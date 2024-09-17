@@ -1,6 +1,8 @@
 ﻿
 using FALOFinancialProofing.Models;
+using FALOFinancialProofing.Repository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FALOFinancialProofing
 {
@@ -11,6 +13,7 @@ namespace FALOFinancialProofing
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
 
             //builder.Services.AddControllers();
             builder.Services.AddDbContext<FALOFinancialProofingDbContext>(options =>
