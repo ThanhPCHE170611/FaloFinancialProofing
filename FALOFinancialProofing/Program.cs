@@ -1,8 +1,3 @@
-﻿
-using FALOFinancialProofing.Models;
-using FALOFinancialProofing.Repository;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace FALOFinancialProofing
 {
@@ -13,18 +8,8 @@ namespace FALOFinancialProofing
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
 
-            //builder.Services.AddControllers();
-            builder.Services.AddDbContext<FALOFinancialProofingDbContext>(options =>
-            {
-                // Đọc chuỗi kết nối
-                string connectstring = builder.Configuration.GetConnectionString("DefaultConnection");
-                Console.WriteLine("Kết nối thành công");
-                // Sử dụng MS SQL Server
-                options.UseSqlServer(connectstring);
-            });
-
+            builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
