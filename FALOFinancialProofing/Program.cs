@@ -1,3 +1,6 @@
+﻿
+using FALOFinancialProofing.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace FALOFinancialProofing
 {
@@ -9,7 +12,16 @@ namespace FALOFinancialProofing
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            //builder.Services.AddControllers();
+            builder.Services.AddDbContext<FALOFinancialProofingDbContext>(options =>
+            {
+                // Đọc chuỗi kết nối
+                string connectstring = builder.Configuration.GetConnectionString("DefaultConnection");
+                Console.WriteLine("Kết nối thành công");
+                // Sử dụng MS SQL Server
+                options.UseSqlServer(connectstring);
+            });
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
