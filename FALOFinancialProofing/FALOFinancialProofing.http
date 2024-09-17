@@ -1,0 +1,6 @@
+@FALOFinancialProofing_HostAddress = http://localhost:5062
+
+GET {{FALOFinancialProofing_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
