@@ -1,6 +1,8 @@
 # FaloFinancialProofing
 Final Capstone FPT
 
+config : usn: sa, pwd: 12345678
+
 
 Quy trình pull, push, fetch:
 Có thể sử dụng source tree để quản lý sử dụng git
