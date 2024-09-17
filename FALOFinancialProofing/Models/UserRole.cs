@@ -1,6 +1,8 @@
-﻿namespace FALOFinancialProofing.Models
+﻿using FALOFinancialProofing.Core;
+
+namespace FALOFinancialProofing.Models
 {
-    public class UserRole
+    public class UserRole : Entity
     {
         public UserRole()
         {
