@@ -14,6 +14,8 @@ using System.Text;
 using System.Security.Cryptography;
 using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.DTOs;
+using Microsoft.AspNetCore.Identity.Data;
+using FALOFinancialProofing.Services;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -23,19 +25,18 @@ namespace FALOFinancialProofing.Controllers
     {
         private readonly AppSetting _appSetting;
         //private readonly IRefreshTokenRepository _refreshTokenRepository;
-        private readonly IUserRepository _userRepository;
+        private readonly AuthServices authServices ;
 
-        public UsersController(IOptionsMonitor<AppSetting> optionsMonitor, IUserRepository userRepository)
+        public UsersController(IOptionsMonitor<AppSetting> optionsMonitor, AuthServices _authServices)
         {
             _appSetting = optionsMonitor.CurrentValue;
             //_refreshTokenRepository = refreshTokenRepository;
-            _userRepository = userRepository;
+            authServices = _authServices;
         }
         [HttpPost("Login")]
         public async Task<IActionResult> Post([FromBody] LoginModel userLogin)
         {
-            //var user = _db.NguoiDungs.SingleOrDefault(n => n == User.Email && nguoiDung.PassWord == n.PassWord);
-            var user = await _userRepository.GetUserByEmailAndPassword(userLogin.Email, userLogin.Password);
+            var user = await authServices.LoginUser(userLogin);
             if (user == null)
             {
                 return Ok(new
@@ -43,14 +44,55 @@ namespace FALOFinancialProofing.Controllers
                     Success = false,
                     Message = "Invalid Username/Password"
                 });
-            }
-            return Ok(new
+            } else
             {
-                Success = true,
-                Message = "Authenticate Success",
-                Data = GenerateToken(user)
-            });
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Authenticate Success",
+                    Data = GenerateToken(user)
+                });
+            }
+            ////var user = _db.NguoiDungs.SingleOrDefault(n => n == User.Email && nguoiDung.PassWord == n.PassWord);
+            //var user = await _userRepository.GetUserByEmailAndPassword(userLogin.Email, userLogin.Password);
+            //if (user == null)
+            //{
+            //    return Ok(new
+            //    {
+            //        Success = false,
+            //        Message = "Invalid Username/Password"
+            //    });
+            //}
+            //return Ok(new
+            //{
+            //    Success = true,
+            //    Message = "Authenticate Success",
+            //    Data = GenerateToken(user)
+            //});
         }
+
+        [HttpPost("Register")]
+        public async Task<IActionResult> Register([FromBody] SignUpRequest registerRequest)
+        {
+            var user = await authServices.RegisterUser(registerRequest);
+            if (user == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "Register Failed"
+                });
+            } else
+            {
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Register Success",
+                });
+            }
+        }
+
+
         //// GET: api/Users
         //[HttpGet]
         //public async Task<ActionResult<IEnumerable<User>>> GetUsers()
