@@ -13,6 +13,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Security.Cryptography;
 using FALOFinancialProofing.Repository;
+using FALOFinancialProofing.DTOs;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -21,14 +22,35 @@ namespace FALOFinancialProofing.Controllers
     public class UsersController : ControllerBase
     {
         private readonly AppSetting _appSetting;
-        private readonly IRefreshTokenRepository _refreshTokenRepository;
+        //private readonly IRefreshTokenRepository _refreshTokenRepository;
+        private readonly IUserRepository _userRepository;
 
-        public UsersController( IOptionsMonitor<AppSetting> optionsMonitor, RefreshTokenRepository refreshTokenRepository)
+        public UsersController(IOptionsMonitor<AppSetting> optionsMonitor, IUserRepository userRepository)
         {
             _appSetting = optionsMonitor.CurrentValue;
-            _refreshTokenRepository = refreshTokenRepository;
+            //_refreshTokenRepository = refreshTokenRepository;
+            _userRepository = userRepository;
         }
-
+        [HttpPost("Login")]
+        public async Task<IActionResult> Post([FromBody] LoginModel userLogin)
+        {
+            //var user = _db.NguoiDungs.SingleOrDefault(n => n == User.Email && nguoiDung.PassWord == n.PassWord);
+            var user = await _userRepository.GetUserByEmailAndPassword(userLogin.Email, userLogin.Password);
+            if (user == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "Invalid Username/Password"
+                });
+            }
+            return Ok(new
+            {
+                Success = true,
+                Message = "Authenticate Success",
+                Data = GenerateToken(user)
+            });
+        }
         //// GET: api/Users
         //[HttpGet]
         //public async Task<ActionResult<IEnumerable<User>>> GetUsers()
@@ -113,10 +135,10 @@ namespace FALOFinancialProofing.Controllers
         //    return _context.Users.Any(e => e.Id == id);
         //}
 
-        private async Task<TokenModel> GenerateToken(User User)
+        private async Task<TokenModel> GenerateToken(UserDto User)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
-            var secretKeyBytes = Encoding.ASCII.GetBytes(_appSetting.SecretKey);
+            var secretKeyBytes = Encoding.UTF8.GetBytes(_appSetting.SecretKey);
             var tokenDescription = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
@@ -126,8 +148,9 @@ namespace FALOFinancialProofing.Controllers
                     new Claim(JwtRegisteredClaimNames.Sub, User.Email),
                     //tokenId
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(ClaimTypes.Role,User.RoleName),
                     new Claim("Id", User.Id.ToString()),
-                    new Claim("TokenId", Guid.NewGuid().ToString()),
+                    //new Claim("TokenId", Guid.NewGuid().ToString()),
 
                 }),
                 Expires = DateTime.UtcNow.AddDays(_appSetting.ExpiryInDays),
@@ -149,7 +172,7 @@ namespace FALOFinancialProofing.Controllers
                 IsRevoked = false,
                 IsUsed = false
             };
-            await _refreshTokenRepository.InsertAsync(refeshTokenEntity);
+            //await _refreshTokenRepository.InsertAsync(refeshTokenEntity);
             return new TokenModel
             {
                 AccessToken = accessToken,

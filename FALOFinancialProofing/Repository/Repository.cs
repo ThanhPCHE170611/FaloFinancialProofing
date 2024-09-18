@@ -7,7 +7,7 @@ namespace FALOFinancialProofing.Repository
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private FALOFinancialProofingDbContext _dbContext;
+        public FALOFinancialProofingDbContext _dbContext;
         public Repository(FALOFinancialProofingDbContext dbContext)
         {
             _dbContext = dbContext;
