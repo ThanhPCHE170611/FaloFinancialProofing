@@ -1,6 +1,7 @@
 ﻿using FALOFinancialProofing.Core;
 using FALOFinancialProofing.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 using System.Linq.Expressions;
 
 namespace FALOFinancialProofing.Repository
@@ -54,10 +55,12 @@ namespace FALOFinancialProofing.Repository
 
         public async Task<T> InsertAsync(T entity)
         {
-            _dbContext.Set<T>().Add(entity);
-            var rowCount = await _dbContext.SaveChangesAsync();
 
+            await _dbContext.Set<T>().AddAsync(entity);
+            var rowCount = await _dbContext.SaveChangesAsync();
+               
             return rowCount > 0 ? entity : null;
+
         }
 
         public async Task<bool> InsertManyAsync(IEnumerable<T> entities)
