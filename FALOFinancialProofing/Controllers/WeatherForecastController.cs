@@ -20,7 +20,8 @@ namespace FALOFinancialProofing.Controllers
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
-        [Authorize(Policy = "AdminOnly")]
+        //[Authorize(Policy = "AdminOnly")]
+        [Authorize(Policy = "ManagerOnly")]
         //[Authorize]
         public IEnumerable<WeatherForecast> Get()
         {

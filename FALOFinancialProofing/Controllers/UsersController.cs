@@ -31,6 +31,17 @@ namespace FALOFinancialProofing.Controllers
             //_refreshTokenRepository = refreshTokenRepository;
             _userRepository = userRepository;
         }
+        [HttpGet("Login")]
+        public IActionResult Login()
+        {
+            return Unauthorized("You need to log in to access this resource.");
+        }
+
+        [HttpGet("AccessDenied")]
+        public IActionResult AccessDenied()
+        {
+            return Forbid("You do not have permission to access this resource.");
+        }
         [HttpPost("Login")]
         public async Task<IActionResult> Post([FromBody] LoginModel userLogin)
         {
@@ -139,20 +150,16 @@ namespace FALOFinancialProofing.Controllers
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
             var secretKeyBytes = Encoding.UTF8.GetBytes(_appSetting.SecretKey);
+            var roleClaimList = User.RoleNames.Select(r => new Claim(ClaimTypes.Role, r)).ToList();
+            roleClaimList.Add(new Claim(ClaimTypes.Name, User.FullName));
+            roleClaimList.Add(new Claim(JwtRegisteredClaimNames.Email, User.Email));
+            roleClaimList.Add(new Claim(JwtRegisteredClaimNames.Sub, User.Email));
+            roleClaimList.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
+            roleClaimList.Add(new Claim("Id", User.Id.ToString()));
+            //new Claim("TokenId", Guid.NewGuid().ToString()),
             var tokenDescription = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.Name, User.FullName),
-                    new Claim(JwtRegisteredClaimNames.Email, User.Email),
-                    new Claim(JwtRegisteredClaimNames.Sub, User.Email),
-                    //tokenId
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(ClaimTypes.Role,User.RoleName),
-                    new Claim("Id", User.Id.ToString()),
-                    //new Claim("TokenId", Guid.NewGuid().ToString()),
-
-                }),
+                Subject = new ClaimsIdentity(roleClaimList),
                 Expires = DateTime.UtcNow.AddDays(_appSetting.ExpiryInDays),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretKeyBytes), SecurityAlgorithms.HmacSha512Signature),
                 Issuer = _appSetting.Issuer,
@@ -161,17 +168,18 @@ namespace FALOFinancialProofing.Controllers
             };
             var token = jwtTokenHandler.CreateToken(tokenDescription);
             var accessToken = jwtTokenHandler.WriteToken(token);
-            var refeshToken = GenerateRefeshToken();
-            var refeshTokenEntity = new RefreshToken
+            var refreshToken = GenerateRefeshToken();
+            var refreshTokenEntity = new RefreshToken
             {
                 Id = Guid.NewGuid(),
-                Token = refeshToken,
+                Token = refreshToken,
                 JwtId = token.Id,
                 IssuedAt = DateTime.UtcNow,
                 ExpiredAt = DateTime.UtcNow.AddDays(7),
                 IsRevoked = false,
                 IsUsed = false
             };
+            // chưa hoàn thành
             //await _refreshTokenRepository.InsertAsync(refeshTokenEntity);
             return new TokenModel
             {

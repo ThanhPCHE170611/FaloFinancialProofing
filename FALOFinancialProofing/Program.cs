@@ -80,9 +80,26 @@ namespace FALOFinancialProofing
                     => policy.RequireClaim(ClaimTypes.Role, "Admin"));
                 options.AddPolicy("UserOnly", policy
                                        => policy.RequireClaim("Role", "Staff"));
+                options.AddPolicy("ManagerOnly", policy
+                                       => policy.RequireClaim(ClaimTypes.Role, "Manager"));
+                //options.
+
+
             });
             var app = builder.Build();
+            app.Use(async (context, next) =>
+            {
+                await next();
 
+                if (context.Response.StatusCode == StatusCodes.Status401Unauthorized)
+                {
+                    context.Response.Redirect("/api/Users/Login");
+                }
+                else if (context.Response.StatusCode == StatusCodes.Status403Forbidden)
+                {
+                    context.Response.Redirect("/api/Users/AccessDenied");
+                }
+            });
             app.UseCors(option => option.AllowAnyHeader().
               AllowAnyMethod().AllowAnyOrigin());
 
