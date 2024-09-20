@@ -1,40 +1,50 @@
 ﻿using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
-using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace FALOFinancialProofing.Services
 {
     public class AuthServices
     {
-        private readonly IRepository<User> repository;
-        public AuthServices(IRepository<User> _repository)
+        private readonly IRepository<User, int> repository;
+
+        public AuthServices(IRepository<User, int> _repository)
         {
             this.repository = _repository;
         }
 
         public async Task<UserDto?> LoginUser(LoginModel userLogin)
         {
-            var user = await repository.Get(u => u.Email.Equals(userLogin.Email) && u.Password.Equals(userLogin.Password));
-            return user == null ? null : new UserDto
+            var user = await repository
+                .GetAll(u => u.Email.Equals(userLogin.Email) && u.Password.Equals(userLogin.Password))
+                .Include(x => x.Roles)
+                .FirstOrDefaultAsync();
+
+            if (user == null) return null;
+
+            var roles = user.Roles?.Select(x => x.RoleName).ToList() ?? new List<string>();
+            var roleNames = roles.Count > 0 ? string.Join(", ", roles) : "No Roles Assigned";
+
+            return new UserDto
             {
                 Id = user.Id,
                 Email = user.Email,
                 Password = user.Password,
                 FullName = user.FullName,
-                RoleName = null
+                RoleName = roleNames
             };
-            //Todo: đang để RoleName là string? tại vì bị null, sửa đi nhé
         }
 
         public async Task<User?> RegisterUser(SignUpRequest registerRequest)
         {
-
             var validatedInformationRequest = await ValidatedInformationRequest(registerRequest);
-            if(validatedInformationRequest == null)
+            if (validatedInformationRequest == null)
             {
                 return null;
-            } else
+            }
+            else
             {
                 var newUser = new User
                 {

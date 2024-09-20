@@ -2,7 +2,7 @@
 
 namespace FALOFinancialProofing.Repository
 {
-    public interface IRefreshTokenRepository : IRepository<RefreshToken>
+    public interface IRefreshTokenRepository : IRepository<RefreshToken,Guid>
     {
     }
 }

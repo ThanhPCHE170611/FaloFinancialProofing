@@ -1,7 +1,10 @@
-﻿namespace FALOFinancialProofing.Core
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FALOFinancialProofing.Core
 {
-    public class Entity
+    public class Entity<TPrimaryKey> : IEntity<TPrimaryKey>
     {
-        public int Id { get; set; }
+        [Key]
+        public TPrimaryKey Id { get; set; }
     }
 }

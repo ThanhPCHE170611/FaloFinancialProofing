@@ -1,5 +1,4 @@
-﻿
-using FALOFinancialProofing.Models;
+﻿using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -19,7 +18,7 @@ namespace FALOFinancialProofing
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
             builder.Services.AddScoped(typeof(AuthServices));
             //builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddControllers();
