@@ -1,12 +1,8 @@
-﻿using Azure;
-using FALOFinancialProofing.DTOs;
+﻿using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
-using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services.EmailService;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -206,8 +202,6 @@ namespace FALOFinancialProofing.Services
                 return null; // tam thoi
             };
             return null;
-
-
 
         }
         public string GenerateForgotPasswordLink(HttpContext httpContext, string token, string email)
