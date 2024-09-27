@@ -60,7 +60,7 @@ namespace FALOFinancialProofing.Controllers
                 return Ok(new
                 {
                     Success = false,
-                    Message = "Register Failed"
+                    Message = "Register Failed" 
                 });
             } else
             {
