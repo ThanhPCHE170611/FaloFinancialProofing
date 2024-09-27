@@ -1,14 +1,14 @@
 ﻿using FALOFinancialProofing.Core;
 using FALOFinancialProofing.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 using System.Linq.Expressions;
 
 namespace FALOFinancialProofing.Repository
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public class Repository<T, TPrimaryKey> : IRepository<T, TPrimaryKey> where T : Entity<TPrimaryKey>
     {
         public FALOFinancialProofingDbContext _dbContext;
+
         public Repository(FALOFinancialProofingDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -26,6 +26,7 @@ namespace FALOFinancialProofing.Repository
 
             return true;
         }
+
         //public async Task<T> Get(long id)
         //{
         //    return await _dbContext.Set<T>().SingleOrDefaultAsync(p => p.Id == id);
@@ -34,17 +35,18 @@ namespace FALOFinancialProofing.Repository
         {
             return await _dbContext.Set<T>().SingleOrDefaultAsync(filter);
         }
-        public async Task<IEnumerable<T>> GetAll(Expression<Func<T, bool>> filter = null)
+
+        public IQueryable<T> GetAll(Expression<Func<T, bool>> filter = null)
         {
             var query = _dbContext.Set<T>().AsNoTracking();
             query = filter != null ? query.Where(filter) : query;
-            return await query.ToListAsync();
+            return query;
         }
 
-        public async Task<IEnumerable<T>> GetAllIncludeDeleted(Expression<Func<T, bool>> filter = null)
+        public IQueryable<T> GetAllIncludeDeleted(Expression<Func<T, bool>> filter = null)
         {
             var query = filter != null ? _dbContext.Set<T>().Where(filter) : _dbContext.Set<T>();
-            return await query.ToListAsync();
+            return query;
         }
 
         public async Task<T> GetFirstItem(Expression<Func<T, bool>> filter)
@@ -55,12 +57,10 @@ namespace FALOFinancialProofing.Repository
 
         public async Task<T> InsertAsync(T entity)
         {
-
             await _dbContext.Set<T>().AddAsync(entity);
             var rowCount = await _dbContext.SaveChangesAsync();
-               
-            return rowCount > 0 ? entity : null;
 
+            return rowCount > 0 ? entity : null;
         }
 
         public async Task<bool> InsertManyAsync(IEnumerable<T> entities)
