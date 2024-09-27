@@ -107,6 +107,7 @@ namespace FALOFinancialProofing.Services
                     LastName = validatedInformationRequest.LastName,
                     Email = validatedInformationRequest.Email,
                     UserName = validatedInformationRequest.UserName,
+                    TwoFactorEnabled = true,
                 };
                 var result = await userManager.CreateAsync(newUser, registerRequest.Password);
                 if (result.Succeeded)
