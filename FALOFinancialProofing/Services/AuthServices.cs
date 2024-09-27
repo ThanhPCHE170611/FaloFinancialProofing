@@ -1,7 +1,10 @@
-﻿using FALOFinancialProofing.DTOs;
+﻿using Azure;
+using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
+using FALOFinancialProofing.Services.EmailService;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -9,24 +12,38 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+//using System.Security.Policy;
 using System.Text;
+
+
+
 
 namespace FALOFinancialProofing.Services
 {
     public class AuthServices
     {
         private readonly AppSetting appSetting;
+        private readonly IEmailService emailService;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly UserManager<User> userManager;
         private readonly SignInManager<User> signInManager;
 
+        //moi
+        private readonly LinkGenerator _linkGenerator;
+
+
         public AuthServices(UserManager<User> userManager, SignInManager<User> signInManager,
-            IOptionsMonitor<AppSetting> optionsMonitor, RoleManager<IdentityRole> roleManager)
+            IOptionsMonitor<AppSetting> optionsMonitor, RoleManager<IdentityRole> roleManager,
+            IEmailService emailService,
+            LinkGenerator linkGenerator)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.appSetting = optionsMonitor.CurrentValue;
             this.roleManager = roleManager;
+            this.emailService = emailService;
+            _linkGenerator = linkGenerator;
+
         }
 
         public async Task<UserDto?> LoginUser(SignInModel userLogin)
@@ -49,7 +66,7 @@ namespace FALOFinancialProofing.Services
                     RoleNames = userManager.GetRolesAsync(user).Result.ToList()
                 };
                 return userDTO;
-            }
+            }   
             return null;
         }
 
@@ -171,5 +188,42 @@ namespace FALOFinancialProofing.Services
                 return Convert.ToBase64String(randomBytes);
             }
         }
+
+        public async Task<UserDto?> ForgotPassword(string email, HttpContext httpContext)
+        {
+
+            var user = await userManager.FindByEmailAsync(email);
+            if (user != null)
+            {
+                var token = await userManager.GeneratePasswordResetTokenAsync(user);
+                var forgotPasswordLink = GenerateForgotPasswordLink(httpContext, token, email);
+                //var forgotPasswordLink = Url.Action(nameof(ResetPassword), "Authentication", new { token, email = user.Email }, Request.Scheme);
+                var message = new Message(new string[] { user.Email! }, "Forgot Password link", forgotPasswordLink!);
+                emailService.SendEmail(message);
+
+
+                return null; // tam thoi
+            };
+            return null;
+
+
+
+        }
+        public string GenerateForgotPasswordLink(HttpContext httpContext, string token, string email)
+        {
+            // Sử dụng LinkGenerator để tạo URL tương tự như Url.Action
+            var forgotPasswordLink = _linkGenerator.GetUriByAction(
+                httpContext,
+                action: "ResetPassword",
+                controller: "Users",
+                //controller: "Authentication",
+                values: new { token, email },
+                scheme: httpContext.Request.Scheme
+            );
+
+            return forgotPasswordLink;
+        }
     }
+
+
 }

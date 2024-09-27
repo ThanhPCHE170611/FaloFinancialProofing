@@ -16,6 +16,8 @@ using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.DTOs;
 using Microsoft.AspNetCore.Identity.Data;
 using FALOFinancialProofing.Services;
+using Microsoft.AspNetCore.Authorization;
+using System.ComponentModel.DataAnnotations;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -70,6 +72,32 @@ namespace FALOFinancialProofing.Controllers
                     Message = "Register Success",
                 });
             }
-        }  
+        }
+
+        [HttpPost("ForgotPassword")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword([Required] string email)
+        {
+            var user = await authServices.ForgotPassword(email, HttpContext);
+            if (user == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "F"
+                });
+            }
+            else
+            {
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "T",
+                    //Data = await authServices.GenerateToken(user)
+                });
+            }
+        }
+
+
     }
 }
