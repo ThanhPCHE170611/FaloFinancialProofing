@@ -1,4 +1,4 @@
-﻿namespace FALOFinancialProofing.Models
+﻿namespace FALOFinancialProofing.Helpers
 {
     public class TokenModel
     {

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FALOFinancialProofing.Controllers
 {
+    
     [ApiController]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
@@ -19,8 +20,11 @@ namespace FALOFinancialProofing.Controllers
             _logger = logger;
         }
 
+        
         [HttpGet(Name = "GetWeatherForecast")]
-        [Authorize(Policy = "AdminOnly")]
+        [Authorize(Roles = "User")]
+        //[Authorize(Roles = "Admin")]
+        //[Authorize(Policy = "Admin")]
         //[Authorize]
         public IEnumerable<WeatherForecast> Get()
         {

@@ -4,6 +4,7 @@ using FALOFinancialProofing.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FALOFinancialProofing.Migrations
 {
     [DbContext(typeof(FALOFinancialProofingDbContext))]
-    partial class FALOFinancialProofingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240926193921_initialDb")]
+    partial class initialDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -120,29 +123,6 @@ namespace FALOFinancialProofing.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "1fe0c8b3-8edb-44fd-a5b5-22ef11374578",
-                            ConcurrencyStamp = "277af920-1662-4299-90d6-ede1ae38ca70",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "fbc5c8c4-0654-44cd-b33f-2bdb3e7191cd",
-                            ConcurrencyStamp = "c0c68286-8d18-40f8-9e5d-fbc210e17751",
-                            Name = "User",
-                            NormalizedName = "USER"
-                        },
-                        new
-                        {
-                            Id = "8c8091bf-18a6-4944-91af-9d707e826b71",
-                            ConcurrencyStamp = "bb421a79-babf-4407-bc63-1f1fdc7a48bf",
-                            Name = "Human Resources",
-                            NormalizedName = "Human Resources"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
