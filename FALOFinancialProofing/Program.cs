@@ -1,7 +1,9 @@
-﻿using FALOFinancialProofing.Models;
+﻿using FALOFinancialProofing.Helpers;
+using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -29,8 +31,9 @@ namespace FALOFinancialProofing
                     Description = "JWT Authorization header using the Bearer scheme. Example: ",
                     Name = "Authorization",
                     In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer"
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT"
                 });
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
@@ -50,6 +53,7 @@ namespace FALOFinancialProofing
                     }
                 });
             });
+            builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<FALOFinancialProofingDbContext>();
             builder.Services.AddDbContext<FALOFinancialProofingDbContext>(options =>
             {
                 // Đọc chuỗi kết nối
@@ -63,13 +67,21 @@ namespace FALOFinancialProofing
             builder.Services.Configure<AppSetting>(builder.Configuration.GetSection("JwtAppsettings"));
             var secretKey = builder.Configuration["JwtAppsettings:SecretKey"];
             var secretKeyByte = Encoding.UTF8.GetBytes(secretKey);
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
+            builder.Services.AddAuthentication(options =>
             {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(opt =>
+            {
+                opt.SaveToken = false;
+
                 opt.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
                     ValidateIssuer = false,
                     ValidateAudience = false,
-
+                    ValidAudience = builder.Configuration["JwtAppsettings:Audience"],
+                    ValidIssuer = builder.Configuration["JwtAppsettings:Issuer"],
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(secretKeyByte),
                     ClockSkew = TimeSpan.Zero
@@ -77,10 +89,10 @@ namespace FALOFinancialProofing
             });
             builder.Services.AddAuthorization(options =>
             {
-                options.AddPolicy("AdminOnly", policy
-                    => policy.RequireClaim(ClaimTypes.Role, "Admin"));
-                options.AddPolicy("UserOnly", policy
-                                       => policy.RequireClaim("Role", "Staff"));
+                //options.AddPolicy("AdminOnly", policy
+                //    => policy.RequireClaim(ClaimTypes.Role, "Admin"));
+                //options.AddPolicy("UserOnly", policy
+                //                       => policy.RequireClaim("Role", "Staff"));
             });
             var app = builder.Build();
 

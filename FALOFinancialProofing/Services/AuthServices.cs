@@ -1,6 +1,8 @@
 ﻿using FALOFinancialProofing.DTOs;
+using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -13,42 +15,67 @@ namespace FALOFinancialProofing.Services
 {
     public class AuthServices
     {
-        private readonly IRepository<User, int> userRepository;
-        private readonly IRepository<RefreshToken, Guid > refreshTokenRepository;
         private readonly AppSetting appSetting;
+        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly UserManager<User> userManager;
+        private readonly SignInManager<User> signInManager;
 
-        public AuthServices(IRepository<User, int> _repository,
-            IRepository<RefreshToken, Guid> _refreshTokenRepository,
-            IOptionsMonitor<AppSetting> optionsMonitor)
+        public AuthServices(UserManager<User> userManager, SignInManager<User> signInManager,
+            IOptionsMonitor<AppSetting> optionsMonitor, RoleManager<IdentityRole> roleManager)
         {
-            this.userRepository = _repository;
-            this.refreshTokenRepository = _refreshTokenRepository;
+            this.userManager = userManager;
+            this.signInManager = signInManager;
             this.appSetting = optionsMonitor.CurrentValue;
+            this.roleManager = roleManager;
         }
 
-        public async Task<UserDto?> LoginUser(LoginModel userLogin)
+        public async Task<UserDto?> LoginUser(SignInModel userLogin)
         {
-            var user = await userRepository
-                .GetAll(u => u.Email.Equals(userLogin.Email) && u.Password.Equals(userLogin.Password))
-                .Include(x => x.Roles)
-                .FirstOrDefaultAsync();
-
-            if (user == null) return null;
-
-            var roles = user.Roles?.Select(x => x.RoleName).ToList() ?? new List<string>();
-            var roleNames = roles.Count > 0 ? string.Join(", ", roles) : "No Roles Assigned";
-
-            return new UserDto
+            var user = await userManager.FindByNameAsync(userLogin.UserName);
+            var checkPassword = await userManager.CheckPasswordAsync(user, userLogin.Password);
+            if (user == null || !checkPassword)
             {
-                Id = user.Id,
-                Email = user.Email,
-                Password = user.Password,
-                FullName = user.FullName,
-                RoleName = roleNames
-            };
+                return null;
+            }
+            var result = await signInManager.PasswordSignInAsync(userLogin.UserName, userLogin.Password, true, false);
+            if (result.Succeeded)
+            {
+                var userDTO = new UserDto
+                {
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    UserName = user.UserName,
+                    RoleNames = userManager.GetRolesAsync(user).Result.ToList()
+                };
+                return userDTO;
+            }
+            return null;
         }
 
-        public async Task<User?> RegisterUser(SignUpRequest registerRequest)
+        //public async Task<User?> RegisterUser(SignUpRequest registerRequest)
+        //{
+        //    var validatedInformationRequest = await ValidatedInformationRequest(registerRequest);
+        //    if (validatedInformationRequest == null)
+        //    {
+        //        return null;
+        //    }
+        //    else
+        //    {
+        //        var newUser = new User
+        //        {
+        //            FirstName = validatedInformationRequest.FirstName,
+        //            LastName = validatedInformationRequest.LastName,
+        //            Email = validatedInformationRequest.Email,
+        //            UserName = validatedInformationRequest.UserName,
+        //        };
+        //        await userManager.CreateAsync(newUser, registerRequest.Password);
+        //        return newUser;
+        //    }
+        //}
+
+
+        public async Task<IdentityResult?> RegisterUser(SignUpRequest registerRequest)
         {
             var validatedInformationRequest = await ValidatedInformationRequest(registerRequest);
             if (validatedInformationRequest == null)
@@ -59,20 +86,24 @@ namespace FALOFinancialProofing.Services
             {
                 var newUser = new User
                 {
-                    FullName = validatedInformationRequest.FullName,
+                    FirstName = validatedInformationRequest.FirstName,
+                    LastName = validatedInformationRequest.LastName,
                     Email = validatedInformationRequest.Email,
-                    SocialAddress = validatedInformationRequest.SocialAddress,
-                    Password = validatedInformationRequest.Password,
-                    Status = 1,
+                    UserName = validatedInformationRequest.UserName,
                 };
-                await userRepository.InsertAsync(newUser);
-                return newUser;
+                var result = await userManager.CreateAsync(newUser, registerRequest.Password);
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(newUser, AppRole.User);
+                    return result;
+                }
             }
+            return null;
         }
-
         private async Task<SignUpRequest> ValidatedInformationRequest(SignUpRequest registerRequest)
         {
             //Validate information
+
             if (true)
             {
                 return registerRequest;
@@ -84,20 +115,25 @@ namespace FALOFinancialProofing.Services
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
             var secretKeyBytes = Encoding.UTF8.GetBytes(appSetting.SecretKey);
+            var authClaims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, User.FirstName),
+                new Claim(ClaimTypes.Name,User.LastName),
+                new Claim(JwtRegisteredClaimNames.Email, User.Email),
+                new Claim(JwtRegisteredClaimNames.Sub, User.Email),
+                //tokenId
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                //new Claim("Id", User.Id.ToString()),
+                //new Claim("TokenId", Guid.NewGuid().ToString()),
+
+            };
+            foreach (var roleName in User.RoleNames)
+            {
+                authClaims.Add(new Claim(ClaimTypes.Role, roleName));
+            }
             var tokenDescription = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.Name, User.FullName),
-                    new Claim(JwtRegisteredClaimNames.Email, User.Email),
-                    new Claim(JwtRegisteredClaimNames.Sub, User.Email),
-                    //tokenId
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(ClaimTypes.Role,User.RoleName),
-                    new Claim("Id", User.Id.ToString()),
-                    //new Claim("TokenId", Guid.NewGuid().ToString()),
-
-                }),
+                Subject = new ClaimsIdentity(authClaims),
                 Expires = DateTime.UtcNow.AddDays(appSetting.ExpiryInDays),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretKeyBytes), SecurityAlgorithms.HmacSha512Signature),
                 Issuer = appSetting.Issuer,
@@ -106,19 +142,19 @@ namespace FALOFinancialProofing.Services
             };
             var token = jwtTokenHandler.CreateToken(tokenDescription);
             var accessToken = jwtTokenHandler.WriteToken(token);
-            var refeshToken = GenerateRefeshToken();
-            var refeshTokenEntity = new RefreshToken
-            {
-                Id = Guid.NewGuid(),
-                UserId = User.Id,
-                Token = refeshToken,
-                JwtId = token.Id,
-                IssuedAt = DateTime.UtcNow,
-                ExpiredAt = DateTime.UtcNow.AddDays(7),
-                IsRevoked = false,
-                IsUsed = false
-            };
-             var newRefreshToken = await refreshTokenRepository.InsertAsync(refeshTokenEntity);
+            //var refeshToken = GenerateRefeshToken();
+            //var refeshTokenEntity = new RefreshToken
+            //{
+            //    Id = Guid.NewGuid(),
+            //    UserId = User.Id,
+            //    Token = refeshToken,
+            //    JwtId = token.Id,
+            //    IssuedAt = DateTime.UtcNow,
+            //    ExpiredAt = DateTime.UtcNow.AddDays(7),
+            //    IsRevoked = false,
+            //    IsUsed = false
+            //};
+            //var newRefreshToken = await refreshTokenRepository.InsertAsync(refeshTokenEntity);
             return new TokenModel
             {
                 AccessToken = accessToken,

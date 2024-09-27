@@ -30,7 +30,7 @@ namespace FALOFinancialProofing.Controllers
             authServices = _authServices;
         }
         [HttpPost("Login")]
-        public async Task<IActionResult> Post([FromBody] LoginModel userLogin)
+        public async Task<IActionResult> Post([FromBody] SignInModel userLogin)
         {
             var user = await authServices.LoginUser(userLogin);
             if (user == null)
