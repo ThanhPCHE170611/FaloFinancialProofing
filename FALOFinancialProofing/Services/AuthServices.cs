@@ -1,4 +1,5 @@
-﻿using FALOFinancialProofing.DTOs;
+﻿using Azure;
+using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.EmailService;
@@ -186,7 +187,7 @@ namespace FALOFinancialProofing.Services
             }
         }
 
-        public async Task<UserDto?> ForgotPassword(string email, HttpContext httpContext)
+        public async Task<string?> ForgotPassword(string email, HttpContext httpContext)
         {
 
             var user = await userManager.FindByEmailAsync(email);
@@ -194,14 +195,30 @@ namespace FALOFinancialProofing.Services
             {
                 var token = await userManager.GeneratePasswordResetTokenAsync(user);
                 var forgotPasswordLink = GenerateForgotPasswordLink(httpContext, token, email);
-                //var forgotPasswordLink = Url.Action(nameof(ResetPassword), "Authentication", new { token, email = user.Email }, Request.Scheme);
                 var message = new Message(new string[] { user.Email! }, "Forgot Password link", forgotPasswordLink!);
                 emailService.SendEmail(message);
 
-
-                return null; // tam thoi
+                return "Password reset email sent successfully.";
             };
             return null;
+
+        }
+        
+        public async Task<IdentityResult> ResetPassword(ResetPassword resetPassword)
+        {
+
+            var user = await userManager.FindByEmailAsync(resetPassword.Email);
+            if (user != null)
+            {
+                var resetPassResult = await userManager.ResetPasswordAsync(user, resetPassword.Token, resetPassword.Password);
+                if (!resetPassResult.Succeeded)
+                {
+                    return resetPassResult;
+                }
+                return resetPassResult;
+            }
+            return null; // tam thoi
+
 
         }
         public string GenerateForgotPasswordLink(HttpContext httpContext, string token, string email)
@@ -211,13 +228,15 @@ namespace FALOFinancialProofing.Services
                 httpContext,
                 action: "ResetPassword",
                 controller: "Users",
-                //controller: "Authentication",
                 values: new { token, email },
                 scheme: httpContext.Request.Scheme
             );
 
             return forgotPasswordLink;
         }
+
+
+
     }
 
 

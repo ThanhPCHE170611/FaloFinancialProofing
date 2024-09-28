@@ -74,7 +74,7 @@ namespace FALOFinancialProofing.Controllers
             }
         }
 
-        [HttpPost("ForgotPassword")]
+        [HttpPost("ForgotPassword")]    
         [AllowAnonymous]
         public async Task<IActionResult> ForgotPassword([Required] string email)
         {
@@ -84,7 +84,7 @@ namespace FALOFinancialProofing.Controllers
                 return Ok(new
                 {
                     Success = false,
-                    Message = "F"
+                    Message = "Could not send link to email. Email is not registered, or you have entered the wrong email address"
                 });
             }
             else
@@ -92,8 +92,41 @@ namespace FALOFinancialProofing.Controllers
                 return Ok(new
                 {
                     Success = true,
-                    Message = "T",
-                    //Data = await authServices.GenerateToken(user)
+                    Message = " Password Changed request is sent on Email . Please Open your email & click the link.",
+                });
+            }
+        }
+        [HttpGet("reset-password")]
+        public async Task<IActionResult> ResetPassword(string token, string email)
+        {
+            var model = new ResetPassword { Token = token, Email = email };
+
+            return Ok(new
+            {
+                model
+            });
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("reset-password")]
+        public async Task<IActionResult> ResetPassword([Required] ResetPassword resetPassword)
+        {
+            var user = await authServices.ResetPassword(resetPassword);
+            if (user == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "Could not send link to email. Email is not registered, or you have entered the wrong email address"
+                });
+            }
+            else
+            {
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Password has been changed.",
                 });
             }
         }
