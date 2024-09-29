@@ -1,32 +1,46 @@
-﻿using FALOFinancialProofing.DTOs;
+﻿using Azure;
+using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
-using FALOFinancialProofing.Repository;
+using FALOFinancialProofing.Services.EmailService;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+//using System.Security.Policy;
 using System.Text;
+
+
+
 
 namespace FALOFinancialProofing.Services
 {
     public class AuthServices
     {
         private readonly AppSetting appSetting;
+        private readonly IEmailService emailService;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly UserManager<User> userManager;
         private readonly SignInManager<User> signInManager;
 
+        //moi
+        private readonly LinkGenerator _linkGenerator;
+
+
         public AuthServices(UserManager<User> userManager, SignInManager<User> signInManager,
-            IOptionsMonitor<AppSetting> optionsMonitor, RoleManager<IdentityRole> roleManager)
+            IOptionsMonitor<AppSetting> optionsMonitor, RoleManager<IdentityRole> roleManager,
+            IEmailService emailService,
+            LinkGenerator linkGenerator)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.appSetting = optionsMonitor.CurrentValue;
             this.roleManager = roleManager;
+            this.emailService = emailService;
+            _linkGenerator = linkGenerator;
+
         }
 
         public async Task<UserDto?> LoginUser(SignInModel userLogin)
@@ -49,7 +63,7 @@ namespace FALOFinancialProofing.Services
                     RoleNames = userManager.GetRolesAsync(user).Result.ToList()
                 };
                 return userDTO;
-            }
+            }   
             return null;
         }
 
@@ -90,6 +104,7 @@ namespace FALOFinancialProofing.Services
                     LastName = validatedInformationRequest.LastName,
                     Email = validatedInformationRequest.Email,
                     UserName = validatedInformationRequest.UserName,
+                    TwoFactorEnabled = true,
                 };
                 var result = await userManager.CreateAsync(newUser, registerRequest.Password);
                 if (result.Succeeded)
@@ -171,5 +186,58 @@ namespace FALOFinancialProofing.Services
                 return Convert.ToBase64String(randomBytes);
             }
         }
+
+        public async Task<string?> ForgotPassword(string email, HttpContext httpContext)
+        {
+
+            var user = await userManager.FindByEmailAsync(email);
+            if (user != null)
+            {
+                var token = await userManager.GeneratePasswordResetTokenAsync(user);
+                var forgotPasswordLink = GenerateForgotPasswordLink(httpContext, token, email);
+                var message = new Message(new string[] { user.Email! }, "Forgot Password link", forgotPasswordLink!);
+                emailService.SendEmail(message);
+
+                return "Password reset email sent successfully.";
+            };
+            return null;
+
+        }
+        
+        public async Task<IdentityResult> ResetPassword(ResetPassword resetPassword)
+        {
+
+            var user = await userManager.FindByEmailAsync(resetPassword.Email);
+            if (user != null)
+            {
+                var resetPassResult = await userManager.ResetPasswordAsync(user, resetPassword.Token, resetPassword.Password);
+                if (!resetPassResult.Succeeded)
+                {
+                    return resetPassResult;
+                }
+                return resetPassResult;
+            }
+            return null; // tam thoi
+
+
+        }
+        public string GenerateForgotPasswordLink(HttpContext httpContext, string token, string email)
+        {
+            // Sử dụng LinkGenerator để tạo URL tương tự như Url.Action
+            var forgotPasswordLink = _linkGenerator.GetUriByAction(
+                httpContext,
+                action: "ResetPassword",
+                controller: "Users",
+                values: new { token, email },
+                scheme: httpContext.Request.Scheme
+            );
+
+            return forgotPasswordLink;
+        }
+
+
+
     }
+
+
 }
