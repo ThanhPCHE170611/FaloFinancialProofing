@@ -13,6 +13,7 @@ namespace FALOFinancialProofing.Models
         //public DbSet<User> Users { get; set; }
         //public DbSet<Role> Roles { get; set; }
         //public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<SDG> SDGs { get; set; }
 
         //#endregion DBSet
 
@@ -22,6 +23,10 @@ namespace FALOFinancialProofing.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<SDG>()
+                .HasOne(s => s.User)
+                .WithMany(u => u.SDGs)
+                .HasForeignKey(s => s.UserId);
             // Seed roles
             modelBuilder.Entity<IdentityRole>().HasData(
                 new IdentityRole { Id = Guid.NewGuid().ToString(), Name = AppRole.Admin, NormalizedName = "ADMIN", ConcurrencyStamp = Guid.NewGuid().ToString() },

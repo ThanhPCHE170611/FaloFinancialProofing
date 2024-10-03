@@ -4,6 +4,7 @@ using FALOFinancialProofing.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FALOFinancialProofing.Migrations
 {
     [DbContext(typeof(FALOFinancialProofingDbContext))]
-    partial class FALOFinancialProofingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241003154808_addSDG")]
+    partial class addSDG
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,9 +43,10 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
-                    b.ToTable("SDGs");
+                    b.ToTable("SDG");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.User", b =>
@@ -147,22 +151,22 @@ namespace FALOFinancialProofing.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "21d7ce15-d438-4ec7-b20d-f59655afe7b7",
-                            ConcurrencyStamp = "0544c988-b90b-4bee-948a-7117b26ab303",
+                            Id = "cc9a00dd-d0d8-4569-981d-1bb1bc25327b",
+                            ConcurrencyStamp = "f80c903e-6c98-47ca-a9a0-728120f32255",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "056f8aca-62f1-4431-bbff-453c2cf01a6d",
-                            ConcurrencyStamp = "2c55592f-24a7-47d0-95ca-6c3c4b67c8fa",
+                            Id = "4eec9535-5bc1-494a-a770-878c47d726cb",
+                            ConcurrencyStamp = "c6fb007f-2050-4a0a-9513-d791d3730a18",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "61370db3-90e6-4a4e-a3f1-f9a745f82087",
-                            ConcurrencyStamp = "f7686586-9ed9-4007-82b5-9744a6b70a12",
+                            Id = "1a76f1e3-04cd-41a3-9058-ff28c95dd6f6",
+                            ConcurrencyStamp = "7673d91e-ea44-4d50-ba6e-870443eeaa9d",
                             Name = "Human Resources",
                             NormalizedName = "Human Resources"
                         });
@@ -277,8 +281,8 @@ namespace FALOFinancialProofing.Migrations
             modelBuilder.Entity("FALOFinancialProofing.Models.SDG", b =>
                 {
                     b.HasOne("FALOFinancialProofing.Models.User", "User")
-                        .WithMany("SDGs")
-                        .HasForeignKey("UserId")
+                        .WithOne("SDG")
+                        .HasForeignKey("FALOFinancialProofing.Models.SDG", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -338,7 +342,8 @@ namespace FALOFinancialProofing.Migrations
 
             modelBuilder.Entity("FALOFinancialProofing.Models.User", b =>
                 {
-                    b.Navigation("SDGs");
+                    b.Navigation("SDG")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
