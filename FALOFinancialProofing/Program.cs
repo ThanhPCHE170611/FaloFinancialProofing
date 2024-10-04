@@ -1,8 +1,10 @@
-﻿using FALOFinancialProofing.Helpers;
+﻿using FALOFinancialProofing.Attributes;
+using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -78,10 +80,10 @@ namespace FALOFinancialProofing
 
                 opt.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
                     ValidAudience = builder.Configuration["JwtAppsettings:Audience"],
                     ValidIssuer = builder.Configuration["JwtAppsettings:Issuer"],
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(secretKeyByte),
                     ClockSkew = TimeSpan.Zero
@@ -93,7 +95,15 @@ namespace FALOFinancialProofing
                 //    => policy.RequireClaim(ClaimTypes.Role, "Admin"));
                 //options.AddPolicy("UserOnly", policy
                 //                       => policy.RequireClaim("Role", "Staff"));
+
+                
+                for (int age = 18; age < 23; age++)
+                {
+                    options.AddPolicy($"MinimumAge{age}", policy => policy.Requirements.Add(new MinimumAgeRequirement(age)));
+                }
+
             });
+            builder.Services.AddSingleton<IAuthorizationHandler, MinimumAgeHandler>();
             var app = builder.Build();
 
             app.UseCors(option => option.AllowAnyHeader().
