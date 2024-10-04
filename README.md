@@ -20,4 +20,7 @@ NÊÚ: có conflict, pull lại bản vừa push lên và vào vscode xanh để
 
 Không có conflict và hiện tick xanh là thành công, không tự ý merge mà đợi để được merge request.
 
+Trước khi push: fetch lại code origin và pull để lấy code mới nhất, trường hợp không có pull thì đã là code mới nhất rồi, bỏ qua,
 
+Nếu như có code pull thì pull mới nhất về và merge vào brach hiện tại, nếu có conflict thì phải fix đến khi các chức năng của app
+chạy bình thường, sau đấy push lên nhánh bản thân và tạo merge request vào nhánh chung(dev)

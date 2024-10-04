@@ -16,6 +16,8 @@ using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.DTOs;
 using Microsoft.AspNetCore.Identity.Data;
 using FALOFinancialProofing.Services;
+using Microsoft.AspNetCore.Authorization;
+using System.ComponentModel.DataAnnotations;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -70,6 +72,65 @@ namespace FALOFinancialProofing.Controllers
                     Message = "Register Success",
                 });
             }
-        }  
+        }
+
+        [HttpPost("ForgotPassword")]    
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword([Required] string email)
+        {
+            var user = await authServices.ForgotPassword(email, HttpContext);
+            if (user == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "Could not send link to email. Email is not registered, or you have entered the wrong email address"
+                });
+            }
+            else
+            {
+                return Ok(new
+                {
+                    Success = true,
+                    Message = " Password Changed request is sent on Email . Please Open your email & click the link.",
+                });
+            }
+        }
+        [HttpGet("reset-password")]
+        public async Task<IActionResult> ResetPassword(string token, string email)
+        {
+            var model = new ResetPassword { Token = token, Email = email };
+
+            return Ok(new
+            {
+                model
+            });
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("reset-password")]
+        public async Task<IActionResult> ResetPassword([Required] ResetPassword resetPassword)
+        {
+            var user = await authServices.ResetPassword(resetPassword);
+            if (user == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "Could not send link to email. Email is not registered, or you have entered the wrong email address"
+                });
+            }
+            else
+            {
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Password has been changed.",
+                });
+            }
+        }
+
+
     }
 }
