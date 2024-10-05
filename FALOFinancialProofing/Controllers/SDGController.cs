@@ -103,7 +103,7 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<IActionResult> UpdateSDG([FromBody] SDGRequest sdg)
         {
 

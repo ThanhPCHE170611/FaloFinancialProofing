@@ -38,7 +38,6 @@ namespace FALOFinancialProofing.Services.SDGServices
                 Id = sdg.Id != null ? sdg.Id.Value : 0,
                 SDGName = sdg.SDGName,
                 UserId = sdg.UserId,
-                User = await userManager.FindByIdAsync(sdg.UserId.ToString()),
             };
         }
 
@@ -74,7 +73,20 @@ namespace FALOFinancialProofing.Services.SDGServices
         {
             try
             {
-                return await sdgRepository.GetAll().ToListAsync();
+                return await sdgRepository.GetAll().Include(x => x.User).Select(
+                    sdg => new SDG
+                    {
+                        Id = sdg.Id,
+                        SDGName = sdg.SDGName,
+                        UserId = sdg.UserId,
+                        User = new User
+                        {
+                            Id = sdg.User.Id,
+                            FirstName = sdg.User.FirstName,
+                            LastName = sdg.User.LastName,
+                        }
+                    }
+                    ).ToListAsync();
             }
             catch (Exception e)
             {
@@ -86,7 +98,20 @@ namespace FALOFinancialProofing.Services.SDGServices
         {
             try
             {
-                return await sdgRepository.Get(x => x.Id == id);
+                return await sdgRepository.GetAll(x => x.Id == id).Include(x => x.User).Select(
+                    sdg => new SDG
+                    {
+                        Id = sdg.Id,
+                        SDGName = sdg.SDGName,
+                        UserId = sdg.UserId,
+                        User = new User
+                        {
+                            Id = sdg.User.Id,
+                            FirstName = sdg.User.FirstName,
+                            LastName = sdg.User.LastName,
+                        }
+                    }
+                    ).FirstOrDefaultAsync();
             }
             catch (Exception e)
             {
@@ -94,11 +119,24 @@ namespace FALOFinancialProofing.Services.SDGServices
             }
         }
 
-        public async Task<SDG?> GetSDGByUserIdAsync(string userId)
+        public async Task<List<SDG>?> GetSDGByUserIdAsync(string userId)
         {
             try
             {
-                return await sdgRepository.Get(x => x.User.Id == userId);
+                return await sdgRepository.GetAll(x => x.UserId.Equals(userId)).Include(x => x.User).Select(
+                   sdg => new SDG
+                   {
+                       Id = sdg.Id,
+                       SDGName = sdg.SDGName,
+                       UserId = sdg.UserId,
+                       User = new User
+                       {
+                           Id = sdg.User.Id,
+                           FirstName = sdg.User.FirstName,
+                           LastName = sdg.User.LastName,
+                       }
+                   }
+                   ).ToListAsync();
             }
             catch (Exception e)
             {

@@ -9,7 +9,7 @@ namespace FALOFinancialProofing.Services.SDGServices
 
         Task<SDG?> GetSDGByIdAsync(int id);
 
-        Task<SDG?> GetSDGByUserIdAsync(string userId);
+        Task<List<SDG>?> GetSDGByUserIdAsync(string userId);
 
         Task<SDG?> CreateSDGAsync(SDGRequest sdg);
 
