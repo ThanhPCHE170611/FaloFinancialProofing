@@ -7,6 +7,8 @@ namespace FALOFinancialProofing.Models
     {
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
+
+        public ICollection<SDG> SDGs { get; set; } = new List<SDG>();
         //public DateOnly? BirthDate { get; set; }
         //public string? Gender { get; set; }
         //public string? Address { get; set; }

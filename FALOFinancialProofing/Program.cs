@@ -4,6 +4,7 @@ using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services;
 using FALOFinancialProofing.Services.EmailService;
+using FALOFinancialProofing.Services.SDGServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -28,14 +29,18 @@ namespace FALOFinancialProofing
 
             // Add services to the container.
             builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
-           
             builder.Services.AddScoped(typeof(AuthServices));
+            builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<ISDGServices, SDGServices>();
+
 
             // Add Email Configs
             var emailConfig = configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
             builder.Services.AddSingleton(emailConfig);
 
-            builder.Services.AddScoped<IEmailService, EmailService>();
+
+
+            
 
             //builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddControllers();
