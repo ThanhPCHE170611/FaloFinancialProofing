@@ -4,6 +4,7 @@ using FALOFinancialProofing.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FALOFinancialProofing.Migrations
 {
     [DbContext(typeof(FALOFinancialProofingDbContext))]
-    partial class FALOFinancialProofingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241003155049_addSDGv2")]
+    partial class addSDGv2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,44 +43,10 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("SDGs");
-                });
-
-            modelBuilder.Entity("FALOFinancialProofing.Models.TransactionLog", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ReceiverId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SenderID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("TransactionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TransactionLogs");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.User", b =>
@@ -87,9 +56,6 @@ namespace FALOFinancialProofing.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
-
-                    b.Property<DateOnly?>("BirthDate")
-                        .HasColumnType("date");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -185,22 +151,22 @@ namespace FALOFinancialProofing.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "83292e2c-6c86-4153-bdc5-760d05ec2293",
-                            ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85f",
+                            Id = "69e4cfbb-d193-401b-912d-d9d8d225abf7",
+                            ConcurrencyStamp = "dd1c0c2b-7b9e-411a-8128-2e92f4937b90",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "4e7b2c09-e0b0-4ddd-9694-ebf3e21e2472",
-                            ConcurrencyStamp = "1a777fbf-24db-4247-bd76-db376d703ea9",
+                            Id = "023e8d6c-40d1-438d-86c1-dfe05c9c8d6e",
+                            ConcurrencyStamp = "c50fb836-36d3-41c6-ad2c-6a3897f01aba",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "205d4496-4ac8-40d9-84b9-e09e1ada7a49",
-                            ConcurrencyStamp = "acccef8b-20f3-4de0-8ee9-5a3690f094ed",
+                            Id = "03101b58-56da-431d-87dd-7ec1014dd04b",
+                            ConcurrencyStamp = "ab13316b-479e-44d5-bb0c-3e3e19d43ffa",
                             Name = "Human Resources",
                             NormalizedName = "Human Resources"
                         });
@@ -315,8 +281,8 @@ namespace FALOFinancialProofing.Migrations
             modelBuilder.Entity("FALOFinancialProofing.Models.SDG", b =>
                 {
                     b.HasOne("FALOFinancialProofing.Models.User", "User")
-                        .WithMany("SDGs")
-                        .HasForeignKey("UserId")
+                        .WithOne("SDG")
+                        .HasForeignKey("FALOFinancialProofing.Models.SDG", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -376,7 +342,8 @@ namespace FALOFinancialProofing.Migrations
 
             modelBuilder.Entity("FALOFinancialProofing.Models.User", b =>
                 {
-                    b.Navigation("SDGs");
+                    b.Navigation("SDG")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

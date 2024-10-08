@@ -4,6 +4,7 @@ using FALOFinancialProofing.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FALOFinancialProofing.Migrations
 {
     [DbContext(typeof(FALOFinancialProofingDbContext))]
-    partial class FALOFinancialProofingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241003171307_addSDGv3")]
+    partial class addSDGv3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,41 +48,6 @@ namespace FALOFinancialProofing.Migrations
                     b.ToTable("SDGs");
                 });
 
-            modelBuilder.Entity("FALOFinancialProofing.Models.TransactionLog", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ReceiverId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SenderID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("TransactionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TransactionLogs");
-                });
-
             modelBuilder.Entity("FALOFinancialProofing.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -87,9 +55,6 @@ namespace FALOFinancialProofing.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
-
-                    b.Property<DateOnly?>("BirthDate")
-                        .HasColumnType("date");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -185,22 +150,22 @@ namespace FALOFinancialProofing.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "83292e2c-6c86-4153-bdc5-760d05ec2293",
-                            ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85f",
+                            Id = "21d7ce15-d438-4ec7-b20d-f59655afe7b7",
+                            ConcurrencyStamp = "0544c988-b90b-4bee-948a-7117b26ab303",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "4e7b2c09-e0b0-4ddd-9694-ebf3e21e2472",
-                            ConcurrencyStamp = "1a777fbf-24db-4247-bd76-db376d703ea9",
+                            Id = "056f8aca-62f1-4431-bbff-453c2cf01a6d",
+                            ConcurrencyStamp = "2c55592f-24a7-47d0-95ca-6c3c4b67c8fa",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "205d4496-4ac8-40d9-84b9-e09e1ada7a49",
-                            ConcurrencyStamp = "acccef8b-20f3-4de0-8ee9-5a3690f094ed",
+                            Id = "61370db3-90e6-4a4e-a3f1-f9a745f82087",
+                            ConcurrencyStamp = "f7686586-9ed9-4007-82b5-9744a6b70a12",
                             Name = "Human Resources",
                             NormalizedName = "Human Resources"
                         });
