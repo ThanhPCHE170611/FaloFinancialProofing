@@ -5,6 +5,7 @@ using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services;
 using FALOFinancialProofing.Services.EmailService;
 using FALOFinancialProofing.Services.SDGServices;
+using FALOFinancialProofing.Services.SocialNetworkService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,8 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped(typeof(AuthServices));
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<ISDGServices, SDGServices>();
+            builder.Services.AddScoped<ISocialNetworkService, SocialNetworkService>();
+
 
 
             // Add Email Configs

@@ -14,6 +14,7 @@ namespace FALOFinancialProofing.Models
         //public DbSet<Role> Roles { get; set; }
         //public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<SDG> SDGs { get; set; }
+        public DbSet<SocialNetwork> SocialNetworks { get; set; }
 
         //#endregion DBSet
 
@@ -27,6 +28,25 @@ namespace FALOFinancialProofing.Models
                 .HasOne(s => s.User)
                 .WithMany(u => u.SDGs)
                 .HasForeignKey(s => s.UserId);
+            modelBuilder.Entity<SocialNetwork>()
+                .HasOne(s => s.User)
+                .WithMany(u => u.SocialNetworks)
+                .HasForeignKey(s => s.UserId);
+
+
+
+            modelBuilder.Entity<CampaignMember>()
+                .HasKey(cm => new { cm.Id, cm.UserId });
+
+            modelBuilder.Entity<CampaignMember>()
+                .HasOne(cm => cm.Campaign)
+                .WithMany(c => c.CampaignMembers)
+                .HasForeignKey(cm => cm.Id);
+
+            modelBuilder.Entity<CampaignMember>()
+                .HasOne(cm => cm.User)
+                .WithMany(u => u.CampaignMembers)
+                .HasForeignKey(cm => cm.UserId);
             // Seed roles
             modelBuilder.Entity<IdentityRole>().HasData(
                 new IdentityRole { Id = Guid.NewGuid().ToString(), Name = AppRole.Admin, NormalizedName = "ADMIN", ConcurrencyStamp = Guid.NewGuid().ToString() },
