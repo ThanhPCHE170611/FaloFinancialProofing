@@ -53,12 +53,11 @@ namespace FALOFinancialProofing.Controllers
             var statusMessage = "";
             try
             {
-                if (ModelState.IsValid)
+                if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
                 }
-                await _transactionLogService.UpdateTransactionLogAsync(UpdateTransactionLog);
-                statusMessage = "Update TransactionLog Successfully!";
+                statusMessage = await _transactionLogService.UpdateTransactionLogAsync(UpdateTransactionLog) != false ? "Update TransactionLog Successfully!" : throw new Exception();
             }
             catch (Exception ex)
             {
@@ -71,23 +70,25 @@ namespace FALOFinancialProofing.Controllers
 
         // POST: api/TransactionLogs
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost(Name = "CreateTransactionLog")]
+        [HttpPost("CreateTransactionLog", Name = "CreateTransactionLog")]
         public async Task<ActionResult<TransactionLog>> PostTransactionLog([FromBody] CreateTransactionLog createTransactionLog)
         {
             var statusMessage = "";
             try
             {
-                if (ModelState.IsValid)
+                //var url = Url.RouteUrl("CreateTransactionLog");
+                if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
                 }
-                await _transactionLogService.CreateTransactionLogAsync(createTransactionLog);
-                statusMessage = "Create TransactionLog Successfully!";
+                statusMessage = await _transactionLogService.CreateTransactionLogAsync(createTransactionLog)
+                    != false ? "Create TransactionLog Successfully!" : throw new Exception();
+
             }
             catch (Exception ex)
             {
                 statusMessage = "Create TransactionLog Failed!";
-                await Console.Out.WriteLineAsync("PostTransactionLog: Error");
+                await Console.Out.WriteLineAsync($"PostTransactionLog: {ex.Message}");
             }
 
             return Content(statusMessage);
@@ -100,12 +101,12 @@ namespace FALOFinancialProofing.Controllers
             var statusMessage = "";
             try
             {
-                await _transactionLogService.DeleteTransactionLogAsync(id);
-                statusMessage = "Create TransactionLog Successfully!";
+                statusMessage = await _transactionLogService.DeleteTransactionLogAsync(id)
+                    != false ? "DELETE TransactionLog Successfully!" : throw new Exception();
             }
             catch (Exception ex)
             {
-                statusMessage = "Create TransactionLog Failed!";
+                statusMessage = "DELETE TransactionLog Failed!";
                 await Console.Out.WriteLineAsync("PostTransactionLog: Error");
             }
 

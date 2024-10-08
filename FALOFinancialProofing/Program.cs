@@ -5,6 +5,7 @@ using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services;
 using FALOFinancialProofing.Services.EmailService;
+using FALOFinancialProofing.Services.TransactionLogsServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -30,8 +31,9 @@ namespace FALOFinancialProofing
 
             // Add services to the container.
             builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
-           
+
             builder.Services.AddScoped(typeof(AuthServices));
+            builder.Services.AddScoped<ITransactionLogService, TransactionLogService>();
 
             // Add Email Configs
             var emailConfig = configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
@@ -113,7 +115,7 @@ namespace FALOFinancialProofing
                 //options.AddPolicy("UserOnly", policy
                 //                       => policy.RequireClaim("Role", "Staff"));
 
-                
+
                 //for (int age = 18; age < 23; age++)
                 //{
                 //    options.AddPolicy($"MinimumAge{age}", policy => policy.Requirements.Add(new MinimumAgeRequirement(age)));

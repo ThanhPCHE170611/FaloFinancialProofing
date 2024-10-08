@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FALOFinancialProofing.Services.TransactionLogsServices
 {
-    public class TransactionLogService :ITransactionLogService
+    public class TransactionLogService : ITransactionLogService
     {
         private readonly IRepository<TransactionLog, int> _transactionLogRepository;
 
