@@ -5,7 +5,7 @@ namespace FALOFinancialProofing.Repository
 {
     public interface IRepository<T, TPrimaryKey> where T : IEntity<TPrimaryKey>
     {
-        Task<T> Get(TPrimaryKey id);
+        //Task<T> Get(long id);
         Task<T> Get(Expression<Func<T, bool>> filter);
 
         IQueryable<T> GetAll(Expression<Func<T, bool>> filter = null);
@@ -20,7 +20,7 @@ namespace FALOFinancialProofing.Repository
 
         Task<bool> UpdateAsync(T entity);
 
-        Task<bool> DeleteAsync(TPrimaryKey id);
+        //Task<bool> DeleteAsync(long id);
         Task<bool> DeleteAsync(T entity);
     }
 }

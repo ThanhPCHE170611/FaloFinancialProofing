@@ -60,7 +60,6 @@ namespace FALOFinancialProofing.Services
                     LastName = user.LastName,
                     Email = user.Email,
                     UserName = user.UserName,
-                    BirthDate = user.BirthDate,
                     RoleNames = userManager.GetRolesAsync(user).Result.ToList()
                 };
                 return userDTO;
@@ -135,7 +134,6 @@ namespace FALOFinancialProofing.Services
             {
                 new Claim(ClaimTypes.Name, User.FirstName),
                 new Claim(ClaimTypes.Name,User.LastName),
-                new Claim(ClaimTypes.DateOfBirth,User.BirthDate.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, User.Email),
                 new Claim(JwtRegisteredClaimNames.Sub, User.Email),
                 //tokenId

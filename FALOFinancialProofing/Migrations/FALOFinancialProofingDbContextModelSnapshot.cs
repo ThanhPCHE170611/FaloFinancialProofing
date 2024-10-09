@@ -129,35 +129,6 @@ namespace FALOFinancialProofing.Migrations
 
                     b.ToTable("SocialNetworks");
                 });
-                
-                modelBuilder.Entity("FALOFinancialProofing.Models.TransactionLog", b =>
-                {
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ReceiverId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SenderID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("TransactionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TransactionLogs");
-                });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.User", b =>
                 {
@@ -166,9 +137,6 @@ namespace FALOFinancialProofing.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
-
-                    b.Property<DateOnly?>("BirthDate")
-                        .HasColumnType("date");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()

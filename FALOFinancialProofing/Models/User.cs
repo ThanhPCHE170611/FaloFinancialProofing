@@ -12,7 +12,6 @@ namespace FALOFinancialProofing.Models
         public ICollection<SocialNetwork> SocialNetworks { get; set; } = new List<SocialNetwork>();
         public ICollection<CampaignMember> CampaignMembers { get; set; } = new List<CampaignMember>();
         //public DateOnly? BirthDate { get; set; }
-        public DateOnly? BirthDate { get; set; }
         //public string? Gender { get; set; }
         //public string? Address { get; set; }
         //public string? PhoneNumber { get; set; }

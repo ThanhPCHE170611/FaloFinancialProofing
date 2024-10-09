@@ -18,7 +18,6 @@ using Microsoft.AspNetCore.Identity.Data;
 using FALOFinancialProofing.Services;
 using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
-using FALOFinancialProofing.Helpers;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -45,7 +44,7 @@ namespace FALOFinancialProofing.Controllers
                 });
             } else
             {
-                return Ok(new ApiResponse
+                return Ok(new
                 {
                     Success = true,
                     Message = "Authenticate Success",
@@ -63,7 +62,7 @@ namespace FALOFinancialProofing.Controllers
                 return Ok(new
                 {
                     Success = false,
-                    Message = "Register Failed" 
+                    Message = "Register Failed"
                 });
             } else
             {
