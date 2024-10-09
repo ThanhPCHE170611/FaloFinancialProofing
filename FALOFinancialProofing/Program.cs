@@ -1,11 +1,14 @@
-﻿using FALOFinancialProofing.DTOs;
+﻿using FALOFinancialProofing.Attributes;
+using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services;
 using FALOFinancialProofing.Services.EmailService;
+using FALOFinancialProofing.Services.TransactionLogsServices;
 using FALOFinancialProofing.Services.SDGServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,8 +32,11 @@ namespace FALOFinancialProofing
 
             // Add services to the container.
             builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
+
             builder.Services.AddScoped(typeof(AuthServices));
-            builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<ITransactionLogService, TransactionLogService>();
+            //builder.Services.AddScoped(typeof(AuthServices));
+            builder.Services.AddScoped<IEmailService, EmailService>(); 
             builder.Services.AddScoped<ISDGServices, SDGServices>();
 
 
@@ -89,28 +95,6 @@ namespace FALOFinancialProofing
             builder.Services.Configure<AppSetting>(builder.Configuration.GetSection("JwtAppsettings"));
             var secretKey = builder.Configuration["JwtAppsettings:SecretKey"];
             var secretKeyByte = Encoding.UTF8.GetBytes(secretKey);
-            //builder.Services.AddAuthentication(options =>
-            //{
-            //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            //    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            //}).AddJwtBearer(opt =>
-            //{
-            //    //opt.SaveToken = false;
-            //    opt.SaveToken = true;
-            //    opt.RequireHttpsMetadata = false;
-            //    opt.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-            //    {
-            //        ValidateIssuer = false,
-            //        ValidateAudience = false,
-            //        ValidAudience = builder.Configuration["JwtAppsettings:Audience"],
-            //        ValidIssuer = builder.Configuration["JwtAppsettings:Issuer"],
-            //        ValidateIssuerSigningKey = true,
-            //        IssuerSigningKey = new SymmetricSecurityKey(secretKeyByte),
-            //        ClockSkew = TimeSpan.Zero
-            //    };
-            //});
-
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -122,11 +106,13 @@ namespace FALOFinancialProofing
                 options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new TokenValidationParameters()
                 {
+                    ValidAudience = builder.Configuration["JwtAppsettings:Audience"],
+                    ValidIssuer = builder.Configuration["JwtAppsettings:Issuer"],
                     ValidateIssuer = true,
                     ValidateAudience = true,
-                    ValidAudience = configuration["JwtAppsettings:Audience"],
-                    ValidIssuer = configuration["JwtAppsettings:Issuer"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtAppsettings:SecretKey"]))
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(secretKeyByte),
+                    ClockSkew = TimeSpan.Zero
                 };
             });
             builder.Services.AddAuthorization(options =>
@@ -135,7 +121,15 @@ namespace FALOFinancialProofing
                 //    => policy.RequireClaim(ClaimTypes.Role, "Admin"));
                 //options.AddPolicy("UserOnly", policy
                 //                       => policy.RequireClaim("Role", "Staff"));
+
+
+                //for (int age = 18; age < 23; age++)
+                //{
+                //    options.AddPolicy($"MinimumAge{age}", policy => policy.Requirements.Add(new MinimumAgeRequirement(age)));
+                //}
+
             });
+            builder.Services.AddSingleton<IAuthorizationHandler, MinimumAgeHandler>();
             var app = builder.Build();
 
             app.UseCors(option => option.AllowAnyHeader().
