@@ -1,10 +1,9 @@
-using FALOFinancialProofing.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FALOFinancialProofing.Controllers
 {
-
+    
     [ApiController]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
@@ -21,13 +20,9 @@ namespace FALOFinancialProofing.Controllers
             _logger = logger;
         }
 
-
+        
         [HttpGet(Name = "GetWeatherForecast")]
-        // Must use Policy that is defined in Startup.cs else error
-        [MinimumAge(21)]
-        //[Authorize(Policy = "MinimumAge22")]
-        //[MinimumAgeAuthorize(22)]
-        //[Authorize(Roles = "User")]
+        [Authorize(Roles = "User")]
         //[Authorize(Roles = "Admin")]
         //[Authorize(Policy = "Admin")]
         //[Authorize]

@@ -16,6 +16,7 @@ namespace FALOFinancialProofing.Repository
 
         public async Task<bool> DeleteAsync(T entity)
         {
+            //var entity = await Get(id);
             if (entity != null)
             {
                 _dbContext.Set<T>().Remove(entity);
@@ -23,25 +24,13 @@ namespace FALOFinancialProofing.Repository
                 return rowCount > 0;
             }
 
-            return false;
+            return true;
         }
 
-        public async Task<bool> DeleteAsync(TPrimaryKey id)
-        {
-            var entity = await Get(id);
-            if (entity != null)
-            {
-                _dbContext.Set<T>().Remove(entity);
-                var rowCount = await _dbContext.SaveChangesAsync();
-                return rowCount > 0;
-            }
-
-            return false;
-        }
-        public async Task<T> Get(TPrimaryKey id)
-        {
-            return await _dbContext.Set<T>().SingleOrDefaultAsync(p => p.Id.Equals(id));
-        }
+        //public async Task<T> Get(long id)
+        //{
+        //    return await _dbContext.Set<T>().SingleOrDefaultAsync(p => p.Id == id);
+        //}
         public async Task<T> Get(Expression<Func<T, bool>> filter)
         {
             return await _dbContext.Set<T>().SingleOrDefaultAsync(filter);
