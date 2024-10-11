@@ -13,20 +13,20 @@ namespace FALOFinancialProofing.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DeleteData(
-                table: "AspNetRoles",
-                keyColumn: "Id",
-                keyValue: "056f8aca-62f1-4431-bbff-453c2cf01a6d");
+            //migrationBuilder.DeleteData(
+            //    table: "AspNetRoles",
+            //    keyColumn: "Id",
+            //    keyValue: "056f8aca-62f1-4431-bbff-453c2cf01a6d");
 
-            migrationBuilder.DeleteData(
-                table: "AspNetRoles",
-                keyColumn: "Id",
-                keyValue: "21d7ce15-d438-4ec7-b20d-f59655afe7b7");
+            //migrationBuilder.DeleteData(
+            //    table: "AspNetRoles",
+            //    keyColumn: "Id",
+            //    keyValue: "21d7ce15-d438-4ec7-b20d-f59655afe7b7");
 
-            migrationBuilder.DeleteData(
-                table: "AspNetRoles",
-                keyColumn: "Id",
-                keyValue: "61370db3-90e6-4a4e-a3f1-f9a745f82087");
+            //migrationBuilder.DeleteData(
+            //    table: "AspNetRoles",
+            //    keyColumn: "Id",
+            //    keyValue: "61370db3-90e6-4a4e-a3f1-f9a745f82087");
 
             migrationBuilder.CreateTable(
                 name: "Campaign",
@@ -94,15 +94,15 @@ namespace FALOFinancialProofing.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "AspNetRoles",
-                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[,]
-                {
-                    { "32bb5397-afe7-4875-88e6-9382dba6f747", "c621a06d-14b9-49e5-9b73-3bfe9a75bbe6", "Admin", "ADMIN" },
-                    { "358dda90-1b69-4518-b4fd-6c1a14d2cfea", "88d4e430-4ae6-4fab-a059-50dfad33a9d7", "Human Resources", "Human Resources" },
-                    { "7217ef90-c670-46f1-869f-f01c9ed8e065", "ab4ab5a7-2b63-48e8-856a-af034407957a", "User", "USER" }
-                });
+            //migrationBuilder.InsertData(
+            //    table: "AspNetRoles",
+            //    columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+            //    values: new object[,]
+            //    {
+            //        { "32bb5397-afe7-4875-88e6-9382dba6f747", "c621a06d-14b9-49e5-9b73-3bfe9a75bbe6", "Admin", "ADMIN" },
+            //        { "358dda90-1b69-4518-b4fd-6c1a14d2cfea", "88d4e430-4ae6-4fab-a059-50dfad33a9d7", "Human Resources", "Human Resources" },
+            //        { "7217ef90-c670-46f1-869f-f01c9ed8e065", "ab4ab5a7-2b63-48e8-856a-af034407957a", "User", "USER" }
+            //    });
 
             migrationBuilder.CreateIndex(
                 name: "IX_CampaignMember_UserId",
@@ -142,15 +142,15 @@ namespace FALOFinancialProofing.Migrations
                 keyColumn: "Id",
                 keyValue: "7217ef90-c670-46f1-869f-f01c9ed8e065");
 
-            migrationBuilder.InsertData(
-                table: "AspNetRoles",
-                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[,]
-                {
-                    { "056f8aca-62f1-4431-bbff-453c2cf01a6d", "2c55592f-24a7-47d0-95ca-6c3c4b67c8fa", "User", "USER" },
-                    { "21d7ce15-d438-4ec7-b20d-f59655afe7b7", "0544c988-b90b-4bee-948a-7117b26ab303", "Admin", "ADMIN" },
-                    { "61370db3-90e6-4a4e-a3f1-f9a745f82087", "f7686586-9ed9-4007-82b5-9744a6b70a12", "Human Resources", "Human Resources" }
-                });
+            //migrationBuilder.InsertData(
+            //    table: "AspNetRoles",
+            //    columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+            //    values: new object[,]
+            //    {
+            //        { "056f8aca-62f1-4431-bbff-453c2cf01a6d", "2c55592f-24a7-47d0-95ca-6c3c4b67c8fa", "User", "USER" },
+            //        { "21d7ce15-d438-4ec7-b20d-f59655afe7b7", "0544c988-b90b-4bee-948a-7117b26ab303", "Admin", "ADMIN" },
+            //        { "61370db3-90e6-4a4e-a3f1-f9a745f82087", "f7686586-9ed9-4007-82b5-9744a6b70a12", "Human Resources", "Human Resources" }
+            //    });
         }
     }
 }

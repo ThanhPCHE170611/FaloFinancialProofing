@@ -65,7 +65,7 @@ namespace FALOFinancialProofing.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Campaign");
-                });
+                }));
 
             modelBuilder.Entity("FALOFinancialProofing.Models.CampaignMember", b =>
                 {
