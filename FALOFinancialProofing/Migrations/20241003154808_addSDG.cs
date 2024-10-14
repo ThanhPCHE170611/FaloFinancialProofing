@@ -15,17 +15,17 @@ namespace FALOFinancialProofing.Migrations
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "1fe0c8b3-8edb-44fd-a5b5-22ef11374578");
+                keyValue: "0ecf50c1-ea9d-4c7f-a9e6-aa5c7e65ed89");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "8c8091bf-18a6-4944-91af-9d707e826b71");
+                keyValue: "b9762650-1fb3-42ef-8d1d-66189ab6ea45");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "fbc5c8c4-0654-44cd-b33f-2bdb3e7191cd");
+                keyValue: "cebdc5cd-401e-4258-bd69-082f26437a80");
 
             migrationBuilder.CreateTable(
                 name: "SDG",
