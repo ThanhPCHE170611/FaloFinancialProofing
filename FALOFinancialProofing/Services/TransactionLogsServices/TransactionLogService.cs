@@ -19,11 +19,11 @@ namespace FALOFinancialProofing.Services.TransactionLogsServices
             var transactionLog = new TransactionLog
             {
                 SenderID = createTransactionLog.SenderID,
-                ReceiverId = createTransactionLog.ReceiverId,
+                CampaignId = createTransactionLog.CampaignId,
                 TransactionDate = createTransactionLog.TransactionDate,
                 Amount = createTransactionLog.Amount,
                 Description = createTransactionLog.Description,
-                Type = createTransactionLog.Type
+                BankId = createTransactionLog.BankId
             };
             return transactionLog;
         }
@@ -52,9 +52,9 @@ namespace FALOFinancialProofing.Services.TransactionLogsServices
         {
             SourceTransactionLog.SenderID = DesTransactionLog.SenderID;
             SourceTransactionLog.Amount = DesTransactionLog.Amount;
-            SourceTransactionLog.Type = DesTransactionLog.Type;
+            SourceTransactionLog.BankId = DesTransactionLog.BankId;
             SourceTransactionLog.Description = DesTransactionLog.Description;
-            SourceTransactionLog.ReceiverId = DesTransactionLog.ReceiverId;
+            SourceTransactionLog.CampaignId = DesTransactionLog.CampaignId;
         }
 
         public async Task<TransactionLog> GetTransactionLogByIdAsync(int id)

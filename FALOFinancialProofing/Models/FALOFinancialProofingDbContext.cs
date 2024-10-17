@@ -8,15 +8,18 @@ namespace FALOFinancialProofing.Models
 {
     public class FALOFinancialProofingDbContext : IdentityDbContext<User>
     {
-        //#region DBSet
+        #region DBSet
 
         public DbSet<TransactionLog> TransactionLogs { get; set; }
+        public DbSet<CreateProjectFile> CreateProjectFiles { get; set; }
+        public DbSet<CreateProjectRequest> CreateProjects { get; set; }
         //public DbSet<Role> Roles { get; set; }
         //public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<Organization> Organizations { get; set; }
         public DbSet<SDG> SDGs { get; set; }
         public DbSet<SocialNetwork> SocialNetworks { get; set; }
 
-        //#endregion DBSet
+        #endregion DBSet
 
         public FALOFinancialProofingDbContext(DbContextOptions<FALOFinancialProofingDbContext> options) : base(options)
         {
@@ -47,6 +50,34 @@ namespace FALOFinancialProofing.Models
                 .HasOne(cm => cm.User)
                 .WithMany(u => u.CampaignMembers)
                 .HasForeignKey(cm => cm.UserId);
+
+            modelBuilder.Entity<CreateProjectRequest>(entity =>
+            {
+                entity.HasOne(c => c.SenderUser)
+                    .WithMany(u => u.SenderCreateProjectRequests)
+                    .HasForeignKey(c => c.SenderId)
+                    .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(c => c.ReceiverUser)
+                   .WithMany(u => u.ReceiverCreateProjectRequests)
+                   .HasForeignKey(c => c.ReceiverId)
+                   .OnDelete(DeleteBehavior.Restrict);
+            });
+            modelBuilder.Entity<CreateProjectFile>(entity =>
+            {
+                entity.HasOne(c => c.ProjectRequest)
+                    .WithMany(u => u.CreateProjectFiles)
+                    .HasForeignKey(c => c.RequestId);
+
+            });
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasMany(c => c.TransactionLogs)
+                    .WithOne(u => u.SenderUser)
+                    .HasForeignKey(c => c.SenderID);
+
+            });
+
+
             // Seed roles
             modelBuilder.Entity<IdentityRole>().HasData(
                 new IdentityRole { Id = "205d4496-4ac8-40d9-84b9-e09e1ada7a49", Name = AppRole.Admin, NormalizedName = "ADMIN", ConcurrencyStamp = "acccef8b-20f3-4de0-8ee9-5a3690f094ed" },
