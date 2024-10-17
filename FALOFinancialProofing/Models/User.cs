@@ -11,7 +11,8 @@ namespace FALOFinancialProofing.Models
         public ICollection<SDG> SDGs { get; set; } = new List<SDG>();
         public ICollection<SocialNetwork> SocialNetworks { get; set; } = new List<SocialNetwork>();
         public ICollection<CampaignMember> CampaignMembers { get; set; } = new List<CampaignMember>();
-        //public DateOnly? BirthDate { get; set; }
+        public ICollection<CreateProjectRequest> SenderCreateProjectRequests { get; set; } = new List<CreateProjectRequest>();
+        public ICollection<CreateProjectRequest> ReceiverCreateProjectRequests { get; set; } = new List<CreateProjectRequest>();
         public DateOnly? BirthDate { get; set; }
         //public string? Gender { get; set; }
         //public string? Address { get; set; }
