@@ -10,6 +10,7 @@ namespace FALOFinancialProofing.Models
         //public string ReceiverId { get; set; }
         [JsonPropertyOrder(2)]
         public string SenderID { get; set; }
+        public User SenderUser { get; set; }
         [JsonPropertyOrder(3)]
         public string BankId { get; set; }
         [JsonPropertyOrder(4)]

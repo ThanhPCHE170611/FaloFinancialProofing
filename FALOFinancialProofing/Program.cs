@@ -19,6 +19,9 @@ using Microsoft.OpenApi.Models;
 using System.Configuration;
 using System.Security.Claims;
 using System.Text;
+using FALOFinancialProofing.Services.OrganizationServices;
+using FALOFinancialProofing.Services.CreateProjectRequestServices;
+using FALOFinancialProofing.Services.CreateProjectFileServices;
 
 namespace FALOFinancialProofing
 {
@@ -38,6 +41,9 @@ namespace FALOFinancialProofing
             //builder.Services.AddScoped(typeof(AuthServices));
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<ISDGServices, SDGServices>();
+            builder.Services.AddScoped<IOrganizationService, OrganizationService>();
+            builder.Services.AddScoped<ICreateProjectRequestService, CreateProjectRequestService>();
+            builder.Services.AddScoped<ICreateProjectFileService, CreateProjectFileService>();
             builder.Services.AddScoped<ISocialNetworkService, SocialNetworkService>();
 
             // Add Email Configs

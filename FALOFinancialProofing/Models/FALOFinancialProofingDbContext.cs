@@ -62,6 +62,22 @@ namespace FALOFinancialProofing.Models
                    .HasForeignKey(c => c.ReceiverId)
                    .OnDelete(DeleteBehavior.Restrict);
             });
+            modelBuilder.Entity<CreateProjectFile>(entity =>
+            {
+                entity.HasOne(c => c.ProjectRequest)
+                    .WithMany(u => u.CreateProjectFiles)
+                    .HasForeignKey(c => c.RequestId);
+
+            });
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasMany(c => c.TransactionLogs)
+                    .WithOne(u => u.SenderUser)
+                    .HasForeignKey(c => c.SenderID);
+
+            });
+
+
             // Seed roles
             modelBuilder.Entity<IdentityRole>().HasData(
                 new IdentityRole { Id = "205d4496-4ac8-40d9-84b9-e09e1ada7a49", Name = AppRole.Admin, NormalizedName = "ADMIN", ConcurrencyStamp = "acccef8b-20f3-4de0-8ee9-5a3690f094ed" },
