@@ -36,17 +36,24 @@ namespace FALOFinancialProofing.Models
 
 
             modelBuilder.Entity<CampaignMember>()
-                .HasKey(cm => new { cm.Id, cm.UserId });
+            .HasKey(cm => new { cm.CampaignId, cm.UserId });
 
             modelBuilder.Entity<CampaignMember>()
                 .HasOne(cm => cm.Campaign)
                 .WithMany(c => c.CampaignMembers)
-                .HasForeignKey(cm => cm.Id);
+                .HasForeignKey(cm => cm.CampaignId);
 
             modelBuilder.Entity<CampaignMember>()
                 .HasOne(cm => cm.User)
                 .WithMany(u => u.CampaignMembers)
                 .HasForeignKey(cm => cm.UserId);
+
+            // Liên kết CreateBy với UserId trong bảng User
+            modelBuilder.Entity<Campaign>()
+                .HasOne(c => c.User)
+                .WithMany(u => u.Campaigns)
+                .HasForeignKey(c => c.CreateBy)
+                .OnDelete(DeleteBehavior.Restrict); // Ngăn xóa User khi có liên kết
             // Seed roles
             modelBuilder.Entity<IdentityRole>().HasData(
                 new IdentityRole { Id = "205d4496-4ac8-40d9-84b9-e09e1ada7a49", Name = AppRole.Admin, NormalizedName = "ADMIN", ConcurrencyStamp = "acccef8b-20f3-4de0-8ee9-5a3690f094ed" },
