@@ -117,7 +117,12 @@ namespace FALOFinancialProofing
                     IssuerSigningKey = new SymmetricSecurityKey(secretKeyByte),
                     ClockSkew = TimeSpan.Zero
                 };
+            }).AddGoogle(googleOptions =>
+            {
+                googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
+                googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
             });
+            ;
             builder.Services.AddAuthorization(options =>
             {
                 //options.AddPolicy("AdminOnly", policy
