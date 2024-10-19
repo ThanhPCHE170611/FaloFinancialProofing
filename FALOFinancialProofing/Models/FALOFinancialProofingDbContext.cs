@@ -13,6 +13,8 @@ namespace FALOFinancialProofing.Models
         public DbSet<TransactionLog> TransactionLogs { get; set; }
         //public DbSet<Role> Roles { get; set; }
         //public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<Campaign> Campaigns { get; set; } 
+        public DbSet<CampaignMember> CampaignMembers { get; set; } 
         public DbSet<SDG> SDGs { get; set; }
         public DbSet<SocialNetwork> SocialNetworks { get; set; }
 

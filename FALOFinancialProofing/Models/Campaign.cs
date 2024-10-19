@@ -22,7 +22,7 @@ namespace FALOFinancialProofing.Models
 
         [Required]
         [Column(TypeName = "money")]
-        public decimal FundTarget { get; set; }
+        public double FundTarget { get; set; }
 
         [MaxLength(200)]
         public string? Image { get; set; }

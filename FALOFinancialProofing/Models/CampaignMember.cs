@@ -16,7 +16,7 @@ namespace FALOFinancialProofing.Models
 
         [Column(TypeName = "money")]
         [DefaultValue(0)]
-        public decimal Debt { get; set; } = 0;
+        public double Debt { get; set; } = 0;
 
         [DefaultValue(true)]
         public bool IsActive { get; set; } = true;

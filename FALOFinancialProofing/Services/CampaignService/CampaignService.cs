@@ -15,11 +15,11 @@ namespace FALOFinancialProofing.Services
             campaignRepository = _campaignRepository;
         }
 
-        public async Task<Campaign?> CreateCampaignAsync(CreateCampaignDTO campaignDTO)
+        public async Task<Campaign?> CreateCampaignAsync(CreateCampaignDTO createcampaignDTO)
         {
             try
             {
-                var newCampaign = await CreateCampaignDTOToEntity(campaignDTO);
+                var newCampaign = await CreateCampaignDTOToEntity(createcampaignDTO);
 
                 return await campaignRepository.InsertAsync(newCampaign);
             }
@@ -70,7 +70,7 @@ namespace FALOFinancialProofing.Services
             }
         }
 
-        public async Task<bool> UpdateCampaignworkAsync(UpdateCampaignDTO updateCampaignDTO)
+        public async Task<bool> UpdateCampaignAsync(UpdateCampaignDTO updateCampaignDTO)
         {
             Campaign campaign = null!;
             bool result = false;
