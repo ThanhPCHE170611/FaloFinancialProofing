@@ -6,6 +6,8 @@ namespace FALOFinancialProofing.Models
 {
     public class Campaign : Entity<int>
     {
+        public int ProjectId { get; set; }
+        public Project Project { get; set; }
         [Required]
         [MaxLength(200)]
         public string Title { get; set; }
@@ -17,7 +19,7 @@ namespace FALOFinancialProofing.Models
 
         [Required]
         [Column(TypeName = "money")]
-        public decimal TargetAmount { get; set; }
+        public double TargetAmount { get; set; }
 
         [MaxLength(200)]
         public string? Image { get; set; }
@@ -34,6 +36,8 @@ namespace FALOFinancialProofing.Models
         public byte Status { get; set; }
 
         public ICollection<CampaignMember> CampaignMembers { get; set; } = new List<CampaignMember>();
+        public ICollection<MoveNextCampaignStatusRequest> MoveNextCampaignStatusRequests { get; set; } = new List<MoveNextCampaignStatusRequest>();
+        public ICollection<CreateCampaignRequest> CreateCampaignRequests { get; set; } = new List<CreateCampaignRequest>();
 
     }
 }

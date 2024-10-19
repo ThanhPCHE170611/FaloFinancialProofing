@@ -14,9 +14,9 @@ namespace FALOFinancialProofing.Models
         [JsonPropertyOrder(3)]
         public string BankId { get; set; }
         [JsonPropertyOrder(4)]
-        public decimal Amount { get; set; }
+        public double Amount { get; set; }
         [JsonPropertyOrder(5)]
-        public int CampaignId { get; set; }
+        public int CampaignId { get; set; } 
         [JsonPropertyOrder(6)]
         public string Description { get; set; }
         [JsonPropertyOrder(7)]

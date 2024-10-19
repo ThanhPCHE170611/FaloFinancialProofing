@@ -36,21 +36,17 @@ namespace FALOFinancialProofing.Models
                 .WithMany(u => u.SocialNetworks)
                 .HasForeignKey(s => s.UserId);
 
-
-
-            modelBuilder.Entity<CampaignMember>()
-                .HasKey(cm => new { cm.Id, cm.UserId });
-
-            modelBuilder.Entity<CampaignMember>()
-                .HasOne(cm => cm.Campaign)
-                .WithMany(c => c.CampaignMembers)
-                .HasForeignKey(cm => cm.Id);
-
-            modelBuilder.Entity<CampaignMember>()
-                .HasOne(cm => cm.User)
-                .WithMany(u => u.CampaignMembers)
-                .HasForeignKey(cm => cm.UserId);
-
+            modelBuilder.Entity<CampaignMember>(entity =>
+            {
+                entity.HasOne(c => c.Campaign)
+                    .WithMany(u => u.CampaignMembers)
+                    .HasForeignKey(c => c.CampaignID)
+                    .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(c => c.User)
+                   .WithMany(u => u.CampaignMembers)
+                   .HasForeignKey(c => c.UserId)
+                   .OnDelete(DeleteBehavior.Restrict);
+            });
             modelBuilder.Entity<CreateProjectRequest>(entity =>
             {
                 entity.HasOne(c => c.SenderUser)
