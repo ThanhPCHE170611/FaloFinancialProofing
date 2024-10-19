@@ -19,6 +19,9 @@ using Microsoft.OpenApi.Models;
 using System.Configuration;
 using System.Security.Claims;
 using System.Text;
+using FALOFinancialProofing.Services.OrganizationServices;
+using FALOFinancialProofing.Services.CreateProjectRequestServices;
+using FALOFinancialProofing.Services.CreateProjectFileServices;
 
 namespace FALOFinancialProofing
 {
@@ -29,19 +32,19 @@ namespace FALOFinancialProofing
 
             var builder = WebApplication.CreateBuilder(args);
             var configuration = builder.Configuration;
-
-
+            builder.Services.AddCors();
             // Add services to the container.
             builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 
             builder.Services.AddScoped(typeof(AuthServices));
             builder.Services.AddScoped<ITransactionLogService, TransactionLogService>();
             //builder.Services.AddScoped(typeof(AuthServices));
-            builder.Services.AddScoped<IEmailService, EmailService>(); 
+            builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<ISDGServices, SDGServices>();
+            builder.Services.AddScoped<IOrganizationService, OrganizationService>();
+            builder.Services.AddScoped<ICreateProjectRequestService, CreateProjectRequestService>();
+            builder.Services.AddScoped<ICreateProjectFileService, CreateProjectFileService>();
             builder.Services.AddScoped<ISocialNetworkService, SocialNetworkService>();
-
-
 
             // Add Email Configs
             var emailConfig = configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
@@ -49,7 +52,7 @@ namespace FALOFinancialProofing
 
 
 
-            
+
 
             //builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddControllers();
@@ -105,6 +108,8 @@ namespace FALOFinancialProofing
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(options =>
             {
+                //options.SecurityTokenValidators.Clear();
+                //options.SecurityTokenValidators.Add(new JwtSecurityTokenHandler());
                 options.SaveToken = true;
                 options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new TokenValidationParameters()
@@ -117,7 +122,15 @@ namespace FALOFinancialProofing
                     IssuerSigningKey = new SymmetricSecurityKey(secretKeyByte),
                     ClockSkew = TimeSpan.Zero
                 };
+            }).AddGoogle(googleOptions =>
+            {
+                //googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
+                //googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+
+                googleOptions.ClientId = "1079045769870-tn77k2e2psvlv5tdi7mak8i0nlqahr76.apps.googleusercontent.com";
+                googleOptions.ClientSecret = "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";
             });
+            ;
             builder.Services.AddAuthorization(options =>
             {
                 //options.AddPolicy("AdminOnly", policy
@@ -134,10 +147,8 @@ namespace FALOFinancialProofing
             });
             builder.Services.AddSingleton<IAuthorizationHandler, MinimumAgeHandler>();
             var app = builder.Build();
-
             app.UseCors(option => option.AllowAnyHeader().
-              AllowAnyMethod().AllowAnyOrigin());
-
+                AllowAnyMethod().AllowAnyOrigin());
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
