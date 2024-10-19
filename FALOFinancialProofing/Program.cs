@@ -19,6 +19,12 @@ using Microsoft.OpenApi.Models;
 using System.Configuration;
 using System.Security.Claims;
 using System.Text;
+using FALOFinancialProofing.Services.RequestFormServices;
+using FALOFinancialProofing.Services.AttachmentFIleServices;
+using FALOFinancialProofing.Services.ApproveProcessServices;
+using FALOFinancialProofing.Services.VoucherServices;
+using Example;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace FALOFinancialProofing
 {
@@ -30,7 +36,6 @@ namespace FALOFinancialProofing
             var builder = WebApplication.CreateBuilder(args);
             var configuration = builder.Configuration;
 
-
             // Add services to the container.
             builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 
@@ -40,7 +45,10 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped<IEmailService, EmailService>(); 
             builder.Services.AddScoped<ISDGServices, SDGServices>();
             builder.Services.AddScoped<ISocialNetworkService, SocialNetworkService>();
-
+            builder.Services.AddScoped<IRequestFormServices, RequestFormServices>();
+            builder.Services.AddScoped<IAttachmentFileServices, AttachmentFileServices>();
+            builder.Services.AddScoped<IApproveProcessServices, ApproveProcessServices>();
+            builder.Services.AddScoped<IVoucherServices, VoucherServices>();
 
 
             // Add Email Configs
@@ -48,11 +56,12 @@ namespace FALOFinancialProofing
             builder.Services.AddSingleton(emailConfig);
 
 
-
-            
-
             //builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddControllers();
+            builder.Services.Configure<FormOptions>(options =>
+            {
+                options.MultipartBodyLengthLimit = 102400; // Giới hạn 100kb chẳng hạn
+            });
             builder.Services.AddSwaggerGen(c =>
             {
                 c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme

@@ -9,13 +9,10 @@ namespace FALOFinancialProofing.Services.SDGServices
     public class SDGServices : ISDGServices
     {
         private readonly IRepository<SDG, int> sdgRepository;
-        private readonly UserManager<User> userManager;
 
-        public SDGServices(IRepository<SDG, int> _sdgRepository,
-                                 UserManager<User> _userManager)
+        public SDGServices(IRepository<SDG, int> _sdgRepository)
         {
             this.sdgRepository = _sdgRepository;
-            this.userManager = _userManager;
         }
 
         public async Task<SDG?> CreateSDGAsync(SDGRequest sdg)
@@ -33,12 +30,19 @@ namespace FALOFinancialProofing.Services.SDGServices
 
         private async Task<SDG> SDGDTOToEntity(SDGRequest sdg)
         {
-            return new SDG
+            try
             {
-                Id = sdg.Id != null ? sdg.Id.Value : 0,
-                SDGName = sdg.SDGName,
-                UserId = sdg.UserId,
-            };
+                return new SDG
+                {
+                    Id = sdg.Id != null ? sdg.Id.Value : 0,
+                    SDGName = sdg.SDGName,
+                    UserId = sdg.UserId,
+                };
+            } catch (Exception ex)
+            {
+                return null;
+            }
+            
         }
 
         public async Task<bool> DeleteSDGByIdAsync(int id)
@@ -60,7 +64,9 @@ namespace FALOFinancialProofing.Services.SDGServices
         {
             try
             {
-                var deletedSDG = await SDGDTOToEntity(sdg);
+                var deletedSDG = await sdgRepository.Get(x => x.Id == sdg.Id);
+                if (sdg == null) return false;
+
                 return await sdgRepository.DeleteAsync(deletedSDG);
             }
             catch (Exception e)
