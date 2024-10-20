@@ -6,9 +6,11 @@ namespace FALOFinancialProofing.Models
     public class CampaignMember : Entity<int>
     {
 
-        public string CampaignID { get; set; }
+        public int CampaignID { get; set; }
         public Campaign Campaign { get; set; } = null!;
         public string UserId { get; set; }
         public User User { get; set; } = null!;
+        public Double Debt { get; set; }
+        public bool IsActive { get; set; }
     }
 }

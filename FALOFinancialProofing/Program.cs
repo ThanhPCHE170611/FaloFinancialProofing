@@ -22,6 +22,10 @@ using System.Text;
 using FALOFinancialProofing.Services.OrganizationServices;
 using FALOFinancialProofing.Services.CreateProjectRequestServices;
 using FALOFinancialProofing.Services.CreateProjectFileServices;
+using FALOFinancialProofing.Services.CreateCampaignFileServices;
+using FALOFinancialProofing.Services.CreateCampaignRequestServices;
+using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices;
+using FALOFinancialProofing.Services.ProjectServices;
 
 namespace FALOFinancialProofing
 {
@@ -45,6 +49,10 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped<ICreateProjectRequestService, CreateProjectRequestService>();
             builder.Services.AddScoped<ICreateProjectFileService, CreateProjectFileService>();
             builder.Services.AddScoped<ISocialNetworkService, SocialNetworkService>();
+            builder.Services.AddScoped<ICreateCampaignFileService, CreateCampaignFileService>();
+            builder.Services.AddScoped<ICreateCampaignRequestService, CreateCampaignRequestService>();
+            builder.Services.AddScoped<IMoveNextCampaignStatusRequestService, MoveNextCampaignStatusRequestService>();
+            builder.Services.AddScoped<IProjectService, ProjectService>();
 
             // Add Email Configs
             var emailConfig = configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();

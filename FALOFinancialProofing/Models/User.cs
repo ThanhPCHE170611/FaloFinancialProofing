@@ -14,6 +14,14 @@ namespace FALOFinancialProofing.Models
         public ICollection<CreateProjectRequest> SenderCreateProjectRequests { get; set; } = new List<CreateProjectRequest>();
         public ICollection<CreateProjectRequest> ReceiverCreateProjectRequests { get; set; } = new List<CreateProjectRequest>();
         public ICollection<TransactionLog> TransactionLogs { get; set; } = new List<TransactionLog>();
+        public ICollection<Project> Projects { get; set; } = new List<Project>();
+
+        public ICollection<MoveNextCampaignStatusRequest> MoveNextCampaignStatusRequestSenderUsers { get; set; } = new List<MoveNextCampaignStatusRequest>();
+
+        public ICollection<MoveNextCampaignStatusRequest> MoveNextCampaignStatusRequestReceiverUsers { get; set; } = new List<MoveNextCampaignStatusRequest>();
+
+        public ICollection<CreateCampaignRequest> CreateCampaignRequestSenders { get; set; } = new List<CreateCampaignRequest>();
+        public ICollection<CreateCampaignRequest> CreateCampaignRequestReceivers { get; set; } = new List<CreateCampaignRequest>();
 
         //public string? Gender { get; set; }
         //public string? Address { get; set; }
