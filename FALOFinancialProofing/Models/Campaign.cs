@@ -9,7 +9,6 @@ namespace FALOFinancialProofing.Models
         public int ProjectId { get; set; }
         public Project Project { get; set; }
         [Required]
-        [ForeignKey(nameof(User))]
         public string CreateBy { get; set; } // Đây là khóa ngoại trỏ tới UserId của User
         public virtual User User { get; set; } = null!;
 
@@ -24,7 +23,6 @@ namespace FALOFinancialProofing.Models
 
         [Column(TypeName = "money")]
         [Required]
-        [Column(TypeName = "money")]
         public double FundTarget { get; set; }
 
         [MaxLength(200)]
@@ -47,4 +45,5 @@ namespace FALOFinancialProofing.Models
         public ICollection<MoveNextCampaignStatusRequest> MoveNextCampaignStatusRequests { get; set; } = new List<MoveNextCampaignStatusRequest>();
         public ICollection<CreateCampaignRequest> CreateCampaignRequests { get; set; } = new List<CreateCampaignRequest>();
 
+    }
 }

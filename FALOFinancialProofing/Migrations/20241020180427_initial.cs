@@ -105,7 +105,7 @@ namespace FALOFinancialProofing.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Project",
+                name: "Projects",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -118,9 +118,9 @@ namespace FALOFinancialProofing.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Project", x => x.Id);
+                    table.PrimaryKey("PK_Projects", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Project_Users_CreatedBy",
+                        name: "FK_Projects_Users_CreatedBy",
                         column: x => x.CreatedBy,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -277,31 +277,38 @@ namespace FALOFinancialProofing.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Campaign",
+                name: "Campaigns",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProjectId = table.Column<int>(type: "int", nullable: false),
+                    CreateBy = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateOfCreation = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TargetAmount = table.Column<decimal>(type: "money", nullable: false),
+                    FundTarget = table.Column<decimal>(type: "money", nullable: false),
                     Image = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    BankingNumber = table.Column<int>(type: "int", nullable: true),
                     Status = table.Column<byte>(type: "tinyint", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Campaign", x => x.Id);
+                    table.PrimaryKey("PK_Campaigns", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Campaign_Project_ProjectId",
+                        name: "FK_Campaigns_Projects_ProjectId",
                         column: x => x.ProjectId,
-                        principalTable: "Project",
+                        principalTable: "Projects",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Campaigns_Users_CreateBy",
+                        column: x => x.CreateBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -322,9 +329,9 @@ namespace FALOFinancialProofing.Migrations
                 {
                     table.PrimaryKey("PK_CreateProjects", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CreateProjects_Project_ProjectId",
+                        name: "FK_CreateProjects_Projects_ProjectId",
                         column: x => x.ProjectId,
-                        principalTable: "Project",
+                        principalTable: "Projects",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -342,27 +349,27 @@ namespace FALOFinancialProofing.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CampaignMember",
+                name: "CampaignMembers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CampaignID = table.Column<int>(type: "int", nullable: false),
+                    CampaignId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Debt = table.Column<double>(type: "float", nullable: false),
+                    Debt = table.Column<decimal>(type: "money", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CampaignMember", x => x.Id);
+                    table.PrimaryKey("PK_CampaignMembers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CampaignMember_Campaign_CampaignID",
-                        column: x => x.CampaignID,
-                        principalTable: "Campaign",
+                        name: "FK_CampaignMembers_Campaigns_CampaignId",
+                        column: x => x.CampaignId,
+                        principalTable: "Campaigns",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_CampaignMember_Users_UserId",
+                        name: "FK_CampaignMembers_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -370,7 +377,7 @@ namespace FALOFinancialProofing.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CreateCampaignRequest",
+                name: "CreateCampaignRequests",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -385,27 +392,27 @@ namespace FALOFinancialProofing.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CreateCampaignRequest", x => x.Id);
+                    table.PrimaryKey("PK_CreateCampaignRequests", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CreateCampaignRequest_Campaign_CampaignId",
+                        name: "FK_CreateCampaignRequests_Campaigns_CampaignId",
                         column: x => x.CampaignId,
-                        principalTable: "Campaign",
+                        principalTable: "Campaigns",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CreateCampaignRequest_Users_ReceiverId",
+                        name: "FK_CreateCampaignRequests_Users_ReceiverId",
                         column: x => x.ReceiverId,
                         principalTable: "Users",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_CreateCampaignRequest_Users_SenderId",
+                        name: "FK_CreateCampaignRequests_Users_SenderId",
                         column: x => x.SenderId,
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "MoveNextCampaignStatusRequest",
+                name: "MoveNextCampaignStatusRequests",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -420,21 +427,21 @@ namespace FALOFinancialProofing.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MoveNextCampaignStatusRequest", x => x.Id);
+                    table.PrimaryKey("PK_MoveNextCampaignStatusRequests", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_MoveNextCampaignStatusRequest_Campaign_CampaignID",
+                        name: "FK_MoveNextCampaignStatusRequests_Campaigns_CampaignID",
                         column: x => x.CampaignID,
-                        principalTable: "Campaign",
+                        principalTable: "Campaigns",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_MoveNextCampaignStatusRequest_Users_ReceiverId",
+                        name: "FK_MoveNextCampaignStatusRequests_Users_ReceiverId",
                         column: x => x.ReceiverId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_MoveNextCampaignStatusRequest_Users_SenderId",
+                        name: "FK_MoveNextCampaignStatusRequests_Users_SenderId",
                         column: x => x.SenderId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -462,7 +469,7 @@ namespace FALOFinancialProofing.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CreateCampaignFile",
+                name: "CreateCampaignFiles",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -472,11 +479,11 @@ namespace FALOFinancialProofing.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CreateCampaignFile", x => x.Id);
+                    table.PrimaryKey("PK_CreateCampaignFiles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CreateCampaignFile_CreateCampaignRequest_RequestId",
+                        name: "FK_CreateCampaignFiles_CreateCampaignRequests_RequestId",
                         column: x => x.RequestId,
-                        principalTable: "CreateCampaignRequest",
+                        principalTable: "CreateCampaignRequests",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -492,38 +499,43 @@ namespace FALOFinancialProofing.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Campaign_ProjectId",
-                table: "Campaign",
-                column: "ProjectId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CampaignMember_CampaignID",
-                table: "CampaignMember",
-                column: "CampaignID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CampaignMember_UserId",
-                table: "CampaignMember",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CreateCampaignFile_RequestId",
-                table: "CreateCampaignFile",
-                column: "RequestId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CreateCampaignRequest_CampaignId",
-                table: "CreateCampaignRequest",
+                name: "IX_CampaignMembers_CampaignId",
+                table: "CampaignMembers",
                 column: "CampaignId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreateCampaignRequest_ReceiverId",
-                table: "CreateCampaignRequest",
+                name: "IX_CampaignMembers_UserId",
+                table: "CampaignMembers",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Campaigns_CreateBy",
+                table: "Campaigns",
+                column: "CreateBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Campaigns_ProjectId",
+                table: "Campaigns",
+                column: "ProjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CreateCampaignFiles_RequestId",
+                table: "CreateCampaignFiles",
+                column: "RequestId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CreateCampaignRequests_CampaignId",
+                table: "CreateCampaignRequests",
+                column: "CampaignId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CreateCampaignRequests_ReceiverId",
+                table: "CreateCampaignRequests",
                 column: "ReceiverId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreateCampaignRequest_SenderId",
-                table: "CreateCampaignRequest",
+                name: "IX_CreateCampaignRequests_SenderId",
+                table: "CreateCampaignRequests",
                 column: "SenderId");
 
             migrationBuilder.CreateIndex(
@@ -547,23 +559,23 @@ namespace FALOFinancialProofing.Migrations
                 column: "SenderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MoveNextCampaignStatusRequest_CampaignID",
-                table: "MoveNextCampaignStatusRequest",
+                name: "IX_MoveNextCampaignStatusRequests_CampaignID",
+                table: "MoveNextCampaignStatusRequests",
                 column: "CampaignID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MoveNextCampaignStatusRequest_ReceiverId",
-                table: "MoveNextCampaignStatusRequest",
+                name: "IX_MoveNextCampaignStatusRequests_ReceiverId",
+                table: "MoveNextCampaignStatusRequests",
                 column: "ReceiverId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MoveNextCampaignStatusRequest_SenderId",
-                table: "MoveNextCampaignStatusRequest",
+                name: "IX_MoveNextCampaignStatusRequests_SenderId",
+                table: "MoveNextCampaignStatusRequests",
                 column: "SenderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Project_CreatedBy",
-                table: "Project",
+                name: "IX_Projects_CreatedBy",
+                table: "Projects",
                 column: "CreatedBy");
 
             migrationBuilder.CreateIndex(
@@ -625,16 +637,16 @@ namespace FALOFinancialProofing.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CampaignMember");
+                name: "CampaignMembers");
 
             migrationBuilder.DropTable(
-                name: "CreateCampaignFile");
+                name: "CreateCampaignFiles");
 
             migrationBuilder.DropTable(
                 name: "CreateProjectFiles");
 
             migrationBuilder.DropTable(
-                name: "MoveNextCampaignStatusRequest");
+                name: "MoveNextCampaignStatusRequests");
 
             migrationBuilder.DropTable(
                 name: "Organizations");
@@ -664,7 +676,7 @@ namespace FALOFinancialProofing.Migrations
                 name: "UserTokens");
 
             migrationBuilder.DropTable(
-                name: "CreateCampaignRequest");
+                name: "CreateCampaignRequests");
 
             migrationBuilder.DropTable(
                 name: "CreateProjects");
@@ -673,10 +685,10 @@ namespace FALOFinancialProofing.Migrations
                 name: "Roles");
 
             migrationBuilder.DropTable(
-                name: "Campaign");
+                name: "Campaigns");
 
             migrationBuilder.DropTable(
-                name: "Project");
+                name: "Projects");
 
             migrationBuilder.DropTable(
                 name: "Users");
