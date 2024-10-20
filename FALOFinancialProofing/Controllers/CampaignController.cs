@@ -1,8 +1,5 @@
-﻿using FALOFinancialProofing.DTOs;
-using FALOFinancialProofing.DTOs.CampaignDTO;
-using FALOFinancialProofing.Services;
-using FALOFinancialProofing.Services.SocialNetworkService;
-using Microsoft.AspNetCore.Http;
+﻿using FALOFinancialProofing.DTOs.CampaignDTO;
+using FALOFinancialProofing.Services.CampaignService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FALOFinancialProofing.Controllers
@@ -11,6 +8,7 @@ namespace FALOFinancialProofing.Controllers
     [ApiController]
     public class CampaignController : ControllerBase
     {
+        //private readonly ICampaignService _campaignService;
         private readonly ICampaignService _campaignService;
 
         public CampaignController(ICampaignService campaignService)
@@ -18,6 +16,26 @@ namespace FALOFinancialProofing.Controllers
             _campaignService = campaignService;
         }
 
+        //[HttpGet("GetAllCampaign")]
+        //public async Task<IActionResult> GetAllCampaign()
+        //{
+        //    var campaigns = await _campaignService.GetAllCampaignsAsync();
+        //    if (campaigns == null || campaigns.Count == 0)
+        //    {
+        //        return Ok(new
+        //        {
+        //            Success = false,
+        //            Message = "No Campaigns found."
+        //        });
+        //    }
+
+        //    return Ok(new
+        //    {
+        //        Success = true,
+        //        Message = "Campaigns retrieved successfully.",
+        //        Data = campaigns
+        //    });
+        //}
         [HttpGet("GetAllCampaign")]
         public async Task<IActionResult> GetAllCampaign()
         {

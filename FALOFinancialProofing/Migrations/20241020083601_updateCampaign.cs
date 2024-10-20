@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FALOFinancialProofing.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateCampaign : Migration
+    public partial class updateCampaign : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -180,7 +180,7 @@ namespace FALOFinancialProofing.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Campaign",
+                name: "Campaigns",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -199,9 +199,9 @@ namespace FALOFinancialProofing.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Campaign", x => x.Id);
+                    table.PrimaryKey("PK_Campaigns", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Campaign_AspNetUsers_CreateBy",
+                        name: "FK_Campaigns_AspNetUsers_CreateBy",
                         column: x => x.CreateBy,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -249,7 +249,7 @@ namespace FALOFinancialProofing.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CampaignMember",
+                name: "CampaignMembers",
                 columns: table => new
                 {
                     CampaignId = table.Column<int>(type: "int", nullable: false),
@@ -260,17 +260,17 @@ namespace FALOFinancialProofing.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CampaignMember", x => new { x.CampaignId, x.UserId });
+                    table.PrimaryKey("PK_CampaignMembers", x => new { x.CampaignId, x.UserId });
                     table.ForeignKey(
-                        name: "FK_CampaignMember_AspNetUsers_UserId",
+                        name: "FK_CampaignMembers_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CampaignMember_Campaign_CampaignId",
+                        name: "FK_CampaignMembers_Campaigns_CampaignId",
                         column: x => x.CampaignId,
-                        principalTable: "Campaign",
+                        principalTable: "Campaigns",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -325,14 +325,14 @@ namespace FALOFinancialProofing.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Campaign_CreateBy",
-                table: "Campaign",
-                column: "CreateBy");
+                name: "IX_CampaignMembers_UserId",
+                table: "CampaignMembers",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CampaignMember_UserId",
-                table: "CampaignMember",
-                column: "UserId");
+                name: "IX_Campaigns_CreateBy",
+                table: "Campaigns",
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SDGs_UserId",
@@ -364,7 +364,7 @@ namespace FALOFinancialProofing.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "CampaignMember");
+                name: "CampaignMembers");
 
             migrationBuilder.DropTable(
                 name: "SDGs");
@@ -379,7 +379,7 @@ namespace FALOFinancialProofing.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Campaign");
+                name: "Campaigns");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

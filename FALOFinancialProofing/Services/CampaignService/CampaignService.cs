@@ -5,7 +5,7 @@ using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using Microsoft.EntityFrameworkCore;
 
-namespace FALOFinancialProofing.Services
+namespace FALOFinancialProofing.Services.CampaignService
 {
     public class CampaignService : ICampaignService
     {

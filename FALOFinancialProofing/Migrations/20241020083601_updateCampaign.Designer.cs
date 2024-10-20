@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FALOFinancialProofing.Migrations
 {
     [DbContext(typeof(FALOFinancialProofingDbContext))]
-    [Migration("20241017113317_UpdateCampaign")]
-    partial class UpdateCampaign
+    [Migration("20241020083601_updateCampaign")]
+    partial class updateCampaign
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -75,7 +75,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("CreateBy");
 
-                    b.ToTable("Campaign");
+                    b.ToTable("Campaigns");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.CampaignMember", b =>
@@ -99,7 +99,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("CampaignMember");
+                    b.ToTable("CampaignMembers");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.SDG", b =>

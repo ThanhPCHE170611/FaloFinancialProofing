@@ -1,8 +1,7 @@
-﻿using FALOFinancialProofing.DTOs;
-using FALOFinancialProofing.DTOs.CampaignDTO;
+﻿using FALOFinancialProofing.DTOs.CampaignDTO;
 using FALOFinancialProofing.Models;
 
-namespace FALOFinancialProofing.Services
+namespace FALOFinancialProofing.Services.CampaignService
 {
     public interface ICampaignService
     {
