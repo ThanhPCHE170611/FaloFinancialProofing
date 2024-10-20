@@ -7,8 +7,10 @@ namespace FALOFinancialProofing.Models
     public class MoveNextCampaignStatusRequest : Entity<int>
     {
         // chưa rõ ràng senderId và receiverId là gì sao lại nối vào bảng campaign member mà không có khóa khóa ngoại
-        public int SenderId { get; set; }
-        public int ReceiverId { get; set; }
+        public string SenderId { get; set; }
+        public User SenderUser { get; set; }
+        public string ReceiverId { get; set; }
+        public User ReceiverUser { get; set; }
         public int CampaignID { get; set; }
         public Campaign Campaign { get; set; }
         public string Title { get; set; }

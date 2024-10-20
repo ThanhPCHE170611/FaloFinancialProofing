@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FALOFinancialProofing.Core;
+using System.ComponentModel.DataAnnotations;
 
 namespace FALOFinancialProofing.Models
 {
-    public class CreateCampaignRequest
+    public class CreateCampaignRequest : Entity<int>
     {
         public CreateCampaignRequest()
         {

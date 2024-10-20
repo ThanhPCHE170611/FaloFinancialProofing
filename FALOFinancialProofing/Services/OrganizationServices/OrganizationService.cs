@@ -8,9 +8,9 @@ namespace FALOFinancialProofing.Services.OrganizationServices
     {
         private readonly IRepository<Organization, int> _organizationRepository;
 
-        public OrganizationService(IRepository<Organization, int> transactionLogRepository)
+        public OrganizationService(IRepository<Organization, int> organizationRepository)
         {
-            _organizationRepository = transactionLogRepository;
+            _organizationRepository = organizationRepository;
         }
 
         #region Comment may use
