@@ -22,7 +22,7 @@ namespace FALOFinancialProofing.Services
         private readonly AppSetting appSetting;
         private readonly IEmailService emailService;
         private readonly RoleManager<IdentityRole> roleManager;
-        private readonly UserManager<User> userManager;
+        public readonly UserManager<User> userManager;
         private readonly SignInManager<User> signInManager;
 
         //moi
@@ -64,7 +64,7 @@ namespace FALOFinancialProofing.Services
                     RoleNames = userManager.GetRolesAsync(user).Result.ToList()
                 };
                 return userDTO;
-            }   
+            }
             return null;
         }
 
@@ -205,7 +205,7 @@ namespace FALOFinancialProofing.Services
             return null;
 
         }
-        
+
         public async Task<IdentityResult> ResetPassword(ResetPassword resetPassword)
         {
 

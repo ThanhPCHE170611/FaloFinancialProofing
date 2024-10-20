@@ -19,6 +19,9 @@ using FALOFinancialProofing.Services;
 using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
 using FALOFinancialProofing.Helpers;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -26,7 +29,7 @@ namespace FALOFinancialProofing.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly AuthServices authServices ;
+        private readonly AuthServices authServices;
 
         public UsersController(AuthServices _authServices)
         {
@@ -43,7 +46,8 @@ namespace FALOFinancialProofing.Controllers
                     Success = false,
                     Message = "Invalid Username/Password"
                 });
-            } else
+            }
+            else
             {
                 return Ok(new ApiResponse
                 {
@@ -54,6 +58,46 @@ namespace FALOFinancialProofing.Controllers
             }
         }
 
+        [HttpGet("loginGG")]
+        public IActionResult Login()
+        {
+            var properties = new AuthenticationProperties { RedirectUri = Url.Action("GoogleResponse") };
+            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+        }
+        [HttpGet("signin-google")]
+        public async Task<IActionResult> GoogleResponse()
+        {
+            var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+            if (!result.Succeeded)
+                return BadRequest();
+
+            var claims = result.Principal.Identities
+                .FirstOrDefault()?.Claims.Select(claim => new
+                {
+                    claim.Type,
+                    claim.Value
+                });
+
+            var email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            var user = await authServices.userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                user = new User { UserName = email, Email = email };
+                var createResult = await authServices.userManager.CreateAsync(user);
+                if (!createResult.Succeeded)
+                    return BadRequest(createResult.Errors);
+
+                var info = new UserLoginInfo(GoogleDefaults.AuthenticationScheme, result.Principal.FindFirstValue(ClaimTypes.NameIdentifier), "Google");
+                var addLoginResult = await authServices.userManager.AddLoginAsync(user, info);
+                if (!addLoginResult.Succeeded)
+                    return BadRequest(addLoginResult.Errors);
+            }
+            //var token = GenerateJwtToken(user);
+
+            //return Ok(new { token });
+            return Ok();
+        }
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] SignUpRequest registerRequest)
         {
@@ -63,9 +107,10 @@ namespace FALOFinancialProofing.Controllers
                 return Ok(new
                 {
                     Success = false,
-                    Message = "Register Failed" 
+                    Message = "Register Failed"
                 });
-            } else
+            }
+            else
             {
                 return Ok(new
                 {
@@ -75,7 +120,7 @@ namespace FALOFinancialProofing.Controllers
             }
         }
 
-        [HttpPost("ForgotPassword")]    
+        [HttpPost("ForgotPassword")]
         [AllowAnonymous]
         public async Task<IActionResult> ForgotPassword([Required] string email)
         {

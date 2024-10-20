@@ -4,6 +4,7 @@ using FALOFinancialProofing.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FALOFinancialProofing.Migrations
 {
     [DbContext(typeof(FALOFinancialProofingDbContext))]
-    partial class FALOFinancialProofingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241020162329_initial")]
+    partial class initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,13 +37,6 @@ namespace FALOFinancialProofing.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<int?>("BankingNumber")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CreateBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("DateOfCreation")
                         .HasColumnType("datetime2");
 
@@ -49,9 +45,6 @@ namespace FALOFinancialProofing.Migrations
 
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<decimal>("FundTarget")
-                        .HasColumnType("money");
 
                     b.Property<string>("Image")
                         .HasMaxLength(200)
@@ -66,6 +59,9 @@ namespace FALOFinancialProofing.Migrations
                     b.Property<byte>("Status")
                         .HasColumnType("tinyint");
 
+                    b.Property<decimal>("TargetAmount")
+                        .HasColumnType("money");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -76,9 +72,6 @@ namespace FALOFinancialProofing.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("Campaign");
-                });
-
-                    b.ToTable("Campaigns");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.CampaignMember", b =>
@@ -359,7 +352,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.Property<string>("VolunteerExperience")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("VolunteerObjectives")
                         .IsRequired()
@@ -727,17 +720,6 @@ namespace FALOFinancialProofing.Migrations
                         .IsRequired();
 
                     b.Navigation("Project");
-                });
-
-            modelBuilder.Entity("FALOFinancialProofing.Models.Campaign", b =>
-                {
-                    b.HasOne("FALOFinancialProofing.Models.User", "User")
-                        .WithMany("Campaigns")
-                        .HasForeignKey("CreateBy")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.CampaignMember", b =>

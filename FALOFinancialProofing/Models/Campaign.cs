@@ -6,6 +6,8 @@ namespace FALOFinancialProofing.Models
 {
     public class Campaign : Entity<int>
     {
+        public int ProjectId { get; set; }
+        public Project Project { get; set; }
         [Required]
         [ForeignKey(nameof(User))]
         public string CreateBy { get; set; } // Đây là khóa ngoại trỏ tới UserId của User
@@ -20,6 +22,7 @@ namespace FALOFinancialProofing.Models
         [Required]
         public DateTime DateOfCreation { get; set; }
 
+        [Column(TypeName = "money")]
         [Required]
         [Column(TypeName = "money")]
         public double FundTarget { get; set; }
@@ -41,6 +44,7 @@ namespace FALOFinancialProofing.Models
         public byte Status { get; set; }
 
         public ICollection<CampaignMember> CampaignMembers { get; set; } = new List<CampaignMember>();
-    }
+        public ICollection<MoveNextCampaignStatusRequest> MoveNextCampaignStatusRequests { get; set; } = new List<MoveNextCampaignStatusRequest>();
+        public ICollection<CreateCampaignRequest> CreateCampaignRequests { get; set; } = new List<CreateCampaignRequest>();
 
 }

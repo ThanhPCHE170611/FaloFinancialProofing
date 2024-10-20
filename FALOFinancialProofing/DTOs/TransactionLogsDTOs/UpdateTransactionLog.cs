@@ -5,13 +5,13 @@ namespace FALOFinancialProofing.DTOs.TransactionLogsDTOs
 {
     public class UpdateTransactionLog : Entity<int>
     {
-        [Required(ErrorMessage ="Sender is require!")]
+        [Required(ErrorMessage = "Sender is require!")]
         public string SenderID { get; set; }
         [Required(ErrorMessage = "Amount is require!")]
-        public decimal Amount { get; set; }
-        public string Type { get; set; } = null!;
+        public double Amount { get; set; }
+        public string BankId { get; set; } = null!;
         public string Description { get; set; } = null!;
         [Required(ErrorMessage = "ReceiverId is require!")]
-        public string ReceiverId { get; set; }
+        public int CampaignId { get; set; }
     }
 }
