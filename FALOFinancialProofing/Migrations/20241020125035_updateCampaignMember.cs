@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FALOFinancialProofing.Migrations
 {
     /// <inheritdoc />
-    public partial class updateCampaign : Migration
+    public partial class updateCampaignMember : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -252,15 +252,16 @@ namespace FALOFinancialProofing.Migrations
                 name: "CampaignMembers",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CampaignId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Debt = table.Column<decimal>(type: "money", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CampaignMembers", x => new { x.CampaignId, x.UserId });
+                    table.PrimaryKey("PK_CampaignMembers", x => x.Id);
                     table.ForeignKey(
                         name: "FK_CampaignMembers_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -323,6 +324,11 @@ namespace FALOFinancialProofing.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CampaignMembers_CampaignId",
+                table: "CampaignMembers",
+                column: "CampaignId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CampaignMembers_UserId",

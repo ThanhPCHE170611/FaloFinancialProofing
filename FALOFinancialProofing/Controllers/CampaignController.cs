@@ -99,7 +99,7 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
-        [HttpPut("UpdateCampaign/{id}")]
+        [HttpPut("UpdateCampaign")]
         public async Task<IActionResult> UpdateCampaign([FromBody] UpdateCampaignDTO updateCampaignDTO)
         {
 

@@ -39,16 +39,16 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
-        [HttpGet("GetCampaignMemberByCampaignIdAndUserId/{campaignId},{userId}")]
-        public async Task<IActionResult> GetCampaignMemberByCampaignIdAndUserId(int campaignId, string userId)
+        [HttpGet("GetCampaignMemberByCampaignIdAndUserId/{id}")]
+        public async Task<IActionResult> GetCampaignMemberByCampaignIdAndUserId(int id)
         {
-            var campaignMember = await _campaignMemberService.GetCampaignMemberByCampaignIdAndUserIdAsync(campaignId, userId);
+            var campaignMember = await _campaignMemberService.GetCampaignMemberByIdAsync(id);
             if (campaignMember == null)
             {
                 return Ok(new
                 {
                     Success = false,
-                    Message = $"CampaignMember with CampaignId = {campaignId} and UserId = {userId} not found."
+                    Message = $"CampaignMember with Id = {id} not found."
                 });
             }
 
@@ -91,7 +91,7 @@ namespace FALOFinancialProofing.Controllers
                 return Ok(new
                 {
                     Success = false,
-                    Message = $"CampaignMember with CampaignId = {updateCampaignMemberDTO.CampaignId} and UserId = {updateCampaignMemberDTO.UserId} not found or could not be updated."
+                    Message = $"CampaignMember with Id = {updateCampaignMemberDTO.Id} not found or could not be updated."
                 });
             }
 
@@ -101,16 +101,16 @@ namespace FALOFinancialProofing.Controllers
                 Message = "CampaignMember updated successfully."
             });
         }
-        [HttpDelete("DeleteCampaignMemberByCampaignIdAndUserId/{campaignId},{userId}")]
-        public async Task<IActionResult> DeleteCampaignMemberByCampaignIdAndUserId(int campaignId, string userId)
+        [HttpDelete("DeleteCampaignMemberByCampaignIdAndUserId/{id}")]
+        public async Task<IActionResult> DeleteCampaignMemberByCampaignIdAndUserId(int id)
         {
-            var deleteResult = await _campaignMemberService.DeleteCampaignMemberByCampaignIdAndUserIdAsync(campaignId, userId);
+            var deleteResult = await _campaignMemberService.DeleteCampaignMemberByIdAsync(id);
             if (!deleteResult)
             {
                 return Ok(new
                 {
                     Success = false,
-                    Message = $"CampaignMember with CampaignId = {campaignId} and UserId = {userId} not found or could not be deleted."
+                    Message = $"CampaignMember with Id = {id} not found or could not be deleted."
                 });
             }
 

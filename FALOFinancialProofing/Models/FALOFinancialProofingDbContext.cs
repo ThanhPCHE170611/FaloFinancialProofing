@@ -35,10 +35,8 @@ namespace FALOFinancialProofing.Models
                 .WithMany(u => u.SocialNetworks)
                 .HasForeignKey(s => s.UserId);
 
-
-
-            modelBuilder.Entity<CampaignMember>()
-            .HasKey(cm => new { cm.CampaignId, cm.UserId });
+            //modelBuilder.Entity<CampaignMember>()
+            //.HasKey(cm => new { cm.CampaignId, cm.UserId });
 
             modelBuilder.Entity<CampaignMember>()
                 .HasOne(cm => cm.Campaign)
