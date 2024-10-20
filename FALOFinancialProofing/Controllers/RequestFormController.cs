@@ -1,4 +1,5 @@
 ﻿using FALOFinancialProofing.DTOs;
+using FALOFinancialProofing.Extensions;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.ApproveProcessServices;
 using FALOFinancialProofing.Services.AttachmentFIleServices;
@@ -97,21 +98,19 @@ namespace FALOFinancialProofing.Controllers
                 return Ok(new
                 {
                     Success = false,
-                    Message = $""
+                    Message = $"Create Request Failed"
                 });
             }
             // Create new RequestForm
-            validatedRequest.TypeId = 1;
-            validatedRequest.Status = Resources.GetResource("ProcessStatus");
             RequestFormInformation newRequestFormInfor = new RequestFormInformation
             {
                 CreateAt = validatedRequest.CreateAt,
                 Description = validatedRequest.Description,
                 ExpectedMoney = validatedRequest.ExpectedMoney,
-                Status = validatedRequest.Status,
+                Status = "Pending",
                 CreatedBy = validatedRequest.CreatedBy,
-                CampaignId = validatedRequest.CampaignId,
-                TypeId = validatedRequest.TypeId
+                CampaignId = StringExtension.ParseStringToInt(validatedRequest.CampaignId),
+                TypeId = 1
             };
             var newRequestForm = await requestFormService.CreateRequestFormAsync(newRequestFormInfor);
             if(newRequestForm == null)
@@ -133,7 +132,7 @@ namespace FALOFinancialProofing.Controllers
             };
             var newApproveProcess = await approveProcessServices.CreateApproveProcessAsync(approveProcessDTO);
             //Create new AttachmentFile
-            var attachmentFiles = await requestFormService.SaveUploadedFilesAsync(validatedRequest.UploadFiles, validatedRequest.Id.Value);
+            var attachmentFiles = await requestFormService.SaveUploadedFilesAsync(validatedRequest.UploadFiles, newRequestForm.Id);
             var canCreateAttachmentFiles = await attachmentFileService.CreateManyAttachmentFileAsync(attachmentFiles);
             if(!canCreateAttachmentFiles)
             {
@@ -147,7 +146,7 @@ namespace FALOFinancialProofing.Controllers
             {
                 Success = true,
                 Message = "Create new PrePay RequestForm successfully.",
-                Data = newApproveProcess
+                Data = newRequestFormInfor
             });
         }
     }

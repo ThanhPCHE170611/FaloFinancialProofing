@@ -83,12 +83,12 @@ namespace FALOFinancialProofing.Models
 
 
             modelBuilder.Entity<CampaignMember>()
-                .HasKey(cm => new { cm.Id, cm.UserId });
+                .HasKey(cm => new { cm.CampaignId, cm.UserId });
 
             modelBuilder.Entity<CampaignMember>()
                 .HasOne(cm => cm.Campaign)
                 .WithMany(c => c.CampaignMembers)
-                .HasForeignKey(cm => cm.Id);
+                .HasForeignKey(cm => cm.CampaignId);
 
             modelBuilder.Entity<CampaignMember>()
                 .HasOne(cm => cm.User)

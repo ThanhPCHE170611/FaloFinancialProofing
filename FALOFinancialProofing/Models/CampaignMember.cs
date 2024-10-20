@@ -5,6 +5,7 @@ namespace FALOFinancialProofing.Models
 {
     public class CampaignMember : Entity<int>
     {
+        public int CampaignId { get; set; }
         [ForeignKey("CampaignId")]
         public virtual Campaign Campaign { get; set; } = null!;
 

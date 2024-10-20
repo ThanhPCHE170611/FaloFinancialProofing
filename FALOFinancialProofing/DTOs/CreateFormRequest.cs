@@ -7,18 +7,18 @@ namespace FALOFinancialProofing.DTOs
     {
         public int? Id { get; set; }
         public DateTime CreateAt { get; set; } = DateTime.Now;
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         public double ExpectedMoney { get; set; }
 
-        public string Status { get; set; } = Resources.GetResource("ProcessStatus");
+        public string? Status { get; set; } = Resources.GetResource("ProcessStatus");
         [Required]
         public string CreatedBy { get; set; }
         [Required]
-        public int CampaignId { get; set; }
+        public string CampaignId { get; set; }
         [Required]
-        public int TypeId { get; set; }
-
+        public string TypeId { get; set; }
+        [Required]
         public string ApproverId { get; set; }
 
         public List<IFormFile> UploadFiles { get; set; }
