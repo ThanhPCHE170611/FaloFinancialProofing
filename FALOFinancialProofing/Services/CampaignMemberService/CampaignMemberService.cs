@@ -37,7 +37,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             };
         }
 
-        public async Task<List<CampaignMember>> GetAllCampaignsAsync()
+        public async Task<List<CampaignMember>> GetAllCampaignMembersAsync()
         {
             try
             {
@@ -61,15 +61,46 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             }
         }
 
-        //public async Task<bool> UpdateCampaignMemberAsync(UpdateCampaignMemberDTO updateCampaignMemberDTO)
-        //{
-            
-        //}
+        public async Task<bool> UpdateCampaignMemberAsync(UpdateCampaignMemberDTO updateCampaignMemberDTO)
+        {
+            try
+            {
+                var existingCampaignMember = await cmRepository.Get(x => x.UserId == updateCampaignMemberDTO.UserId && x.CampaignId == updateCampaignMemberDTO.CampaignId);
 
-        //private void UpdateCampaignMemberDTOEntity(CampaignMember campaignMemberModels, UpdateCampaignMemberDTO updateCampaignMemberDTO)
-        //{
-        //    campaignMemberModels.Debt = updateCampaignMemberDTO.Debt;
-        //    campaignMemberModels.IsActive = updateCampaignMemberDTO.IsActive;
-        //}
+                if (existingCampaignMember == null)
+                {
+                    return false;
+                }
+
+                UpdateCampaignMemberDTOToEntity(existingCampaignMember, updateCampaignMemberDTO);
+
+                return await cmRepository.UpdateAsync(existingCampaignMember);
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+        private void UpdateCampaignMemberDTOToEntity(CampaignMember campaignMember, UpdateCampaignMemberDTO updateCampaignMemberDTO)
+        {
+            campaignMember.Debt = updateCampaignMemberDTO.Debt;
+            campaignMember.IsActive = updateCampaignMemberDTO.IsActive;
+        }
+
+        public async Task<bool> DeleteCampaignMemberByCampaignIdAndUserIdAsync(int campaignId, string userId)
+        {
+            try
+            {
+                var existingCampaignMember = await cmRepository.Get(x => x.UserId == userId && x.CampaignId == campaignId);
+                if (existingCampaignMember == null) return false;
+
+                return await cmRepository.DeleteAsync(existingCampaignMember);
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
     }
 }
