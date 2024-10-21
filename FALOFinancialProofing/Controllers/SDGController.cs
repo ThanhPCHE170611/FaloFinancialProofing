@@ -64,7 +64,7 @@ namespace FALOFinancialProofing.Controllers
         public async Task<IActionResult> GetSDGByUserId(string userId)
         {
             var sdg = await _sdgServices.GetSDGByUserIdAsync(userId);
-            if (sdg == null)
+            if (sdg == null )
             {
                 return Ok(new
                 {

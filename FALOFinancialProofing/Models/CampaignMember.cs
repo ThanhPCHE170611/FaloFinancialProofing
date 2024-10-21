@@ -1,4 +1,5 @@
 ﻿using FALOFinancialProofing.Core;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -17,6 +18,10 @@ namespace FALOFinancialProofing.Models
         [Column(TypeName = "money")]
         [DefaultValue(0)]
         public double Debt { get; set; } = 0;
+
+        [ForeignKey(nameof(IdentityRole))]
+        public string RoleId { get; set; } = null!;
+        public virtual IdentityRole IdentityRole { get; set; } = null!;
 
         [DefaultValue(true)]
         public bool IsActive { get; set; } = true;

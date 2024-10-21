@@ -25,7 +25,14 @@ namespace FALOFinancialProofing.Models
         public DbSet<SDG> SDGs { get; set; }
         public DbSet<SocialNetwork> SocialNetworks { get; set; }
 
-        #endregion DBSet
+
+        public DbSet<RequestForm> RequestForms { get; set; }
+        public DbSet<RequestType> RequestTypes { get; set; }
+        public DbSet<AttachmentFile> AttachmentFiles { get; set; }
+        public DbSet<ApproveProcess> ApproveProcesses { get; set; }
+        public DbSet<Voucher> Vouchers { get; set; }
+
+        #endregion
 
         public FALOFinancialProofingDbContext(DbContextOptions<FALOFinancialProofingDbContext> options) : base(options)
         {
@@ -33,6 +40,49 @@ namespace FALOFinancialProofing.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<AttachmentFile>()
+                .HasOne(a => a.RequestForm)
+                .WithMany(r => r.AttachmentFiles)
+                .HasForeignKey(a => a.RequestId);
+
+            modelBuilder.Entity<Voucher>()
+                .HasOne(v => v.ApproveProcess)
+                .WithMany(ap => ap.Vouchers)
+                .HasForeignKey(v => v.ApproveId);
+            
+            modelBuilder.Entity<ApproveProcess>()
+                .HasOne(ap => ap.RequestForm)
+                .WithMany(r => r.ApproveProcesses)
+                .HasForeignKey(ap => ap.RequestId);
+
+            modelBuilder.Entity<ApproveProcess>()
+                .HasOne(ap => ap.User)
+                .WithMany(u => u.ApproveProcesses)
+                .HasForeignKey(ap => ap.ApproverId);
+            
+            modelBuilder.Entity<ApproveProcess>()
+                .HasOne(ap => ap.RequestForm)
+                .WithMany(r => r.ApproveProcesses)
+                .HasForeignKey(ap => ap.RequestId);
+            
+            modelBuilder.Entity<RequestForm>()
+                .HasOne(r => r.User)
+                .WithMany(u => u.RequestForms)
+                .HasForeignKey(r => r.CreatedBy)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            modelBuilder.Entity<RequestForm>()
+                .HasOne(r => r.Campaign)
+                .WithMany(c => c.RequestForms)
+                .HasForeignKey(r => r.CampaignId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<RequestForm>()
+                .HasOne(r => r.RequestType)
+                .WithMany(rt => rt.RequestForms)
+                .HasForeignKey(r => r.TypeId)
+                .OnDelete(DeleteBehavior.NoAction);
+
             modelBuilder.Entity<SDG>()
                 .HasOne(s => s.User)
                 .WithMany(u => u.SDGs)
@@ -41,6 +91,7 @@ namespace FALOFinancialProofing.Models
                 .HasOne(s => s.User)
                 .WithMany(u => u.SocialNetworks)
                 .HasForeignKey(s => s.UserId);
+
 
             modelBuilder.Entity<CampaignMember>(entity =>
             {
@@ -101,6 +152,9 @@ namespace FALOFinancialProofing.Models
                 entity.HasMany(c => c.Projects)
                    .WithOne(u => u.User)
                    .HasForeignKey(c => c.CreatedBy);
+                entity.HasMany(u => u.RequestForms)
+                        .WithOne(r => r.User)
+                        .HasForeignKey(u => u.CreatedBy);
                 entity.HasMany(c => c.Campaigns)
                   .WithOne(u => u.User)
                   .HasForeignKey(c => c.CreateBy)

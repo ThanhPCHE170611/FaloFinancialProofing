@@ -22,6 +22,59 @@ namespace FALOFinancialProofing.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("FALOFinancialProofing.Models.ApproveProcess", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ApproveNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ApproveStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ApproverId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("RequestId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApproverId");
+
+                    b.HasIndex("RequestId");
+
+                    b.ToTable("ApproveProcesses");
+                });
+
+            modelBuilder.Entity("FALOFinancialProofing.Models.AttachmentFile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RequestId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RequestId");
+
+                    b.ToTable("AttachmentFiles");
+                });
+
             modelBuilder.Entity("FALOFinancialProofing.Models.Campaign", b =>
                 {
                     b.Property<int>("Id")
@@ -97,6 +150,10 @@ namespace FALOFinancialProofing.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -104,6 +161,8 @@ namespace FALOFinancialProofing.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CampaignId");
+
+                    b.HasIndex("RoleId");
 
                     b.HasIndex("UserId");
 
@@ -403,6 +462,66 @@ namespace FALOFinancialProofing.Migrations
                     b.ToTable("Projects");
                 });
 
+            modelBuilder.Entity("FALOFinancialProofing.Models.RequestForm", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CampaignId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("ExpectedMoney")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CampaignId");
+
+                    b.HasIndex("CreatedBy");
+
+                    b.HasIndex("TypeId");
+
+                    b.ToTable("RequestForms");
+                });
+
+            modelBuilder.Entity("FALOFinancialProofing.Models.RequestType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("TypeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RequestTypes");
+                });
+
             modelBuilder.Entity("FALOFinancialProofing.Models.SDG", b =>
                 {
                     b.Property<int>("Id")
@@ -561,6 +680,32 @@ namespace FALOFinancialProofing.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
+            modelBuilder.Entity("FALOFinancialProofing.Models.Voucher", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ApproveId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApproveId");
+
+                    b.ToTable("Vouchers");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -717,6 +862,36 @@ namespace FALOFinancialProofing.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("FALOFinancialProofing.Models.ApproveProcess", b =>
+                {
+                    b.HasOne("FALOFinancialProofing.Models.User", "User")
+                        .WithMany("ApproveProcesses")
+                        .HasForeignKey("ApproverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FALOFinancialProofing.Models.RequestForm", "RequestForm")
+                        .WithMany("ApproveProcesses")
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RequestForm");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FALOFinancialProofing.Models.AttachmentFile", b =>
+                {
+                    b.HasOne("FALOFinancialProofing.Models.RequestForm", "RequestForm")
+                        .WithMany("AttachmentFiles")
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RequestForm");
+                });
+
             modelBuilder.Entity("FALOFinancialProofing.Models.Campaign", b =>
                 {
                     b.HasOne("FALOFinancialProofing.Models.User", "User")
@@ -744,6 +919,12 @@ namespace FALOFinancialProofing.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", "IdentityRole")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("FALOFinancialProofing.Models.User", "User")
                         .WithMany("CampaignMembers")
                         .HasForeignKey("UserId")
@@ -751,6 +932,8 @@ namespace FALOFinancialProofing.Migrations
                         .IsRequired();
 
                     b.Navigation("Campaign");
+
+                    b.Navigation("IdentityRole");
 
                     b.Navigation("User");
                 });
@@ -869,6 +1052,33 @@ namespace FALOFinancialProofing.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("FALOFinancialProofing.Models.RequestForm", b =>
+                {
+                    b.HasOne("FALOFinancialProofing.Models.Campaign", "Campaign")
+                        .WithMany("RequestForms")
+                        .HasForeignKey("CampaignId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("FALOFinancialProofing.Models.User", "User")
+                        .WithMany("RequestForms")
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("FALOFinancialProofing.Models.RequestType", "RequestType")
+                        .WithMany("RequestForms")
+                        .HasForeignKey("TypeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Campaign");
+
+                    b.Navigation("RequestType");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("FALOFinancialProofing.Models.SDG", b =>
                 {
                     b.HasOne("FALOFinancialProofing.Models.User", "User")
@@ -900,6 +1110,17 @@ namespace FALOFinancialProofing.Migrations
                         .IsRequired();
 
                     b.Navigation("SenderUser");
+                });
+
+            modelBuilder.Entity("FALOFinancialProofing.Models.Voucher", b =>
+                {
+                    b.HasOne("FALOFinancialProofing.Models.ApproveProcess", "ApproveProcess")
+                        .WithMany("Vouchers")
+                        .HasForeignKey("ApproveId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApproveProcess");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -953,6 +1174,11 @@ namespace FALOFinancialProofing.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("FALOFinancialProofing.Models.ApproveProcess", b =>
+                {
+                    b.Navigation("Vouchers");
+                });
+
             modelBuilder.Entity("FALOFinancialProofing.Models.Campaign", b =>
                 {
                     b.Navigation("CampaignMembers");
@@ -960,6 +1186,8 @@ namespace FALOFinancialProofing.Migrations
                     b.Navigation("CreateCampaignRequests");
 
                     b.Navigation("MoveNextCampaignStatusRequests");
+
+                    b.Navigation("RequestForms");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.CreateCampaignRequest", b =>
@@ -979,8 +1207,22 @@ namespace FALOFinancialProofing.Migrations
                     b.Navigation("CreateProjectRequests");
                 });
 
+            modelBuilder.Entity("FALOFinancialProofing.Models.RequestForm", b =>
+                {
+                    b.Navigation("ApproveProcesses");
+
+                    b.Navigation("AttachmentFiles");
+                });
+
+            modelBuilder.Entity("FALOFinancialProofing.Models.RequestType", b =>
+                {
+                    b.Navigation("RequestForms");
+                });
+
             modelBuilder.Entity("FALOFinancialProofing.Models.User", b =>
                 {
+                    b.Navigation("ApproveProcesses");
+
                     b.Navigation("CampaignMembers");
 
                     b.Navigation("Campaigns");
@@ -996,6 +1238,8 @@ namespace FALOFinancialProofing.Migrations
                     b.Navigation("Projects");
 
                     b.Navigation("ReceiverCreateProjectRequests");
+
+                    b.Navigation("RequestForms");
 
                     b.Navigation("SDGs");
 

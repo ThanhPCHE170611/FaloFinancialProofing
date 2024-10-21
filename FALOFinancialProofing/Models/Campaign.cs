@@ -42,6 +42,7 @@ namespace FALOFinancialProofing.Models
         public byte Status { get; set; }
 
         public ICollection<CampaignMember> CampaignMembers { get; set; } = new List<CampaignMember>();
+        public ICollection<RequestForm> RequestForms { get; set; } = new List<RequestForm>();
         public ICollection<MoveNextCampaignStatusRequest> MoveNextCampaignStatusRequests { get; set; } = new List<MoveNextCampaignStatusRequest>();
         public ICollection<CreateCampaignRequest> CreateCampaignRequests { get; set; } = new List<CreateCampaignRequest>();
 
