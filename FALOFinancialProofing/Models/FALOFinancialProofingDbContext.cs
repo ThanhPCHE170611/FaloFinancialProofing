@@ -14,12 +14,16 @@ namespace FALOFinancialProofing.Models
         public DbSet<TransactionLog> TransactionLogs { get; set; }
         public DbSet<CreateProjectFile> CreateProjectFiles { get; set; }
         public DbSet<CreateProjectRequest> CreateProjects { get; set; }
-        //public DbSet<Role> Roles { get; set; }
+        public DbSet<CreateCampaignFile> CreateCampaignFiles { get; set; }
+        public DbSet<CreateCampaignRequest> CreateCampaignRequests { get; set; }
+        public DbSet<MoveNextCampaignStatusRequest> MoveNextCampaignStatusRequests { get; set; }
+        public DbSet<Project> Projects { get; set; }
         //public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Organization> Organizations { get; set; }
+        public DbSet<Campaign> Campaigns { get; set; }
+        public DbSet<CampaignMember> CampaignMembers { get; set; }
         public DbSet<SDG> SDGs { get; set; }
         public DbSet<SocialNetwork> SocialNetworks { get; set; }
-        public DbSet<Campaign> Campaigns { get; set; }
 
 
         public DbSet<RequestForm> RequestForms { get; set; }
@@ -93,7 +97,7 @@ namespace FALOFinancialProofing.Models
             {
                 entity.HasOne(c => c.Campaign)
                     .WithMany(u => u.CampaignMembers)
-                    .HasForeignKey(c => c.CampaignID)
+                    .HasForeignKey(c => c.CampaignId)
                     .OnDelete(DeleteBehavior.Restrict);
                 entity.HasOne(c => c.User)
                    .WithMany(u => u.CampaignMembers)
@@ -151,6 +155,10 @@ namespace FALOFinancialProofing.Models
                 entity.HasMany(u => u.RequestForms)
                         .WithOne(r => r.User)
                         .HasForeignKey(u => u.CreatedBy);
+                entity.HasMany(c => c.Campaigns)
+                  .WithOne(u => u.User)
+                  .HasForeignKey(c => c.CreateBy)
+                  .OnDelete(DeleteBehavior.NoAction);
             });
             modelBuilder.Entity<Project>(entity =>
             {
@@ -203,7 +211,7 @@ namespace FALOFinancialProofing.Models
                     entityType.SetTableName(tableName.Substring(6));
                 }
             }
-        } 
+        }
         #endregion
     }
 }
