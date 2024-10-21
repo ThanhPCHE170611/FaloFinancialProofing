@@ -101,7 +101,7 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
-        [HttpPut("UpdateSocialNetwork/{id}")]
+        [HttpPut("UpdateSocialNetwork")]
         public async Task<IActionResult> UpdateSocialNetwork([FromBody] SocialNetworkRequest socialNetworkRequest)
         {
 

@@ -1,16 +1,24 @@
 ﻿using FALOFinancialProofing.Core;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FALOFinancialProofing.Models
 {
     public class CampaignMember : Entity<int>
     {
+        //[ForeignKey(nameof(Campaign))]
+        public int CampaignId { get; set; }
+        public virtual Campaign Campaign { get; set; } = null!;
 
-        public int CampaignID { get; set; }
-        public Campaign Campaign { get; set; } = null!;
-        public string UserId { get; set; }
-        public User User { get; set; } = null!;
-        public Double Debt { get; set; }
-        public bool IsActive { get; set; }
+        [ForeignKey(nameof(User))]
+        public string UserId { get; set; } = null!;
+        public virtual User User { get; set; } = null!;
+
+        [Column(TypeName = "money")]
+        [DefaultValue(0)]
+        public double Debt { get; set; } = 0;
+
+        [DefaultValue(true)]
+        public bool IsActive { get; set; } = true;
     }
 }
