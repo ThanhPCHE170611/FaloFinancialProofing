@@ -2,6 +2,7 @@
 using FALOFinancialProofing.Extensions;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace FALOFinancialProofing.Services.RequestFormServices
@@ -10,6 +11,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
     {
         private readonly IRepository<RequestForm, int> repository;
         private readonly IRepository<Campaign, int> campaignRepository;
+        private readonly UserManager<User> userManager;
 
         public RequestFormServices(IRepository<RequestForm, int> repository, IRepository<Campaign, int> campaignRepository)
         {
@@ -237,9 +239,9 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             }
         }
 
-        public async Task<CreateFormRequest> ValidateRequestForm(CreateFormRequest requestFormRequest)
+        public async Task<CreateFormRequest> ValidateRequestForm(CreateFormRequest requestFormRequest, System.Text.StringBuilder message)
         {
-            if (ValidatedRequestForm(requestFormRequest))
+            if (ValidatedRequestForm(requestFormRequest, message))
             {
                 requestFormRequest.IsValidate = true;
                 return requestFormRequest;
@@ -252,10 +254,11 @@ namespace FALOFinancialProofing.Services.RequestFormServices
         }
 
 
-        private bool ValidatedRequestForm(CreateFormRequest requestForm)
+        private bool ValidatedRequestForm(CreateFormRequest requestForm, System.Text.StringBuilder message)
         {
             if(requestForm == null || requestForm.ExpectedMoney == null || requestForm.ApproverId == null)
             {
+                message.Append("Expected money and ApproverId cannot be null");
                 return false;
             }
             //check campaign id exist?
@@ -264,28 +267,44 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 .FirstOrDefault();
             if (campainInDb == null)
             {
+                message.Append("CampaignID is not exist");
                 return false;
             }
-            //check createBy id exist, in campain
+            //check createBy id exist, in campaign
             var createByValidate = campainInDb.CampaignMembers.Any(cm => cm.UserId == requestForm.CreatedBy);
             if(!createByValidate)
             {
+                message.Append("CreateBy is not exist or maybe in wrong campaign");
                 return false;
             }
-            // check ApproverId exist in campain
+            // check ApproverId exist in campain && ApproverId != CreatedBy && Role of ApproverId is greater than CreatedBy
+            if(requestForm.ApproverId == requestForm.CreatedBy)
+            {
+                message.Append("Approver ID cannot equal CreatBy");
+                return false;
+            }
             var approveByValidate = campainInDb.CampaignMembers.Any(cm => cm.UserId == requestForm.ApproverId);
             if (!approveByValidate)
             {
+                message.Append("ApproverId is not exist or maybe in wrong campaign");
                 return false;
             }
+            // Compare role of ApproverID and CreatedBy (voluntear, leader, accounting)
+            var haveEnoughPermission = CheckPermission(requestForm.CreatedBy, requestForm.ApproverId);
 
             if (requestForm.ExpectedMoney < 0)
             {
+                message.Append("Expected money must be greater than 0");
                 return false;
             }
             return true;
         }
 
+        private bool CheckPermission(string createdBy, string approverId)
+        {
+            // 2 case that (volunteer, leader, accounting) and PM
+            var createdByRole = 
+        }
 
         public async Task<List<AttachmentFileRequest>> SaveUploadedFilesAsync(List<IFormFile> uploadFiles, int requestId)
         {

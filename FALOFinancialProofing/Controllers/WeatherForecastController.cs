@@ -1,4 +1,5 @@
 using FALOFinancialProofing.Attributes;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,5 +42,18 @@ namespace FALOFinancialProofing.Controllers
             })
             .ToArray();
         }
+        //[Authorize(AuthenticationSchemes = GoogleDefaults.AuthenticationScheme)]
+        //[HttpGet("{id}")]
+        //public IEnumerable<WeatherForecast> Get(int id)
+        //{
+        //    var user = this.User;
+        //    return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+        //    {
+        //        Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+        //        TemperatureC = Random.Shared.Next(-20, 55),
+        //        Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+        //    })
+        //    .ToArray();
+        //}
     }
 }

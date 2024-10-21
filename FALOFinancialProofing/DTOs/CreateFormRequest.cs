@@ -16,13 +16,12 @@ namespace FALOFinancialProofing.DTOs
         public string CreatedBy { get; set; }
         [Required]
         public string CampaignId { get; set; }
-        [Required]
-        public string TypeId { get; set; }
+        public string? TypeId { get; set; }
         [Required]
         public string ApproverId { get; set; }
 
         public List<IFormFile> UploadFiles { get; set; }
 
-        public bool IsValidate { get; set; } = false;
+        public bool? IsValidate { get; set; } = false;
     }
 }

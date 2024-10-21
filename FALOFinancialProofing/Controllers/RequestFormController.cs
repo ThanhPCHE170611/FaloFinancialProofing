@@ -7,6 +7,7 @@ using FALOFinancialProofing.Services.RequestFormServices;
 using Humanizer.Localisation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -91,14 +92,15 @@ namespace FALOFinancialProofing.Controllers
         [HttpPost("creatnewprepayrequest")]
         public async Task<IActionResult> CreateNewPrePayRequestForm([FromForm] CreateFormRequest requestFormRequest)
         {
+            StringBuilder message = new StringBuilder();
             // Validate Data from RequestForm
-            var validatedRequest = await requestFormService.ValidateRequestForm(requestFormRequest);
-            if (!validatedRequest.IsValidate)
+            var validatedRequest = await requestFormService.ValidateRequestForm(requestFormRequest, message);
+            if ((bool)!validatedRequest.IsValidate)
             {
                 return Ok(new
                 {
                     Success = false,
-                    Message = $"Create Request Failed"
+                    Message = $"Create Request Failed {message}"  
                 });
             }
             // Create new RequestForm

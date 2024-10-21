@@ -18,8 +18,11 @@ namespace FALOFinancialProofing.Services.RequestFormServices
         Task<bool> DeleteRequestFormAsync(RequestFormDTO dto);
 
         Task<bool> DeleteRequestFormByIdAsync(int id);
+
         Task<RequestForm?> CreateRequestFormAsync(RequestFormInformation requestForm);
-        Task<CreateFormRequest> ValidateRequestForm(CreateFormRequest requestFormRequest);
+
+        Task<CreateFormRequest> ValidateRequestForm(CreateFormRequest requestFormRequest, System.Text.StringBuilder message);
+
         Task<List<AttachmentFileRequest>> SaveUploadedFilesAsync(List<IFormFile> uploadFiles, int value);
     }
 }
