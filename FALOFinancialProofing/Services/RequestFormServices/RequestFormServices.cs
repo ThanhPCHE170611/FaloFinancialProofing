@@ -11,12 +11,15 @@ namespace FALOFinancialProofing.Services.RequestFormServices
     {
         private readonly IRepository<RequestForm, int> repository;
         private readonly IRepository<Campaign, int> campaignRepository;
-        private readonly UserManager<User> userManager;
         private readonly IRepository<CampaignMember, int> campaignMemberRepository;
-        public RequestFormServices(IRepository<RequestForm, int> repository, IRepository<Campaign, int> campaignRepository)
+        public RequestFormServices(IRepository<RequestForm, int> repository, 
+            IRepository<Campaign, int> campaignRepository,
+            IRepository<CampaignMember, int> campaignMemberRepository
+            )
         {
             this.repository = repository;
             this.campaignRepository = campaignRepository;
+            this.campaignMemberRepository = campaignMemberRepository;   
         }
 
         public async Task<RequestForm?> CreateRequestFormAsync(RequestFormDTO dto)
@@ -353,13 +356,10 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             var attachmentFiles = new List<AttachmentFileRequest>();
             try
             {
-                // Kiểm tra nếu danh sách file không null và có file
                 if (uploadFiles != null && uploadFiles.Any())
                 {
-                    // Tạo đường dẫn thư mục lưu trữ
                     var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "PrePayUploads");
 
-                    // Kiểm tra và tạo thư mục nếu chưa tồn tại
                     if (!Directory.Exists(uploadFolder))
                     {
                         Directory.CreateDirectory(uploadFolder);
@@ -367,22 +367,18 @@ namespace FALOFinancialProofing.Services.RequestFormServices
 
                     foreach (var file in uploadFiles)
                     {
-                        // Tạo tên file mới để tránh trùng lặp bằng cách thêm GUID vào tên file
                         var uniqueFileName = $"{Guid.NewGuid()}_{file.FileName}";
 
-                        // Tạo đường dẫn đầy đủ tới file sẽ lưu
                         var filePath = Path.Combine(uploadFolder, uniqueFileName);
 
-                        // Sử dụng FileStream để lưu file vào đường dẫn
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
                             await file.CopyToAsync(stream);
                         }
 
-                        // Tạo DTO lưu thông tin file đã upload
                         var attachmentFileDTO = new AttachmentFileRequest
                         {
-                            FilePath = uniqueFileName,  // Lưu tên file hoặc có thể lưu cả đường dẫn nếu cần
+                            FilePath = uniqueFileName,  
                             RequestId = requestId
                         };
                         attachmentFiles.Add(attachmentFileDTO);
@@ -393,10 +389,147 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             }
             catch (Exception ex)
             {
-                // Log lỗi hoặc xử lý ngoại lệ tùy theo yêu cầu
                 return attachmentFiles;
             }
         }
 
+        public async Task<List<UserWithRole>> GetApproverListForVolunteer(int campaignId)
+        {
+            var approverList = new List<UserWithRole>();
+            try
+            {
+                approverList = await campaignMemberRepository.GetAll(x => x.CampaignId == campaignId)
+                    .Include(x => x.User)
+                    .Include(x => x.IdentityRole)
+                    .Where(x => x.IdentityRole.Name == "Volunteer Leader")
+                    .Select(x => new UserWithRole
+                    {
+                        UserId = x.UserId,
+                        FullName = $"{x.User.FirstName} {x.User.LastName}",
+                        RoleId = x.RoleId,
+                        RoleName = x.IdentityRole.Name
+                    })
+                    .ToListAsync();
+                return approverList;
+            }
+            catch (Exception ex)
+            {
+                return approverList;
+            }
+        }
+
+        public async Task<UserWithRole?> GetApproverForVolunteerLeader(int campaignId)
+        {
+            try
+            {
+                var approverForLeader = await campaignMemberRepository.GetAll(x => x.CampaignId == campaignId)
+                    .Include(x => x.User)
+                    .Include(x => x.IdentityRole)
+                    .Where(x => x.IdentityRole.Name == "Accounting")
+                    .Select(x => new UserWithRole
+                    {
+                        UserId = x.UserId,
+                        FullName = $"{x.User.FirstName} {x.User.LastName}",
+                        RoleId = x.RoleId,
+                        RoleName = x.IdentityRole.Name
+                    })
+                    .FirstOrDefaultAsync();
+                return approverForLeader;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<UserWithRole?> GetApproverForAccounting(int campaignId)
+        {
+            try
+            {
+                var approverForLeader = await campaignMemberRepository.GetAll(x => x.CampaignId == campaignId)
+                    .Include(x => x.User)
+                    .Include(x => x.IdentityRole)
+                    .Where(x => x.IdentityRole.Name == "Project Management")
+                    .Select(x => new UserWithRole
+                    {
+                        UserId = x.UserId,
+                        FullName = $"{x.User.FirstName} {x.User.LastName}",
+                        RoleId = x.RoleId,
+                        RoleName = x.IdentityRole.Name
+                    })
+                    .FirstOrDefaultAsync();
+                return approverForLeader;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<UserWithRole?> GetApproverForProjectManagement(int campaignId)
+        {
+            try
+            {
+                var approverForLeader = await campaignMemberRepository.GetAll(x => x.CampaignId == campaignId)
+                    .Include(x => x.User)
+                    .Include(x => x.IdentityRole)
+                    .Where(x => x.IdentityRole.Name == "Accounting")
+                    .Select(x => new UserWithRole
+                    {
+                        UserId = x.UserId,
+                        FullName = $"{x.User.FirstName} {x.User.LastName}",
+                        RoleId = x.RoleId,
+                        RoleName = x.IdentityRole.Name
+                    })
+                    .FirstOrDefaultAsync();
+                return approverForLeader;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<List<VoucherRequest>> SaveUploadedVoucherAsync(int approveId, List<IFormFile> files)
+        {
+            var voucherFiles = new List<VoucherRequest>();
+            try
+            {
+                if (files != null && files.Any())
+                {
+                    var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "Vouchers");
+
+                    if (!Directory.Exists(uploadFolder))
+                    {
+                        Directory.CreateDirectory(uploadFolder);
+                    }
+
+                    foreach (var file in files)
+                    {
+                        var uniqueFileName = $"{Guid.NewGuid()}_{file.FileName}";
+
+                        var filePath = Path.Combine(uploadFolder, uniqueFileName);
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+
+                        var voucherDTO = new VoucherRequest
+                        {
+                            FilePath = uniqueFileName,
+                            ApproveId = approveId
+                        };
+                        voucherFiles.Add(voucherDTO);
+                    }
+                }
+
+                return voucherFiles;
+            }
+            catch (Exception ex)
+            {
+                return voucherFiles;
+            }
+        }
     }
 }
