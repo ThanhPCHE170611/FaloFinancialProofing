@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Identity.Client;
 using System.Reflection.Emit;
 
 namespace FALOFinancialProofing.Models
@@ -49,7 +50,7 @@ namespace FALOFinancialProofing.Models
                 .HasOne(v => v.ApproveProcess)
                 .WithMany(ap => ap.Vouchers)
                 .HasForeignKey(v => v.ApproveId);
-            
+
             modelBuilder.Entity<ApproveProcess>()
                 .HasOne(ap => ap.RequestForm)
                 .WithMany(r => r.ApproveProcesses)
@@ -59,18 +60,18 @@ namespace FALOFinancialProofing.Models
                 .HasOne(ap => ap.User)
                 .WithMany(u => u.ApproveProcesses)
                 .HasForeignKey(ap => ap.ApproverId);
-            
+
             modelBuilder.Entity<ApproveProcess>()
                 .HasOne(ap => ap.RequestForm)
                 .WithMany(r => r.ApproveProcesses)
                 .HasForeignKey(ap => ap.RequestId);
-            
+
             modelBuilder.Entity<RequestForm>()
                 .HasOne(r => r.User)
                 .WithMany(u => u.RequestForms)
                 .HasForeignKey(r => r.CreatedBy)
                 .OnDelete(DeleteBehavior.NoAction);
-            
+
             modelBuilder.Entity<RequestForm>()
                 .HasOne(r => r.Campaign)
                 .WithMany(c => c.RequestForms)
@@ -195,9 +196,10 @@ namespace FALOFinancialProofing.Models
         {
             // Seed roles
             modelBuilder.Entity<IdentityRole>().HasData(
-                new IdentityRole { Id = "205d4496-4ac8-40d9-84b9-e09e1ada7a49", Name = AppRole.Admin, NormalizedName = "ADMIN", ConcurrencyStamp = "acccef8b-20f3-4de0-8ee9-5a3690f094ed" },
-                new IdentityRole { Id = "4e7b2c09-e0b0-4ddd-9694-ebf3e21e2472", Name = AppRole.User, NormalizedName = "USER", ConcurrencyStamp = "1a777fbf-24db-4247-bd76-db376d703ea9" },
-                new IdentityRole { Id = "83292e2c-6c86-4153-bdc5-760d05ec2293", Name = AppRole.HR, NormalizedName = "Human Resources", ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85f" }
+                new IdentityRole { Id = "205d4496-4ac8-40d9-84b9-e09e1ada7a49", Name = AppRole.ProjectManager, NormalizedName = AppRole.ProjectManager.ToUpper(), ConcurrencyStamp = "acccef8b-20f3-4de0-8ee9-5a3690f094ed" },
+                new IdentityRole { Id = "4e7b2c09-e0b0-4ddd-9694-ebf3e21e2472", Name = AppRole.VolunteerLeader, NormalizedName = AppRole.VolunteerLeader.ToUpper(), ConcurrencyStamp = "1a777fbf-24db-4247-bd76-db376d703ea9" },
+                new IdentityRole { Id = "83292e2c-6c86-4153-bdc5-760d05ec2293", Name = AppRole.Accounting, NormalizedName = AppRole.Accounting.ToUpper(), ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85f" },
+                new IdentityRole { Id = "83292e2c-6c86-4153-bdc5-760d05ec2295", Name = AppRole.Volunteer, NormalizedName = AppRole.Volunteer.ToUpper(), ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85g" }
             );
         }
 
