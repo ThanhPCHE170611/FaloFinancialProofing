@@ -7,7 +7,7 @@ namespace FALOFinancialProofing.DTOs
     {
         public int? Id { get; set; }
         public DateTime CreateAt { get; set; } = DateTime.Now;
-        public string? Description { get; set; }
+        public string Description { get; set; }
 
         public double ExpectedMoney { get; set; }
 
