@@ -18,5 +18,6 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
         Task<bool> DeleteApproveProcessAsync(ApproveProcessRequest dto);
 
         Task<bool> DeleteApproveProcessByIdAsync(int id);
+        Task<List<CreateFormRequest>?> GetAllPrepayRequestForVolunteerLeader(string userid, string currentRoleLoggedIn);
     }
 }

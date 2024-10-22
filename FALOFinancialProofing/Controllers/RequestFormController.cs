@@ -4,6 +4,7 @@ using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.ApproveProcessServices;
 using FALOFinancialProofing.Services.AttachmentFIleServices;
 using FALOFinancialProofing.Services.RequestFormServices;
+using FALOFinancialProofing.Services.VoucherServices;
 using Humanizer.Localisation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,12 +19,18 @@ namespace FALOFinancialProofing.Controllers
         private readonly IRequestFormServices requestFormService;
         private readonly IAttachmentFileServices attachmentFileService;
         private readonly IApproveProcessServices approveProcessServices;
+        private readonly IVoucherServices voucherServices;
 
-        public RequestFormController(IRequestFormServices requestFormService, IAttachmentFileServices attachmentFileService, IApproveProcessServices approveProcessServices)
+        public RequestFormController(IRequestFormServices requestFormService, 
+            IAttachmentFileServices attachmentFileService, 
+            IApproveProcessServices approveProcessServices,
+            IVoucherServices voucherServices
+            )
         {
             this.requestFormService = requestFormService;
             this.attachmentFileService = attachmentFileService;
             this.approveProcessServices = approveProcessServices;
+            this.voucherServices = voucherServices;
         }
 
         [HttpGet]
@@ -109,7 +116,7 @@ namespace FALOFinancialProofing.Controllers
                 CreateAt = validatedRequest.CreateAt,
                 Description = validatedRequest.Description,
                 ExpectedMoney = validatedRequest.ExpectedMoney,
-                Status = "Pending",
+                Status = Resource.ProcessStatus,
                 CreatedBy = validatedRequest.CreatedBy,
                 CampaignId = StringExtension.ParseStringToInt(validatedRequest.CampaignId),
                 TypeId = 1
@@ -148,8 +155,111 @@ namespace FALOFinancialProofing.Controllers
             {
                 Success = true,
                 Message = "Create new PrePay RequestForm successfully.",
-                Data = newRequestFormInfor
+                Data = new {RequestId = newRequestForm.Id, 
+                ApproveProcessId = newApproveProcess.Id }
             });
         }
+
+        [HttpGet("getapproverlistforvolunteer/{campaignId}")]
+        public async Task<IActionResult> GetApproverListForVolunteer(int campaignId)
+        {
+            var approverListAsync = await requestFormService.GetApproverListForVolunteer(campaignId);
+            if(approverListAsync == null || approverListAsync.Count == 0)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "No Approver found."
+                });
+            } 
+            return Ok(new
+            {
+                Success = true,
+                Message = "Request Form retrieved successfully.",
+                Data = approverListAsync
+            });
+            
+        }
+        [HttpGet("getapproverlistforvolunteerleader/{campaignId}")]
+        public async Task<IActionResult> GetApproverListForVolunteerLeader(int campaignId)
+        {
+            var approverAsync = await requestFormService.GetApproverForVolunteerLeader(campaignId);
+            if(approverAsync == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "No Approver found."
+                });
+            }
+            return Ok(new
+            {
+                Success = true,
+                Message = "Request Form retrieved successfully.",
+                Data = approverAsync
+            });
+        }
+        
+        [HttpGet("getapproverlistforaccounting/{campaignId}")]
+        public async Task<IActionResult> GetApproverListForAccounting(int campaignId)
+        {
+            var approverAsync = await requestFormService.GetApproverForAccounting(campaignId);
+            if(approverAsync == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "No Approver found."
+                });
+            }
+            return Ok(new
+            {
+                Success = true,
+                Message = "Request Form retrieved successfully.",
+                Data = approverAsync
+            });
+        }
+        
+        [HttpGet("getapproverlistforprojectmanagement/{campaignId}")]
+        public async Task<IActionResult> GetApproverListForProjectManagement(int campaignId)
+        {
+            var approverAsync = await requestFormService.GetApproverForProjectManagement(campaignId);
+            if(approverAsync == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "No Approver found."
+                });
+            }
+            return Ok(new
+            {
+                Success = true,
+                Message = "Request Form retrieved successfully.",
+                Data = approverAsync
+            });
+        }
+        
+        [HttpPost("uploadvoucherforaccounting/{approveId}")]
+        public async Task<IActionResult> UploadVoucherForAccounting(int approveId, List<IFormFile> files)
+        {
+            var vouchers = await requestFormService.SaveUploadedVoucherAsync(approveId, files);
+            var canCreateVouchers = await voucherServices.CreateManyVoucherAsync(vouchers);
+            if (!canCreateVouchers)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "Create new Voucher failed."
+                });
+            }
+            return Ok(new
+            {
+                Success = true,
+                Message = "Create new PrePay RequestForm successfully.",
+                Data = vouchers
+            });
+        }
+        
     }
 }

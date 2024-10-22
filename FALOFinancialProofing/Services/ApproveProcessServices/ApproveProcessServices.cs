@@ -120,5 +120,35 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                 return false;
             }
         }
+
+        public async Task<List<CreateFormRequest>?> GetAllPrepayRequestForVolunteerLeader(string userid, string currentRoleLoggedIn)
+        {
+            var requests = new List<CreateFormRequest>();
+            try
+            {
+                if (currentRoleLoggedIn != "Volunteer Leader")
+                {
+                    return new List<CreateFormRequest>();
+                }
+
+                // get the campaign of request
+                var campaign = await repository.GetAll(x => x.ApproverId == userid)
+                    .Include(x => x.RequestForm)
+                    .ThenInclude(x => x.Campaign)
+                    .ThenInclude(c => c.CampaignMembers)
+                    .ThenInclude(cm => cm.IdentityRole)
+                    .FirstOrDefaultAsync(cm => cm.RequestForm.Campaign.CampaignMembers.FirstOrDefault(x => x.UserId == userid && x.IdentityRole.Name.Equals("Volunteer Leader")) != null);
+                if(campaign == null)
+                {
+                    return new List<CreateFormRequest>();
+                }
+                return requests;
+
+            }
+            catch (Exception ex)
+            {
+                return requests;
+            }
+        }
     }
 }
