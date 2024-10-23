@@ -239,7 +239,7 @@ namespace FALOFinancialProofing.Controllers
                 Data = approverAsync
             });
         }
-        
+
         [HttpPost("uploadvoucherforaccounting/{approveId}")]
         public async Task<IActionResult> UploadVoucherForAccounting(int approveId, List<IFormFile> files)
         {
@@ -260,6 +260,6 @@ namespace FALOFinancialProofing.Controllers
                 Data = vouchers
             });
         }
-        
+
     }
 }

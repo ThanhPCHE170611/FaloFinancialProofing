@@ -140,7 +140,9 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                     return new List<PrePayRequestFormViewRequest>();
                 }
                 // get all the campaign that userid is a Volunteer Leader
-                var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid && cm.IdentityRole.Name.Equals("Volunteer Leader"))
+                var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid 
+                        && cm.IdentityRole.Name.Equals("Volunteer Leader")
+                        && cm.IsActive)
                     .Include(cm => cm.Campaign)
                     .Include(cm => cm.IdentityRole)
                     .Select(cm => new Campaign
@@ -210,6 +212,36 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
             }
         }
 
+        public async Task<bool> ApprovePrePayRequestForAccounting(string userid, string currentLoggingRole, int requestid)
+        {
+            try
+            {
+                // validate if current logged in user is not Accounting
+                if (currentLoggingRole != "Accounting")
+                {
+                    return false;
+                }
+                // check if user have permission
+                var approveProcess = repository.GetAll(x => x.RequestId == requestid && x.ApproverId.Equals(userid))
+                    .FirstOrDefault();
+                if (approveProcess == null)
+                {
+                    return false;
+                }
+                approveProcess.ApproveStatus = Resource.ApprovedStatus;
+                var updatedComplete = await repository.UpdateAsync(approveProcess);
+                if (!updatedComplete)
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
         public async Task<bool> RejectPrePayRequestForLeader(string userid, string currentLoggingRole, int requestid)
         {
             try
@@ -246,5 +278,60 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                 return null;
             }
         }
+
+        public async Task<List<PrePayRequestFormViewRequest>?> GetAllPrepayRequestForAccounting(string userid, string currentLoggingRole)
+        {
+            var requests = new List<PrePayRequestFormViewRequest>();
+            try
+            {
+                // check if current logged in user is not Accounting
+                if (currentLoggingRole != "Accounting")
+                {
+                    return new List<PrePayRequestFormViewRequest>();
+                }
+                // get all the campaign that userid is a Accounting
+                var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid 
+                        && cm.IdentityRole.Name.Equals("Accounting")
+                        && cm.IsActive)
+                    .Include(cm => cm.Campaign)
+                    .Include(cm => cm.IdentityRole)
+                    .Select(cm => new Campaign
+                    {
+                        Id = cm.Campaign.Id,
+                    }).ToListAsync();
+
+                foreach (var campaign in campaigns)
+                {
+                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id)
+                        .Include(x => x.AttachmentFiles)
+                        .Select(rf => new PrePayRequestFormViewRequest
+                        {
+                            Id = rf.Id,
+                            CreateAt = rf.CreateAt,
+                            Description = rf.Description,
+                            ExpectedMoney = rf.ExpectedMoney,
+                            Status = rf.Status,
+                            CreatedBy = rf.CreatedBy,
+                            CampaignId = rf.CampaignId,
+                            AttachmentFiles = rf.AttachmentFiles.Select(af => new AttachmentFileRequest
+                            {
+                                FilePath = af.FilePath,
+                                RequestId = af.RequestId
+                            }).ToList()
+                        }).ToListAsync();
+                    if (requestForms != null && requestForms.Count > 0)
+                    {
+                        requests.AddRange(requestForms);
+                    }
+                }
+                return requests;
+            }
+            catch (Exception ex)
+            {
+                return requests;
+            }
+        }
+
+        
     }
 }

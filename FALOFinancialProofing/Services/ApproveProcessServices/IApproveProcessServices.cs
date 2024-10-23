@@ -20,7 +20,11 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
         Task<bool> DeleteApproveProcessByIdAsync(int id);
         Task<List<PrePayRequestFormViewRequest>?> GetAllPrepayRequestForVolunteerLeader(string userid, string currentRoleLoggedIn);
         Task<bool> ApprovePrePayRequestForLeader(string userid, string currentLoggingRole, int requestid);
+
+        Task<bool> ApprovePrePayRequestForAccounting(string userid, string currentLoggingRole, int requestid);
         Task<bool> RejectPrePayRequestForLeader(string userid, string currentLoggingRole, int requestid);
         Task<ApproveProcess?> GetApproveProcessesByRequestIdAndApproveIdAsync(int requestid, string userid);
+        Task<List<PrePayRequestFormViewRequest>?> GetAllPrepayRequestForAccounting(string userid, string currentLoggingRole);
+        
     }
 }

@@ -12,14 +12,15 @@ namespace FALOFinancialProofing.Services.RequestFormServices
         private readonly IRepository<RequestForm, int> repository;
         private readonly IRepository<Campaign, int> campaignRepository;
         private readonly IRepository<CampaignMember, int> campaignMemberRepository;
-        public RequestFormServices(IRepository<RequestForm, int> repository, 
-            IRepository<Campaign, int> campaignRepository,
-            IRepository<CampaignMember, int> campaignMemberRepository
-            )
+        private readonly IRepository<ApproveProcess, int> approveProcessrepository;
+
+        public RequestFormServices(IRepository<RequestForm, int> repository, IRepository<Campaign, int> campaignRepository, 
+            IRepository<CampaignMember, int> campaignMemberRepository, IRepository<ApproveProcess, int> approveProcessrepository)
         {
             this.repository = repository;
             this.campaignRepository = campaignRepository;
-            this.campaignMemberRepository = campaignMemberRepository;   
+            this.campaignMemberRepository = campaignMemberRepository;
+            this.approveProcessrepository = approveProcessrepository;
         }
 
         public async Task<RequestForm?> CreateRequestFormAsync(RequestFormDTO dto)
@@ -322,7 +323,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                     .Include(x => x.IdentityRole)
                     .FirstOrDefault()
                     .IdentityRole.Name;
-            if (createByRole.Equals("Project Managerment"))
+            if (createByRole.Equals("Project Manager"))
             {
                 // check approveId role is accoungting
                 if (approverRole.Equals("Accounting"))
@@ -344,7 +345,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 {
                     return true;
                 }
-                if(createByRole.Equals("Accounting") && approverRole.Equals("Project Managerment"))
+                if(createByRole.Equals("Accounting") && approverRole.Equals("Project Manager"))
                 {
                     return true;
                 }
@@ -450,7 +451,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 var approverForLeader = await campaignMemberRepository.GetAll(x => x.CampaignId == campaignId)
                     .Include(x => x.User)
                     .Include(x => x.IdentityRole)
-                    .Where(x => x.IdentityRole.Name == "Project Management" && x.IsActive)
+                    .Where(x => x.IdentityRole.Name == "Project Manager" && x.IsActive)
                     .Select(x => new UserWithRole
                     {
                         UserId = x.UserId,
@@ -493,12 +494,17 @@ namespace FALOFinancialProofing.Services.RequestFormServices
 
         public async Task<List<VoucherRequest>> SaveUploadedVoucherAsync(int approveId, List<IFormFile> files)
         {
+            var requestType = await approveProcessrepository.GetAll(x => x.Id == approveId)
+                .Include(x => x.RequestForm)
+                .ThenInclude(x => x.RequestType)
+                .FirstOrDefaultAsync();
+            var type = requestType.RequestForm.RequestType.TypeName;
             var voucherFiles = new List<VoucherRequest>();
             try
             {
                 if (files != null && files.Any())
                 {
-                    var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "Vouchers");
+                    var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), $"{type}Vouchers");
 
                     if (!Directory.Exists(uploadFolder))
                     {

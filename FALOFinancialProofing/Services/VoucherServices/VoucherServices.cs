@@ -44,7 +44,7 @@ namespace FALOFinancialProofing.Services.VoucherServices
             {
                 Id = dto.Id != null ? dto.Id.Value : 0,
                 FilePath = dto.FilePath,
-                Status = dto.Status,
+                Status = Resource.ProcessStatus,
                 ApproveId = dto.ApproveId
             };
         }
