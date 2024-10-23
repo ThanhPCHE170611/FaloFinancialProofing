@@ -1,0 +1,260 @@
+﻿@page "/paymentvoucher"
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+            .close:hover,
+            .close:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+        .form-control {
+            margin-top: 10px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+            .nav-tabs a {
+                padding: 10px 20px;
+                text-decoration: none;
+                color: #000;
+                background-color: #f1f1f1;
+                border-radius: 5px;
+            }
+
+                .nav-tabs a.active {
+                    background-color: #EC407A;
+                    color: #fff;
+                }
+
+                .nav-tabs a:hover {
+                    background-color: #007bff;
+                    color: #fff;
+                }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class=" pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <nav class="nav-tabs">
+                                <a href="/campaigndetail">Campaign Detail</a>
+                                <a href="/prepaymanagement">Prepay Request</a>
+                                <a href="/paymentmanagement">Payment Request</a>
+                                <a href="/prepayvoucher">Prepay Voucher</a>
+                                <a href="/paymentvoucher" class="active">Payment Voucher</a>
+                                <a href="/accountingbook">Accounting Book</a>
+                                <a href="/member">Member</a>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Payment Voucher List</h6>
+                            <button class="btn btn-dark mb-0 me-3" onclick="showCreateVoucherPopup()">
+                                Create Payment Voucher
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body px-0 pb-2">
+                        <div class="table-responsive p-0">
+                            <table class="table align-items-center mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 25%;">Title</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 25%;">Money</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 30%;">Description</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 10%;">Create Date</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 10%;">File</th>
+                                        <th class="text-secondary opacity-7 text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="voucherTableBody">
+                                    <tr>
+                                        <td><span class="text-secondary text-xs font-weight-bold">Sample Payment Voucher</span></td>
+                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">$1231</span></td>
+                                        <td><span class="text-secondary text-xs font-weight-bold">Sample description for the payment voucher.</span></td>
+                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">20/10/2021</span></td>
+                                        <td class="align-middle text-center"><a href="#" class="btn btn-link text-info" download="sample.pdf">samplePayment.pdf</a></td>
+                                        <td class="align-middle text-center">
+                                            <button class="btn btn-info btn-sm" onclick="showDetail(this)">Detail</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div id="createVoucherModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('createVoucherModal')">&times;</span>
+                <h3>Create Payment Voucher</h3>
+                <label for="voucherTitle">Title:</label>
+                <input type="text" id="voucherTitle" class="form-control" placeholder="Enter title" required />
+                <label for="voucherMoney">Money:</label>
+                <input type="number" id="voucherMoney" class="form-control" placeholder="Enter money" required />
+                <label for="voucherDescription">Description:</label>
+                <textarea id="voucherDescription" class="form-control" rows="4" placeholder="Enter description" required></textarea>
+                <input type="date" id="voucherDateCreated" class="form-control" value="${new Date().toISOString().split('T')[0]}" hidden required />
+                <label for="voucherFile">File:</label>
+                <input type="file" id="voucherFile" class="form-control" />
+                <span id="fileNameDisplay" style="margin-top: 10px;"></span>
+                <button class="btn btn-success mt-3" onclick="submitVoucher()">Submit</button>
+            </div>
+        </div>
+
+        <div id="detailModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('detailModal')">&times;</span>
+                <h3>Payment Voucher Details</h3>
+                <div id="voucherDetailContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/core/popper.min.js"></script>
+    <script src="../assets/js/core/bootstrap.min.js"></script>
+    <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+    <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+
+    <script>
+        function showCreateVoucherPopup() {
+            document.getElementById('createVoucherModal').style.display = 'block';
+        }
+
+        function submitVoucher() {
+            const title = document.getElementById('voucherTitle').value;
+            const money = document.getElementById('voucherMoney').value;
+            const description = document.getElementById('voucherDescription').value;
+            const dateCreated = new Date().toLocaleDateString();
+            const fileInput = document.getElementById('voucherFile');
+
+            if (fileInput.files.length === 0) {
+                alert("Please upload a file before submitting.");
+                return; 
+            }
+
+            const fileName = fileInput.files[0].name;
+
+            const newRow = `
+                <tr>
+                    <td><span class="text-secondary text-xs font-weight-bold">${title}</span></td>
+                    <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">$${money}</span></td>
+                    <td><span class="text-secondary text-xs font-weight-bold">${description}</span></td>
+                    <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${dateCreated}</span></td>
+                    <td class="align-middle text-center"><a href="#" class="btn btn-link text-info" download="${fileName}">${fileName}</a></td>
+                    <td class="align-middle text-center">
+                        <button class="btn btn-info btn-sm" onclick="showDetail(this)">Detail</button>
+                    </td>
+                </tr>
+            `;
+            document.getElementById('voucherTableBody').insertAdjacentHTML('beforeend', newRow);
+            resetForm();
+            closeModal('createVoucherModal');
+        }
+
+        function resetForm() {
+            document.getElementById('voucherTitle').value = '';
+            document.getElementById('voucherMoney').value = '';
+            document.getElementById('voucherDescription').value = '';
+            document.getElementById('voucherFile').value = '';
+            document.getElementById('fileNameDisplay').textContent = '';
+        }
+
+        document.getElementById('voucherFile').addEventListener('change', function () {
+            const fileName = this.files.length > 0 ? this.files[0].name : 'No file chosen';
+            document.getElementById('fileNameDisplay').textContent = `Selected File: ${fileName}`;
+        });
+
+        function showDetail(button) {
+            const row = button.closest('tr');
+            const title = row.cells[0].innerText;
+            const money = row.cells[1].innerText;
+            const description = row.cells[2].innerText;
+            const dateCreated = row.cells[3].innerText;
+            const file = row.cells[4].innerText;
+
+            const detailContent = `
+                <p><strong>Title:</strong> ${title}</p>
+                <p><strong>Money:</strong> ${money}</p>
+                <p><strong>Description:</strong> ${description}</p>
+                <p><strong>Date Created:</strong> ${dateCreated}</p>
+                <p><strong>File:</strong> <a href="#" download="${file}">${file}</a></p>
+            `;
+            document.getElementById('voucherDetailContent').innerHTML = detailContent;
+            document.getElementById('detailModal').style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        window.onclick = function (event) {
+            if (event.target == document.getElementById('createVoucherModal')) {
+                closeModal('createVoucherModal');
+            }
+            if (event.target == document.getElementById('detailModal')) {
+                closeModal('detailModal');
+            }
+        }
+    </script>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+</body>
+
+</html>

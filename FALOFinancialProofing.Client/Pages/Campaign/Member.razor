@@ -1,0 +1,360 @@
+﻿@page "/member"
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <style>
+        .modal, .add-member-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content, .add-member-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+            .close:hover,
+            .close:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+        .search-filter-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            width: 70%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .table th, .table td {
+            text-align: center;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+            .nav-tabs a {
+                padding: 10px 20px;
+                text-decoration: none;
+                color: #000;
+                background-color: #f1f1f1;
+                border-radius: 5px;
+            }
+
+                .nav-tabs a.active {
+                    background-color: #EC407A;
+                    color: #fff;
+                }
+
+                .nav-tabs a:hover {
+                    background-color: #007bff;
+                    color: #fff;
+                }
+
+        .listbox {
+            position: relative;
+            width: 100%;
+        }
+
+            .listbox input {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+            }
+
+            .listbox ul {
+                position: absolute;
+                width: 100%;
+                max-height: 200px;
+                overflow-y: auto;
+                background-color: white;
+                border: 1px solid #ddd;
+                list-style-type: none;
+                padding: 0;
+                margin: 0;
+                display: none;
+            }
+
+                .listbox ul li {
+                    padding: 10px;
+                    cursor: pointer;
+                }
+
+                    .listbox ul li:hover {
+                        background-color: #f1f1f1;
+                    }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class=" pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <nav class="nav-tabs">
+                                <a href="/campaigndetail">Campaign Detail</a>
+                                <a href="/prepaymanagement">Prepay Request</a>
+                                <a href="/paymentrequest">Payment Request</a>
+                                <a href="/prepayvoucher">Prepay Voucher</a>
+                                <a href="/paymentvoucher">Payment Voucher</a>
+                                <a href="/accountingbook">Accounting Book</a>
+                                <a href="/member" class="active">Member</a>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Member List</h6>
+                            <button class="btn btn-dark mb-0 me-3" onclick="openAddMemberModal()">Add Member</button>
+                        </div>
+                    </div>
+                    <div class="search-filter-container px-3">
+                        <input type="text" id="searchBox" class="search-box" placeholder="Search by Name or Email..." onkeyup="filterTable()">
+                    </div>
+
+                    <div class="card-body px-0 pb-2">
+                        <div class="table-responsive p-0">
+                            <table class="table align-items-center mb-0" id="memberTable">
+                                <thead>
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STT</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Email</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Role</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                                        <th class="text-secondary opacity-7">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="memberList">
+
+                                    <tr>
+                                        <td>1</td>
+                                        <td><span class="text-secondary text-xs font-weight-bold">John Doe</span></td>
+                                        <td><span class="text-secondary text-xs font-weight-bold">john.doe@example.com</span></td>
+                                        <td>
+                                            <select class="form-select" onchange="changeToSaveButton(this)">
+                                                <option value="Team Member">Team Member</option>
+                                                <option value="Team Leader">Team Leader</option>
+                                                <option value="Accountant">Accountant</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-select" onchange="changeToSaveButton(this)">
+                                                <option value="Active">Active</option>
+                                                <option value="Inactive">Inactive</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-info btn-sm" onclick="showDetail(this)">Detail</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="detailModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <div id="memberDetailContent"></div>
+            </div>
+        </div>
+
+        <div id="addMemberModal" class="add-member-modal">
+            <div class="add-member-content">
+                <span class="close" onclick="closeAddMemberModal()">&times;</span>
+                <h4>Add Member</h4>
+                <div class="listbox">
+                    <input type="text" id="memberSearchBox" placeholder="Search member..." onkeyup="filterMemberList()" />
+                    <ul id="searchResultList">
+                        <li onclick="selectMember('Alice Johnson', 'alice.johnson@example.com')">Alice Johnson</li>
+                        <li onclick="selectMember('Bob Williams', 'bob.williams@example.com')">Bob Williams</li>
+                        <li onclick="selectMember('Charlie Brown', 'charlie.brown@example.com')">Charlie Brown</li>
+                    </ul>
+                </div>
+                <button class="btn btn-primary mt-3" onclick="addMember()">Add Member</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedMember = null;
+
+        function filterTable() {
+            const searchInput = document.getElementById('searchBox').value.toLowerCase();
+            const table = document.getElementById('memberTable');
+            const rows = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < rows.length; i++) {
+                const name = rows[i].cells[1].innerText.toLowerCase();
+                const email = rows[i].cells[2].innerText.toLowerCase();
+
+                if (name.includes(searchInput) || email.includes(searchInput)) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        }
+
+        function changeToSaveButton(select) {
+            const row = select.closest('tr');
+            const actionButton = row.querySelector('.btn-info');
+            actionButton.innerText = 'Save';
+            actionButton.classList.remove('btn-info');
+            actionButton.classList.add('btn-success');
+            actionButton.setAttribute('onclick', 'saveChanges(this)');
+        }
+
+        function showDetail(button) {
+            const row = button.closest('tr');
+            const name = row.cells[1].innerText;
+            const email = row.cells[2].innerText;
+            const role = row.cells[3].querySelector('select').value;
+            const status = row.cells[4].querySelector('select').value;
+
+            const detailContent = `
+                <p><strong>Name:</strong> ${name}</p>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Role:</strong> ${role}</p>
+                <p><strong>Status:</strong> ${status}</p>
+            `;
+
+            document.getElementById('memberDetailContent').innerHTML = detailContent;
+            document.getElementById('detailModal').style.display = 'block';
+        }
+
+        function saveChanges(button) {
+            const row = button.closest('tr');
+            const actionButton = row.querySelector('.btn-success');
+            actionButton.innerText = 'Detail';
+            actionButton.classList.add('btn-info');
+            actionButton.classList.remove('btn-success');
+            actionButton.setAttribute('onclick', 'showDetail(this)');
+
+            closeModal();
+            alert('Changes saved successfully!');
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').style.display = 'none';
+        }
+
+        function openAddMemberModal() {
+            document.getElementById('addMemberModal').style.display = 'block';
+        }
+
+        function closeAddMemberModal() {
+            document.getElementById('addMemberModal').style.display = 'none';
+        }
+
+        function filterMemberList() {
+            const searchInput = document.getElementById('memberSearchBox').value.toLowerCase();
+            const list = document.getElementById('searchResultList');
+            const members = list.getElementsByTagName('li');
+
+            for (let i = 0; i < members.length; i++) {
+                const member = members[i].innerText.toLowerCase();
+                if (member.includes(searchInput)) {
+                    members[i].style.display = '';
+                } else {
+                    members[i].style.display = 'none';
+                }
+            }
+
+            list.style.display = searchInput ? 'block' : 'none';
+        }
+
+        function selectMember(name, email) {
+            selectedMember = { name, email };
+            document.getElementById('memberSearchBox').value = name;
+            document.getElementById('searchResultList').style.display = 'none';
+        }
+
+        function addMember() {
+            if (!selectedMember) {
+                alert('Please select a member');
+                return;
+            }
+
+            const table = document.getElementById('memberList');
+            const newRow = `
+                <tr>
+                    <td>${table.rows.length + 1}</td>
+                    <td><span class="text-secondary text-xs font-weight-bold">${selectedMember.name}</span></td>
+                    <td><span class="text-secondary text-xs font-weight-bold">${selectedMember.email}</span></td>
+                    <td>
+                        <select class="form-select" onchange="changeToSaveButton(this)">
+                            <option value="Team Member">Team Member</option>
+                            <option value="Team Leader">Team Leader</option>
+                            <option value="Accountant">Accountant</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-select" onchange="changeToSaveButton(this)">
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button class="btn btn-info btn-sm" onclick="showDetail(this)">Detail</button>
+                    </td>
+                </tr>
+            `;
+            table.innerHTML += newRow;
+
+            closeAddMemberModal();
+        }
+    </script>
+
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+</body>
+
+</html>

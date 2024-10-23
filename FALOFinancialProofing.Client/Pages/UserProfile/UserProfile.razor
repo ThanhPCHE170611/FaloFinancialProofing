@@ -1,0 +1,265 @@
+﻿@page "/userprofile"
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <style>
+        .form-control {
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+        }
+
+        #save-btn {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        #imagePreview img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+        }
+
+        #fileList {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+            #fileList li {
+                padding: 5px 10px;
+                background-color: #e0e0e0;
+                border-radius: 5px;
+                list-style: none;
+            }
+
+        .gender-radio-group {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .sdg-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+            .sdg-tags span {
+                padding: 5px 10px;
+                background-color: #f0f0f0;
+                border-radius: 5px;
+                cursor: pointer;
+                display: inline-block;
+            }
+
+                .sdg-tags span.active {
+                    background-color: #d4edda;
+                    border: 1px solid #28a745;
+                }
+
+        #attachments {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <h6 class="text-white text-capitalize ps-3 mb-0">User Profile</h6>
+                        </div>
+                    </div>
+                    <div class="card-body">
+
+                        <div class="mb-3">
+                            <label for="profilePicture" class="form-label">Avata</label>
+                            <input type="file" class="form-control" id="profilePicture" accept="image/*" onchange="previewImage()">
+                            <div id="imagePreview" class="mt-3"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="fullName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="fullName" placeholder="Nhập họ và tên" value="Nguyễn Văn A">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="dob" class="form-label">Date Of Birth</label>
+                            <input type="date" class="form-control" id="dob" value="1990-01-01">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Gender</label>
+                            <div class="gender-radio-group">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="gender" id="male" value="male" checked>
+                                    <label class="form-check-label" for="male">Male</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="gender" id="female" value="female">
+                                    <label class="form-check-label" for="female">Female</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="gender" id="other" value="other">
+                                    <label class="form-check-label" for="other">Other</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <textarea class="form-control" id="address" rows="2" placeholder="Nhập địa chỉ">123 Đường ABC, Quận X, TP. Hồ Chí Minh</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="workplace" class="form-label">Ưorkplace</label>
+                            <input type="text" class="form-control" id="workplace" placeholder="Nhập nơi học tập hoặc làm việc" value="Công ty XYZ">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="number" class="form-control" id="phone" placeholder="Nhập số điện thoại" value="0123456789">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" placeholder="Nhập email" value="email@example.com">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="socialMedia" class="form-label">Social Media</label>
+                            <input type="url" class="form-control" id="socialMedia" placeholder="Nhập link trang mạng xã hội" value="https://facebook.com/nguyenvana">
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label for="bio" class="form-label">Bio</label>
+                            <textarea class="form-control" id="bio" rows="3" placeholder="Giới thiệu về bản thân">Tôi là một lập trình viên với 5 năm kinh nghiệm...</textarea>
+                        </div>
+
+                        <h5>Thông tin chi tiết</h5>
+
+                        <div class="mb-3">
+                            <label for="education" class="form-label">Education</label>
+                            <input type="text" class="form-control" id="education" placeholder="Nhập trình độ học vấn" value="Đại học Công nghệ Thông tin">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="skills" class="form-label">Skills</label>
+                            <input type="text" class="form-control" id="skills" placeholder="Nhập kỹ năng" value="Java, Python, Web Development">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="hobbies" class="form-label">Hobbies</label>
+                            <input type="text" class="form-control" id="hobbies" placeholder="Nhập sở thích" value="Chơi cờ vua, Đọc sách, Thể thao">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="strengths" class="form-label">Strengths</label>
+                            <textarea class="form-control" id="strengths" rows="3" placeholder="Nhập thế mạnh">Giải quyết vấn đề, Quản lý thời gian</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="sdgInterests" class="form-label">SDG Interests (17 SDGs)</label>
+                            <div class="sdg-tags" id="sdg-tags">
+                                <span data-value="1" class="active">No Poverty</span>
+                                <span data-value="2" class="active">Zero Hunger</span>
+                                <span data-value="3">Good Health And Well-Being</span>
+                                <span data-value="4">Quality Education</span>
+                                <span data-value="5">Gender Equality</span>
+                                <span data-value="6">Clean Water And Sanitation</span>
+                                <span data-value="7">Không đói</span>
+                                <span data-value="8">Sức khỏe tốt</span>
+                                <span data-value="9">Giáo dục chất lượng</span>
+                                <span data-value="10">Bình đẳng giới</span>
+                                <span data-value="11">Không nghèo</span>
+                                <span data-value="12">Không đói</span>
+                                <span data-value="13">Sức khỏe tốt</span>
+                                <span data-value="14">Giáo dục chất lượng</span>
+                                <span data-value="15">Bình đẳng giới</span>
+                                <span data-value="16">Giáo dục chất lượng</span>
+                                <span data-value="17">Bình đẳng giới</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="volunteerExperience" class="form-label">Volunteer Experience</label>
+                            <textarea class="form-control" id="volunteerExperience" rows="3" placeholder="Nhập kinh nghiệm tình nguyện">Tôi đã tham gia nhiều hoạt động tình nguyện...</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="volunteerGoals" class="form-label">Volunteer Goals</label>
+                            <textarea class="form-control" id="volunteerGoals" rows="3" placeholder="Nhập mục tiêu tình nguyện">Mong muốn đóng góp cho cộng đồng...</textarea>
+                        </div>
+
+                        <h5>Attachments File</h5>
+
+                        <div class="mb-3" id="attachments">
+                            <label for="fileInput" class="form-label">Attachments</label>
+                            <input class="form-control" type="file" id="fileInput" multiple>
+                            <ul id="fileList"></ul>
+                        </div>
+                        <a class="btn btn-warning" href="changepassword">Change Password</a>
+                        <div id="save-btn">
+                            <button type="submit" class="btn btn-success">Save</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function previewImage() {
+            var fileInput = document.getElementById('profilePicture');
+            var imagePreview = document.getElementById('imagePreview');
+            var file = fileInput.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function(e) {
+                var img = document.createElement('img');
+                img.src = e.target.result;
+                imagePreview.innerHTML = '';
+                imagePreview.appendChild(img);
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+        document.getElementById('attachments').addEventListener('change', function (e) {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+            Array.from(e.target.files).forEach(file => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(file);  
+                a.textContent = file.name;
+                a.download = file.name; 
+                li.appendChild(a);
+                fileList.appendChild(li);
+            });
+        });
+        document.querySelectorAll('.sdg-tags span').forEach(function (tag) {
+            tag.addEventListener('click', function () {
+                this.classList.toggle('active');
+            });
+        });
+    </script>
+</body>
+
+</html>

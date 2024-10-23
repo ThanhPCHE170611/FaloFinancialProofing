@@ -1,0 +1,233 @@
+﻿@page "/campaignmanagement"
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
+    <style>
+        .search-filter-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .search-box {
+            width: 70%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .filter-box {
+            width: 25%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Campaign Management</h6>
+                            <NavLink class="btn btn-dark mb-0 me-3" href="campaigncreate">
+                                Add Campaign
+                            </NavLink>
+                        </div>
+                    </div>
+                    <div class="search-filter-container">
+                        <input type="text" id="searchInput" placeholder="Search by campaign name..." class="search-box" onkeyup="searchCampaign()" />
+                        <select id="statusFilter" class="filter-box" onchange="filterByStatus()">
+                            <option value="">All Statuses</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Declined">Declined</option>
+                        </select>
+                    </div>
+                    <div class="card-body px-0 pb-2">
+                        <div class="table-responsive p-0">
+                            <table class="table align-items-center mb-0" id="campaignTable">
+                                <thead>
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 5%;">STT</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="width: 20%;">Campaign Name</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 20%;">Project</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Total Estimated Cost</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 10%;">Status</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Process</th>
+                                        <th class="text-secondary opacity-7" style="width: 15%;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="text-secondary text-xs font-weight-bold">1</span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-2 py-1">
+                                                <span class="text-secondary text-xs font-weight-bold">Campaign 1</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-2 py-1">
+                                                <span class="text-secondary text-xs font-weight-bold">Project A</span>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="text-secondary text-xs font-weight-bold">$10,000</span>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="badge badge-sm bg-gradient-warning" id="status-1">Pending</span>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <select class="form-select" onchange="showSaveButton(this)">
+                                                <option value="fundraising">Gây Quỹ</option>
+                                                <option value="deployment">Triển Khai</option>
+                                                <option value="disbursement">Giải Ngân</option>
+                                            </select>
+                                        </td>
+                                        <td class="align-middle">
+                                            <button class="btn btn-success btn-sm" onclick="approveCampaign(1)">Approve</button>
+                                            <button class="btn btn-danger btn-sm" onclick="declineCampaign(1)">Decline</button>
+                                            <a href="campaigndetail" class="btn btn-info btn-sm detail-btn">Detail</a>
+                                            <button class="btn btn-primary btn-sm save-btn" style="display:none;" onclick="saveProcess(this, 1)">Save</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="text-secondary text-xs font-weight-bold">2</span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-2 py-1">
+                                                <span class="text-secondary text-xs font-weight-bold">Campaign 2</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-2 py-1">
+                                                <span class="text-secondary text-xs font-weight-bold">Project B</span>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="text-secondary text-xs font-weight-bold">$20,000</span>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="badge badge-sm bg-gradient-warning" id="status-2">Pending</span>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <select class="form-select" onchange="showSaveButton(this)">
+                                                <option value="fundraising">Gây Quỹ</option>
+                                                <option value="deployment">Triển Khai</option>
+                                                <option value="disbursement">Giải Ngân</option>
+                                            </select>
+                                        </td>
+                                        <td class="align-middle">
+                                            <button class="btn btn-success btn-sm" onclick="approveCampaign(2)">Approve</button>
+                                            <button class="btn btn-danger btn-sm" onclick="declineCampaign(2)">Decline</button>
+                                            <a href="campaigndetail" class="btn btn-info btn-sm detail-btn">Detail</a>
+                                            <button class="btn btn-primary btn-sm save-btn" style="display:none;" onclick="saveProcess(this, 2)">Save</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/core/popper.min.js"></script>
+    <script src="../assets/js/core/bootstrap.min.js"></script>
+    <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+    <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+
+    <script>
+        function approveCampaign(id) {
+            document.getElementById('status-' + id).className = 'badge badge-sm bg-gradient-success';
+            document.getElementById('status-' + id).innerText = 'Approved';
+            hideApproveDeclineButtons(id);
+        }
+
+        function declineCampaign(id) {
+            document.getElementById('status-' + id).className = 'badge badge-sm bg-gradient-danger';
+            document.getElementById('status-' + id).innerText = 'Declined';
+            hideApproveDeclineButtons(id);
+        }
+
+        function hideApproveDeclineButtons(id) {
+            var row = document.getElementById('status-' + id).closest('tr');
+            var approveButton = row.querySelector('.btn-success');
+            var declineButton = row.querySelector('.btn-danger');
+            approveButton.style.display = 'none';
+            declineButton.style.display = 'none';
+        }
+
+        function showSaveButton(selectElement) {
+            var row = selectElement.closest('tr');
+            var saveButton = row.querySelector('.save-btn');
+            var detailButton = row.querySelector('.detail-btn');
+            saveButton.style.display = 'inline-block';
+            detailButton.style.display = 'none';
+        }
+
+        function saveProcess(button, id) {
+            alert("Process status has been saved!");
+            var row = button.closest('tr');
+            var saveButton = row.querySelector('.save-btn');
+            var detailButton = row.querySelector('.detail-btn');
+            saveButton.style.display = 'none';
+            detailButton.style.display = 'inline-block';
+        }
+
+        function searchCampaign() {
+            var input = document.getElementById("searchInput").value.toLowerCase();
+            var table = document.getElementById("campaignTable");
+            var tr = table.getElementsByTagName("tr");
+
+            for (var i = 1; i < tr.length; i++) {
+                var td = tr[i].getElementsByTagName("td")[1]; // Campaign Name column
+                if (td) {
+                    var txtValue = td.textContent || td.innerText;
+                    tr[i].style.display = txtValue.toLowerCase().indexOf(input) > -1 ? "" : "none";
+                }
+            }
+        }
+
+        function filterByStatus() {
+            var filter = document.getElementById("statusFilter").value;
+            var table = document.getElementById("campaignTable");
+            var tr = table.getElementsByTagName("tr");
+
+            for (var i = 1; i < tr.length; i++) {
+                var td = tr[i].getElementsByTagName("td")[4]; // Status column
+                if (td) {
+                    var statusText = td.textContent || td.innerText;
+                    if (filter === "" || statusText === filter) {
+                        tr[i].style.display = ""; // Show row
+                    } else {
+                        tr[i].style.display = "none"; // Hide row
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+</body>
+</html>

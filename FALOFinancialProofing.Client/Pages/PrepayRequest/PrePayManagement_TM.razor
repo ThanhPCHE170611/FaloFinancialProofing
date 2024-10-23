@@ -1,0 +1,305 @@
+﻿@page "/prepaymanagementtm"
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
+    <style>
+        .text-approved {
+            color: green;
+            font-weight: bold;
+        }
+
+        .text-declined {
+            color: red;
+            font-weight: bold;
+        }
+
+        /* Popup styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+            .close:hover,
+            .close:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+            .nav-tabs a {
+                padding: 10px 20px;
+                text-decoration: none;
+                color: #000;
+                background-color: #f1f1f1;
+                border-radius: 5px;
+            }
+
+                .nav-tabs a.active {
+                    background-color: #EC407A;
+                    color: #fff;
+                }
+
+                .nav-tabs a:hover {
+                    background-color: #007bff;
+                    color: #fff;
+                }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class=" pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <nav class="nav-tabs">
+                                <a href="/campaigndetail">Campaign Detail</a>
+                                <a href="/prepaymanagement" class="active">Prepay Request</a>
+                                <a href="/paymentrequest">Payment Request</a>
+                                <a href="/prepayvoucher">Prepay Voucher</a>
+                                <a href="/paymentvoucher">Payment Voucher</a>
+                                <a href="/accountingbook">Accounting Book</a>
+                                <a href="/member">Member</a>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Prepay Request List</h6>
+                        </div>
+                    </div>
+                    <div class="card-body px-0 pb-2">
+                        <div class="table-responsive p-0">
+                            <table class="table align-items-center mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 25%;">Title</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 20%;">Sender</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 15%;">Expected Money</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 20%;">Assign From</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 10%;">File</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 10%;">Status</th>
+                                        <th class="text-secondary opacity-7 text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <span class="text-secondary text-xs font-weight-bold">Prepay Request 1</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-secondary text-xs font-weight-bold">John Doe</span>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="text-secondary text-xs font-weight-bold">$500</span>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="text-secondary text-xs font-weight-bold">Manager A</span>
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <a href="#" class="btn btn-link text-info" download="file.pdf">file.pdf</a>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="text-secondary text-xs font-weight-bold">Pending</span>
+                                        </td>
+                                        <td class="align-middle text-center">
+@*                                             <button class="btn btn-success btn-sm" onclick="approveRequest(this)">Approve</button>
+                                            <button class="btn btn-danger btn-sm" onclick="declineRequest(this)">Decline</button> *@
+                                            <button class="btn btn-info btn-sm" onclick="showDetail(this)">Detail</button>
+                                        </td>
+                                    </tr>
+                                    <!-- Add more rows as needed -->
+                                    <tr>
+                                        <td>
+                                            <span class="text-secondary text-xs font-weight-bold">Prepay Request 1</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-secondary text-xs font-weight-bold">John Doe</span>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="text-secondary text-xs font-weight-bold">$500</span>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="text-secondary text-xs font-weight-bold">Manager A</span>
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <a href="#" class="btn btn-link text-info" download="file.pdf">file.pdf</a>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="text-secondary text-xs font-weight-bold">Pending</span>
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <button class="btn btn-success btn-sm" onclick="approveRequest(this)">Approve</button>
+                                            <button class="btn btn-danger btn-sm" onclick="declineRequest(this)">Decline</button>
+                                            <button class="btn btn-info btn-sm" onclick="showDetail(this)">Detail</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detail Modal -->
+        <div id="detailModal" class="modal">
+            <div class="modal-content" style="width:fit-content; height:fit-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h3>Prepay Request Details</h3>
+                <p><strong>Title:</strong> Prepay Request 1</p>
+                <p><strong>Sender:</strong> John Doe</p>
+                <p><strong>Expected Money:</strong> $500</p>
+                <p><strong>Assign From:</strong> Manager A</p>
+                <p><strong>Description:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vehicula turpis ut nulla placerat consectetur.</p>
+                <p><strong>File:</strong> <a href="#">file.pdf</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/core/popper.min.js"></script>
+    <script src="../assets/js/core/bootstrap.min.js"></script>
+    <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+    <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+
+    <script>
+        let currentDeclineButton = null;
+        let currentDeclineReason = '';
+
+        function approveRequest(button) {
+            var row = button.closest('tr');
+            var actionCell = row.querySelector('td:nth-child(7)');
+
+            button.style.display = 'none';
+            actionCell.querySelector('.btn-danger').style.display = 'none';
+
+            const detailButton = actionCell.querySelector('.btn-info');
+            const approvedText = document.createElement('span');
+            approvedText.classList.add('text-approved', 'me-2');
+            approvedText.textContent = 'Approved';
+            // actionCell.appendChild(approvedText);
+            actionCell.insertBefore(approvedText, detailButton);
+            row.querySelector('td:nth-child(6)').innerHTML = '<span class="text-approved text-xs font-weight-bold">Approved</span>';
+        }
+
+        function showDeclinePopup(button) {
+            currentDeclineButton = button;
+            document.getElementById('declineModal').style.display = 'block';
+        }
+
+        function submitDecline() {
+            if (!currentDeclineButton) return;
+
+            const reason = document.getElementById('declineReason').value;
+            // if (!reason.trim()) {
+            //     alert('Please enter a reason for decline.');
+            //     return;
+            // }
+
+            var row = currentDeclineButton.closest('tr');
+            var actionCell = row.querySelector('td:nth-child(7)');
+            currentDeclineButton.style.display = 'none';
+            row.querySelector('.btn-success').style.display = 'none';
+
+            const detailButton = actionCell.querySelector('.btn-info');
+            const declinedText = document.createElement('span');
+            declinedText.classList.add('text-declined', 'me-2');
+            declinedText.textContent = `Declined`;
+            // actionCell.appendChild(declinedText);
+            actionCell.insertBefore(declinedText, detailButton);
+
+            row.querySelector('td:nth-child(6)').innerHTML = '<span class="text-declined text-xs font-weight-bold">Declined</span>';
+            // currentDeclineReason = reason;
+                row.dataset.declineReason = reason;
+
+            document.getElementById('declineReason').value = '';
+            closeModal();
+        }
+
+        function showDetail(button) {
+            var row = button.closest('tr');
+            var modal = document.getElementById('detailModal');
+            modal.style.display = 'block';
+
+            const declineReason = row.dataset.declineReason;
+            if (declineReason) {
+                document.getElementById('declineReasonDisplay').style.display = 'block';
+                document.getElementById('declineReasonText').textContent = declineReason;
+            } else {
+            document.getElementById('declineReasonDisplay').style.display = 'none';
+            }
+            // if (currentDeclineReason) {
+            //     document.getElementById('declineReasonDisplay').style.display = 'block';
+            //     document.getElementById('declineReasonText').textContent = currentDeclineReason;
+            // } else {
+            //     document.getElementById('declineReasonDisplay').style.display = 'none';
+            // }
+        }
+
+        function closeModal() {
+            document.getElementById('declineModal').style.display = 'none';
+            document.getElementById('detailModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var declineModal = document.getElementById('declineModal');
+            var detailModal = document.getElementById('detailModal');
+            if (event.target == declineModal) {
+                declineModal.style.display = 'none';
+            }
+            if (event.target == detailModal) {
+                detailModal.style.display = 'none';
+            }
+
+        }
+    </script>
+
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+</body>
+
+</html>

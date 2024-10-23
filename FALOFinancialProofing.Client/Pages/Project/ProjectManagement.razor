@@ -1,0 +1,173 @@
+﻿@page "/projectmanagement"
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
+
+    <style>
+        .badge-approved {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        .badge-declined {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .badge-pending {
+            background-color: #ffc107;
+            color: #fff;
+        }
+
+        /* Search and filter styles */
+        .search-filter-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .search-box {
+            width: 70%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .filter-box {
+            width: 25%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Project table</h6>
+                            <NavLink class="btn btn-dark mb-0 me-3" href="projectcreate">Add Project</NavLink>
+                        </div>
+                    </div>
+
+                    <div class="search-filter-container px-3">
+                        <input type="text" id="searchBox" class="search-box" placeholder="Search by Project or Address" onkeyup="filterTable()">
+                        <select id="statusFilter" class="filter-box" onchange="filterTable()">
+                            <option value="">All Status</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Declined">Declined</option>
+                        </select>
+                    </div>
+
+                    <div class="card-body px-0 pb-2">
+                        <div class="table-responsive p-0">
+                            <table class="table align-items-center mb-0" id="projectTable">
+                                <thead>
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 5%;">STT</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="width: 25%;">Project</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 25%;">Address</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Budget</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Status</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">1</span></td>
+                                        <td><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">Project A</span></div></td>
+                                        <td><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">Address A</span></div></td>
+                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">10,000.00</span></td>
+                                        <td class="align-middle text-center"><span class="badge badge-sm badge-pending" id="status-1">Pending</span></td>
+                                        <td class="align-middle text-center">
+                                            <span id="action-1">
+                                                <button class="btn btn-success btn-sm" onclick="approveProject(1)">Approve</button>
+                                                <button class="btn btn-danger btn-sm" onclick="declineProject(1)">Decline</button>
+                                            </span>
+                                            <a href="projectdetail" class="btn btn-primary btn-sm">Detail</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">2</span></td>
+                                        <td><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">Project B</span></div></td>
+                                        <td><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">Address B</span></div></td>
+                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">20,000.00</span></td>
+                                        <td class="align-middle text-center"><span class="badge badge-sm badge-pending" id="status-2">Pending</span></td>
+                                        <td class="align-middle text-center">
+                                            <span id="action-2">
+                                                <button class="btn btn-success btn-sm" onclick="approveProject(2)">Approve</button>
+                                                <button class="btn btn-danger btn-sm" onclick="declineProject(2)">Decline</button>
+                                            </span>
+                                            <a href="projectdetail" class="btn btn-primary btn-sm">Detail</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/core/popper.min.js"></script>
+    <script src="../assets/js/core/bootstrap.min.js"></script>
+    <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+    <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+
+    <script>
+        function approveProject(id) {
+            document.getElementById('status-' + id).className = 'badge badge-sm badge-approved';
+            document.getElementById('status-' + id).innerText = 'Approved';
+            document.getElementById('action-' + id).innerHTML = '';
+        }
+
+        function declineProject(id) {
+            document.getElementById('status-' + id).className = 'badge badge-sm badge-declined';
+            document.getElementById('status-' + id).innerText = 'Declined';
+            document.getElementById('action-' + id).innerHTML = '';
+        }
+
+        function filterTable() {
+            const searchInput = document.getElementById('searchBox').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
+            const table = document.getElementById('projectTable');
+            const rows = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < rows.length; i++) {
+                const project = rows[i].cells[1].innerText.toLowerCase();
+                const address = rows[i].cells[2].innerText.toLowerCase();
+                const status = rows[i].cells[4].innerText.toLowerCase();
+
+                let matchesSearch = project.includes(searchInput) || address.includes(searchInput);
+                let matchesStatus = statusFilter === "" || status.includes(statusFilter);
+
+                if (matchesSearch && matchesStatus) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        }
+    </script>
+
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+</body>
+
+</html>
