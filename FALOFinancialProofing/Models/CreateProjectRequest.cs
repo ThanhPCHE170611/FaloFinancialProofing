@@ -15,6 +15,7 @@ namespace FALOFinancialProofing.Models
         public string ReceiverId { get; set; }
         public User ReceiverUser { get; set; }
         public int ProjectId { get; set; }
+        public Project Project { get; set; }
         public string Title { get; set; }
         [Required(ErrorMessage = "Description is Required")]
         public DateTime CreatedAt { get; set; }

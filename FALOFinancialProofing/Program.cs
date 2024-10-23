@@ -19,9 +19,21 @@ using Microsoft.OpenApi.Models;
 using System.Configuration;
 using System.Security.Claims;
 using System.Text;
+using FALOFinancialProofing.Services.RequestFormServices;
+using FALOFinancialProofing.Services.AttachmentFIleServices;
+using FALOFinancialProofing.Services.ApproveProcessServices;
+using FALOFinancialProofing.Services.VoucherServices;
+using Example;
+using Microsoft.AspNetCore.Http.Features;
 using FALOFinancialProofing.Services.OrganizationServices;
 using FALOFinancialProofing.Services.CreateProjectRequestServices;
 using FALOFinancialProofing.Services.CreateProjectFileServices;
+using FALOFinancialProofing.Services.CreateCampaignFileServices;
+using FALOFinancialProofing.Services.CreateCampaignRequestServices;
+using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices;
+using FALOFinancialProofing.Services.ProjectServices;
+using FALOFinancialProofing.Services.CampaignService;
+using FALOFinancialProofing.Services.CampaignMemberService;
 
 namespace FALOFinancialProofing
 {
@@ -38,6 +50,7 @@ namespace FALOFinancialProofing
 
             builder.Services.AddScoped(typeof(AuthServices));
             builder.Services.AddScoped<ITransactionLogService, TransactionLogService>();
+            
             //builder.Services.AddScoped(typeof(AuthServices));
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<ISDGServices, SDGServices>();
@@ -45,17 +58,30 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped<ICreateProjectRequestService, CreateProjectRequestService>();
             builder.Services.AddScoped<ICreateProjectFileService, CreateProjectFileService>();
             builder.Services.AddScoped<ISocialNetworkService, SocialNetworkService>();
+            builder.Services.AddScoped<IRequestFormServices, RequestFormServices>();
+            builder.Services.AddScoped<IAttachmentFileServices, AttachmentFileServices>();
+            builder.Services.AddScoped<IApproveProcessServices, ApproveProcessServices>();
+            builder.Services.AddScoped<IVoucherServices, VoucherServices>();
+
+            builder.Services.AddScoped<ICreateCampaignFileService, CreateCampaignFileService>();
+            builder.Services.AddScoped<ICreateCampaignRequestService, CreateCampaignRequestService>();
+            builder.Services.AddScoped<IMoveNextCampaignStatusRequestService, MoveNextCampaignStatusRequestService>();
+            builder.Services.AddScoped<IProjectService, ProjectService>();
+            builder.Services.AddScoped<ICampaignService, CampaignService>();
+            builder.Services.AddScoped<ICampaignMemberService, CampaignMemberService>();
+
 
             // Add Email Configs
             var emailConfig = configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
             builder.Services.AddSingleton(emailConfig);
 
 
-
-
-
             //builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddControllers();
+            builder.Services.Configure<FormOptions>(options =>
+            {
+                options.MultipartBodyLengthLimit = 102400; // Giới hạn 100kb chẳng hạn
+            });
             builder.Services.AddSwaggerGen(c =>
             {
                 c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme

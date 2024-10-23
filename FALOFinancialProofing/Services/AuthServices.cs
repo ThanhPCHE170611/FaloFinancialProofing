@@ -110,7 +110,7 @@ namespace FALOFinancialProofing.Services
                 var result = await userManager.CreateAsync(newUser, registerRequest.Password);
                 if (result.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(newUser, AppRole.User);
+                    await userManager.AddToRoleAsync(newUser, AppRole.Volunteer);
                     return result;
                 }
             }
