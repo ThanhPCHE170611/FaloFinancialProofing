@@ -180,7 +180,8 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                         {
                             Id = rf.RequestType.Id,
                             TypeName = rf.RequestType.TypeName
-                        }
+                        },
+                        TypeId = rf.RequestType.Id
                     }).FirstOrDefaultAsync();
             }
             catch (Exception e)
@@ -315,9 +316,9 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 .ThenInclude(x => x.IdentityRole)
                 .FirstOrDefault()
                 .CampaignMembers
-                .FirstOrDefault(cm => cm.UserId == createdBy)
+                .FirstOrDefault(cm => cm.UserId == createdBy && cm.IsActive)
                 .IdentityRole.Name;
-            var approverRole = campaignMemberRepository.GetAll(x => x.UserId == approverId)
+            var approverRole = campaignMemberRepository.GetAll(x => x.UserId == approverId && x.IsActive)
                     .Include(x => x.IdentityRole)
                     .FirstOrDefault()
                     .IdentityRole.Name;
@@ -401,7 +402,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 approverList = await campaignMemberRepository.GetAll(x => x.CampaignId == campaignId)
                     .Include(x => x.User)
                     .Include(x => x.IdentityRole)
-                    .Where(x => x.IdentityRole.Name == "Volunteer Leader")
+                    .Where(x => x.IdentityRole.Name == "Volunteer Leader" && x.IsActive)
                     .Select(x => new UserWithRole
                     {
                         UserId = x.UserId,
@@ -425,7 +426,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 var approverForLeader = await campaignMemberRepository.GetAll(x => x.CampaignId == campaignId)
                     .Include(x => x.User)
                     .Include(x => x.IdentityRole)
-                    .Where(x => x.IdentityRole.Name == "Accounting")
+                    .Where(x => x.IdentityRole.Name == "Accounting" && x.IsActive)
                     .Select(x => new UserWithRole
                     {
                         UserId = x.UserId,
@@ -449,7 +450,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 var approverForLeader = await campaignMemberRepository.GetAll(x => x.CampaignId == campaignId)
                     .Include(x => x.User)
                     .Include(x => x.IdentityRole)
-                    .Where(x => x.IdentityRole.Name == "Project Management")
+                    .Where(x => x.IdentityRole.Name == "Project Management" && x.IsActive)
                     .Select(x => new UserWithRole
                     {
                         UserId = x.UserId,
@@ -473,7 +474,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 var approverForLeader = await campaignMemberRepository.GetAll(x => x.CampaignId == campaignId)
                     .Include(x => x.User)
                     .Include(x => x.IdentityRole)
-                    .Where(x => x.IdentityRole.Name == "Accounting")
+                    .Where(x => x.IdentityRole.Name == "Accounting" && x.IsActive)
                     .Select(x => new UserWithRole
                     {
                         UserId = x.UserId,

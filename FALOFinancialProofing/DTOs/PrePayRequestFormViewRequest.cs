@@ -15,6 +15,5 @@ namespace FALOFinancialProofing.DTOs
         public int CampaignId { get; set; }
 
         public List<AttachmentFileRequest> AttachmentFiles { get; set; }
-
     }
 }

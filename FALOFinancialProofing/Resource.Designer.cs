@@ -61,11 +61,29 @@ namespace FALOFinancialProofing {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Approved.
+        /// </summary>
+        public static string ApprovedStatus {
+            get {
+                return ResourceManager.GetString("ApprovedStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Process.
         /// </summary>
         public static string ProcessStatus {
             get {
                 return ResourceManager.GetString("ProcessStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rejected.
+        /// </summary>
+        public static string RejectedStatus {
+            get {
+                return ResourceManager.GetString("RejectedStatus", resourceCulture);
             }
         }
     }

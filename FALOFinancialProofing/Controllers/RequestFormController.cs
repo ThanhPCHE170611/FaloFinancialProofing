@@ -180,8 +180,8 @@ namespace FALOFinancialProofing.Controllers
             });
             
         }
-        [HttpGet("getapproverlistforvolunteerleader/{campaignId}")]
-        public async Task<IActionResult> GetApproverListForVolunteerLeader(int campaignId)
+        [HttpGet("getapproverforvolunteerleader/{campaignId}")]
+        public async Task<IActionResult> GetApproverForVolunteerLeader(int campaignId)
         {
             var approverAsync = await requestFormService.GetApproverForVolunteerLeader(campaignId);
             if(approverAsync == null)
@@ -200,8 +200,8 @@ namespace FALOFinancialProofing.Controllers
             });
         }
         
-        [HttpGet("getapproverlistforaccounting/{campaignId}")]
-        public async Task<IActionResult> GetApproverListForAccounting(int campaignId)
+        [HttpGet("getapproverforaccounting/{campaignId}")]
+        public async Task<IActionResult> GetApproverForAccounting(int campaignId)
         {
             var approverAsync = await requestFormService.GetApproverForAccounting(campaignId);
             if(approverAsync == null)
@@ -220,8 +220,8 @@ namespace FALOFinancialProofing.Controllers
             });
         }
         
-        [HttpGet("getapproverlistforprojectmanagement/{campaignId}")]
-        public async Task<IActionResult> GetApproverListForProjectManagement(int campaignId)
+        [HttpGet("getapproverforprojectmanagement/{campaignId}")]
+        public async Task<IActionResult> GetApproverForProjectManagement(int campaignId)
         {
             var approverAsync = await requestFormService.GetApproverForProjectManagement(campaignId);
             if(approverAsync == null)

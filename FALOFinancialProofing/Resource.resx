@@ -117,7 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ApprovedStatus" xml:space="preserve">
+    <value>Approved</value>
+  </data>
   <data name="ProcessStatus" xml:space="preserve">
     <value>Process</value>
+  </data>
+  <data name="RejectedStatus" xml:space="preserve">
+    <value>Rejected</value>
   </data>
 </root>
