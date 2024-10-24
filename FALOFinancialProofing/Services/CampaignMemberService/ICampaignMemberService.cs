@@ -8,6 +8,8 @@ namespace FALOFinancialProofing.Services
     {
         Task<List<CampaignMember>> GetAllCampaignMembersAsync();
         Task<CampaignMember?> GetCampaignMemberByIdAsync(int id);
+        Task<CampaignMember?> GetCampaignMemberByUserIdAsync(string userid);
+
         Task<CampaignMember?> CreateCampaignMemberAsync(CreateCampaignMemberDTO createCampaignMemberDTO);
         Task<bool> UpdateCampaignMemberAsync(UpdateCampaignMemberDTO updateCampaignMemberDTO);
         Task<bool> DeleteCampaignMemberByIdAsync(int id);

@@ -240,6 +240,27 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
+        [HttpGet("getallprepayrequestincampaign/{campaignId}")]
+        public async Task<IActionResult> GetAllPrePayRequestInCampaign(int campaignId, string userId)
+        {
+            var requestForms = await requestFormService.GetAllPrePayRequestInCampaign(campaignId, userId);
+            if(requestForms == null || requestForms.Count == 0)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "No RequestForms found."
+                });
+            }
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "RequestForms retrieved successfully.",
+                Data = requestForms
+            });
+        }
+
         [HttpPost("uploadvoucherforaccounting/{approveId}")]
         public async Task<IActionResult> UploadVoucherForAccounting(int approveId, List<IFormFile> files)
         {

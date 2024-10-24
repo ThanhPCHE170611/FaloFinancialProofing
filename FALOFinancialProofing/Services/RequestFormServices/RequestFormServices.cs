@@ -538,5 +538,60 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 return voucherFiles;
             }
         }
+
+        public async Task<List<RequestFormWithAttachmentApprovementVoucher>?> GetAllPrePayRequestInCampaign(int campaignId, string userId)
+        {
+            var requestForms = new List<RequestFormWithAttachmentApprovementVoucher>();
+            try
+            {
+                requestForms = await repository.GetAll(r => r.CampaignId == campaignId
+                                            && r.CreatedBy.Equals(userId))
+                                            .Include(r => r.AttachmentFiles)
+                                            .Include(r => r.ApproveProcesses)
+                                            .ThenInclude(ap => ap.Vouchers)
+                                            .Include(r => r.ApproveProcesses)
+                                            .ThenInclude(ap => ap.User)
+                                            .Include(r => r.Campaign)
+                                            .ThenInclude(c => c.CampaignMembers)
+                                            .Select(r => new RequestFormWithAttachmentApprovementVoucher
+                                            {
+                                                Id = r.Id,
+                                                CreateAt = r.CreateAt,
+                                                Description = r.Description,
+                                                ExpectedMoney = r.ExpectedMoney,
+                                                Status = r.Status,
+                                                CreatedBy = r.CreatedBy,
+                                                CampaignId = r.CampaignId,
+                                                TypeId = r.TypeId,
+                                                AttachmentFiles = r.AttachmentFiles.ToList(),
+                                                ApproveProcesses = r.ApproveProcesses.Select(ap => new ApproveProcessWithUser
+                                                {
+                                                    Id = ap.Id,
+                                                    ApproveNumber = ap.ApproveNumber,
+                                                    ApproveStatus = ap.ApproveStatus,
+                                                    RequestId = ap.RequestId,
+                                                    ApproverId = ap.ApproverId,
+                                                    UserWithRole = new UserWithRole
+                                                    {
+                                                        UserId = ap.ApproverId,
+                                                        FullName = $"{ap.User.FirstName} {ap.User.LastName}",
+                                                        RoleId = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).IdentityRole.Id,
+                                                        RoleName = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).IdentityRole.Name
+                                                    }
+                                                }).ToList(),
+                                                VoucherFiles = r.ApproveProcesses.Select(ap => new VoucherRequest
+                                                {
+                                                    Id = ap.Vouchers.FirstOrDefault().Id,
+                                                    FilePath = ap.Vouchers.FirstOrDefault().FilePath,
+                                                }).ToList()
+                                            }).ToListAsync();
+
+                return requestForms;
+            }
+            catch (Exception ex)
+            {
+                return new List<RequestFormWithAttachmentApprovementVoucher>();
+            }
+        }
     }
 }

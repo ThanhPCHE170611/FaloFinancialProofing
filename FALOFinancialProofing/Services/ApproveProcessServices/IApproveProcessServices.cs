@@ -1,5 +1,6 @@
 ﻿using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Models;
+using System.Threading.Tasks;
 
 namespace FALOFinancialProofing.Services.ApproveProcessServices
 {
@@ -22,9 +23,14 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
         Task<bool> ApprovePrePayRequestForLeader(string userid, string currentLoggingRole, int requestid);
 
         Task<bool> ApprovePrePayRequestForAccounting(string userid, string currentLoggingRole, int requestid);
+
+        Task<bool> ApprovePrePayRequestForProjectManager(string userid, string currentLoggingRole, int requestid);
         Task<bool> RejectPrePayRequestForLeader(string userid, string currentLoggingRole, int requestid);
+        Task<bool> RejectPrePayRequestForAccounting(string userid, string currentLoggingRole, int requestid);
+        Task<bool> RejectPrePayRequestForProjectManager(string userid, string currentLoggingRole, int requestid);
         Task<ApproveProcess?> GetApproveProcessesByRequestIdAndApproveIdAsync(int requestid, string userid);
         Task<List<PrePayRequestFormViewRequest>?> GetAllPrepayRequestForAccounting(string userid, string currentLoggingRole);
+        Task<List<PrePayRequestFormViewRequestWithVoucherForPM>?> GetAllPrepayRequestForProjectManager(string userid, string currentLoggingRole);
         
     }
 }

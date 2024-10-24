@@ -68,6 +68,19 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             }
         }
 
+        public async Task<CampaignMember?> GetCampaignMemberByUserIdAsync(string userid)
+        {
+            try
+            {
+                return await cmRepository.Get(x => x.UserId.Equals(userid));
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+
         public async Task<bool> UpdateCampaignMemberAsync(UpdateCampaignMemberDTO updateCampaignMemberDTO)
         {
             try
@@ -109,5 +122,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 return false;
             }
         }
+
+        
     }
 }

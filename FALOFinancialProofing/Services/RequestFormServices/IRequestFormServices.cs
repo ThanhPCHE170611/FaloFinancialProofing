@@ -29,5 +29,6 @@ namespace FALOFinancialProofing.Services.RequestFormServices
         Task<UserWithRole?> GetApproverForAccounting(int campaignId);
         Task<UserWithRole?> GetApproverForProjectManagement(int campaignId);
         Task<List<VoucherRequest>> SaveUploadedVoucherAsync(int approveId, List<IFormFile> files);
+        Task<List<RequestFormWithAttachmentApprovementVoucher>?> GetAllPrePayRequestInCampaign(int campaignId, string userId);
     }
 }
