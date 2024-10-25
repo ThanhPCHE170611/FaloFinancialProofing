@@ -1,5 +1,255 @@
-﻿<h3>PrepayDetail</h3>
+﻿@page "/prepaydetail"
+<!DOCTYPE html>
+<html lang="en">
 
-@code {
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+    <link href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <style>
+        .approval-process {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            margin-left: auto;
+            margin-right: 0;
+            width: 300px;
+            padding-left: 40px;
+        }
 
-}
+            .approval-process h6 {
+                margin-bottom: 20px;
+                font-size: 18px;
+                font-weight: bold;
+                color: #333;
+            }
+
+            .approval-process::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 23px; 
+                width: 3px;
+                height: 100%;
+                background-color: #ddd;
+                z-index: -1;
+            }
+
+        .approval-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+            padding: 0 0 0 10px;
+        }
+
+            .approval-step .circle {
+                width: 25px;
+                height: 25px;
+                border-radius: 50%;
+                margin-right: 15px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 14px;
+                color: #fff;
+                font-weight: bold;
+                position: relative;
+                z-index: 1;
+                border: 3px solid #fff; 
+            }
+
+            .approval-step .info {
+                display: flex;
+                flex-direction: column;
+                text-align: left;
+            }
+
+                .approval-step .info .step-name {
+                    font-weight: bold;
+                    font-size: 14px;
+                }
+
+                .approval-step .info .step-date {
+                    font-size: 12px;
+                    color: #888;
+                }
+
+                .approval-step .info .step-status {
+                    font-size: 12px;
+                    font-weight: bold;
+                    font-style: italic;
+                }
+
+        .creator .circle {
+            background-color: blue;
+        }
+
+        .approved .circle {
+            background-color: green;
+        }
+
+        .pending .circle {
+            background-color: gray;
+        }
+
+        .rejected .circle {
+            background-color: red;
+        }
+
+        .completed .circle {
+            background-color: darkblue;
+        }
+
+        .approval-step.approved::before,
+        .approval-step.creator::before,
+        .approval-step.completed::before {
+            content: '';
+            position: absolute;
+            left: 34px; 
+            top: 50%;
+            bottom: -50%;
+            width: 3px;
+            background-color: green;
+            z-index: 0;
+        }
+
+        .approval-step.pending::before {
+            content: '';
+            position: absolute;
+            left: 34px;
+            top: 50%;
+            bottom: -50%;
+            width: 3px;
+            background-color: gray;
+            z-index: 0;
+        }
+
+        .approval-step.rejected::before {
+            content: '';
+            position: absolute;
+            left: 34px;
+            top: 50%;
+            bottom: -50%;
+            width: 3px;
+            background-color: red;
+            z-index: 0;
+        }
+
+        .back-button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .back-button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+            .back-button:hover {
+                background-color: #0056b3;
+            }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                            <h6 class="text-white text-capitalize ps-3">Prepay Detail</h6>
+                        </div>
+                    </div>
+
+                    <div class="card-body px-0 pb-2">
+                        <div class="row">
+                            <div class="col-8">
+                                <div class="px-4">
+                                    <h6 class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Prepay Information</h6>
+                                    <p><strong>Title:</strong> Prepay Request 1</p>
+                                    <p><strong>Sender:</strong> John Doe</p>
+                                    <p><strong>Expected Money:</strong> 9.000.000</p>
+                                    <p><strong>Assign From:</strong> Manager A</p>
+                                    <p><strong>File:</strong> <a href="#" class="btn btn-link text-info" download="file.pdf">file.pdf</a></p>
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="approval-process">
+                                    <h6>Approval Process</h6>
+
+                                    <div class="approval-step creator">
+                                        <div class="circle">1</div>
+                                        <div class="info">
+                                            <div class="step-name">Created</div>
+                                            <div class="step-date">2024-10-24 10:30</div>
+                                            <div class="step-status">Status: Created</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="approval-step approved">
+                                        <div class="circle">2</div>
+                                        <div class="info">
+                                            <div class="step-name">Team Leader Approved</div>
+                                            <div class="step-date">2024-10-25 12:00</div>
+                                            <div class="step-status">Status: Approved</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="approval-step pending">
+                                        <div class="circle">3</div>
+                                        <div class="info">
+                                            <div class="step-name">Accountant Pending</div>
+                                            <div class="step-date">--</div>
+                                            <div class="step-status">Status: Pending</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="approval-step rejected">
+                                        <div class="circle">4</div>
+                                        <div class="info">
+                                            <div class="step-name">Project Manager Rejected</div>
+                                            <div class="step-date">2024-10-26 15:30</div>
+                                            <div class="step-status">Status: Rejected</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="approval-step completed">
+                                        <div class="circle">5</div>
+                                        <div class="info">
+                                            <div class="step-name">Completed</div>
+                                            <div class="step-date">2024-10-27 18:00</div>
+                                            <div class="step-status">Status: Completed</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="back-button-container">
+                            <button class="back-button" onclick="window.history.back();">Back</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/core/popper.min.js"></script>
+    <script src="../assets/js/core/bootstrap.min.js"></script>
+    <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+    <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+</body>
+
+</html>
