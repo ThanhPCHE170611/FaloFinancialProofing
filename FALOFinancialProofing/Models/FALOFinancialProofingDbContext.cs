@@ -160,6 +160,15 @@ namespace FALOFinancialProofing.Models
                   .WithOne(u => u.User)
                   .HasForeignKey(c => c.CreateBy)
                   .OnDelete(DeleteBehavior.NoAction);
+                //them moi
+                entity.HasMany(c => c.MoveNextCampaignStatusRequestSenderUsers)
+                    .WithOne(u => u.SenderUser)
+                    .HasForeignKey(su => su.SenderId)
+                    .OnDelete(DeleteBehavior.NoAction);
+                entity.HasMany(c => c.MoveNextCampaignStatusRequestReceiverUsers)
+                    .WithOne(u => u.ReceiverUser)
+                    .HasForeignKey(ru => ru.ReceiverId)
+                    .OnDelete(DeleteBehavior.NoAction);
             });
             modelBuilder.Entity<Project>(entity =>
             {

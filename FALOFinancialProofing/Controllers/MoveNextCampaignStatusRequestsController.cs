@@ -1,4 +1,5 @@
-﻿using FALOFinancialProofing.Models;
+﻿using FALOFinancialProofing.DTOs.MoveNextCampaignStatusRequestDTO;
+using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -105,5 +106,75 @@ namespace FALOFinancialProofing.Controllers
 
             return Content(statusMessage);
         }
+
+
+
+
+
+        //Manh moi them
+        [HttpGet("GetAllMoveNextCampaignStatusRequests")]
+        public async Task<IActionResult> GetAllMoveNextCampaignStatusRequests()
+        {
+            var moveNextCampaignStatusRequests = await _moveNextCampaignStatusRequestService.GetAllMoveNextCampaignStatusRequestAsync();
+            if (moveNextCampaignStatusRequests == null || moveNextCampaignStatusRequests.Count == 0)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "No MoveNextCampaignStatusRequest found."
+                });
+            }
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "MoveNextCampaignStatusRequests retrieved successfully.",
+                Data = moveNextCampaignStatusRequests
+            });
+        }
+
+
+        [HttpGet("GetMoveNextCampaignStatusRequestById/{id}")]
+        public async Task<IActionResult> GetMoveNextCampaignStatusRequestById(int id)
+        {
+            var moveNextCampaignStatusRequest = await _moveNextCampaignStatusRequestService.GetMoveNextCampaignStatussRequestByIdAsync(id);
+            if (moveNextCampaignStatusRequest == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = $"MoveNextCampaignStatusRequest with Id = {id} not found."
+                });
+            }
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "MoveNextCampaignStatusRequest retrieved successfully.",
+                Data = moveNextCampaignStatusRequest
+            });
+        }
+
+        [HttpPost("CreateMoveNextCampaignStatusRequest")]
+        public async Task<IActionResult> CreateMoveNextCampaignStatusRequest([FromBody] CreateMoveNextCampaignStatusRequestDTO createMoveNextCampaignStatusRequestDTO)
+        {
+            var createMoveNextCampaignStatusRequest = await _moveNextCampaignStatusRequestService.CreateMoveNextCampaignStatusRequestAsync(createMoveNextCampaignStatusRequestDTO);
+            if (createMoveNextCampaignStatusRequest == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "Unable to create MoveNextCampaignStatusRequest."
+                });
+            }
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "MoveNextCampaignStatusRequest created successfully.",
+                Data = createMoveNextCampaignStatusRequest
+            });
+        }
+
     }
 }

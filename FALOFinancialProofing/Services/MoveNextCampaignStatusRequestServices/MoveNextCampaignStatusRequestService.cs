@@ -1,4 +1,5 @@
-﻿using FALOFinancialProofing.Models;
+﻿using FALOFinancialProofing.DTOs.MoveNextCampaignStatusRequestDTO;
+using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using Microsoft.EntityFrameworkCore;
 
@@ -69,6 +70,8 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
         }
 
 
+
+
         // admin can update transaction logs
         public async Task<bool> UpdateMoveNextCampaignStatusRequestAsync(MoveNextCampaignStatusRequest updateMoveNextCampaignStatusRequest)
         {
@@ -113,6 +116,64 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
             }
 
             return result;
+        }
+
+
+
+
+
+        // Manh moi them vao
+        public async Task<List<MoveNextCampaignStatusRequest>> GetAllMoveNextCampaignStatusRequestAsync()
+        {
+            try
+            {
+                return await _moveNextCampaignStatusRequestRepository.GetAll().ToListAsync();
+            }
+            catch (Exception e)
+            {
+                return new List<MoveNextCampaignStatusRequest>();
+            }
+        }
+
+        public async Task<MoveNextCampaignStatusRequest?> GetMoveNextCampaignStatussRequestByIdAsync(int id)
+        {
+            try
+            {
+                return await _moveNextCampaignStatusRequestRepository.Get(x => x.Id == id);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        public async Task<MoveNextCampaignStatusRequest?> CreateMoveNextCampaignStatusRequestAsync(CreateMoveNextCampaignStatusRequestDTO createMoveNextCampaignStatusRequestDTO)
+        {
+            try
+            {
+                var newMoveNextCampaignStatusRequest = await CreateMoveNextCampaignStatusRequestDTOToEntity(createMoveNextCampaignStatusRequestDTO);
+
+                return await _moveNextCampaignStatusRequestRepository.InsertAsync(newMoveNextCampaignStatusRequest);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        private async Task<MoveNextCampaignStatusRequest> CreateMoveNextCampaignStatusRequestDTOToEntity(CreateMoveNextCampaignStatusRequestDTO createMoveNextCampaignStatusRequestDTO)
+        {
+            return new MoveNextCampaignStatusRequest
+            {
+                
+                SenderId = createMoveNextCampaignStatusRequestDTO.SenderId,
+                ReceiverId = createMoveNextCampaignStatusRequestDTO.ReceiverId,
+                CampaignID = createMoveNextCampaignStatusRequestDTO.CampaignID,
+                Title = createMoveNextCampaignStatusRequestDTO.Title,
+                CreatedAt = createMoveNextCampaignStatusRequestDTO.CreatedAt,
+                Feedback = createMoveNextCampaignStatusRequestDTO.Feedback,
+                Status = createMoveNextCampaignStatusRequestDTO.Status
+            };
         }
     }
 }

@@ -1,25 +1,20 @@
-﻿using FALOFinancialProofing.Core;
+﻿using FALOFinancialProofing.Models;
 using System.ComponentModel.DataAnnotations;
 
-namespace FALOFinancialProofing.Models
+namespace FALOFinancialProofing.DTOs.MoveNextCampaignStatusRequestDTO
 {
-    public class MoveNextCampaignStatusRequest : Entity<int>
+    public class CreateMoveNextCampaignStatusRequestDTO
     {
         [Required]
         public string SenderId { get; set; }
-        public User SenderUser { get; set; }
         [Required]
         public string ReceiverId { get; set; }
-        public User ReceiverUser { get; set; }
         [Required]
         public int CampaignID { get; set; }
-        public Campaign Campaign { get; set; }
         public string Title { get; set; }
         [Required]
         public DateTime CreatedAt { get; set; }
-        [StringLength(250)]
         public string Feedback { get; set; }
-        [StringLength(20)]
         public string Status { get; set; }
     }
 }
