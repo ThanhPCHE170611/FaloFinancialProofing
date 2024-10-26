@@ -38,7 +38,7 @@
                 list-style: none;
             }
 
-        /* Style for the tab navigation */
+
         .nav-tabs {
             display: flex;
             justify-content: space-around;
@@ -64,7 +64,7 @@
                     color: #fff;
                 }
 
-        /* Searchable select box */
+
         .searchable-select {
             width: 100%;
             padding: 10px;
@@ -182,13 +182,13 @@
             const description = document.getElementById('description').value;
             const attachments = document.getElementById('attachments').files;
 
-            // Ensure that a file is selected
+
             if (attachments.length === 0) {
                 alert('Please attach at least one file before creating.');
-                return; // Prevent submission
+                return; 
             }
 
-            // If file is selected, proceed with the creation
+
             console.log({
                 sender,
                 title,

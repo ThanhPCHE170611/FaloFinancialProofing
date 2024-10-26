@@ -189,9 +189,9 @@
                                         <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">$7500.00</span></td>
                                         <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">Manager B</span></td>
                                         <td class="align-middle text-center"><a href="#" class="btn btn-link text-info" download="filePayment2.pdf">filePayment2.pdf</a></td>
-                                        <td class="align-middle text-center text-sm"><span class="text-approved text-xs font-weight-bold">Approved</span></td>
+                                        <td class="align-middle text-center text-sm"><span class="text-pending text-xs font-weight-bold">Pending</span></td>
                                         <td class="align-middle text-center">
-                                            <button class="btn btn-success btn-sm" onclick="approveRequest(this)" disabled>Approve</button>
+                                            <button class="btn btn-success btn-sm" onclick="approveRequest(this)">Approve</button>
                                             <button class="btn btn-danger btn-sm" onclick="showDeclinePopup(this)">Decline</button>
                                             <button class="btn btn-info btn-sm" onclick="showDetail(this)">Detail</button>
                                         </td>
@@ -308,7 +308,6 @@
             document.getElementById('detailModal').style.display = 'none';
         }
 
-        // Search and Filter functionality
         function filterTable() {
             const searchInput = document.getElementById('searchBox').value.toLowerCase();
             const statusFilter = document.getElementById('statusFilter').value;

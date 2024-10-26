@@ -50,8 +50,8 @@
                             </NavLink>
                         </div>
                     </div>
-                    <div class="search-filter-container">
-                        <input type="text" id="searchInput" placeholder="Search by campaign name..." class="search-box" onkeyup="searchCampaign()" />
+                    <div class="search-filter-container px-3">
+                        <input type="text" id="searchInput" placeholder="Search by Campaign Name" class="search-box" onkeyup="searchCampaign()" />
                         <select id="statusFilter" class="filter-box" onchange="filterByStatus()">
                             <option value="">All Statuses</option>
                             <option value="Approved">Approved</option>
@@ -59,8 +59,9 @@
                             <option value="Declined">Declined</option>
                         </select>
                     </div>
+
                     <div class="card-body px-0 pb-2">
-                        <div class="table-responsive p-0">
+                        <div class="table-responsive p-0">  
                             <table class="table align-items-center mb-0" id="campaignTable">
                                 <thead>
                                     <tr>
