@@ -4,6 +4,7 @@ using FALOFinancialProofing.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FALOFinancialProofing.Migrations
 {
     [DbContext(typeof(FALOFinancialProofingDbContext))]
-    partial class FALOFinancialProofingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241024154631_changeFeedBackType1")]
+    partial class changeFeedBackType1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -278,6 +281,7 @@ namespace FALOFinancialProofing.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ReceiverId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("SenderId")
@@ -290,6 +294,7 @@ namespace FALOFinancialProofing.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Title")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -300,7 +305,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("CreateProjectRequests");
+                    b.ToTable("CreateProjects");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.CreateProjectRequestApproveHistory", b =>
@@ -499,7 +504,7 @@ namespace FALOFinancialProofing.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("OrganizationId")
+                    b.Property<int>("OrganizationId")
                         .HasColumnType("int");
 
                     b.Property<string>("ProjectName")
@@ -1062,7 +1067,8 @@ namespace FALOFinancialProofing.Migrations
                     b.HasOne("FALOFinancialProofing.Models.User", "ReceiverUser")
                         .WithMany("ReceiverCreateProjectRequests")
                         .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("FALOFinancialProofing.Models.User", "SenderUser")
                         .WithMany("SenderCreateProjectRequests")
@@ -1152,7 +1158,9 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasOne("FALOFinancialProofing.Models.Organization", "Organization")
                         .WithMany("Projects")
-                        .HasForeignKey("OrganizationId");
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Organization");
 

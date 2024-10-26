@@ -14,6 +14,8 @@ namespace FALOFinancialProofing.Models
         public string Description { get; set; }
         public DateTime DateOfCreation { get; set; }
         public bool Status { get; set; }
+        public int? OrganizationId { get; set; }
+        public Organization Organization { get; set; }
         public ICollection<Campaign> Campaigns { get; set; }
         public ICollection<CreateProjectRequest> CreateProjectRequests { get; set; }
 

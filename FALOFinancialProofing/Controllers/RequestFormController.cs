@@ -135,6 +135,7 @@ namespace FALOFinancialProofing.Controllers
             var newApproveProcess = await approveProcessServices.CreateApproveProcessAsync(approveProcessDTO);
             //Create new AttachmentFile
             var attachmentFiles = await requestFormService.SaveUploadedFilesAsync(validatedRequest.UploadFiles, newRequestForm.Id);
+
             var canCreateAttachmentFiles = await attachmentFileService.CreateManyAttachmentFileAsync(attachmentFiles);
             if(!canCreateAttachmentFiles)
             {

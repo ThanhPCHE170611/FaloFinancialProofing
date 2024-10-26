@@ -9,5 +9,6 @@ namespace FALOFinancialProofing.Services.CreateProjectFileServices
         Task<IEnumerable<CreateProjectFile>> GetAllCreateProjectFilesAsync();
         Task<bool> UpdateCreateProjectFileAsync(CreateProjectFile updateProjectFile);
         Task<bool> DeleteCreateProjectFileAsync(int id);
+        Task<List<CreateProjectFile>> SaveUploadedFilesAsync(List<IFormFile> uploadFiles, int requestId);
     }
 }

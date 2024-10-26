@@ -26,6 +26,8 @@ namespace FALOFinancialProofing.Models
         public ICollection<CreateCampaignRequest> CreateCampaignRequestSenders { get; set; } = new List<CreateCampaignRequest>();
         public ICollection<CreateCampaignRequest> CreateCampaignRequestReceivers { get; set; } = new List<CreateCampaignRequest>();
         public ICollection<Campaign> Campaigns { get; set; } = new List<Campaign>();
+        public ICollection<OrganizationMember> OrganizationMembers { get; set; } = new List<OrganizationMember>();
+        public ICollection<CreateProjectRequestApproveHistory> CreateProjectRequestApproveHistories { get; set; } = new List<CreateProjectRequestApproveHistory>();
 
         //public string? Gender { get; set; }
         //public string? Address { get; set; }

@@ -14,7 +14,7 @@ namespace FALOFinancialProofing.Models
 
         public DbSet<TransactionLog> TransactionLogs { get; set; }
         public DbSet<CreateProjectFile> CreateProjectFiles { get; set; }
-        public DbSet<CreateProjectRequest> CreateProjects { get; set; }
+        public DbSet<CreateProjectRequest> CreateProjectRequests { get; set; }
         public DbSet<CreateCampaignFile> CreateCampaignFiles { get; set; }
         public DbSet<CreateCampaignRequest> CreateCampaignRequests { get; set; }
         public DbSet<MoveNextCampaignStatusRequest> MoveNextCampaignStatusRequests { get; set; }
@@ -25,6 +25,7 @@ namespace FALOFinancialProofing.Models
         public DbSet<CampaignMember> CampaignMembers { get; set; }
         public DbSet<SDG> SDGs { get; set; }
         public DbSet<SocialNetwork> SocialNetworks { get; set; }
+        public DbSet<CreateProjectRequestApproveHistory> CreateProjectRequestApproveHistories { get; set; }
 
 
         public DbSet<RequestForm> RequestForms { get; set; }
@@ -187,6 +188,38 @@ namespace FALOFinancialProofing.Models
                  .HasForeignKey(c => c.ReceiverId)
                  .OnDelete(DeleteBehavior.NoAction); ;
             });
+
+            modelBuilder.Entity<Organization>(entity =>
+            {
+                entity.HasMany(c => c.Projects)
+                    .WithOne(u => u.Organization)
+                    .HasForeignKey(c => c.OrganizationId);
+
+            });
+
+            modelBuilder.Entity<OrganizationMember>(entity =>
+            {
+                entity.HasOne(c => c.User)
+                    .WithMany(u => u.OrganizationMembers)
+                    .HasForeignKey(c => c.UserId);
+                entity.HasOne(c => c.Organization)
+                  .WithMany(u => u.OrganizationMembers)
+                  .HasForeignKey(c => c.OrganizationId);
+
+            });
+
+            modelBuilder.Entity<CreateProjectRequestApproveHistory>(entity =>
+            {
+                entity.HasOne(c => c.CreateProjectRequest)
+                    .WithMany(u => u.CreateProjectRequestApproveHistories)
+                    .HasForeignKey(c => c.CreateProjectRequestId);
+
+                entity.HasOne(c => c.Approver)
+                 .WithMany(u => u.CreateProjectRequestApproveHistories)
+                 .HasForeignKey(c => c.ApproverId);
+
+
+            });
             RoleSeedData(modelBuilder);
             DeleteIdentityPrefix(modelBuilder);
         }
@@ -199,7 +232,8 @@ namespace FALOFinancialProofing.Models
                 new IdentityRole { Id = "205d4496-4ac8-40d9-84b9-e09e1ada7a49", Name = AppRole.ProjectManager, NormalizedName = AppRole.ProjectManager.ToUpper(), ConcurrencyStamp = "acccef8b-20f3-4de0-8ee9-5a3690f094ed" },
                 new IdentityRole { Id = "4e7b2c09-e0b0-4ddd-9694-ebf3e21e2472", Name = AppRole.VolunteerLeader, NormalizedName = AppRole.VolunteerLeader.ToUpper(), ConcurrencyStamp = "1a777fbf-24db-4247-bd76-db376d703ea9" },
                 new IdentityRole { Id = "83292e2c-6c86-4153-bdc5-760d05ec2293", Name = AppRole.Accounting, NormalizedName = AppRole.Accounting.ToUpper(), ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85f" },
-                new IdentityRole { Id = "83292e2c-6c86-4153-bdc5-760d05ec2295", Name = AppRole.Volunteer, NormalizedName = AppRole.Volunteer.ToUpper(), ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85g" }
+                new IdentityRole { Id = "83292e2c-6c86-4153-bdc5-760d05ec2295", Name = AppRole.Volunteer, NormalizedName = AppRole.Volunteer.ToUpper(), ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85g" },
+                 new IdentityRole { Id = "83292e2c-6c86-4153-bdc5-760d05ec2299", Name = AppRole.ProjectManagementBoard, NormalizedName = AppRole.ProjectManagementBoard.ToUpper(), ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85h" }
             );
         }
 

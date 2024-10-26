@@ -1,7 +1,11 @@
-﻿using FALOFinancialProofing.Models;
+﻿using FALOFinancialProofing.Helpers;
+using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.CreateProjectRequestServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -23,6 +27,29 @@ namespace FALOFinancialProofing.Controllers
             return Ok(await _createProjectRequestService.GetAllCreateProjectRequestsAsync());
         }
 
+        //[Authorize]
+        [HttpGet("GetCreateProjectRequestByPMB/{id}")]
+        public async Task<ActionResult<IEnumerable<CreateProjectRequest>>> GetCreateProjectRequests(string userId)
+        {
+            StringBuilder message = new StringBuilder();
+            IEnumerable<CreateProjectRequest> data = null;
+            try
+            {
+                data = await _createProjectRequestService.GetAllCreateProjectRequestsByPMBAsync(userId, message);
+                message.Append("Get CreateProjectRequests Successfully!");
+            }
+            catch (Exception ex)
+            {
+                message.Append("Get CreateProjectRequests Failed!");
+                await Console.Out.WriteLineAsync(ex.Message);
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = message.ToString(),
+                Data = data
+            });
+        }
         // GET: api/CreateProjectRequests/5
         [HttpGet("GetCreateProjectRequest/{id}")]
         public async Task<ActionResult<CreateProjectRequest>> GetCreateProjectRequest(int id)
@@ -37,6 +64,7 @@ namespace FALOFinancialProofing.Controllers
 
             return createProjectRequest;
         }
+
 
         // PUT: api/CreateProjectRequests/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

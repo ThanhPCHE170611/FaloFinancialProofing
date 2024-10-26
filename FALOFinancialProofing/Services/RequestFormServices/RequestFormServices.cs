@@ -81,7 +81,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             try
             {
                 var requestForm = await repository.Get(x => x.Id == dto.Id);
-                if(requestForm == null) return false;
+                if (requestForm == null) return false;
 
                 return await repository.DeleteAsync(requestForm);
             }
@@ -255,7 +255,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
 
         private bool ValidatedRequestForm(CreateFormRequest requestForm, System.Text.StringBuilder message)
         {
-            if(requestForm == null || requestForm.ExpectedMoney == null || requestForm.ApproverId == null)
+            if (requestForm == null || requestForm.ExpectedMoney == null || requestForm.ApproverId == null)
             {
                 message.Append("Expected money and ApproverId cannot be null");
                 return false;
@@ -271,13 +271,13 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             }
             //check createBy id exist, in campaign
             var createByValidate = campainInDb.CampaignMembers.Any(cm => cm.UserId == requestForm.CreatedBy);
-            if(!createByValidate)
+            if (!createByValidate)
             {
                 message.Append("CreateBy is not exist or maybe in wrong campaign");
                 return false;
             }
             // check ApproverId exist in campain && ApproverId != CreatedBy && Role of ApproverId is greater than CreatedBy
-            if(requestForm.ApproverId == requestForm.CreatedBy)
+            if (requestForm.ApproverId == requestForm.CreatedBy)
             {
                 message.Append("Approver ID cannot equal CreatBy");
                 return false;
@@ -329,18 +329,19 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 {
                     return false;
                 }
-            } else
+            }
+            else
             {
                 // check approveId role is greater than createBy
-                if(createByRole.Equals("Volunteer") && approverRole.Equals("Volunteer Leader"))
+                if (createByRole.Equals("Volunteer") && approverRole.Equals("Volunteer Leader"))
                 {
                     return true;
                 }
-                if(createByRole.Equals("Volunteer Leader") && approverRole.Equals("Accounting"))
+                if (createByRole.Equals("Volunteer Leader") && approverRole.Equals("Accounting"))
                 {
                     return true;
                 }
-                if(createByRole.Equals("Accounting") && approverRole.Equals("Project Managerment"))
+                if (createByRole.Equals("Accounting") && approverRole.Equals("Project Managerment"))
                 {
                     return true;
                 }

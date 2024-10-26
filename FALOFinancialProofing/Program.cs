@@ -4,36 +4,32 @@ using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services;
-using FALOFinancialProofing.Services.EmailService;
-using FALOFinancialProofing.Services.TransactionLogsServices;
-using FALOFinancialProofing.Services.SDGServices;
-using FALOFinancialProofing.Services.SocialNetworkService;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using System.Configuration;
-using System.Security.Claims;
-using System.Text;
-using FALOFinancialProofing.Services.RequestFormServices;
-using FALOFinancialProofing.Services.AttachmentFIleServices;
 using FALOFinancialProofing.Services.ApproveProcessServices;
-using FALOFinancialProofing.Services.VoucherServices;
-using Example;
-using Microsoft.AspNetCore.Http.Features;
-using FALOFinancialProofing.Services.OrganizationServices;
-using FALOFinancialProofing.Services.CreateProjectRequestServices;
-using FALOFinancialProofing.Services.CreateProjectFileServices;
+using FALOFinancialProofing.Services.AttachmentFIleServices;
+using FALOFinancialProofing.Services.CampaignMemberService;
+using FALOFinancialProofing.Services.CampaignService;
 using FALOFinancialProofing.Services.CreateCampaignFileServices;
 using FALOFinancialProofing.Services.CreateCampaignRequestServices;
+using FALOFinancialProofing.Services.CreateProjectFileServices;
+using FALOFinancialProofing.Services.CreateProjectRequestServices;
+using FALOFinancialProofing.Services.EmailService;
 using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices;
+using FALOFinancialProofing.Services.OrganizationMemberServices;
+using FALOFinancialProofing.Services.OrganizationServices;
 using FALOFinancialProofing.Services.ProjectServices;
-using FALOFinancialProofing.Services.CampaignService;
-using FALOFinancialProofing.Services.CampaignMemberService;
+using FALOFinancialProofing.Services.RequestFormServices;
+using FALOFinancialProofing.Services.SDGServices;
+using FALOFinancialProofing.Services.SocialNetworkService;
+using FALOFinancialProofing.Services.TransactionLogsServices;
+using FALOFinancialProofing.Services.VoucherServices;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 
 namespace FALOFinancialProofing
 {
@@ -69,6 +65,7 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped<IProjectService, ProjectService>();
             builder.Services.AddScoped<ICampaignService, CampaignService>();
             builder.Services.AddScoped<ICampaignMemberService, CampaignMemberService>();
+            builder.Services.AddScoped<IOrganizationMemberService, OrganizationMemberService>();
 
 
             // Add Email Configs
