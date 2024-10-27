@@ -9,5 +9,7 @@ namespace FALOFinancialProofing.Services.CreateCampaignRequestServices
         Task<IEnumerable<CreateCampaignRequest>> GetAllCreateCampaignRequestsAsync();
         Task<bool> UpdateCreateCampaignRequestAsync(CreateCampaignRequest updateCampaignRequest);
         Task<bool> DeleteCreateCampaignRequestAsync(int id);
+
+        Task<CreateCampaignRequest> CreateCreateCampaignRequestReturnEntityAsync(CreateCampaignRequest createCampaignRequest);
     }
 }

@@ -7,6 +7,7 @@ using FALOFinancialProofing.Services;
 using FALOFinancialProofing.Services.ApproveProcessServices;
 using FALOFinancialProofing.Services.AttachmentFIleServices;
 using FALOFinancialProofing.Services.CampaignMemberService;
+using FALOFinancialProofing.Services.CampaignRequestApproveHistoryServices;
 using FALOFinancialProofing.Services.CampaignService;
 using FALOFinancialProofing.Services.CreateCampaignFileServices;
 using FALOFinancialProofing.Services.CreateCampaignRequestServices;
@@ -68,6 +69,7 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped<ICampaignMemberService, CampaignMemberService>();
             builder.Services.AddScoped<IOrganizationMemberService, OrganizationMemberService>();
             builder.Services.AddScoped<ICreateProjectRequestApproveHistoryService, CreateProjectRequestApproveHistoryService>();
+            builder.Services.AddScoped<ICampaignRequestApproveHistoryService, CampaignRequestApproveHistoryService>();
 
 
             // Add Email Configs

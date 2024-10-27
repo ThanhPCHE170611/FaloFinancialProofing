@@ -120,7 +120,7 @@ namespace FALOFinancialProofing.Controllers
                     SenderId = createProject.CreatedBy,
                     Title = "Create Project",
                     CreatedAt = DateTime.Now,
-                    Status = "Pending"
+                    Status = RequestStatus.Pending
                 };
                 var CreateProjectRequestCreated = await _createProjectRequestService.CreateCreateProjectRequestReturnEntityAsync(createProjectRequest);
                 if (CreateProjectRequestCreated == null)

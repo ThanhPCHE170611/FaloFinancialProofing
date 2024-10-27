@@ -12,7 +12,6 @@ namespace FALOFinancialProofing.Models
         public string CreateBy { get; set; } // Đây là khóa ngoại trỏ tới UserId của User
         public virtual User User { get; set; } = null!;
 
-        [Required]
         [MaxLength(200)]
         public string Title { get; set; }
 
@@ -35,11 +34,9 @@ namespace FALOFinancialProofing.Models
 
         [Required]
         public bool IsActive { get; set; }
+        public string? BankingNumber { get; set; }
 
-        public int? BankingNumber { get; set; }
-
-        [Required]
-        public byte Status { get; set; }
+        public string? Status { get; set; }
 
         public ICollection<CampaignMember> CampaignMembers { get; set; } = new List<CampaignMember>();
         public ICollection<RequestForm> RequestForms { get; set; } = new List<RequestForm>();

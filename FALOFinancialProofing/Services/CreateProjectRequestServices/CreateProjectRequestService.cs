@@ -51,7 +51,7 @@ namespace FALOFinancialProofing.Services.CreateProjectRequestServices
             }
             catch (Exception ex)
             {
-                await Console.Out.WriteLineAsync($"CreateProjectRequest: {ex.Message}!");
+                await Console.Out.WriteLineAsync($"CreateCreateProjectRequestReturnEntityAsync: {ex.Message}!");
             }
 
             return createCreateProjectRequest;

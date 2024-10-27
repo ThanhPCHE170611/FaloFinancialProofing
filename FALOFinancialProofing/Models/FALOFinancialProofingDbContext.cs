@@ -26,6 +26,7 @@ namespace FALOFinancialProofing.Models
         public DbSet<SDG> SDGs { get; set; }
         public DbSet<SocialNetwork> SocialNetworks { get; set; }
         public DbSet<CreateProjectRequestApproveHistory> CreateProjectRequestApproveHistories { get; set; }
+        public DbSet<CampaignRequestApproveHistory> CampaignRequestApproveHistories { get; set; }
 
 
         public DbSet<RequestForm> RequestForms { get; set; }
@@ -161,6 +162,11 @@ namespace FALOFinancialProofing.Models
                   .WithOne(u => u.User)
                   .HasForeignKey(c => c.CreateBy)
                   .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasMany(c => c.CampaignRequestApproveHistories)
+                  .WithOne(u => u.Approver)
+                  .HasForeignKey(c => c.ApproverId);
+
             });
             modelBuilder.Entity<Project>(entity =>
             {
@@ -174,6 +180,7 @@ namespace FALOFinancialProofing.Models
                 entity.HasMany(c => c.CreateCampaignFiles)
                     .WithOne(u => u.CampaignRequest)
                     .HasForeignKey(c => c.RequestId);
+
                 entity.HasOne(c => c.Campaign)
                    .WithMany(u => u.CreateCampaignRequests)
                    .HasForeignKey(c => c.CampaignId);
@@ -186,7 +193,13 @@ namespace FALOFinancialProofing.Models
                 entity.HasOne(c => c.ReceiverUser)
                  .WithMany(u => u.CreateCampaignRequestReceivers)
                  .HasForeignKey(c => c.ReceiverId)
-                 .OnDelete(DeleteBehavior.NoAction); ;
+                 .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasMany(c => c.CampaignRequestApproveHistories)
+               .WithOne(u => u.CreateCampaignRequest)
+               .HasForeignKey(c => c.CampaignRequestId)
+               .OnDelete(DeleteBehavior.Restrict);
+
             });
 
             modelBuilder.Entity<Organization>(entity =>

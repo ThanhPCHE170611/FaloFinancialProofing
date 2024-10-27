@@ -7,5 +7,6 @@
         public const string Processing = "Processing";
         public const string Running = "Running";
         public const string Rejected = "Rejected";
+        public const string FundRaising = "Fund-Raising";
     }
 }

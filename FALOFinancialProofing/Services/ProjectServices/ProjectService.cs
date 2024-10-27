@@ -104,6 +104,24 @@ namespace FALOFinancialProofing.Services.ProjectServices
             return projects;
         }
 
+        public async Task<bool> CheckProjectByUserIdAndProjectIdAsync(string pmUserId, int projectId)
+        {
+            bool checkValid = false;
+            try
+            {
+                checkValid = (await _projectRepository.GetAll().ToListAsync()).Any(p => p.CreatedBy == pmUserId && p.Id == projectId);
+                if (!checkValid)
+                {
+                    throw new Exception("This user Has no such Project");
+                }
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"CheckProjectByUserIdAndProjectIdAsync: {ex.Message}");
+            }
+
+            return checkValid;
+        }
         public async Task<IEnumerable<Project>> GetAllProjectsAsync()
         {
             List<Project> data = null!;
@@ -226,6 +244,18 @@ namespace FALOFinancialProofing.Services.ProjectServices
             return result;
         }
 
-
+        public async Task<bool> CheckProjectIsActiveAsync(int projectId)
+        {
+            bool checkValid = false;
+            try
+            {
+                checkValid = (await _projectRepository.Get(projectId)).IsActive;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"CheckProjectIsActiveAsync: {ex.Message}");
+            }
+            return checkValid;
+        }
     }
 }
