@@ -39,12 +39,20 @@ namespace FALOFinancialProofing.Models
         public int? BankingNumber { get; set; }
 
         [Required]
-        public byte Status { get; set; }
+        public string Status { get; set; }
 
         public ICollection<CampaignMember> CampaignMembers { get; set; } = new List<CampaignMember>();
         public ICollection<RequestForm> RequestForms { get; set; } = new List<RequestForm>();
         public ICollection<MoveNextCampaignStatusRequest> MoveNextCampaignStatusRequests { get; set; } = new List<MoveNextCampaignStatusRequest>();
         public ICollection<CreateCampaignRequest> CreateCampaignRequests { get; set; } = new List<CreateCampaignRequest>();
 
+    }
+
+    public class CampaignStatus
+    {
+        public const string FundRaising = "Fund Raising";
+        public const string Implement = "Implement";
+        public const string Disbursement = "Disbursement";
+        public const string Close = "Close";
     }
 }

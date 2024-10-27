@@ -5,11 +5,14 @@ namespace FALOFinancialProofing.Models
 {
     public class MoveNextCampaignStatusRequest : Entity<int>
     {
+        public MoveNextCampaignStatusRequest()
+        {
+            MoveNextCampaignStatusRequestHistories = new List<MoveNextCampaignStatusRequestHistory>();
+        }
         [Required]
         public string SenderId { get; set; }
         public User SenderUser { get; set; }
-        [Required]
-        public string ReceiverId { get; set; }
+        public string? ReceiverId { get; set; }
         public User ReceiverUser { get; set; }
         [Required]
         public int CampaignID { get; set; }
@@ -18,8 +21,10 @@ namespace FALOFinancialProofing.Models
         [Required]
         public DateTime CreatedAt { get; set; }
         [StringLength(250)]
-        public string Feedback { get; set; }
+        public string? Feedback { get; set; }
+        public string StatusOfCampaign { get; set; }
         [StringLength(20)]
         public string Status { get; set; }
+        public ICollection<MoveNextCampaignStatusRequestHistory> MoveNextCampaignStatusRequestHistories { get; set; }
     }
 }

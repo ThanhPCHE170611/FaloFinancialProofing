@@ -42,6 +42,30 @@ namespace FALOFinancialProofing.Services
             _linkGenerator = linkGenerator;
 
         }
+        public async Task<bool> CheckUserInRole(string userId, string userRole, StringBuilder message)
+        {
+            bool checkValid = false;
+            try
+            {
+                var user = await userManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    throw new Exception("User not found");
+                }
+                var isInRole = await userManager.IsInRoleAsync(user, userRole);
+                if (!isInRole)
+                {
+                    throw new Exception("User Role is not permitted");
+                }
+                checkValid = true;
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"CheckUserInRole: {ex.Message}");
+            }
+            return checkValid;
+        }
 
         public async Task<UserDto?> LoginUser(SignInModel userLogin)
         {

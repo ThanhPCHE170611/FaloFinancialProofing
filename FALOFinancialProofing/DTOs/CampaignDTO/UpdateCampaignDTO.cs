@@ -22,7 +22,7 @@ namespace FALOFinancialProofing.DTOs.CampaignDTO
         [Required]
         public bool IsActive { get; set; }
         public int? BankingNumber { get; set; }
-        [Required]
-        public byte Status { get; set; }
+        //[Required]
+        //public string Status { get; set; }
     }
 }

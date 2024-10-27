@@ -33,6 +33,7 @@ namespace FALOFinancialProofing.Services.CampaignService
             return new Campaign
             {
                 //Id = createCampaignDTO.Id != null ? createCampaignDTO.Id.Value : 0,
+                ProjectId = createCampaignDTO.ProjectId,
                 CreateBy = createCampaignDTO.CreateBy,
                 Title = createCampaignDTO.Title,
                 Description = createCampaignDTO.Description,
@@ -103,7 +104,7 @@ namespace FALOFinancialProofing.Services.CampaignService
             campaignModels.Address = updateCampaignDTO.Address;
             campaignModels.IsActive = updateCampaignDTO.IsActive;
             campaignModels.BankingNumber = updateCampaignDTO.BankingNumber;
-            campaignModels.Status = updateCampaignDTO.Status;
+            //campaignModels.Status = updateCampaignDTO.Status;
         }
 
         public async Task<bool> DeleteCampaignByIdAsync(int id)

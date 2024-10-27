@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using FALOFinancialProofing.Models;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel;
 
 namespace FALOFinancialProofing.DTOs.CampaignDTO
 {
@@ -8,6 +9,7 @@ namespace FALOFinancialProofing.DTOs.CampaignDTO
     {
         //public int? Id { get; set; }
 
+        public int ProjectId { get; set; }
         [Required]
         public string CreateBy { get; set; } 
         public string Title { get; set; }
@@ -23,7 +25,8 @@ namespace FALOFinancialProofing.DTOs.CampaignDTO
         [Required]
         public bool IsActive { get; set; }
         public int? BankingNumber { get; set; }
-        [Required]
-        public byte Status { get; set; }
+        [DefaultValue(CampaignStatus.FundRaising)]
+        public string Status { get; set; }
+
     }
 }

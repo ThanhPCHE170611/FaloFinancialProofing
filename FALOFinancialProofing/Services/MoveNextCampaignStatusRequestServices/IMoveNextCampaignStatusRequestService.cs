@@ -1,4 +1,5 @@
-﻿using FALOFinancialProofing.DTOs.MoveNextCampaignStatusRequestDTO;
+﻿using System.Text;
+using FALOFinancialProofing.DTOs.MoveNextCampaignStatusRequestDTO;
 using FALOFinancialProofing.Models;
 
 namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
@@ -13,8 +14,15 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
 
         Task<List<MoveNextCampaignStatusRequest>> GetAllMoveNextCampaignStatusRequestAsync();
         Task<MoveNextCampaignStatusRequest?> GetMoveNextCampaignStatusRequestByIdAsync(int id);
-        Task<MoveNextCampaignStatusRequest?> CreateMoveNextCampaignStatusRequestAsync(CreateMoveNextCampaignStatusRequestDTO createMoveNextCampaignStatusRequestDTO);
+        //Task<MoveNextCampaignStatusRequest?> CreateMoveNextCampaignStatusRequestAsync(CreateMoveNextCampaignStatusRequestDTO createMoveNextCampaignStatusRequestDTO);
         //Task<bool> UpdateCampaignAsync(UpdateCampaignDTO updateCampaignDTO);
         //Task<bool> DeleteCampaignByIdAsync(int id);
+
+        Task<MoveNextCampaignStatusRequest> CreateMoveNextCampaignStatusRequestAsync(CreateMoveNextCampaignStatusRequestDTO requestDto);
+
+        Task<bool> ApproveOrRejectRequestAsync(int requestId, bool isApproved);
+        Task<bool> ValidateCreateMoveNextCampaignStatusRequestAsync(CreateMoveNextCampaignStatusRequestDTO requestDTO, StringBuilder message);
+        Task<MoveNextCampaignStatusResponseDTO?> MapToDto(MoveNextCampaignStatusRequest request);
+        //Task<MoveNextCampaignStatusRequest> ConvertDtoToBaseClass(CreateMoveNextCampaignStatusRequestDTO requestDto);
     }
 }
