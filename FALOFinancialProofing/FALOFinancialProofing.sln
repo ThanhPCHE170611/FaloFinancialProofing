@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FALOFinancialProofing", "FALOFinancialProofing.csproj", "{574169E0-9A3D-4CA8-8148-4E10AFD53AE1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FALOFinancialProofing", "FALOFinancialProofing.csproj", "{574169E0-9A3D-4CA8-8148-4E10AFD53AE1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FALOFinancialProofing.Client", "..\FALOFinancialProofing.Client\FALOFinancialProofing.Client.csproj", "{A0FB5859-D2F7-469A-9228-1EDDD7862C24}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FALOFinancialProofing.Client", "..\FALOFinancialProofing.Client\FALOFinancialProofing.Client.csproj", "{A0FB5859-D2F7-469A-9228-1EDDD7862C24}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
