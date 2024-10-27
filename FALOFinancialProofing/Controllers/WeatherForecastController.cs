@@ -1,4 +1,6 @@
 using FALOFinancialProofing.Attributes;
+using FALOFinancialProofing.Attributes.RoleAttributes;
+using FALOFinancialProofing.Helpers;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,13 +27,14 @@ namespace FALOFinancialProofing.Controllers
 
         [HttpGet(Name = "GetWeatherForecast")]
         // Must use Policy that is defined in Startup.cs else error
-        [MinimumAge(21)]
+        //[MinimumAge(21)]
         //[Authorize(Policy = "MinimumAge22")]
         //[MinimumAgeAuthorize(22)]
         //[Authorize(Roles = "User")]
         //[Authorize(Roles = "Admin")]
         //[Authorize(Policy = "Admin")]
         //[Authorize]
+        [RoleAttribute(AppRole.ProjectManagementBoard)]
         public IEnumerable<WeatherForecast> Get()
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast

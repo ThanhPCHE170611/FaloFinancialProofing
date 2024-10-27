@@ -5,6 +5,7 @@ namespace FALOFinancialProofing.Services.CreateProjectFileServices
     public interface ICreateProjectFileService
     {
         Task<bool> CreateCreateProjectFileAsync(CreateProjectFile createProjectFile);
+        Task<bool> CreateCreateProjectFilesAsync(List<CreateProjectFile> createProjectFiles);
         Task<CreateProjectFile> GetCreateProjectFileByIdAsync(int id);
         Task<IEnumerable<CreateProjectFile>> GetAllCreateProjectFilesAsync();
         Task<bool> UpdateCreateProjectFileAsync(CreateProjectFile updateProjectFile);

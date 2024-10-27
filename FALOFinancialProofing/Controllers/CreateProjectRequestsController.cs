@@ -1,4 +1,5 @@
-﻿using FALOFinancialProofing.Helpers;
+﻿using FALOFinancialProofing.Attributes.RoleAttributes;
+using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.CreateProjectRequestServices;
 using Microsoft.AspNetCore.Authorization;
@@ -21,21 +22,21 @@ namespace FALOFinancialProofing.Controllers
         }
 
         // GET: api/CreateProjectRequests
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<CreateProjectRequest>>> GetCreateProjectRequests()
-        {
-            return Ok(await _createProjectRequestService.GetAllCreateProjectRequestsAsync());
-        }
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<CreateProjectRequest>>> GetCreateProjectRequests()
+        //{
+        //    return Ok(await _createProjectRequestService.GetAllCreateProjectRequestsAsync());
+        //}
 
-        //[Authorize]
-        [HttpGet("GetCreateProjectRequestByPMB/{id}")]
-        public async Task<ActionResult<IEnumerable<CreateProjectRequest>>> GetCreateProjectRequests(string userId)
+        [RoleAttribute(AppRole.ProjectManagementBoard)]
+        [HttpGet("GetCreateProjectRequestByPMB")]
+        public async Task<ActionResult<IEnumerable<CreateProjectRequest>>> GetCreateProjectRequests()
         {
             StringBuilder message = new StringBuilder();
             IEnumerable<CreateProjectRequest> data = null;
             try
             {
-                data = await _createProjectRequestService.GetAllCreateProjectRequestsByPMBAsync(userId, message);
+                data = await _createProjectRequestService.GetAllCreateProjectRequestsByPMBAsync(message);
                 message.Append("Get CreateProjectRequests Successfully!");
             }
             catch (Exception ex)

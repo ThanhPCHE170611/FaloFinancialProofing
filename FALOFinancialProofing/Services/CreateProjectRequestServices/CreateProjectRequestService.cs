@@ -92,25 +92,12 @@ namespace FALOFinancialProofing.Services.CreateProjectRequestServices
             return data;
         }
 
-        public async Task<IEnumerable<CreateProjectRequest>> GetAllCreateProjectRequestsByPMBAsync(string userId, StringBuilder message)
+        public async Task<IEnumerable<CreateProjectRequest>> GetAllCreateProjectRequestsByPMBAsync(StringBuilder message)
         {
             List<CreateProjectRequest> data = null!;
             try
             {
-                // check user whether is PMB or not
-
-                var user = await _userManager.FindByIdAsync(userId);
-                if (user == null)
-                {
-                    throw new Exception("User not found");
-                }
-                var isInRole = await _userManager.IsInRoleAsync(user, AppRole.ProjectManagementBoard);
-                if (!isInRole)
-                {
-                    throw new Exception("User Role is not permitted");
-                }
-                //var user = 
-                data = await _createProjectRequestRepository.GetAll().Where(pr => pr.Status.Equals(ProjectRequestStatus.Pending)).ToListAsync();
+                data = await _createProjectRequestRepository.GetAll().Where(pr => pr.Status.Equals(RequestStatus.Pending)).ToListAsync();
             }
             catch (Exception ex)
             {

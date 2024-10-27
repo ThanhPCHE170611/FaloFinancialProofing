@@ -1,4 +1,6 @@
-﻿using FALOFinancialProofing.DTOs.ProjectDTOs;
+﻿using FALOFinancialProofing.Attributes.RoleAttributes;
+using FALOFinancialProofing.DTOs.ProjectDTOs;
+using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.CreateProjectFileServices;
 using FALOFinancialProofing.Services.CreateProjectRequestServices;
@@ -76,13 +78,14 @@ namespace FALOFinancialProofing.Controllers
                 ProjectName = "Nguyen Duc Project",
                 DateOfCreation = DateTime.Now,
                 Description = "This is a project",
-                Status = false,
+                Status = "NotRunning",
                 OrganizationId = 1
             };
             var checkCreate = await _projectService.CreateProjectReturnEntityAsync(project);
         }
         // POST: api/Projects
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [RoleAttribute(AppRole.ProjectManager)] // mở nếu làm thật
         [HttpPost("CreateProject", Name = "CreateProject")]
         public async Task<ActionResult<Project>> PostProject([FromForm] CreateProject createProject)
         {
@@ -132,7 +135,18 @@ namespace FALOFinancialProofing.Controllers
                 if (createProject.FormFiles != null)
                 {
                     var CreateProjectFiles = await _createProjectFileService.SaveUploadedFilesAsync(createProject.FormFiles, CreateProjectRequestCreated.Id);
-                    if (CreateProjectFiles.Count == 0)
+                    //if (CreateProjectFiles.Count == 0)
+                    //{
+                    //    stringBuilderMessage.Append("Create Project Request files Failed!");
+                    //    return Ok(new
+                    //    {
+                    //        Message = stringBuilderMessage.ToString()
+                    //    });
+                    //}
+                    //else
+                    //{
+                    bool checkCreate = await _createProjectFileService.CreateCreateProjectFilesAsync(CreateProjectFiles);
+                    if (checkCreate == false)
                     {
                         stringBuilderMessage.Append("Create Project Request files Failed!");
                         return Ok(new
@@ -140,6 +154,7 @@ namespace FALOFinancialProofing.Controllers
                             Message = stringBuilderMessage.ToString()
                         });
                     }
+                    //}
                 }
                 stringBuilderMessage.Append("Create Project Successfully!");
                 //statusMessage = await _projectService.CreateProjectAsync(createProject)

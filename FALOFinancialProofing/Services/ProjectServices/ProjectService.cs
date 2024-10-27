@@ -14,14 +14,17 @@ namespace FALOFinancialProofing.Services.ProjectServices
         private readonly IRepository<Project, int> _projectRepository;
         private readonly IRepository<Organization, int> _organizationRepository;
         private readonly RoleManager<IdentityRole> _roleManager;
-        public readonly UserManager<User> _userManager;
+        private readonly UserManager<User> _userManager;
+        private readonly AuthServices _authServices;
 
-        public ProjectService(IRepository<Project, int> projectRepository, IRepository<Organization, int> organizationRepository, RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
+
+        public ProjectService(IRepository<Project, int> projectRepository, IRepository<Organization, int> organizationRepository, RoleManager<IdentityRole> roleManager, UserManager<User> userManager, AuthServices authServices)
         {
             _projectRepository = projectRepository;
             _organizationRepository = organizationRepository;
             _roleManager = roleManager;
             _userManager = userManager;
+            _authServices = authServices;
         }
         public async Task<bool> CreateProjectAsync(Project createProject)
         {
@@ -121,16 +124,10 @@ namespace FALOFinancialProofing.Services.ProjectServices
             bool IsValid = false;
             try
             {
-                // check User is valid (role is PM)
-                var user = await _userManager.FindByIdAsync(createProject.CreatedBy);
-                if (user == null)
+                bool checkValidUser = await _authServices.CheckUserInRole(createProject.CreatedBy, AppRole.ProjectManager, message);
+                if (!checkValidUser)
                 {
-                    throw new Exception("User not found");
-                }
-                var isInRole = await _userManager.IsInRoleAsync(user, AppRole.ProjectManager);
-                if (!isInRole)
-                {
-                    throw new Exception("User Role is not permitted");
+                    return IsValid;
                 }
                 // !=0 đăng kí với vai trò tổ chức
                 if (createProject.OrganizationId != 0)
@@ -142,9 +139,9 @@ namespace FALOFinancialProofing.Services.ProjectServices
                     }
                 }
                 //trạng thái dự án chưa được phép true
-                if (createProject.Status)
+                if (createProject.IsActive)
                 {
-                    throw new Exception("Status must be false");
+                    throw new Exception("IsActive must be false");
                 }
                 // ngày tạo không được lớn hơn ngày hiện tại
                 if (createProject.DateOfCreation > DateTime.Now)

@@ -14,7 +14,8 @@ namespace FALOFinancialProofing.DTOs.ProjectDTOs
         public string? Description { get; set; }
         [Required]
         public DateTime DateOfCreation { get; set; }
-        public bool Status { get; set; }
+        public string? Status { get; set; }
+        public bool IsActive { get; set; }
         // check if the OrganizationId is valid (exist),
         public int OrganizationId { get; set; }
         // tệp đính kèm

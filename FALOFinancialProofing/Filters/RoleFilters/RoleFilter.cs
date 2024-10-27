@@ -19,13 +19,13 @@ namespace FALOFinancialProofing.Filters.RoleFilters
                 context.Result = new UnauthorizedResult();
                 return;
             }
-            bool checkUserLegit1 = user.IsInRole(_role);
-            bool checkUserLegit = user.HasClaim(c => c.Type == ClaimTypes.Role && c.Value == _role);
-
-            //context.Result = new ForbidResult();
-            //return;
-
-
+            bool checkUserLegit = user.IsInRole(_role);
+            if (!checkUserLegit)
+            {
+                context.Result = new ForbidResult();
+                return;
+            }
+            //bool checkUserLegit = user.HasClaim(c => c.Type == ClaimTypes.Role && c.Value == _role);
         }
     }
 }

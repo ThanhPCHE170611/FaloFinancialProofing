@@ -158,5 +158,24 @@ namespace FALOFinancialProofing.Services.CreateProjectFileServices
             }
             return attachmentFiles;
         }
+
+        public async Task<bool> CreateCreateProjectFilesAsync(List<CreateProjectFile> createProjectFiles)
+        {
+            var checkValid = false;
+            try
+            {
+                bool createdCreateProjectFile = await _createProjectFileRepository.InsertManyAsync(createProjectFiles);
+                if (!createdCreateProjectFile)
+                {
+                    throw new Exception("CreateProjectFiles Error");
+                }
+                checkValid = true;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"CreateCreateProjectFilesAsync: {ex.Message}");
+            }
+            return checkValid;
+        }
     }
 }
