@@ -139,7 +139,7 @@
                     </div>
 
                     <div class="search-filter-container px-3">
-                        <input type="text" id="searchBox" class="search-box" placeholder="Search by Title or Sender..." onkeyup="filterTable()">
+                        <input type="text" id="searchBox" class="search-box" placeholder="Search by Sender" onkeyup="filterTable()">
                         <select id="statusFilter" class="filter-box" onchange="filterTable()">
                             <option value="">Filter by Status</option>
                             <option value="Pending">Pending</option>
@@ -153,23 +153,27 @@
                             <table class="table align-items-center mb-0" id="prepayTable">
                                 <thead>
                                     <tr>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 25%;">Title</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 20%;">Sender</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 5%;">STT</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Sender</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 15%;">Expected Money</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 20%;">Assign From</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 15%;">Assign From</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 10%;">File</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 10%;">Voucher</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 10%;">Status</th>
-                                        <th class="text-secondary opacity-7 text-center">Action</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 15%;">Created Date</th>
+                                        <th class="text-secondary opacity-7 text-center" style="width: 10%;">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td><span class="text-secondary text-xs font-weight-bold">Prepay Request 1</span></td>
+                                        <td><span class="text-secondary text-xs font-weight-bold">1</span></td>
                                         <td><span class="text-secondary text-xs font-weight-bold">John Doe</span></td>
                                         <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">9.000.000</span></td>
                                         <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">Manager A</span></td>
                                         <td class="align-middle text-center"><a href="#" class="btn btn-link text-info" download="file.pdf">file.pdf</a></td>
+                                        <td class="align-middle text-center"><a href="#" class="btn btn-link text-info" download="voucher1.pdf">voucher1.pdf</a></td>
                                         <td class="align-middle text-center text-sm"><span class="text-pending text-xs font-weight-bold">Pending</span></td>
+                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">2024-10-01</span></td>
                                         <td class="align-middle text-center">
                                             <button class="btn btn-success btn-sm" onclick="approveRequest(this)">Approve</button>
                                             <button class="btn btn-danger btn-sm" onclick="showDeclinePopup(this)">Decline</button>
@@ -177,20 +181,23 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><span class="text-secondary text-xs font-weight-bold">Prepay Request 2</span></td>
+                                        <td><span class="text-secondary text-xs font-weight-bold">2</span></td>
                                         <td><span class="text-secondary text-xs font-weight-bold">Jane Smith</span></td>
                                         <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">12.000.000</span></td>
                                         <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">Manager B</span></td>
                                         <td class="align-middle text-center"><a href="#" class="btn btn-link text-info" download="filePrepay2.pdf">filePrepay2.pdf</a></td>
+                                        <td class="align-middle text-center"><a href="#" class="btn btn-link text-info" download="voucher2.pdf">voucher2.pdf</a></td>
                                         <td class="align-middle text-center text-sm"><span class="text-pending text-xs font-weight-bold">Pending</span></td>
+                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">2024-10-02</span></td>
                                         <td class="align-middle text-center">
                                             <button class="btn btn-success btn-sm" onclick="approveRequest(this)">Approve</button>
                                             <button class="btn btn-danger btn-sm" onclick="showDeclinePopup(this)">Decline</button>
-                                            <button class="btn btn-info btn-sm" onclick="showDetail(this)">Detail</button>
+                                            <a class="btn btn-info btn-sm" href="prepaydetail">Detail</a>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
+
                         </div>
                     </div>
                 </div>
@@ -225,7 +232,7 @@
 
         function approveRequest(button) {
             const row = button.closest('tr');
-            const actionCell = row.querySelector('td:nth-child(7)');
+            const actionCell = row.querySelector('td:nth-child(9)');
 
             button.style.display = 'none';
             actionCell.querySelector('.btn-danger').style.display = 'none';
@@ -252,7 +259,7 @@
             }
 
             const row = currentDeclineButton.closest('tr');
-            const actionCell = row.querySelector('td:nth-child(7)');
+            const actionCell = row.querySelector('td:nth-child(9)');
             currentDeclineButton.style.display = 'none';
             row.querySelector('.btn-success').style.display = 'none';
 
@@ -262,7 +269,7 @@
             declinedText.textContent = 'Declined';
             actionCell.insertBefore(declinedText, detailButton);
 
-            row.querySelector('td:nth-child(6)').innerHTML = '<span class="text-declined text-xs font-weight-bold">Declined</span>';
+            row.querySelector('td:nth-child(7)').innerHTML = '<span class="text-declined text-xs font-weight-bold">Declined</span>';
             row.dataset.declineReason = reason;
 
             document.getElementById('declineReason').value = '';
