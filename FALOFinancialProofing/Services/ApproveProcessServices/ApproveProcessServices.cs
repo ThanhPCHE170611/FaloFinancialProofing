@@ -1,4 +1,5 @@
-﻿using FALOFinancialProofing.DTOs;
+﻿using FALOFinancialProofing.Constant;
+using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using Humanizer;
@@ -134,7 +135,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
             try
             {
                 // validate if current logged in user is not Volunteer Leader
-                if (currentLoggingRole != "Volunteer Leader")
+                if (currentLoggingRole != Resource.VolunteerLeaderRoleName)
                 {
                     return false;
                 }
@@ -164,7 +165,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
             try
             {
                 // validate if current logged in user is not Accounting
-                if (currentLoggingRole != "Accounting")
+                if (currentLoggingRole != Resource.AccountingRoleName)
                 {
                     return false;
                 }
@@ -194,7 +195,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
             try
             {
                 // validate if current logged in user is not PM
-                if (currentLoggingRole != "Project Manager")
+                if (currentLoggingRole != Resource.ProjectManagerRoleName)
                 {
                     return false;
                 }
@@ -224,7 +225,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
             try
             {
                 // validate if current logged in user is not Volunteer Leader
-                if (currentLoggingRole != "Volunteer Leader")
+                if (currentLoggingRole != Resource.VolunteerLeaderRoleName)
                 {
                     return false;
                 }
@@ -247,7 +248,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
             try
             {
                 // validate if current logged in user is not Accounting
-                if (currentLoggingRole != "Accounting")
+                if (currentLoggingRole != Resource.AccountingRoleName)
                 {
                     return false;
                 }
@@ -270,7 +271,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
             try
             {
                 // validate if current logged in user is not Project Manager
-                if (currentLoggingRole != "Project Manager")
+                if (currentLoggingRole != Resource.ProjectManagerRoleName)
                 {
                     return false;
                 }
@@ -308,13 +309,13 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
             try
             {
                 // check if current logged in user is not Volunteer Leader
-                if (currentRoleLoggedIn != "Volunteer Leader")
+                if (currentRoleLoggedIn != Resource.VolunteerLeaderRoleName)
                 {
                     return new List<PrePayRequestFormViewRequest>();
                 }
                 // get all the campaign that userid is a Volunteer Leader
                 var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid
-                        && cm.IdentityRole.Name.Equals("Volunteer Leader")
+                        && cm.IdentityRole.Name.Equals(Resource.VolunteerLeaderRoleName)
                         && cm.IsActive)
                     .Include(cm => cm.Campaign)
                     .Include(cm => cm.IdentityRole)
@@ -325,7 +326,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
 
                 foreach (var campaign in campaigns)
                 {
-                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id && x.TypeId == 1)
+                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id && x.TypeId == IntConstant.PrePayRequestType)
                         .Include(x => x.AttachmentFiles)
                         .Select(rf => new PrePayRequestFormViewRequest
                         {
@@ -361,13 +362,13 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
             try
             {
                 // check if current logged in user is not Volunteer Leader
-                if (currentRoleLoggedIn != "Volunteer Leader")
+                if (currentRoleLoggedIn != Resource.VolunteerLeaderRoleName)
                 {
                     return new List<PrePayRequestFormViewRequest>();
                 }
                 // get all the campaign that userid is a Volunteer Leader
                 var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid
-                        && cm.IdentityRole.Name.Equals("Volunteer Leader")
+                        && cm.IdentityRole.Name.Equals(Resource.VolunteerLeaderRoleName)
                         && cm.IsActive)
                     .Include(cm => cm.Campaign)
                     .Include(cm => cm.IdentityRole)
@@ -378,7 +379,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
 
                 foreach (var campaign in campaigns)
                 {
-                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id && x.TypeId == 2)
+                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id && x.TypeId == IntConstant.PaymentRequestType)
                         .Include(x => x.AttachmentFiles)
                         .Select(rf => new PrePayRequestFormViewRequest
                         {
@@ -414,13 +415,13 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
             try
             {
                 // check if current logged in user is not Accounting
-                if (currentLoggingRole != "Accounting")
+                if (currentLoggingRole != Resource.AccountingRoleName)
                 {
                     return new List<PrePayRequestFormViewRequest>();
                 }
                 // get all the campaign that userid is a Accounting
                 var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid 
-                        && cm.IdentityRole.Name.Equals("Accounting")
+                        && cm.IdentityRole.Name.Equals(Resource.AccountingRoleName)
                         && cm.IsActive)
                     .Include(cm => cm.Campaign)
                     .Include(cm => cm.IdentityRole)
@@ -431,7 +432,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
 
                 foreach (var campaign in campaigns)
                 {
-                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id && x.TypeId == 1)
+                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id && x.TypeId == IntConstant.PrePayRequestType)
                         .Include(x => x.AttachmentFiles)
                         .Select(rf => new PrePayRequestFormViewRequest
                         {
@@ -466,13 +467,13 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
             try
             {
                 // check if current logged in user is not Accounting
-                if (currentLoggingRole != "Accounting")
+                if (currentLoggingRole != Resource.AccountingRoleName)
                 {
                     return new List<PrePayRequestFormViewRequest>();
                 }
                 // get all the campaign that userid is a Accounting
                 var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid 
-                        && cm.IdentityRole.Name.Equals("Accounting")
+                        && cm.IdentityRole.Name.Equals(Resource.AccountingRoleName)
                         && cm.IsActive)
                     .Include(cm => cm.Campaign)
                     .Include(cm => cm.IdentityRole)
@@ -483,7 +484,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
 
                 foreach (var campaign in campaigns)
                 {
-                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id && x.TypeId == 2)
+                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id && x.TypeId == IntConstant.PaymentRequestType)
                         .Include(x => x.AttachmentFiles)
                         .Select(rf => new PrePayRequestFormViewRequest
                         {
@@ -519,13 +520,13 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
             try
             {
                 // check if current logged in user is not PM
-                if (currentLoggingRole != "Project Manager")
+                if (currentLoggingRole != Resource.ProjectManagerRoleName)
                 {
                     return new List<RequestFormViewRequestWithVoucherForPM>();
                 }
                 // get all the campaign that userid is a PM
                 var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid
-                        && cm.IdentityRole.Name.Equals("Project Manager")
+                        && cm.IdentityRole.Name.Equals(Resource.ProjectManagerRoleName)
                         && cm.IsActive)
                     .Include(cm => cm.Campaign)
                     .Include(cm => cm.IdentityRole)
@@ -536,7 +537,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
 
                 foreach (var campaign in campaigns)
                 {
-                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id && x.TypeId == 1)
+                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id && x.TypeId == IntConstant.PrePayRequestType)
                         .Include(x => x.AttachmentFiles)
                         .Include(x => x.ApproveProcesses)
                         .ThenInclude(x => x.Vouchers)
@@ -574,13 +575,13 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
             try
             {
                 // check if current logged in user is not PM
-                if (currentLoggingRole != "Project Manager")
+                if (currentLoggingRole != Resource.ProjectManagerRoleName)
                 {
                     return new List<RequestFormViewRequestWithVoucherForPM>();
                 }
                 // get all the campaign that userid is a PM
                 var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid
-                        && cm.IdentityRole.Name.Equals("Project Manager")
+                        && cm.IdentityRole.Name.Equals(Resource.ProjectManagerRoleName")
                         && cm.IsActive)
                     .Include(cm => cm.Campaign)
                     .Include(cm => cm.IdentityRole)
@@ -591,7 +592,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
 
                 foreach (var campaign in campaigns)
                 {
-                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id && x.TypeId == 2)
+                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id && x.TypeId == IntConstant.PaymentRequestType)
                         .Include(x => x.AttachmentFiles)
                         .Include(x => x.ApproveProcesses)
                         .ThenInclude(x => x.Vouchers)

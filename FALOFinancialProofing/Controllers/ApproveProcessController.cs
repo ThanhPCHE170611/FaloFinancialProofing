@@ -1,4 +1,5 @@
-﻿using FALOFinancialProofing.DTOs;
+﻿using FALOFinancialProofing.Constant;
+using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.DTOs.CampaignMemberDTO;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services;
@@ -8,6 +9,7 @@ using FALOFinancialProofing.Services.VoucherServices;
 using Humanizer.Localisation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Drawing.Printing;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -30,44 +32,220 @@ namespace FALOFinancialProofing.Controllers
         }
 
         [HttpGet("getallprepayrequestforvolunteerleaderincampaign/{userid}")]
-        public async Task<IActionResult> GetAllPrePayRequestForVolunteerLeader(string userid, string currentLoggingRole, int campaignId)
+        public async Task<IActionResult> GetAllPrePayRequestForVolunteerLeader(string userid, string currentLoggingRole, 
+            int campaignId,
+            string? status = null,          
+            string? createdBy = null,  
+            int page = IntConstant.PageNumberDefault)
         {
             var result = await approveProcessServices.GetAllPrepayRequestForVolunteerLeader(userid, currentLoggingRole);
-            return Ok(result.Where(x => x.CampaignId == campaignId));
+            var filteredResult = result.Where(x => x.CampaignId == campaignId);
+            if (!string.IsNullOrEmpty(status))
+            {
+                filteredResult = filteredResult.Where(x => x.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
+            }
+            if (!string.IsNullOrEmpty(createdBy))
+            {
+                filteredResult = filteredResult.Where(x => x.CreatedBy == createdBy);
+            }
+            var totalRecords = filteredResult.Count();
+            var pagedResult = filteredResult
+            .Skip((page - 1) * IntConstant.PageSize)
+                .Take(IntConstant.PageSize)
+                .ToList();
+
+            var response = new
+            {
+                TotalRecords = totalRecords,
+                Page = page,
+                Data = pagedResult
+            };
+            return Ok(new
+            {
+                Success = true,
+                Message = "Get all prepay request for volunteer leader successfully",
+                Data = response
+            });
         }
         
         [HttpGet("getallpaymentrequestforvolunteerleaderincampaign/{userid}")]
-        public async Task<IActionResult> GetAllPaymentRequestForVolunteerLeader(string userid, string currentLoggingRole, int campaignId)
+        public async Task<IActionResult> GetAllPaymentRequestForVolunteerLeader(string userid, string currentLoggingRole, int campaignId,
+            string? status = null,
+            string? createdBy = null,
+            int page = IntConstant.PageNumberDefault)
         {
             var result = await approveProcessServices.GetAllPaymentRequestForVolunteerLeader(userid, currentLoggingRole);
-            return Ok(result.Where(x => x.CampaignId == campaignId));
+            var filteredResult = result.Where(x => x.CampaignId == campaignId);
+            if (!string.IsNullOrEmpty(status))
+            {
+                filteredResult = filteredResult.Where(x => x.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
+            }
+            if (!string.IsNullOrEmpty(createdBy))
+            {
+                filteredResult = filteredResult.Where(x => x.CreatedBy == createdBy);
+            }
+            var totalRecords = filteredResult.Count();
+            var pagedResult = filteredResult
+            .Skip((page - 1) * IntConstant.PageSize)
+                .Take(IntConstant.PageSize)
+                .ToList();
+
+            var response = new
+            {
+                TotalRecords = totalRecords,
+                Page = page,
+                Data = pagedResult
+            };
+            return Ok(new
+            {
+                Success = true,
+                Message = "Get all payment request for volunteer leader successfully",
+                Data = response
+            });
         }
 
         [HttpGet("getallprepayrequestforaccountingincampaign/{userid}")]
-        public async Task<IActionResult> GetAllPrePayRequestForAccounting(string userid, string currentLoggingRole, int campaignId)
+        public async Task<IActionResult> GetAllPrePayRequestForAccounting(string userid, string currentLoggingRole, int campaignId,
+             string? status = null,
+            string? createdBy = null,
+            int page = IntConstant.PageNumberDefault)
         {
             var result = await approveProcessServices.GetAllPrepayRequestForAccounting(userid, currentLoggingRole);
-            return Ok(result.Where(x => x.CampaignId == campaignId));
+            var filteredResult = result.Where(x => x.CampaignId == campaignId);
+            if (!string.IsNullOrEmpty(status))
+            {
+                filteredResult = filteredResult.Where(x => x.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
+            }
+            if (!string.IsNullOrEmpty(createdBy))
+            {
+                filteredResult = filteredResult.Where(x => x.CreatedBy == createdBy);
+            }
+            var totalRecords = filteredResult.Count();
+            var pagedResult = filteredResult
+            .Skip((page - 1) * IntConstant.PageSize)
+                .Take(IntConstant.PageSize)
+                .ToList();
+
+            var response = new
+            {
+                TotalRecords = totalRecords,
+                Page = page,
+                Data = pagedResult
+            };
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "Get all prepay request for accounting successfully",
+                Data = response
+            });
         }
         [HttpGet("getallpaymentrequestforaccountingincampaign/{userid}")]
-        public async Task<IActionResult> GetAllPaymentRequestForAccounting(string userid, string currentLoggingRole, int campaignId)
+        public async Task<IActionResult> GetAllPaymentRequestForAccounting(string userid, string currentLoggingRole, int campaignId,
+             string? status = null,
+            string? createdBy = null,
+            int page = IntConstant.PageNumberDefault)
         {
             var result = await approveProcessServices.GetAllPaymentRequestForAccounting(userid, currentLoggingRole);
-            return Ok(result.Where(x => x.CampaignId == campaignId));
+            var filteredResult = result.Where(x => x.CampaignId == campaignId);
+            if (!string.IsNullOrEmpty(status))
+            {
+                filteredResult = filteredResult.Where(x => x.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
+            }
+            if (!string.IsNullOrEmpty(createdBy))
+            {
+                filteredResult = filteredResult.Where(x => x.CreatedBy == createdBy);
+            }
+            var totalRecords = filteredResult.Count();
+            var pagedResult = filteredResult
+            .Skip((page - 1) * IntConstant.PageSize)
+                .Take(IntConstant.PageSize)
+                .ToList();
+
+            var response = new
+            {
+                TotalRecords = totalRecords,
+                Page = page,
+                Data = pagedResult
+            };
+            return Ok(new
+            {
+                Success = true,
+                Message = "Get all payment request for accounting successfully",
+                Data = response
+            });
         }
 
         [HttpGet("getallprepayrequestforprojectmanagerincampaign/{userid}")]
-        public async Task<IActionResult> GetAllPrePayRequestForProjectManager(string userid, string currentLoggingRole, int campaignId)
+        public async Task<IActionResult> GetAllPrePayRequestForProjectManager(string userid, string currentLoggingRole, int campaignId,
+             string? status = null,
+            string? createdBy = null,
+            int page = IntConstant.PageNumberDefault)
         {
             var result = await approveProcessServices.GetAllPrepayRequestForProjectManager(userid, currentLoggingRole);
-            return Ok(result.Where(x => x.CampaignId == campaignId));
+            var filteredResult = result.Where(x => x.CampaignId == campaignId);
+            if (!string.IsNullOrEmpty(status))
+            {
+                filteredResult = filteredResult.Where(x => x.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
+            }
+            if (!string.IsNullOrEmpty(createdBy))
+            {
+                filteredResult = filteredResult.Where(x => x.CreatedBy == createdBy);
+            }
+            var totalRecords = filteredResult.Count();
+            var pagedResult = filteredResult
+            .Skip((page - 1) * IntConstant.PageSize)
+                .Take(IntConstant.PageSize)
+                .ToList();
+
+            var response = new
+            {
+                TotalRecords = totalRecords,
+                Page = page,
+                Data = pagedResult
+            };
+            return Ok(new
+            {
+                Success = true,
+                Message = "Get all prepay request for project manager successfully",
+                Data = response
+            });
         }
         
         [HttpGet("getallpaymentrequestforprojectmanagerincampaign/{userid}")]
-        public async Task<IActionResult> GetAllPaymentRequestForProjectManager(string userid, string currentLoggingRole, int campaignId)
+        public async Task<IActionResult> GetAllPaymentRequestForProjectManager(string userid, string currentLoggingRole, int campaignId,
+             string? status = null,
+            string? createdBy = null,
+            int page = IntConstant.PageNumberDefault)
         {
             var result = await approveProcessServices.GetAllPaymentRequestForProjectManager(userid, currentLoggingRole);
-            return Ok(result.Where(x => x.CampaignId == campaignId));
+            var filteredResult = result.Where(x => x.CampaignId == campaignId);
+            if (!string.IsNullOrEmpty(status))
+            {
+                filteredResult = filteredResult.Where(x => x.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
+            }
+            if (!string.IsNullOrEmpty(createdBy))
+            {
+                filteredResult = filteredResult.Where(x => x.CreatedBy == createdBy);
+            }
+            var totalRecords = filteredResult.Count();
+            var pagedResult = filteredResult
+            .Skip((page - 1) * IntConstant.PageSize)
+                .Take(IntConstant.PageSize)
+                .ToList();
+
+            var response = new
+            {
+                TotalRecords = totalRecords,
+                Page = page,
+                Data = pagedResult
+            };
+            return Ok(new
+            {
+                Success = true,
+                Message = "Get all payment request for project manager successfully",
+                Data = response
+            });
         }
 
         [HttpGet("rejectprepayrequestforvolunteerleader/{requestid}")]
@@ -273,7 +451,7 @@ namespace FALOFinancialProofing.Controllers
                 // create next new approve process for accounting
                 var newApproveProvess = new ApproveProcessRequest
                 {
-                    ApproveNumber = 3,
+                    ApproveNumber = IntConstant.ThirdApproveNumber,
                     ApproveStatus = Resource.ProcessStatus,
                     RequestId = requestid,
                     ApproverId = projectmanagerInCampaign.UserId,
@@ -344,7 +522,7 @@ namespace FALOFinancialProofing.Controllers
                         Message = "Campaign Member not found"
                     });
                 }
-                var updateCampaignMember = requestForm.TypeId == 1 ?
+                var updateCampaignMember = requestForm.TypeId == IntConstant.PrePayRequestType ?
                     new UpdateCampaignMemberDTO
                     {
                         Id = campaignMember.Id,
@@ -411,7 +589,7 @@ namespace FALOFinancialProofing.Controllers
             // create next new approve process for accounting
             var newApproveProvess = new ApproveProcessRequest
             {
-                ApproveNumber = 2,
+                ApproveNumber = IntConstant.SecondApproveNumber,
                 ApproveStatus = Resource.ProcessStatus,
                 RequestId = requestid,
                 ApproverId = accountingInCampaign.UserId,
@@ -479,7 +657,7 @@ namespace FALOFinancialProofing.Controllers
                 });
             }
 
-            var updateCampaignMember = requestForm.TypeId == 1 ? new UpdateCampaignMemberDTO
+            var updateCampaignMember = requestForm.TypeId == IntConstant.PrePayRequestType ? new UpdateCampaignMemberDTO
             {
                 Id = campaignMember.Id,
                 Debt = campaignMember.Debt + requestForm.ExpectedMoney,
