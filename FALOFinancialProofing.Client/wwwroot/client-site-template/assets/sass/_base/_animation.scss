@@ -1,0 +1,128 @@
+//  Sway animation start here ***
+@keyframes sway {
+	0% {
+		transform: translateX(-10px);
+	}
+	100% {
+		transform: translateX(0px);
+	}
+}
+.sway__animation {
+	animation: sway 2s linear infinite alternate;
+}
+
+@keyframes banner__line-a {
+	0% {
+		transform: translateX(-30px);
+	}
+	100% {
+		transform: translateX(0px);
+	}
+}
+.banner__line__animation {
+	animation: banner__line-a 3s linear infinite alternate;
+}
+
+@keyframes shape-hand__a {
+	0% {
+		transform: translateX(-20px);
+		// now finish add some zoom
+	}
+	100% {
+		transform: translateX(0px);
+	}
+}
+.shape-hand__animation {
+	animation: shape-hand__a 5s linear infinite alternate;
+}
+
+@keyframes footer__shape-a {
+	0% {
+		transform: translateX(0px);
+	}
+	100% {
+		transform: translateX(-20px);
+	}
+}
+.footer__shape__animation {
+	animation: footer__shape-a 3s linear infinite alternate;
+}
+
+@keyframes footer__shape-a-right {
+	0% {
+		transform: translateX(20px);
+	}
+	100% {
+		transform: translateX(0px);
+	}
+}
+.footer__shape__animation-right {
+	animation: footer__shape-a-right 3s linear infinite alternate;
+}
+
+@keyframes sway_Y {
+	0% {
+		transform: translateY(0px);
+	}
+	100% {
+		transform: translateY(10px);
+	}
+}
+.sway_Y__animation {
+	animation: sway_Y 2s linear infinite alternate;
+}
+
+@keyframes about-animation {
+	0% {
+		transform: translateY(0px);
+	}
+	100% {
+		transform: translateY(50px);
+	}
+}
+.about-dot__animation {
+	animation: about-animation 5s linear infinite alternate;
+}
+//  Sway animation end here ***
+
+//  Video button animation area start here ***
+@-webkit-keyframes video-animation {
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.5);
+	}
+	100% {
+		opacity: 0;
+		transform: scale(2);
+	}
+}
+
+@keyframes video-animation {
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.5);
+	}
+	100% {
+		opacity: 0;
+		transform: scale(2);
+	}
+}
+//  Video button animation area end here ***
+
+//  Bobble animation start here ***
+@keyframes bobble {
+	0% {
+		transform: translateY(0) scale(1);
+	}
+	100% {
+		transform: translateY(-20px) scale(1.1);
+	}
+}
+.bobble__animation {
+	animation: bobble 4s ease-in-out infinite alternate;
+}
+//  Bobble animation end here ***

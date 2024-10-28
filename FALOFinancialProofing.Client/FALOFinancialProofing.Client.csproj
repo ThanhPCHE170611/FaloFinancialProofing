@@ -1172,6 +1172,38 @@
 
   <ItemGroup>
     <None Include="Pages\HomePage\CampaignList.razor" />
+    <None Include="wwwroot\client-site-template\assets\css\style.css.map" />
+    <None Include="wwwroot\client-site-template\assets\images\logo\logo-light.svg" />
+    <None Include="wwwroot\client-site-template\assets\images\logo\logo.svg" />
+    <None Include="wwwroot\client-site-template\assets\images\preloader.svg" />
+    <None Include="wwwroot\client-site-template\assets\js\bootstrap.min.js" />
+    <None Include="wwwroot\client-site-template\assets\js\jquery-3.7.1.min.js" />
+    <None Include="wwwroot\client-site-template\assets\js\jquery.counterup.min.js" />
+    <None Include="wwwroot\client-site-template\assets\js\jquery.waypoints.js" />
+    <None Include="wwwroot\client-site-template\assets\js\magnific-popup.min.js" />
+    <None Include="wwwroot\client-site-template\assets\js\meanmenu.js" />
+    <None Include="wwwroot\client-site-template\assets\js\nice-select.min.js" />
+    <None Include="wwwroot\client-site-template\assets\js\script.js" />
+    <None Include="wwwroot\client-site-template\assets\js\swiper-bundle.min.js" />
+    <None Include="wwwroot\client-site-template\assets\js\wow.min.js" />
+    <None Include="wwwroot\client-site-template\assets\sass\style.scss" />
+    <None Include="wwwroot\client-site-template\assets\sass\_abstracts\_mixins.scss" />
+    <None Include="wwwroot\client-site-template\assets\sass\_abstracts\_variables.scss" />
+    <None Include="wwwroot\client-site-template\assets\sass\_base\_animation.scss" />
+    <None Include="wwwroot\client-site-template\assets\sass\_base\_typography.scss" />
+    <None Include="wwwroot\client-site-template\assets\sass\_components\_buttons.scss" />
+    <None Include="wwwroot\client-site-template\assets\sass\_components\_progress.scss" />
+    <None Include="wwwroot\client-site-template\assets\sass\_layout\_banner.scss" />
+    <None Include="wwwroot\client-site-template\assets\sass\_layout\_footer.scss" />
+    <None Include="wwwroot\client-site-template\assets\sass\_layout\_header.scss" />
+    <None Include="wwwroot\client-site-template\assets\sass\_layout\_section.scss" />
+    <None Include="wwwroot\client-site-template\assets\webfonts\fa-brands-400.woff2" />
+    <None Include="wwwroot\client-site-template\assets\webfonts\fa-duotone-900.woff2" />
+    <None Include="wwwroot\client-site-template\assets\webfonts\fa-light-300.woff2" />
+    <None Include="wwwroot\client-site-template\assets\webfonts\fa-regular-400.woff2" />
+    <None Include="wwwroot\client-site-template\assets\webfonts\fa-solid-900.woff2" />
+    <None Include="wwwroot\client-site-template\assets\webfonts\fa-thin-100.woff2" />
+    <None Include="wwwroot\client-site-template\assets\webfonts\fa-v4compatibility.woff2" />
   </ItemGroup>
 
 </Project>

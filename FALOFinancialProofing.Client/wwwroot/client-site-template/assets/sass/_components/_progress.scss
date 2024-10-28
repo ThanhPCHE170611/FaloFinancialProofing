@@ -1,0 +1,53 @@
+// Progress bar area start here ***
+.progress {
+	&-area {
+		.progress {
+			background-color: var(--sub-bg);
+			height: 12px;
+			border-radius: 0px;
+			.progress-bar {
+				background-color: var(--primary-color);
+			}
+		}
+	}
+	&__title {
+		@include justify;
+		span {
+			color: var(--primary-color);
+			font-size: 14px;
+			font-weight: 600;
+		}
+	}
+	&__item {
+		width: 100%;
+		height: 8px;
+		background-color: var(--sub-bg);
+		.progress__content {
+			background-color: var(--primary-color);
+			height: 8px;
+			position: relative;
+			span {
+				position: absolute;
+				top: -6px;
+				right: 0;
+				display: inline-block;
+				padding: 2px 5px;
+				background-color: var(--primary-color);
+				color: var(--white);
+				font-size: 10px;
+				line-height: 16px;
+			}
+		}
+	}
+	&__goal {
+		@include justify-wrp;
+		h6 {
+			font-size: 14px;
+			span {
+				font-weight: 500;
+				color: var(--primary-color);
+			}
+		}
+	}
+}
+// Progress bar area end here ***
