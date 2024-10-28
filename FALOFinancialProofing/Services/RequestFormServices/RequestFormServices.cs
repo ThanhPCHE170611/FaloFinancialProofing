@@ -1,4 +1,5 @@
-﻿using FALOFinancialProofing.DTOs;
+﻿using FALOFinancialProofing.Constant;
+using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Extensions;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
@@ -305,7 +306,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
 
             // if createByRole is Accounting => Voucher should not be null
             var createByRole = campainInDb.CampaignMembers.FirstOrDefault(cm => cm.UserId == requestForm.CreatedBy && cm.IsActive).IdentityRole.Name;
-            if(createByRole.Equals("Accounting") && requestForm.VoucherFile == null)
+            if(createByRole.Equals(Resource.AccountingRoleName) && requestForm.VoucherFile == null)
             {
                 message.Append("Voucher file cannot be null");
                 return false;
@@ -333,10 +334,10 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                     .Include(x => x.IdentityRole)
                     .FirstOrDefault()
                     .IdentityRole.Name;
-            if (createByRole.Equals("Project Manager"))
+            if (createByRole.Equals(Resource.ProjectManagerRoleName))
             {
                 // check approveId role is accoungting
-                if (approverRole.Equals("Volunteer Leader"))
+                if (approverRole.Equals(Resource.VolunteerLeaderRoleName))
                 {
                     return true;
                 }
@@ -347,15 +348,15 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             } else
             {
                 // check approveId role is greater than createBy
-                if(createByRole.Equals("Volunteer") && approverRole.Equals("Volunteer Leader"))
+                if(createByRole.Equals(Resource.VolunteerRoleName) && approverRole.Equals(Resource.VolunteerLeaderRoleName))
                 {
                     return true;
                 }
-                if(createByRole.Equals("Volunteer Leader") && approverRole.Equals("Accounting"))
+                if(createByRole.Equals(Resource.VolunteerLeaderRoleName) && approverRole.Equals(Resource.AccountingRoleName))
                 {
                     return true;
                 }
-                if(createByRole.Equals("Accounting") && approverRole.Equals("Project Manager"))
+                if(createByRole.Equals(Resource.AccountingRoleName) && approverRole.Equals(Resource.ProjectManagerRoleName))
                 {
                     return true;
                 }
@@ -366,7 +367,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
         public async Task<List<AttachmentFileRequest>> SaveAttachmentFilesAsync(List<IFormFile> uploadFiles, int requestId, int typeId)
         {
             var attachmentFiles = new List<AttachmentFileRequest>();
-            var folderName = typeId == 1 ? "PrePayUploads" : "VoucherUploads";
+            var folderName = typeId == IntConstant.PrePayRequestType ? "PrePayUploads" : "VoucherUploads";
             try
             {
                 
@@ -415,7 +416,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 approverList = await campaignMemberRepository.GetAll(x => x.CampaignId == campaignId)
                     .Include(x => x.User)
                     .Include(x => x.IdentityRole)
-                    .Where(x => x.IdentityRole.Name == "Volunteer Leader" && x.IsActive)
+                    .Where(x => x.IdentityRole.Name == Resource.VolunteerLeaderRoleName && x.IsActive)
                     .Select(x => new UserWithRole
                     {
                         UserId = x.UserId,
@@ -439,7 +440,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 var approverForLeader = await campaignMemberRepository.GetAll(x => x.CampaignId == campaignId)
                     .Include(x => x.User)
                     .Include(x => x.IdentityRole)
-                    .Where(x => x.IdentityRole.Name == "Accounting" && x.IsActive)
+                    .Where(x => x.IdentityRole.Name == Resource.AccountingRoleName && x.IsActive)
                     .Select(x => new UserWithRole
                     {
                         UserId = x.UserId,
@@ -463,7 +464,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 var approverForLeader = await campaignMemberRepository.GetAll(x => x.CampaignId == campaignId)
                     .Include(x => x.User)
                     .Include(x => x.IdentityRole)
-                    .Where(x => x.IdentityRole.Name == "Project Manager" && x.IsActive)
+                    .Where(x => x.IdentityRole.Name == Resource.ProjectManagerRoleName && x.IsActive)
                     .Select(x => new UserWithRole
                     {
                         UserId = x.UserId,
@@ -480,14 +481,15 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             }
         }
 
-        public async Task<UserWithRole?> GetApproverForProjectManagement(int campaignId)
+        public async Task<List<UserWithRole>> GetApproverForProjectManagement(int campaignId)
         {
+            var approverList = new List<UserWithRole>();
             try
             {
-                var approverForLeader = await campaignMemberRepository.GetAll(x => x.CampaignId == campaignId)
+                approverList = await campaignMemberRepository.GetAll(x => x.CampaignId == campaignId)
                     .Include(x => x.User)
                     .Include(x => x.IdentityRole)
-                    .Where(x => x.IdentityRole.Name == "Volunteer Leader" && x.IsActive)
+                    .Where(x => x.IdentityRole.Name == Resource.VolunteerLeaderRoleName && x.IsActive)
                     .Select(x => new UserWithRole
                     {
                         UserId = x.UserId,
@@ -495,12 +497,12 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                         RoleId = x.RoleId,
                         RoleName = x.IdentityRole.Name
                     })
-                    .FirstOrDefaultAsync();
-                return approverForLeader;
+                    .ToListAsync();
+                return approverList;
             }
             catch (Exception ex)
             {
-                return null;
+                return approverList;
             }
         }
 
@@ -558,7 +560,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             {
                 requestForms = await repository.GetAll(r => r.CampaignId == campaignId
                                             && r.CreatedBy.Equals(userId)
-                                            && r.TypeId == 1)
+                                            && r.TypeId == IntConstant.PrePayRequestType)
                                             .Include(r => r.AttachmentFiles)
                                             .Include(r => r.ApproveProcesses)
                                             .ThenInclude(ap => ap.Vouchers)
@@ -613,7 +615,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             {
                 requestForms = await repository.GetAll(r => r.CampaignId == campaignId
                                             && r.CreatedBy.Equals(userId)
-                                            && r.TypeId == 2)
+                                            && r.TypeId == IntConstant.PaymentRequestType)
                                             .Include(r => r.AttachmentFiles)
                                             .Include(r => r.ApproveProcesses)
                                             .ThenInclude(ap => ap.Vouchers)
@@ -669,7 +671,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 var createByRole = await campaignMemberRepository.GetAll(x => x.UserId == requestForm.CreatedBy)
                     .Include(x => x.IdentityRole)
                     .FirstOrDefaultAsync();
-                if (createByRole.IdentityRole.Name == "Project Manager") return true;
+                if (createByRole.IdentityRole.Name == Resource.ProjectManagerRoleName) return true;
                 return false;
 
             }

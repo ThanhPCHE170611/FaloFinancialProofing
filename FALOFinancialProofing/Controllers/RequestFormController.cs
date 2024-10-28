@@ -1,4 +1,5 @@
-﻿using FALOFinancialProofing.DTOs;
+﻿using FALOFinancialProofing.Constant;
+using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Extensions;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.ApproveProcessServices;
@@ -7,6 +8,7 @@ using FALOFinancialProofing.Services.RequestFormServices;
 using FALOFinancialProofing.Services.VoucherServices;
 using Humanizer.Localisation;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 
@@ -119,7 +121,7 @@ namespace FALOFinancialProofing.Controllers
                 Status = Resource.ProcessStatus,
                 CreatedBy = validatedRequest.CreatedBy,
                 CampaignId = StringExtension.ParseStringToInt(validatedRequest.CampaignId),
-                TypeId = 1
+                TypeId = IntConstant.PrePayRequestType
             };
             var newRequestForm = await requestFormService.CreateRequestFormAsync(newRequestFormInfor);
             if(newRequestForm == null)
@@ -134,7 +136,7 @@ namespace FALOFinancialProofing.Controllers
             // Create new Approve Process
             var approveProcessDTO = new ApproveProcessRequest
             {
-                ApproveNumber = 1,
+                ApproveNumber = IntConstant.FirstApproveNumber,
                 ApproveStatus = Resource.ProcessStatus,
                 RequestId = newRequestForm.Id,
                 ApproverId = requestFormRequest.ApproverId
@@ -199,7 +201,7 @@ namespace FALOFinancialProofing.Controllers
                 Status = Resource.ProcessStatus,
                 CreatedBy = validatedRequest.CreatedBy,
                 CampaignId = StringExtension.ParseStringToInt(validatedRequest.CampaignId),
-                TypeId = 2
+                TypeId = IntConstant.PaymentRequestType
             };
             var newRequestForm = await requestFormService.CreateRequestFormAsync(newRequestFormInfor);
             if (newRequestForm == null)
@@ -213,7 +215,7 @@ namespace FALOFinancialProofing.Controllers
             // Create new Approve Process
             var approveProcessDTO = new ApproveProcessRequest
             {
-                ApproveNumber = 1,
+                ApproveNumber = IntConstant.FirstApproveNumber,
                 ApproveStatus = Resource.ProcessStatus,
                 RequestId = newRequestForm.Id,
                 ApproverId = requestFormRequest.ApproverId
@@ -340,7 +342,9 @@ namespace FALOFinancialProofing.Controllers
         }
 
         [HttpGet("getallprepayrequestincampaign/{campaignId}")]
-        public async Task<IActionResult> GetAllPrePayRequestInCampaign(int campaignId, string userId)
+        public async Task<IActionResult> GetAllPrePayRequestInCampaign(int campaignId, string userId,
+            string? status,
+            int page = IntConstant.PageNumberDefault)
         {
             var requestForms = await requestFormService.GetAllPrePayRequestInCampaign(campaignId, userId);
             if(requestForms == null || requestForms.Count == 0)
@@ -352,16 +356,35 @@ namespace FALOFinancialProofing.Controllers
                 });
             }
 
+            var filteredResult = requestForms.AsEnumerable();
+            if (!string.IsNullOrEmpty(status))
+            {
+                filteredResult = filteredResult.Where(x => x.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
+            }
+            var totalRecords = filteredResult.Count();
+            var pagedResult = filteredResult
+            .Skip((page - 1) * IntConstant.PageSize)
+                .Take(IntConstant.PageSize)
+                .ToList();
+
+            var response = new
+            {
+                TotalRecords = totalRecords,
+                Page = page,
+                Data = pagedResult
+            };
             return Ok(new
             {
                 Success = true,
                 Message = "RequestForms retrieved successfully.",
-                Data = requestForms
+                Data = response
             });
         }
         
         [HttpGet("getallpaymentrequestincampaign/{campaignId}")]
-        public async Task<IActionResult> GetAllPaymentRequestInCampaign(int campaignId, string userId)
+        public async Task<IActionResult> GetAllPaymentRequestInCampaign(int campaignId, string userId, 
+            string? status,
+            int page = IntConstant.PageNumberDefault)
         {
             var requestForms = await requestFormService.GetAllPaymentRequestInCampaign(campaignId, userId);
             if(requestForms == null || requestForms.Count == 0)
@@ -372,12 +395,28 @@ namespace FALOFinancialProofing.Controllers
                     Message = "No RequestForms found."
                 });
             }
+            var filteredResult = requestForms.AsEnumerable();
+            if (!string.IsNullOrEmpty(status))
+            {
+                filteredResult = filteredResult.Where(x => x.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
+            }
+            var totalRecords = filteredResult.Count();
+            var pagedResult = filteredResult
+            .Skip((page - 1) * IntConstant.PageSize)
+                .Take(IntConstant.PageSize)
+                .ToList();
 
+            var response = new
+            {
+                TotalRecords = totalRecords,
+                Page = page,
+                Data = pagedResult
+            };
             return Ok(new
             {
                 Success = true,
                 Message = "RequestForms retrieved successfully.",
-                Data = requestForms
+                Data = response
             });
         }
 
