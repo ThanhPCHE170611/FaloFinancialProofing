@@ -19,18 +19,21 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
         Task<bool> DeleteApproveProcessAsync(ApproveProcessRequest dto);
 
         Task<bool> DeleteApproveProcessByIdAsync(int id);
-        Task<List<PrePayRequestFormViewRequest>?> GetAllPrepayRequestForVolunteerLeader(string userid, string currentRoleLoggedIn);
-        Task<bool> ApprovePrePayRequestForLeader(string userid, string currentLoggingRole, int requestid);
+        Task<bool> ApproveRequestForLeader(string userid, string currentLoggingRole, int requestid);
 
-        Task<bool> ApprovePrePayRequestForAccounting(string userid, string currentLoggingRole, int requestid);
+        Task<bool> ApproveRequestForAccounting(string userid, string currentLoggingRole, int requestid);
 
-        Task<bool> ApprovePrePayRequestForProjectManager(string userid, string currentLoggingRole, int requestid);
+        Task<bool> ApproveRequestForProjectManager(string userid, string currentLoggingRole, int requestid);
         Task<bool> RejectPrePayRequestForLeader(string userid, string currentLoggingRole, int requestid);
         Task<bool> RejectPrePayRequestForAccounting(string userid, string currentLoggingRole, int requestid);
         Task<bool> RejectPrePayRequestForProjectManager(string userid, string currentLoggingRole, int requestid);
+
+        Task<List<PrePayRequestFormViewRequest>?> GetAllPrepayRequestForVolunteerLeader(string userid, string currentRoleLoggedIn);
         Task<ApproveProcess?> GetApproveProcessesByRequestIdAndApproveIdAsync(int requestid, string userid);
         Task<List<PrePayRequestFormViewRequest>?> GetAllPrepayRequestForAccounting(string userid, string currentLoggingRole);
-        Task<List<PrePayRequestFormViewRequestWithVoucherForPM>?> GetAllPrepayRequestForProjectManager(string userid, string currentLoggingRole);
-        
+        Task<List<PrePayRequestFormViewRequest>?> GetAllPaymentRequestForVolunteerLeader(string userid, string currentLoggingRole);
+        Task<List<PrePayRequestFormViewRequest>?> GetAllPaymentRequestForAccounting(string userid, string currentLoggingRole);
+        Task<List<RequestFormViewRequestWithVoucherForPM>?> GetAllPrepayRequestForProjectManager(string userid, string currentLoggingRole);
+        Task<List<RequestFormViewRequestWithVoucherForPM>?> GetAllPaymentRequestForProjectManager(string userid, string currentLoggingRole);
     }
 }

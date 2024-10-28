@@ -2,7 +2,7 @@
 
 namespace FALOFinancialProofing.DTOs
 {
-    public class PrePayRequestFormViewRequestWithVoucherForPM
+    public class RequestFormViewRequestWithVoucherForPM
     {
         public int? Id { get; set; }
         public DateTime CreateAt { get; set; }
