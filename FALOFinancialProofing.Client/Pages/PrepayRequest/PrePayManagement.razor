@@ -317,25 +317,18 @@
             }
         }
 
-        function filterTable() {
+                function filterTable() {
             const searchInput = document.getElementById('searchBox').value.toLowerCase();
-            const statusFilter = document.getElementById('statusFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
             const table = document.getElementById('prepayTable');
             const rows = table.getElementsByTagName('tr');
-
             for (let i = 1; i < rows.length; i++) {
-                const title = rows[i].cells[0].innerText.toLowerCase();
                 const sender = rows[i].cells[1].innerText.toLowerCase();
-                const status = rows[i].cells[5].innerText.toLowerCase();
+                const status = rows[i].cells[6].innerText.toLowerCase();
 
-                let matchesSearch = title.includes(searchInput) || sender.includes(searchInput);
-                let matchesStatus = statusFilter === "" || status.includes(statusFilter.toLowerCase());
-
-                if (matchesSearch && matchesStatus) {
-                    rows[i].style.display = '';
-                } else {
-                    rows[i].style.display = 'none';
-                }
+                const matchesSearch = sender.includes(searchInput);
+                const matchesStatus = !statusFilter || status === statusFilter;
+                rows[i].style.display = (matchesSearch && matchesStatus) ? '' : 'none';
             }
         }
     </script>

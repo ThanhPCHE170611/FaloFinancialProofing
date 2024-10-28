@@ -77,6 +77,24 @@
                     background-color: #007bff;
                     color: #fff;
                 }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        td {
+            vertical-align: middle;
+        }
+
+        .btn {
+            margin: 0 5px;
+        }
     </style>
 </head>
 
@@ -86,13 +104,13 @@
             <div class="col-12">
                 <div class="card my-4">
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                        <div class=" pt-4 pb-3 d-flex justify-content-between align-items-center">
+                        <div class="pt-4 pb-3 d-flex justify-content-between align-items-center">
                             <nav class="nav-tabs">
                                 <a href="/campaigndetail">Campaign Detail</a>
                                 <a href="/prepaymanagement">Prepay Request</a>
                                 <a href="/paymentmanagement">Payment Request</a>
                                 <a href="/prepayvoucher">Prepay Voucher</a>
-                                <a href="/paymentvoucher" >Payment Voucher</a>
+                                <a href="/paymentvoucher">Payment Voucher</a>
                                 <a href="/accountingbook" class="active">Accounting Book</a>
                                 <a href="/member">Member</a>
                             </nav>
@@ -111,12 +129,12 @@
                             <table class="table align-items-center mb-0">
                                 <thead>
                                     <tr>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 25%;">Title</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 25%;">Total Money</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 30%;">Description</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 10%;">Create Date</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 10%;">File</th>
-                                        <th class="text-secondary opacity-7 text-center">Action</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Title</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Total Money</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Description</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Create Date</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">File</th>
+                                        <th class="text-secondary text-secondary text-xxs font-weight-bolder opacity-7 text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="voucherTableBody">
@@ -128,6 +146,7 @@
                                         <td class="align-middle text-center"><a href="#" class="btn btn-link text-info" download="sample.pdf">AccountingBook.excel</a></td>
                                         <td class="align-middle text-center">
                                             <button class="btn btn-info btn-sm" onclick="showDetail(this)">Detail</button>
+                                            <button class="btn btn-danger btn-sm" onclick="deleteRow(this)">Delete</button>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -138,7 +157,6 @@
                 </div>
             </div>
         </div>
-
 
         <div id="createVoucherModal" class="modal">
             <div class="modal-content">
@@ -161,7 +179,7 @@
         <div id="detailModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('detailModal')">&times;</span>
-                <h3>Accouting Book Details</h3>
+                <h3>Accounting Book Details</h3>
                 <div id="voucherDetailContent"></div>
             </div>
         </div>
@@ -200,6 +218,7 @@
                     <td class="align-middle text-center"><a href="#" class="btn btn-link text-info" download="${fileName}">${fileName}</a></td>
                     <td class="align-middle text-center">
                         <button class="btn btn-info btn-sm" onclick="showDetail(this)">Detail</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteRow(this)">Delete</button>
                     </td>
                 </tr>
             `;
@@ -238,6 +257,11 @@
             `;
             document.getElementById('voucherDetailContent').innerHTML = detailContent;
             document.getElementById('detailModal').style.display = 'block';
+        }
+
+        function deleteRow(button) {
+            const row = button.closest('tr');
+            row.parentNode.removeChild(row);
         }
 
         function closeModal(modalId) {

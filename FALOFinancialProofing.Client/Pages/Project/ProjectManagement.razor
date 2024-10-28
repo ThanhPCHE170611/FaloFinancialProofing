@@ -58,11 +58,14 @@
                 <div class="card my-4">
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
-                            <h6 class="text-white text-capitalize ps-3 mb-0">Project table</h6>
-                            <NavLink class="btn btn-dark mb-0 me-3" href="projectcreate">Add Project</NavLink>
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Project Management</h6>
+                            <div>
+                                <NavLink class="btn btn-dark mb-0 me-3" href="projectcreate">Create Project (Individual)</NavLink>
+                                <NavLink class="btn btn-dark mb-0 me-3" href="projectcreate">Create Project (Organization)</NavLink>
+                            </div>   
                         </div>
                     </div>
-
+                    
                     <div class="search-filter-container px-3">
                         <input type="text" id="searchBox" class="search-box" placeholder="Search by Project or Address" onkeyup="filterTable()">
                         <select id="statusFilter" class="filter-box" onchange="filterTable()">
@@ -100,7 +103,7 @@
                                                 <button class="btn btn-success btn-sm" onclick="approveProject(1)">Approve</button>
                                                 <button class="btn btn-danger btn-sm" onclick="declineProject(1)">Decline</button>
                                             </span>
-                                            <a href="projectdetail" class="btn btn-primary btn-sm">Detail</a>
+                                            <a href="projectdetail" class="btn btn-info btn-sm">Detail</a>
                                         </td>
                                     </tr>
                                     <tr>
@@ -116,7 +119,7 @@
                                                 <button class="btn btn-success btn-sm" onclick="approveProject(2)">Approve</button>
                                                 <button class="btn btn-danger btn-sm" onclick="declineProject(2)">Decline</button>
                                             </span>
-                                            <a href="projectdetail" class="btn btn-primary btn-sm">Detail</a>
+                                            <a href="projectdetail" class="btn btn-info btn-sm">Detail</a>
                                         </td>
                                     </tr>
                                 </tbody>
