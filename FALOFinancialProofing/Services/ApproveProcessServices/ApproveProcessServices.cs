@@ -34,7 +34,6 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
             }
             catch (Exception ex)
             {
-
                 return null;
             }
         }
@@ -130,6 +129,179 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
             }
         }
 
+        public async Task<bool> ApproveRequestForLeader(string userid, string currentLoggingRole, int requestid)
+        {
+            try
+            {
+                // validate if current logged in user is not Volunteer Leader
+                if (currentLoggingRole != "Volunteer Leader")
+                {
+                    return false;
+                }
+                // check if user have permission
+                var approveProcess = repository.GetAll(x => x.RequestId == requestid && x.ApproverId.Equals(userid))
+                    .FirstOrDefault();
+                if (approveProcess == null)
+                {
+                    return false;
+                }
+                approveProcess.ApproveStatus = Resource.ApprovedStatus;
+                var updatedComplete = await repository.UpdateAsync(approveProcess);
+                if (!updatedComplete)
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> ApproveRequestForAccounting(string userid, string currentLoggingRole, int requestid)
+        {
+            try
+            {
+                // validate if current logged in user is not Accounting
+                if (currentLoggingRole != "Accounting")
+                {
+                    return false;
+                }
+                // check if user have permission
+                var approveProcess = repository.GetAll(x => x.RequestId == requestid && x.ApproverId.Equals(userid))
+                    .FirstOrDefault();
+                if (approveProcess == null)
+                {
+                    return false;
+                }
+                approveProcess.ApproveStatus = Resource.ApprovedStatus;
+                var updatedComplete = await repository.UpdateAsync(approveProcess);
+                if (!updatedComplete)
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> ApproveRequestForProjectManager(string userid, string currentLoggingRole, int requestid)
+        {
+            try
+            {
+                // validate if current logged in user is not PM
+                if (currentLoggingRole != "Project Manager")
+                {
+                    return false;
+                }
+                // check if user have permission
+                var approveProcess = repository.GetAll(x => x.RequestId == requestid && x.ApproverId.Equals(userid))
+                    .FirstOrDefault();
+                if (approveProcess == null)
+                {
+                    return false;
+                }
+                approveProcess.ApproveStatus = Resource.ApprovedStatus;
+                var updatedComplete = await repository.UpdateAsync(approveProcess);
+                if (!updatedComplete)
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RejectPrePayRequestForLeader(string userid, string currentLoggingRole, int requestid)
+        {
+            try
+            {
+                // validate if current logged in user is not Volunteer Leader
+                if (currentLoggingRole != "Volunteer Leader")
+                {
+                    return false;
+                }
+                var approveProcess = repository.GetAll(x => x.RequestId == requestid && x.ApproverId.Equals(userid))
+                    .FirstOrDefault();
+                if (approveProcess == null)
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RejectPrePayRequestForAccounting(string userid, string currentLoggingRole, int requestid)
+        {
+            try
+            {
+                // validate if current logged in user is not Accounting
+                if (currentLoggingRole != "Accounting")
+                {
+                    return false;
+                }
+                var approveProcess = repository.GetAll(x => x.RequestId == requestid && x.ApproverId.Equals(userid))
+                    .FirstOrDefault();
+                if (approveProcess == null)
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RejectPrePayRequestForProjectManager(string userid, string currentLoggingRole, int requestid)
+        {
+            try
+            {
+                // validate if current logged in user is not Project Manager
+                if (currentLoggingRole != "Project Manager")
+                {
+                    return false;
+                }
+                var approveProcess = repository.GetAll(x => x.RequestId == requestid && x.ApproverId.Equals(userid))
+                    .FirstOrDefault();
+                if (approveProcess == null)
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<ApproveProcess?> GetApproveProcessesByRequestIdAndApproveIdAsync(int requestid, string userid)
+        {
+            try
+            {
+                var approveProcess = await repository.GetAll(x => x.RequestId == requestid && x.ApproverId.Equals(userid))
+                    .FirstOrDefaultAsync();
+                return approveProcess;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public async Task<List<PrePayRequestFormViewRequest>?> GetAllPrepayRequestForVolunteerLeader(string userid, string currentRoleLoggedIn)
         {
             var requests = new List<PrePayRequestFormViewRequest>();
@@ -141,7 +313,9 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                     return new List<PrePayRequestFormViewRequest>();
                 }
                 // get all the campaign that userid is a Volunteer Leader
-                var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid && cm.IdentityRole.Name.Equals("Volunteer Leader"))
+                var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid
+                        && cm.IdentityRole.Name.Equals("Volunteer Leader")
+                        && cm.IsActive)
                     .Include(cm => cm.Campaign)
                     .Include(cm => cm.IdentityRole)
                     .Select(cm => new Campaign
@@ -149,9 +323,9 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                         Id = cm.Campaign.Id,
                     }).ToListAsync();
 
-                foreach(var campaign in campaigns)
+                foreach (var campaign in campaigns)
                 {
-                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id)
+                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id && x.TypeId == 1)
                         .Include(x => x.AttachmentFiles)
                         .Select(rf => new PrePayRequestFormViewRequest
                         {
@@ -180,5 +354,276 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                 return requests;
             }
         }
+        
+        public async Task<List<PrePayRequestFormViewRequest>?> GetAllPaymentRequestForVolunteerLeader(string userid, string currentRoleLoggedIn)
+        {
+            var requests = new List<PrePayRequestFormViewRequest>();
+            try
+            {
+                // check if current logged in user is not Volunteer Leader
+                if (currentRoleLoggedIn != "Volunteer Leader")
+                {
+                    return new List<PrePayRequestFormViewRequest>();
+                }
+                // get all the campaign that userid is a Volunteer Leader
+                var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid
+                        && cm.IdentityRole.Name.Equals("Volunteer Leader")
+                        && cm.IsActive)
+                    .Include(cm => cm.Campaign)
+                    .Include(cm => cm.IdentityRole)
+                    .Select(cm => new Campaign
+                    {
+                        Id = cm.Campaign.Id,
+                    }).ToListAsync();
+
+                foreach (var campaign in campaigns)
+                {
+                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id && x.TypeId == 2)
+                        .Include(x => x.AttachmentFiles)
+                        .Select(rf => new PrePayRequestFormViewRequest
+                        {
+                            Id = rf.Id,
+                            CreateAt = rf.CreateAt,
+                            Description = rf.Description,
+                            ExpectedMoney = rf.ExpectedMoney,
+                            Status = rf.Status,
+                            CreatedBy = rf.CreatedBy,
+                            CampaignId = rf.CampaignId,
+                            AttachmentFiles = rf.AttachmentFiles.Select(af => new AttachmentFileRequest
+                            {
+                                FilePath = af.FilePath,
+                                RequestId = af.RequestId
+                            }).ToList()
+                        }).ToListAsync();
+                    if (requestForms != null && requestForms.Count > 0)
+                    {
+                        requests.AddRange(requestForms);
+                    }
+                }
+                return requests;
+            }
+            catch (Exception ex)
+            {
+                return requests;
+            }
+        }
+
+        public async Task<List<PrePayRequestFormViewRequest>?> GetAllPrepayRequestForAccounting(string userid, string currentLoggingRole)
+        {
+            var requests = new List<PrePayRequestFormViewRequest>();
+            try
+            {
+                // check if current logged in user is not Accounting
+                if (currentLoggingRole != "Accounting")
+                {
+                    return new List<PrePayRequestFormViewRequest>();
+                }
+                // get all the campaign that userid is a Accounting
+                var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid 
+                        && cm.IdentityRole.Name.Equals("Accounting")
+                        && cm.IsActive)
+                    .Include(cm => cm.Campaign)
+                    .Include(cm => cm.IdentityRole)
+                    .Select(cm => new Campaign
+                    {
+                        Id = cm.Campaign.Id,
+                    }).ToListAsync();
+
+                foreach (var campaign in campaigns)
+                {
+                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id && x.TypeId == 1)
+                        .Include(x => x.AttachmentFiles)
+                        .Select(rf => new PrePayRequestFormViewRequest
+                        {
+                            Id = rf.Id,
+                            CreateAt = rf.CreateAt,
+                            Description = rf.Description,
+                            ExpectedMoney = rf.ExpectedMoney,
+                            Status = rf.Status,
+                            CreatedBy = rf.CreatedBy,
+                            CampaignId = rf.CampaignId,
+                            AttachmentFiles = rf.AttachmentFiles.Select(af => new AttachmentFileRequest
+                            {
+                                FilePath = af.FilePath,
+                                RequestId = af.RequestId
+                            }).ToList()
+                        }).ToListAsync();
+                    if (requestForms != null && requestForms.Count > 0)
+                    {
+                        requests.AddRange(requestForms);
+                    }
+                }
+                return requests;
+            }
+            catch (Exception ex)
+            {
+                return requests;
+            }
+        }
+        public async Task<List<PrePayRequestFormViewRequest>?> GetAllPaymentRequestForAccounting(string userid, string currentLoggingRole)
+        {
+            var requests = new List<PrePayRequestFormViewRequest>();
+            try
+            {
+                // check if current logged in user is not Accounting
+                if (currentLoggingRole != "Accounting")
+                {
+                    return new List<PrePayRequestFormViewRequest>();
+                }
+                // get all the campaign that userid is a Accounting
+                var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid 
+                        && cm.IdentityRole.Name.Equals("Accounting")
+                        && cm.IsActive)
+                    .Include(cm => cm.Campaign)
+                    .Include(cm => cm.IdentityRole)
+                    .Select(cm => new Campaign
+                    {
+                        Id = cm.Campaign.Id,
+                    }).ToListAsync();
+
+                foreach (var campaign in campaigns)
+                {
+                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id && x.TypeId == 2)
+                        .Include(x => x.AttachmentFiles)
+                        .Select(rf => new PrePayRequestFormViewRequest
+                        {
+                            Id = rf.Id,
+                            CreateAt = rf.CreateAt,
+                            Description = rf.Description,
+                            ExpectedMoney = rf.ExpectedMoney,
+                            Status = rf.Status,
+                            CreatedBy = rf.CreatedBy,
+                            CampaignId = rf.CampaignId,
+                            AttachmentFiles = rf.AttachmentFiles.Select(af => new AttachmentFileRequest
+                            {
+                                FilePath = af.FilePath,
+                                RequestId = af.RequestId
+                            }).ToList()
+                        }).ToListAsync();
+                    if (requestForms != null && requestForms.Count > 0)
+                    {
+                        requests.AddRange(requestForms);
+                    }
+                }
+                return requests;
+            }
+            catch (Exception ex)
+            {
+                return requests;
+            }
+        }
+
+        public async Task<List<RequestFormViewRequestWithVoucherForPM>?> GetAllPrepayRequestForProjectManager(string userid, string currentLoggingRole)
+        {
+            var requests = new List<RequestFormViewRequestWithVoucherForPM>();
+            try
+            {
+                // check if current logged in user is not PM
+                if (currentLoggingRole != "Project Manager")
+                {
+                    return new List<RequestFormViewRequestWithVoucherForPM>();
+                }
+                // get all the campaign that userid is a PM
+                var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid
+                        && cm.IdentityRole.Name.Equals("Project Manager")
+                        && cm.IsActive)
+                    .Include(cm => cm.Campaign)
+                    .Include(cm => cm.IdentityRole)
+                    .Select(cm => new Campaign
+                    {
+                        Id = cm.Campaign.Id,
+                    }).ToListAsync();
+
+                foreach (var campaign in campaigns)
+                {
+                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id && x.TypeId == 1)
+                        .Include(x => x.AttachmentFiles)
+                        .Include(x => x.ApproveProcesses)
+                        .ThenInclude(x => x.Vouchers)
+                        .Select(rf => new RequestFormViewRequestWithVoucherForPM
+                        {
+                            Id = rf.Id,
+                            CreateAt = rf.CreateAt,
+                            Description = rf.Description,
+                            ExpectedMoney = rf.ExpectedMoney,
+                            Status = rf.Status,
+                            CreatedBy = rf.CreatedBy,
+                            CampaignId = rf.CampaignId,
+                            AttachmentFiles = rf.AttachmentFiles.Select(af => new AttachmentFileRequest
+                            {
+                                FilePath = af.FilePath,
+                                RequestId = af.RequestId
+                            }).ToList(),
+                            VoucherFile = rf.ApproveProcesses.SelectMany(ap => ap.Vouchers).ToList()
+                        }).ToListAsync();
+                    if (requestForms != null && requestForms.Count > 0)
+                    {
+                        requests.AddRange(requestForms);
+                    }
+                }
+                return requests;
+            }
+            catch (Exception ex)
+            {
+                return requests;
+            }
+        }
+        public async Task<List<RequestFormViewRequestWithVoucherForPM>?> GetAllPaymentRequestForProjectManager(string userid, string currentLoggingRole)
+        {
+            var requests = new List<RequestFormViewRequestWithVoucherForPM>();
+            try
+            {
+                // check if current logged in user is not PM
+                if (currentLoggingRole != "Project Manager")
+                {
+                    return new List<RequestFormViewRequestWithVoucherForPM>();
+                }
+                // get all the campaign that userid is a PM
+                var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid
+                        && cm.IdentityRole.Name.Equals("Project Manager")
+                        && cm.IsActive)
+                    .Include(cm => cm.Campaign)
+                    .Include(cm => cm.IdentityRole)
+                    .Select(cm => new Campaign
+                    {
+                        Id = cm.Campaign.Id,
+                    }).ToListAsync();
+
+                foreach (var campaign in campaigns)
+                {
+                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id && x.TypeId == 2)
+                        .Include(x => x.AttachmentFiles)
+                        .Include(x => x.ApproveProcesses)
+                        .ThenInclude(x => x.Vouchers)
+                        .Select(rf => new RequestFormViewRequestWithVoucherForPM
+                        {
+                            Id = rf.Id,
+                            CreateAt = rf.CreateAt,
+                            Description = rf.Description,
+                            ExpectedMoney = rf.ExpectedMoney,
+                            Status = rf.Status,
+                            CreatedBy = rf.CreatedBy,
+                            CampaignId = rf.CampaignId,
+                            AttachmentFiles = rf.AttachmentFiles.Select(af => new AttachmentFileRequest
+                            {
+                                FilePath = af.FilePath,
+                                RequestId = af.RequestId
+                            }).ToList(),
+                            VoucherFile = rf.ApproveProcesses.SelectMany(ap => ap.Vouchers).ToList()
+                        }).ToListAsync();
+                    if (requestForms != null && requestForms.Count > 0)
+                    {
+                        requests.AddRange(requestForms);
+                    }
+                }
+                return requests;
+            }
+            catch (Exception ex)
+            {
+                return requests;
+            }
+        }
+
+        
     }
 }

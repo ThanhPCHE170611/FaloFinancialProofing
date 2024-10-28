@@ -23,11 +23,14 @@ namespace FALOFinancialProofing.Services.RequestFormServices
 
         Task<CreateFormRequest> ValidateRequestForm(CreateFormRequest requestFormRequest, System.Text.StringBuilder message);
 
-        Task<List<AttachmentFileRequest>> SaveUploadedFilesAsync(List<IFormFile> uploadFiles, int value);
+        Task<List<AttachmentFileRequest>> SaveAttachmentFilesAsync(List<IFormFile> uploadFiles, int value, int typeId);
         Task<List<UserWithRole>> GetApproverListForVolunteer(int campaignId);
         Task<UserWithRole?> GetApproverForVolunteerLeader(int campaignId);
         Task<UserWithRole?> GetApproverForAccounting(int campaignId);
         Task<UserWithRole?> GetApproverForProjectManagement(int campaignId);
         Task<List<VoucherRequest>> SaveUploadedVoucherAsync(int approveId, List<IFormFile> files);
+        Task<List<RequestFormWithAttachmentApprovementVoucher>?> GetAllPrePayRequestInCampaign(int campaignId, string userId);
+        Task<bool> IsRequestFormCreateByProjectManager(RequestForm? requestForm);
+        Task<List<RequestFormWithAttachmentApprovementVoucher>?> GetAllPaymentRequestInCampaign(int campaignId, string userId);
     }
 }
