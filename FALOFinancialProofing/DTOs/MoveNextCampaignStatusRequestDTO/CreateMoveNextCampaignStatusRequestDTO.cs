@@ -7,13 +7,13 @@ namespace FALOFinancialProofing.DTOs.MoveNextCampaignStatusRequestDTO
 {
     public class CreateMoveNextCampaignStatusRequestDTO 
     {
-        [Required]
+      
+        public int Id { get; set; }
         public string SenderId { get; set; }
         public string? ReceiverId { get; set; }
-        [Required]
         public int CampaignID { get; set; }
+        [DefaultValue("Move next Campaign Status")]
         public string Title { get; set; }
-        [Required]
         public DateTime CreatedAt { get; set; }
         public string? Feedback { get; set; }
         [DefaultValue("Pending")]

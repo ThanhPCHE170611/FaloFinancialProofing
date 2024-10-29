@@ -34,6 +34,7 @@ using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices;
 using FALOFinancialProofing.Services.ProjectServices;
 using FALOFinancialProofing.Services.CampaignService;
 using FALOFinancialProofing.Services.CampaignMemberService;
+using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestHistoryService;
 
 namespace FALOFinancialProofing
 {
@@ -66,6 +67,7 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped<ICreateCampaignFileService, CreateCampaignFileService>();
             builder.Services.AddScoped<ICreateCampaignRequestService, CreateCampaignRequestService>();
             builder.Services.AddScoped<IMoveNextCampaignStatusRequestService, MoveNextCampaignStatusRequestService>();
+            builder.Services.AddScoped<IMoveNextCampaignStatusRequestHistoryService, MoveNextCampaignStatusRequestHistoryService>();
             builder.Services.AddScoped<IProjectService, ProjectService>();
             builder.Services.AddScoped<ICampaignService, CampaignService>();
             builder.Services.AddScoped<ICampaignMemberService, CampaignMemberService>();

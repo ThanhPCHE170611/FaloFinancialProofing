@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using FALOFinancialProofing.DTOs;
+using FALOFinancialProofing.DTOs.CampaignDTO;
 using FALOFinancialProofing.DTOs.MoveNextCampaignStatusRequestDTO;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
@@ -13,17 +14,17 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
     {
         private readonly IRepository<Campaign, int> _campaignRepository;
         private readonly AuthServices _authServices;
-
-
         private readonly IRepository<MoveNextCampaignStatusRequest, int> _moveNextCampaignStatusRequestRepository;
-
+        private readonly IRepository<CampaignMember, int> _campaignMemberRepository;
         public MoveNextCampaignStatusRequestService(IRepository<MoveNextCampaignStatusRequest, int> moveNextCampaignStatusRequestRepository,
             IRepository<Campaign, int> campaignRepository,
-            AuthServices authServices)
+            AuthServices authServices,
+            IRepository<CampaignMember, int> campaignMemberRepository)
         {
             _moveNextCampaignStatusRequestRepository = moveNextCampaignStatusRequestRepository;
             _campaignRepository = campaignRepository;
             _authServices = authServices;
+            _campaignMemberRepository = campaignMemberRepository;
         }
 
         // Manh moi them vao
@@ -50,7 +51,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                 return null;
             }
         }
-
+        //tao don move next campaign status request
         public async Task<MoveNextCampaignStatusRequest> CreateMoveNextCampaignStatusRequestAsync(CreateMoveNextCampaignStatusRequestDTO requestDto)
         {
             try
@@ -123,16 +124,18 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
             if (isApproved)
             {
                 request.Status = "Approve";
-
+                await _moveNextCampaignStatusRequestRepository.UpdateAsync(request);
                 // Cập nhật trạng thái Campaign
                 var campaign = await GetCampaignByIdAsync(request.CampaignID);
                 if (campaign == null) throw new InvalidOperationException("Campaign not found.");
 
                 campaign.Status = request.StatusOfCampaign;
+                await _campaignRepository.UpdateAsync(campaign);
             }
             else
             {
                 request.Status = "Reject";
+                await _moveNextCampaignStatusRequestRepository.UpdateAsync(request);
             }
 
             return isApproved;
@@ -169,32 +172,11 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
 
             return IsValid;
         }
-        //public async Task<MoveNextCampaignStatusRequest> ConvertDtoToBaseClass(CreateMoveNextCampaignStatusRequestDTO requestDTO)
-        //{
-        //    MoveNextCampaignStatusRequest moveNextCSR = null!;
-        //    try
-        //    {
-        //        moveNextCSR = new MoveNextCampaignStatusRequest
-        //        {
-        //            SenderId = requestDTO.SenderId,
-        //            ProjectName = createProject.ProjectName,
-        //            Description = createProject.Description,
-        //            DateOfCreation = createProject.DateOfCreation,
-        //            Status = createProject.Status,
-        //            OrganizationId = createProject.OrganizationId != 0 ? createProject.OrganizationId : null
-        //        };
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await Console.Out.WriteLineAsync($"ConvertDtoToBaseClass: {ex.Message}");
-        //    }
-
-        //    return project;
-        //}
-        public async Task<MoveNextCampaignStatusResponseDTO?> MapToDto(MoveNextCampaignStatusRequest request)
+        public async Task<CreateMoveNextCampaignStatusRequestDTO?> MapToDto(MoveNextCampaignStatusRequest request)
         {
-            return new MoveNextCampaignStatusResponseDTO
+            return new CreateMoveNextCampaignStatusRequestDTO
             {
+                Id = request.Id,
                 CampaignID = request.CampaignID,
                 StatusOfCampaign = request.StatusOfCampaign,
                 Status = request.Status,
@@ -202,6 +184,65 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                 SenderId = request.SenderId,
                 CreatedAt = request.CreatedAt
             };
+        }
+
+        public Task<bool> UpdateMoveNextCampaignStatusRequestAsync(UpdateMoveNextCampaignStatusRequestDTO updateMoveNextCampaignStatusRequestDTO)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<bool> ValidateProjectCreateAsync(CreateMoveNextCampaignStatusRequestDTO createMoveNextCampaignStatusRequestDTO, StringBuilder message)
+        {
+            bool IsValid = false;
+            try
+            {
+                bool checkValidUser = await _authServices.CheckUserInRole(createMoveNextCampaignStatusRequestDTO.SenderId, AppRole.ProjectManager, message);
+                if (!checkValidUser)
+                {
+                    return IsValid;
+                }
+
+                
+                
+                var campaign = await _campaignRepository.Get(x => x.Id == createMoveNextCampaignStatusRequestDTO.CampaignID);
+                if (campaign == null)
+                {
+                    throw new Exception($"CampaignID ={createMoveNextCampaignStatusRequestDTO.CampaignID} does not exist!");
+                }
+                else
+                {
+                    var campaignIsActive = campaign.IsActive;
+                    if (!campaignIsActive)
+                    {
+                        throw new Exception($"CampaignID ={createMoveNextCampaignStatusRequestDTO.CampaignID} inactive!");
+                    }
+                }
+                if (createMoveNextCampaignStatusRequestDTO.CreatedAt > DateTime.Now)
+                {
+                    throw new Exception("Date of creation cannot be in the future");
+                }
+
+                // check xem có phải PM của campaign đấy không
+                var campaignMember = await _campaignMemberRepository.Get(x => x.UserId == createMoveNextCampaignStatusRequestDTO.SenderId && x.CampaignId == createMoveNextCampaignStatusRequestDTO.CampaignID);
+                if (campaignMember == null)
+                {
+                    throw new Exception($"User with ID = {createMoveNextCampaignStatusRequestDTO.SenderId} is not associated with Campaign ID = {createMoveNextCampaignStatusRequestDTO.CampaignID}.");
+                }
+                var projectManagerRoleId = "205d4496-4ac8-40d9-84b9-e09e1ada7a49"; // ID của Project Manager
+                if (campaignMember.RoleId != projectManagerRoleId)
+                {
+                    throw new Exception("User is not a Project Manager for the specified campaign.");
+                }
+               
+                IsValid = true;
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"ValidateProjectCreate: {ex.Message}");
+            }
+
+            return IsValid;
         }
     }
 }
