@@ -1,4 +1,5 @@
-﻿using FALOFinancialProofing.DTOs;
+﻿using FALOFinancialProofing.Constant;
+using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Extensions;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
@@ -11,12 +12,16 @@ namespace FALOFinancialProofing.Services.RequestFormServices
     {
         private readonly IRepository<RequestForm, int> repository;
         private readonly IRepository<Campaign, int> campaignRepository;
-        private readonly UserManager<User> userManager;
         private readonly IRepository<CampaignMember, int> campaignMemberRepository;
-        public RequestFormServices(IRepository<RequestForm, int> repository, IRepository<Campaign, int> campaignRepository)
+        private readonly IRepository<ApproveProcess, int> approveProcessrepository;
+
+        public RequestFormServices(IRepository<RequestForm, int> repository, IRepository<Campaign, int> campaignRepository, 
+            IRepository<CampaignMember, int> campaignMemberRepository, IRepository<ApproveProcess, int> approveProcessrepository)
         {
             this.repository = repository;
             this.campaignRepository = campaignRepository;
+            this.campaignMemberRepository = campaignMemberRepository;
+            this.approveProcessrepository = approveProcessrepository;
         }
 
         public async Task<RequestForm?> CreateRequestFormAsync(RequestFormDTO dto)
@@ -177,7 +182,8 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                         {
                             Id = rf.RequestType.Id,
                             TypeName = rf.RequestType.TypeName
-                        }
+                        },
+                        TypeId = rf.RequestType.Id
                     }).FirstOrDefaultAsync();
             }
             catch (Exception e)
@@ -261,19 +267,21 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 return false;
             }
             //check campaign id exist?
-            var campainInDb = campaignRepository.GetAll(cp => cp.Id == StringExtension.ParseStringToInt(requestForm.CampaignId))
+            var campainInDb = campaignRepository.GetAll(cp => cp.Id == StringExtension.ParseStringToInt(requestForm.CampaignId)
+            && cp.IsActive)
                 .Include(cp => cp.CampaignMembers)
+                .ThenInclude(cm => cm.IdentityRole)
                 .FirstOrDefault();
             if (campainInDb == null)
             {
-                message.Append("CampaignID is not exist");
+                message.Append("CampaignID is not exist or disable");
                 return false;
             }
             //check createBy id exist, in campaign
-            var createByValidate = campainInDb.CampaignMembers.Any(cm => cm.UserId == requestForm.CreatedBy);
-            if (!createByValidate)
+            var createByValidate = campainInDb.CampaignMembers.Any(cm => cm.UserId == requestForm.CreatedBy && cm.IsActive);
+            if(!createByValidate)
             {
-                message.Append("CreateBy is not exist or maybe in wrong campaign");
+                message.Append("CreateBy is not exist or maybe in wrong campaign or disable");
                 return false;
             }
             // check ApproverId exist in campain && ApproverId != CreatedBy && Role of ApproverId is greater than CreatedBy
@@ -282,10 +290,10 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 message.Append("Approver ID cannot equal CreatBy");
                 return false;
             }
-            var approveByValidate = campainInDb.CampaignMembers.Any(cm => cm.UserId == requestForm.ApproverId);
+            var approveByValidate = campainInDb.CampaignMembers.Any(cm => cm.UserId == requestForm.ApproverId && cm.IsActive);
             if (!approveByValidate)
             {
-                message.Append("ApproverId is not exist or maybe in wrong campaign");
+                message.Append("ApproverId is not exist or maybe in wrong campaign or disable");
                 return false;
             }
             // Compare role of ApproverID and CreatedBy (voluntear, leader, accounting)
@@ -293,6 +301,14 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             if (!haveEnoughPermission)
             {
                 message.Append("The selected Approver don have enough permission");
+                return false;
+            }
+
+            // if createByRole is Accounting => Voucher should not be null
+            var createByRole = campainInDb.CampaignMembers.FirstOrDefault(cm => cm.UserId == requestForm.CreatedBy && cm.IsActive).IdentityRole.Name;
+            if(createByRole.Equals(Resource.AccountingRoleName) && requestForm.VoucherFile == null)
+            {
+                message.Append("Voucher file cannot be null");
                 return false;
             }
 
@@ -312,16 +328,16 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 .ThenInclude(x => x.IdentityRole)
                 .FirstOrDefault()
                 .CampaignMembers
-                .FirstOrDefault(cm => cm.UserId == createdBy)
+                .FirstOrDefault(cm => cm.UserId == createdBy && cm.IsActive)
                 .IdentityRole.Name;
-            var approverRole = campaignMemberRepository.GetAll(x => x.UserId == approverId)
+            var approverRole = campaignMemberRepository.GetAll(x => x.UserId == approverId && x.IsActive)
                     .Include(x => x.IdentityRole)
                     .FirstOrDefault()
                     .IdentityRole.Name;
-            if (createByRole.Equals("Project Managerment"))
+            if (createByRole.Equals(Resource.ProjectManagerRoleName))
             {
                 // check approveId role is accoungting
-                if (approverRole.Equals("Accounting"))
+                if (approverRole.Equals(Resource.VolunteerLeaderRoleName))
                 {
                     return true;
                 }
@@ -333,15 +349,15 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             else
             {
                 // check approveId role is greater than createBy
-                if (createByRole.Equals("Volunteer") && approverRole.Equals("Volunteer Leader"))
+                if(createByRole.Equals(Resource.VolunteerRoleName) && approverRole.Equals(Resource.VolunteerLeaderRoleName))
                 {
                     return true;
                 }
-                if (createByRole.Equals("Volunteer Leader") && approverRole.Equals("Accounting"))
+                if(createByRole.Equals(Resource.VolunteerLeaderRoleName) && approverRole.Equals(Resource.AccountingRoleName))
                 {
                     return true;
                 }
-                if (createByRole.Equals("Accounting") && approverRole.Equals("Project Managerment"))
+                if(createByRole.Equals(Resource.AccountingRoleName) && approverRole.Equals(Resource.ProjectManagerRoleName))
                 {
                     return true;
                 }
@@ -349,18 +365,17 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             return false;
         }
 
-        public async Task<List<AttachmentFileRequest>> SaveUploadedFilesAsync(List<IFormFile> uploadFiles, int requestId)
+        public async Task<List<AttachmentFileRequest>> SaveAttachmentFilesAsync(List<IFormFile> uploadFiles, int requestId, int typeId)
         {
             var attachmentFiles = new List<AttachmentFileRequest>();
+            var folderName = typeId == IntConstant.PrePayRequestType ? "PrePayUploads" : "VoucherUploads";
             try
             {
-                // Kiểm tra nếu danh sách file không null và có file
+                
                 if (uploadFiles != null && uploadFiles.Any())
                 {
-                    // Tạo đường dẫn thư mục lưu trữ
-                    var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "PrePayUploads");
+                    var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), folderName);
 
-                    // Kiểm tra và tạo thư mục nếu chưa tồn tại
                     if (!Directory.Exists(uploadFolder))
                     {
                         Directory.CreateDirectory(uploadFolder);
@@ -368,22 +383,18 @@ namespace FALOFinancialProofing.Services.RequestFormServices
 
                     foreach (var file in uploadFiles)
                     {
-                        // Tạo tên file mới để tránh trùng lặp bằng cách thêm GUID vào tên file
                         var uniqueFileName = $"{Guid.NewGuid()}_{file.FileName}";
 
-                        // Tạo đường dẫn đầy đủ tới file sẽ lưu
                         var filePath = Path.Combine(uploadFolder, uniqueFileName);
 
-                        // Sử dụng FileStream để lưu file vào đường dẫn
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
                             await file.CopyToAsync(stream);
                         }
 
-                        // Tạo DTO lưu thông tin file đã upload
                         var attachmentFileDTO = new AttachmentFileRequest
                         {
-                            FilePath = uniqueFileName,  // Lưu tên file hoặc có thể lưu cả đường dẫn nếu cần
+                            FilePath = uniqueFileName,  
                             RequestId = requestId
                         };
                         attachmentFiles.Add(attachmentFileDTO);
@@ -394,10 +405,282 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             }
             catch (Exception ex)
             {
-                // Log lỗi hoặc xử lý ngoại lệ tùy theo yêu cầu
                 return attachmentFiles;
             }
         }
 
+        public async Task<List<UserWithRole>> GetApproverListForVolunteer(int campaignId)
+        {
+            var approverList = new List<UserWithRole>();
+            try
+            {
+                approverList = await campaignMemberRepository.GetAll(x => x.CampaignId == campaignId)
+                    .Include(x => x.User)
+                    .Include(x => x.IdentityRole)
+                    .Where(x => x.IdentityRole.Name == Resource.VolunteerLeaderRoleName && x.IsActive)
+                    .Select(x => new UserWithRole
+                    {
+                        UserId = x.UserId,
+                        FullName = $"{x.User.FirstName} {x.User.LastName}",
+                        RoleId = x.RoleId,
+                        RoleName = x.IdentityRole.Name
+                    })
+                    .ToListAsync();
+                return approverList;
+            }
+            catch (Exception ex)
+            {
+                return approverList;
+            }
+        }
+
+        public async Task<UserWithRole?> GetApproverForVolunteerLeader(int campaignId)
+        {
+            try
+            {
+                var approverForLeader = await campaignMemberRepository.GetAll(x => x.CampaignId == campaignId)
+                    .Include(x => x.User)
+                    .Include(x => x.IdentityRole)
+                    .Where(x => x.IdentityRole.Name == Resource.AccountingRoleName && x.IsActive)
+                    .Select(x => new UserWithRole
+                    {
+                        UserId = x.UserId,
+                        FullName = $"{x.User.FirstName} {x.User.LastName}",
+                        RoleId = x.RoleId,
+                        RoleName = x.IdentityRole.Name
+                    })
+                    .FirstOrDefaultAsync();
+                return approverForLeader;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<UserWithRole?> GetApproverForAccounting(int campaignId)
+        {
+            try
+            {
+                var approverForLeader = await campaignMemberRepository.GetAll(x => x.CampaignId == campaignId)
+                    .Include(x => x.User)
+                    .Include(x => x.IdentityRole)
+                    .Where(x => x.IdentityRole.Name == Resource.ProjectManagerRoleName && x.IsActive)
+                    .Select(x => new UserWithRole
+                    {
+                        UserId = x.UserId,
+                        FullName = $"{x.User.FirstName} {x.User.LastName}",
+                        RoleId = x.RoleId,
+                        RoleName = x.IdentityRole.Name
+                    })
+                    .FirstOrDefaultAsync();
+                return approverForLeader;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<List<UserWithRole>> GetApproverForProjectManagement(int campaignId)
+        {
+            var approverList = new List<UserWithRole>();
+            try
+            {
+                approverList = await campaignMemberRepository.GetAll(x => x.CampaignId == campaignId)
+                    .Include(x => x.User)
+                    .Include(x => x.IdentityRole)
+                    .Where(x => x.IdentityRole.Name == Resource.VolunteerLeaderRoleName && x.IsActive)
+                    .Select(x => new UserWithRole
+                    {
+                        UserId = x.UserId,
+                        FullName = $"{x.User.FirstName} {x.User.LastName}",
+                        RoleId = x.RoleId,
+                        RoleName = x.IdentityRole.Name
+                    })
+                    .ToListAsync();
+                return approverList;
+            }
+            catch (Exception ex)
+            {
+                return approverList;
+            }
+        }
+
+        public async Task<List<VoucherRequest>> SaveUploadedVoucherAsync(int approveId, List<IFormFile> files)
+        {
+            var requestType = await approveProcessrepository.GetAll(x => x.Id == approveId)
+                .Include(x => x.RequestForm)
+                .ThenInclude(x => x.RequestType)
+                .FirstOrDefaultAsync();
+            var type = requestType.RequestForm.RequestType.TypeName;
+            var voucherFiles = new List<VoucherRequest>();
+            try
+            {
+                if (files != null && files.Any())
+                {
+                    var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), $"{type}Vouchers");
+
+                    if (!Directory.Exists(uploadFolder))
+                    {
+                        Directory.CreateDirectory(uploadFolder);
+                    }
+
+                    foreach (var file in files)
+                    {
+                        var uniqueFileName = $"{Guid.NewGuid()}_{file.FileName}";
+
+                        var filePath = Path.Combine(uploadFolder, uniqueFileName);
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+
+                        var voucherDTO = new VoucherRequest
+                        {
+                            FilePath = uniqueFileName,
+                            ApproveId = approveId
+                        };
+                        voucherFiles.Add(voucherDTO);
+                    }
+                }
+
+                return voucherFiles;
+            }
+            catch (Exception ex)
+            {
+                return voucherFiles;
+            }
+        }
+
+        public async Task<List<RequestFormWithAttachmentApprovementVoucher>?> GetAllPrePayRequestInCampaign(int campaignId, string userId)
+        {
+            var requestForms = new List<RequestFormWithAttachmentApprovementVoucher>();
+            try
+            {
+                requestForms = await repository.GetAll(r => r.CampaignId == campaignId
+                                            && r.CreatedBy.Equals(userId)
+                                            && r.TypeId == IntConstant.PrePayRequestType)
+                                            .Include(r => r.AttachmentFiles)
+                                            .Include(r => r.ApproveProcesses)
+                                            .ThenInclude(ap => ap.Vouchers)
+                                            .Include(r => r.ApproveProcesses)
+                                            .ThenInclude(ap => ap.User)
+                                            .Include(r => r.Campaign)
+                                            .ThenInclude(c => c.CampaignMembers)
+                                            .Select(r => new RequestFormWithAttachmentApprovementVoucher
+                                            {
+                                                Id = r.Id,
+                                                CreateAt = r.CreateAt,
+                                                Description = r.Description,
+                                                ExpectedMoney = r.ExpectedMoney,
+                                                Status = r.Status,
+                                                CreatedBy = r.CreatedBy,
+                                                CampaignId = r.CampaignId,
+                                                TypeId = r.TypeId,
+                                                AttachmentFiles = r.AttachmentFiles.ToList(),
+                                                ApproveProcesses = r.ApproveProcesses.Select(ap => new ApproveProcessWithUser
+                                                {
+                                                    Id = ap.Id,
+                                                    ApproveNumber = ap.ApproveNumber,
+                                                    ApproveStatus = ap.ApproveStatus,
+                                                    RequestId = ap.RequestId,
+                                                    ApproverId = ap.ApproverId,
+                                                    UserWithRole = new UserWithRole
+                                                    {
+                                                        UserId = ap.ApproverId,
+                                                        FullName = $"{ap.User.FirstName} {ap.User.LastName}",
+                                                        RoleId = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).IdentityRole.Id,
+                                                        RoleName = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).IdentityRole.Name
+                                                    }
+                                                }).ToList(),
+                                                VoucherFiles = r.ApproveProcesses.Select(ap => new VoucherRequest
+                                                {
+                                                    Id = ap.Vouchers.FirstOrDefault().Id,
+                                                    FilePath = ap.Vouchers.FirstOrDefault().FilePath,
+                                                }).ToList()
+                                            }).ToListAsync();
+
+                return requestForms;
+            }
+            catch (Exception ex)
+            {
+                return new List<RequestFormWithAttachmentApprovementVoucher>();
+            }
+        }
+        public async Task<List<RequestFormWithAttachmentApprovementVoucher>?> GetAllPaymentRequestInCampaign(int campaignId, string userId)
+        {
+            var requestForms = new List<RequestFormWithAttachmentApprovementVoucher>();
+            try
+            {
+                requestForms = await repository.GetAll(r => r.CampaignId == campaignId
+                                            && r.CreatedBy.Equals(userId)
+                                            && r.TypeId == IntConstant.PaymentRequestType)
+                                            .Include(r => r.AttachmentFiles)
+                                            .Include(r => r.ApproveProcesses)
+                                            .ThenInclude(ap => ap.Vouchers)
+                                            .Include(r => r.ApproveProcesses)
+                                            .ThenInclude(ap => ap.User)
+                                            .Include(r => r.Campaign)
+                                            .ThenInclude(c => c.CampaignMembers)
+                                            .Select(r => new RequestFormWithAttachmentApprovementVoucher
+                                            {
+                                                Id = r.Id,
+                                                CreateAt = r.CreateAt,
+                                                Description = r.Description,
+                                                ExpectedMoney = r.ExpectedMoney,
+                                                Status = r.Status,
+                                                CreatedBy = r.CreatedBy,
+                                                CampaignId = r.CampaignId,
+                                                TypeId = r.TypeId,
+                                                AttachmentFiles = r.AttachmentFiles.ToList(),
+                                                ApproveProcesses = r.ApproveProcesses.Select(ap => new ApproveProcessWithUser
+                                                {
+                                                    Id = ap.Id,
+                                                    ApproveNumber = ap.ApproveNumber,
+                                                    ApproveStatus = ap.ApproveStatus,
+                                                    RequestId = ap.RequestId,
+                                                    ApproverId = ap.ApproverId,
+                                                    UserWithRole = new UserWithRole
+                                                    {
+                                                        UserId = ap.ApproverId,
+                                                        FullName = $"{ap.User.FirstName} {ap.User.LastName}",
+                                                        RoleId = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).IdentityRole.Id,
+                                                        RoleName = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).IdentityRole.Name
+                                                    }
+                                                }).ToList(),
+                                                VoucherFiles = r.ApproveProcesses.Select(ap => new VoucherRequest
+                                                {
+                                                    Id = ap.Vouchers.FirstOrDefault().Id,
+                                                    FilePath = ap.Vouchers.FirstOrDefault().FilePath,
+                                                }).ToList()
+                                            }).ToListAsync();
+
+                return requestForms;
+            }
+            catch (Exception ex)
+            {
+                return new List<RequestFormWithAttachmentApprovementVoucher>();
+            }
+        }
+
+        public async Task<bool> IsRequestFormCreateByProjectManager(RequestForm? requestForm)
+        {
+            try
+            {
+                var createByRole = await campaignMemberRepository.GetAll(x => x.UserId == requestForm.CreatedBy)
+                    .Include(x => x.IdentityRole)
+                    .FirstOrDefaultAsync();
+                if (createByRole.IdentityRole.Name == Resource.ProjectManagerRoleName) return true;
+                return false;
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            
+        }
     }
 }

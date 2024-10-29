@@ -7,7 +7,7 @@ namespace FALOFinancialProofing.DTOs
     {
         public int? Id { get; set; }
         public DateTime CreateAt { get; set; } = DateTime.Now;
-        public string? Description { get; set; }
+        public string Description { get; set; }
 
         public double ExpectedMoney { get; set; }
 
@@ -20,7 +20,9 @@ namespace FALOFinancialProofing.DTOs
         [Required]
         public string ApproverId { get; set; }
 
-        public List<IFormFile> UploadFiles { get; set; }
+        public List<IFormFile>? UploadFiles { get; set; }
+
+        public List<IFormFile>? VoucherFile { get; set; }
 
         public bool? IsValidate { get; set; } = false;
     }

@@ -61,11 +61,65 @@ namespace FALOFinancialProofing {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Accounting.
+        /// </summary>
+        public static string AccountingRoleName {
+            get {
+                return ResourceManager.GetString("AccountingRoleName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Approved.
+        /// </summary>
+        public static string ApprovedStatus {
+            get {
+                return ResourceManager.GetString("ApprovedStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Process.
         /// </summary>
         public static string ProcessStatus {
             get {
                 return ResourceManager.GetString("ProcessStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ProjectManager.
+        /// </summary>
+        public static string ProjectManagerRoleName {
+            get {
+                return ResourceManager.GetString("ProjectManagerRoleName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rejected.
+        /// </summary>
+        public static string RejectedStatus {
+            get {
+                return ResourceManager.GetString("RejectedStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Volunteer Leader.
+        /// </summary>
+        public static string VolunteerLeaderRoleName {
+            get {
+                return ResourceManager.GetString("VolunteerLeaderRoleName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Volunteer.
+        /// </summary>
+        public static string VolunteerRoleName {
+            get {
+                return ResourceManager.GetString("VolunteerRoleName", resourceCulture);
             }
         }
     }

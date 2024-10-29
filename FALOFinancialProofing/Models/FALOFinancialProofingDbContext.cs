@@ -248,6 +248,11 @@ namespace FALOFinancialProofing.Models
                 new IdentityRole { Id = "83292e2c-6c86-4153-bdc5-760d05ec2295", Name = AppRole.Volunteer, NormalizedName = AppRole.Volunteer.ToUpper(), ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85g" },
                  new IdentityRole { Id = "83292e2c-6c86-4153-bdc5-760d05ec2299", Name = AppRole.ProjectManagementBoard, NormalizedName = AppRole.ProjectManagementBoard.ToUpper(), ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85h" }
             );
+
+            modelBuilder.Entity<RequestType>().HasData(
+                new RequestType { Id = 1, TypeName = "Pre-Pay" },
+                new RequestType { Id = 2, TypeName = "Payment" }
+             );
         }
 
         public void DeleteIdentityPrefix(ModelBuilder modelBuilder)

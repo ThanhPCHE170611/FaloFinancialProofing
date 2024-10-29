@@ -1,11 +1,14 @@
-﻿using FALOFinancialProofing.DTOs;
+﻿using FALOFinancialProofing.Constant;
+using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Extensions;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.ApproveProcessServices;
 using FALOFinancialProofing.Services.AttachmentFIleServices;
 using FALOFinancialProofing.Services.RequestFormServices;
+using FALOFinancialProofing.Services.VoucherServices;
 using Humanizer.Localisation;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 
@@ -18,12 +21,18 @@ namespace FALOFinancialProofing.Controllers
         private readonly IRequestFormServices requestFormService;
         private readonly IAttachmentFileServices attachmentFileService;
         private readonly IApproveProcessServices approveProcessServices;
+        private readonly IVoucherServices voucherServices;
 
-        public RequestFormController(IRequestFormServices requestFormService, IAttachmentFileServices attachmentFileService, IApproveProcessServices approveProcessServices)
+        public RequestFormController(IRequestFormServices requestFormService, 
+            IAttachmentFileServices attachmentFileService, 
+            IApproveProcessServices approveProcessServices,
+            IVoucherServices voucherServices
+            )
         {
             this.requestFormService = requestFormService;
             this.attachmentFileService = attachmentFileService;
             this.approveProcessServices = approveProcessServices;
+            this.voucherServices = voucherServices;
         }
 
         [HttpGet]
@@ -104,15 +113,15 @@ namespace FALOFinancialProofing.Controllers
                 });
             }
             // Create new RequestForm
-            RequestFormInformation newRequestFormInfor = new RequestFormInformation
+            var newRequestFormInfor = new RequestFormInformation
             {
                 CreateAt = validatedRequest.CreateAt,
                 Description = validatedRequest.Description,
                 ExpectedMoney = validatedRequest.ExpectedMoney,
-                Status = "Pending",
+                Status = Resource.ProcessStatus,
                 CreatedBy = validatedRequest.CreatedBy,
                 CampaignId = StringExtension.ParseStringToInt(validatedRequest.CampaignId),
-                TypeId = 1
+                TypeId = IntConstant.PrePayRequestType
             };
             var newRequestForm = await requestFormService.CreateRequestFormAsync(newRequestFormInfor);
             if(newRequestForm == null)
@@ -127,30 +136,310 @@ namespace FALOFinancialProofing.Controllers
             // Create new Approve Process
             var approveProcessDTO = new ApproveProcessRequest
             {
-                ApproveNumber = 1,
+                ApproveNumber = IntConstant.FirstApproveNumber,
                 ApproveStatus = Resource.ProcessStatus,
                 RequestId = newRequestForm.Id,
                 ApproverId = requestFormRequest.ApproverId
             };
             var newApproveProcess = await approveProcessServices.CreateApproveProcessAsync(approveProcessDTO);
             //Create new AttachmentFile
-            var attachmentFiles = await requestFormService.SaveUploadedFilesAsync(validatedRequest.UploadFiles, newRequestForm.Id);
+            if(requestFormRequest.UploadFiles != null && requestFormRequest.UploadFiles.Count > 0)
+            {
+                var attachmentFiles = await requestFormService.SaveAttachmentFilesAsync(validatedRequest.UploadFiles, newRequestForm.Id, newRequestForm.TypeId);
+                var canCreateAttachmentFiles = await attachmentFileService.CreateManyAttachmentFileAsync(attachmentFiles);
+                if(!canCreateAttachmentFiles)
+                {
+                    return Ok(new
+                    {
+                        Success = false,
+                        Message = "Create new AttachmentFiles failed."
+                    });
+                }
+            }
+            if(requestFormRequest.VoucherFile != null && requestFormRequest.VoucherFile.Count > 0) {
+                var newVouchers = await requestFormService.SaveUploadedVoucherAsync(newApproveProcess.Id, validatedRequest.VoucherFile);
+                var canCreateVouchers = await voucherServices.CreateManyVoucherAsync(newVouchers);
+                if (!canCreateVouchers)
+                {
+                    return Ok(new
+                    {
+                        Success = false,
+                        Message = "Create new Voucher failed."
+                    });
+                }
+            }
+            
+            return Ok(new
+            {
+                Success = true,
+                Message = "Create new PrePay RequestForm successfully.",
+                Data = new {RequestId = newRequestForm.Id, 
+                ApproveProcessId = newApproveProcess.Id }
+            });
+        }
 
-            var canCreateAttachmentFiles = await attachmentFileService.CreateManyAttachmentFileAsync(attachmentFiles);
-            if(!canCreateAttachmentFiles)
+        [HttpPost("createnewpaymentrequest")]
+        public async Task<IActionResult> CreateNewPaymentRequestForm([FromForm] CreateFormRequest requestFormRequest)
+        {
+            StringBuilder message = new StringBuilder();
+            // Validate Data from RequestForm
+            var validatedRequest = await requestFormService.ValidateRequestForm(requestFormRequest, message);
+            if ((bool)!validatedRequest.IsValidate)
             {
                 return Ok(new
                 {
                     Success = false,
-                    Message = "Create new AttachmentFiles failed."
+                    Message = $"Create Request Failed {message}"
+                });
+            }
+            // Create new RequestForm
+            var newRequestFormInfor = new RequestFormInformation
+            {
+                CreateAt = validatedRequest.CreateAt,
+                Description = validatedRequest.Description,
+                ExpectedMoney = validatedRequest.ExpectedMoney,
+                Status = Resource.ProcessStatus,
+                CreatedBy = validatedRequest.CreatedBy,
+                CampaignId = StringExtension.ParseStringToInt(validatedRequest.CampaignId),
+                TypeId = IntConstant.PaymentRequestType
+            };
+            var newRequestForm = await requestFormService.CreateRequestFormAsync(newRequestFormInfor);
+            if (newRequestForm == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "Create new RequestForm failed."
+                });
+            }
+            // Create new Approve Process
+            var approveProcessDTO = new ApproveProcessRequest
+            {
+                ApproveNumber = IntConstant.FirstApproveNumber,
+                ApproveStatus = Resource.ProcessStatus,
+                RequestId = newRequestForm.Id,
+                ApproverId = requestFormRequest.ApproverId
+            };
+            var newApproveProcess = await approveProcessServices.CreateApproveProcessAsync(approveProcessDTO);
+            //Create new AttachmentFile
+            if (requestFormRequest.UploadFiles != null && requestFormRequest.UploadFiles.Count > 0)
+            {
+                var attachmentFiles = await requestFormService.SaveAttachmentFilesAsync(validatedRequest.UploadFiles, newRequestForm.Id, newRequestForm.TypeId);
+                var canCreateAttachmentFiles = await attachmentFileService.CreateManyAttachmentFileAsync(attachmentFiles);
+                if (!canCreateAttachmentFiles)
+                {
+                    return Ok(new
+                    {
+                        Success = false,
+                        Message = "Create new AttachmentFiles failed."
+                    });
+                }
+            }
+            if (requestFormRequest.VoucherFile != null && requestFormRequest.VoucherFile.Count > 0)
+            {
+                var newVouchers = await requestFormService.SaveUploadedVoucherAsync(newApproveProcess.Id, validatedRequest.VoucherFile);
+                var canCreateVouchers = await voucherServices.CreateManyVoucherAsync(newVouchers);
+                if (!canCreateVouchers)
+                {
+                    return Ok(new
+                    {
+                        Success = false,
+                        Message = "Create new Voucher failed."
+                    });
+                }
+            }
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "Create new Payment RequestForm successfully.",
+                Data = new
+                {
+                    RequestId = newRequestForm.Id,
+                    ApproveProcessId = newApproveProcess.Id
+                }
+            });
+        }
+
+        [HttpGet("getapproverlistforvolunteer/{campaignId}")]
+        public async Task<IActionResult> GetApproverListForVolunteer(int campaignId)
+        {
+            var approverListAsync = await requestFormService.GetApproverListForVolunteer(campaignId);
+            if(approverListAsync == null || approverListAsync.Count == 0)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "No Approver found."
+                });
+            } 
+            return Ok(new
+            {
+                Success = true,
+                Message = "Request Form retrieved successfully.",
+                Data = approverListAsync
+            });
+            
+        }
+        [HttpGet("getapproverforvolunteerleader/{campaignId}")]
+        public async Task<IActionResult> GetApproverForVolunteerLeader(int campaignId)
+        {
+            var approverAsync = await requestFormService.GetApproverForVolunteerLeader(campaignId);
+            if(approverAsync == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "No Approver found."
+                });
+            }
+            return Ok(new
+            {
+                Success = true,
+                Message = "Request Form retrieved successfully.",
+                Data = approverAsync
+            });
+        }
+        
+        [HttpGet("getapproverforaccounting/{campaignId}")]
+        public async Task<IActionResult> GetApproverForAccounting(int campaignId)
+        {
+            var approverAsync = await requestFormService.GetApproverForAccounting(campaignId);
+            if(approverAsync == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "No Approver found."
+                });
+            }
+            return Ok(new
+            {
+                Success = true,
+                Message = "Request Form retrieved successfully.",
+                Data = approverAsync
+            });
+        }
+        
+        [HttpGet("getapproverforprojectmanagement/{campaignId}")]
+        public async Task<IActionResult> GetApproverForProjectManagement(int campaignId)
+        {
+            var approverAsync = await requestFormService.GetApproverForProjectManagement(campaignId);
+            if(approverAsync == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "No Approver found."
+                });
+            }
+            return Ok(new
+            {
+                Success = true,
+                Message = "Request Form retrieved successfully.",
+                Data = approverAsync
+            });
+        }
+
+        [HttpGet("getallprepayrequestincampaign/{campaignId}")]
+        public async Task<IActionResult> GetAllPrePayRequestInCampaign(int campaignId, string userId,
+            string? status,
+            int page = IntConstant.PageNumberDefault)
+        {
+            var requestForms = await requestFormService.GetAllPrePayRequestInCampaign(campaignId, userId);
+            if(requestForms == null || requestForms.Count == 0)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "No RequestForms found."
+                });
+            }
+
+            var filteredResult = requestForms.AsEnumerable();
+            if (!string.IsNullOrEmpty(status))
+            {
+                filteredResult = filteredResult.Where(x => x.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
+            }
+            var totalRecords = filteredResult.Count();
+            var pagedResult = filteredResult
+            .Skip((page - 1) * IntConstant.PageSize)
+                .Take(IntConstant.PageSize)
+                .ToList();
+
+            var response = new
+            {
+                TotalRecords = totalRecords,
+                Page = page,
+                Data = pagedResult
+            };
+            return Ok(new
+            {
+                Success = true,
+                Message = "RequestForms retrieved successfully.",
+                Data = response
+            });
+        }
+        
+        [HttpGet("getallpaymentrequestincampaign/{campaignId}")]
+        public async Task<IActionResult> GetAllPaymentRequestInCampaign(int campaignId, string userId, 
+            string? status,
+            int page = IntConstant.PageNumberDefault)
+        {
+            var requestForms = await requestFormService.GetAllPaymentRequestInCampaign(campaignId, userId);
+            if(requestForms == null || requestForms.Count == 0)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "No RequestForms found."
+                });
+            }
+            var filteredResult = requestForms.AsEnumerable();
+            if (!string.IsNullOrEmpty(status))
+            {
+                filteredResult = filteredResult.Where(x => x.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
+            }
+            var totalRecords = filteredResult.Count();
+            var pagedResult = filteredResult
+            .Skip((page - 1) * IntConstant.PageSize)
+                .Take(IntConstant.PageSize)
+                .ToList();
+
+            var response = new
+            {
+                TotalRecords = totalRecords,
+                Page = page,
+                Data = pagedResult
+            };
+            return Ok(new
+            {
+                Success = true,
+                Message = "RequestForms retrieved successfully.",
+                Data = response
+            });
+        }
+
+        [HttpPost("uploadvoucherforaccounting/{approveId}")]
+        public async Task<IActionResult> UploadVoucherForAccounting(int approveId, List<IFormFile> files)
+        {
+            var vouchers = await requestFormService.SaveUploadedVoucherAsync(approveId, files);
+            var canCreateVouchers = await voucherServices.CreateManyVoucherAsync(vouchers);
+            if (!canCreateVouchers)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "Create new Voucher failed."
                 });
             }
             return Ok(new
             {
                 Success = true,
                 Message = "Create new PrePay RequestForm successfully.",
-                Data = newRequestFormInfor
+                Data = vouchers
             });
         }
+
     }
 }

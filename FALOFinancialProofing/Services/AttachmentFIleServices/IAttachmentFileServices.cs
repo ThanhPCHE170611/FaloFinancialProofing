@@ -18,5 +18,6 @@ namespace FALOFinancialProofing.Services.AttachmentFIleServices
         Task<bool> DeleteRequestFormAsync(AttachmentFileRequest dto);
 
         Task<bool> DeleteRequestFormByIdAsync(int id);
+        Task<(byte[] fileBytes, string contentType, string fileName)> DownloadPrePayAttachmentFileByFileName(string fileName);
     }
 }

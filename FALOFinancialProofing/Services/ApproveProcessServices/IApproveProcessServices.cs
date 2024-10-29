@@ -1,5 +1,6 @@
 ﻿using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Models;
+using System.Threading.Tasks;
 
 namespace FALOFinancialProofing.Services.ApproveProcessServices
 {
@@ -18,5 +19,21 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
         Task<bool> DeleteApproveProcessAsync(ApproveProcessRequest dto);
 
         Task<bool> DeleteApproveProcessByIdAsync(int id);
+        Task<bool> ApproveRequestForLeader(string userid, string currentLoggingRole, int requestid);
+
+        Task<bool> ApproveRequestForAccounting(string userid, string currentLoggingRole, int requestid);
+
+        Task<bool> ApproveRequestForProjectManager(string userid, string currentLoggingRole, int requestid);
+        Task<bool> RejectPrePayRequestForLeader(string userid, string currentLoggingRole, int requestid);
+        Task<bool> RejectPrePayRequestForAccounting(string userid, string currentLoggingRole, int requestid);
+        Task<bool> RejectPrePayRequestForProjectManager(string userid, string currentLoggingRole, int requestid);
+
+        Task<List<PrePayRequestFormViewRequest>?> GetAllPrepayRequestForVolunteerLeader(string userid, string currentRoleLoggedIn);
+        Task<ApproveProcess?> GetApproveProcessesByRequestIdAndApproveIdAsync(int requestid, string userid);
+        Task<List<PrePayRequestFormViewRequest>?> GetAllPrepayRequestForAccounting(string userid, string currentLoggingRole);
+        Task<List<PrePayRequestFormViewRequest>?> GetAllPaymentRequestForVolunteerLeader(string userid, string currentLoggingRole);
+        Task<List<PrePayRequestFormViewRequest>?> GetAllPaymentRequestForAccounting(string userid, string currentLoggingRole);
+        Task<List<RequestFormViewRequestWithVoucherForPM>?> GetAllPrepayRequestForProjectManager(string userid, string currentLoggingRole);
+        Task<List<RequestFormViewRequestWithVoucherForPM>?> GetAllPaymentRequestForProjectManager(string userid, string currentLoggingRole);
     }
 }
