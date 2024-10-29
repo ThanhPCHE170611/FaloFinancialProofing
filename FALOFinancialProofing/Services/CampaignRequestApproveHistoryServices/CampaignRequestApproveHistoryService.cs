@@ -64,11 +64,13 @@ namespace FALOFinancialProofing.Services.CampaignRequestApproveHistoryServices
                             CampaignRequest.Status = RequestStatus.Accepted;
                             campaign.IsActive = true;
                             campaign.Status = RequestStatus.FundRaising;
+                            campaign.BankingNumber = createCampaignRequestApproveHistoryClientRequest.BankingNumber;
                         }
                         else
                         {
                             CampaignRequest.Status = RequestStatus.Rejected;
                             campaign.IsActive = false;
+                            campaign.BankingNumber = null;
                             campaign.Status = RequestStatus.Rejected;
                         }
                     }
@@ -84,6 +86,7 @@ namespace FALOFinancialProofing.Services.CampaignRequestApproveHistoryServices
                             CampaignRequest.CreatedAt = requestHistoryRejected.DateOfApproval;
                             CampaignRequest.Status = RequestStatus.Rejected;
                             campaign.IsActive = false;
+                            campaign.BankingNumber = null;
                             campaign.Status = RequestStatus.Rejected;
                             await _campaignRepository.UpdateAsync(campaign);
                             await _createCampaignRequestRepository.UpdateAsync(CampaignRequest);
@@ -96,6 +99,7 @@ namespace FALOFinancialProofing.Services.CampaignRequestApproveHistoryServices
                             CampaignRequest.Status = RequestStatus.Accepted;
                             campaign.IsActive = true;
                             campaign.Status = RequestStatus.FundRaising;
+                            campaign.BankingNumber = createCampaignRequestApproveHistoryClientRequest.BankingNumber;
                         }
                     }
 
@@ -117,6 +121,7 @@ namespace FALOFinancialProofing.Services.CampaignRequestApproveHistoryServices
                         await _campaignRequestApproveHistoriesRepository.InsertAsync(createCampaignRequestApproveHistory);
                         CampaignRequest.Status = RequestStatus.Rejected;
                         campaign.IsActive = false;
+                        campaign.BankingNumber = null;
                         campaign.Status = RequestStatus.Rejected;
                     }
                     else
@@ -160,8 +165,12 @@ namespace FALOFinancialProofing.Services.CampaignRequestApproveHistoryServices
                 {
                     throw new Exception("Date Of Approval cannot be in the future");
                 }
+                // kiểm tra tài khoản ngân hàng có đi cùng với đồng ý
 
-
+                if (string.IsNullOrEmpty(createCampaignRequestApproveHistoryClientRequest.BankingNumber) && createCampaignRequestApproveHistoryClientRequest.IsAllowed)
+                {
+                    throw new Exception("Need to add banking number before Approve");
+                }
                 //await _campaignRequestApproveHistoriesRepository.InsertAsync(createCampaignRequestApproveHistory);
 
                 checkValid = true;
