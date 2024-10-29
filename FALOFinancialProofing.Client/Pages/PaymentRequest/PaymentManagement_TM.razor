@@ -1,4 +1,4 @@
-﻿@page "/prepaymanagement"
+﻿@page "/paymentmanagement_tm"
 <!DOCTYPE html>
 <html lang="en">
 
@@ -122,8 +122,8 @@
                         <div class="pt-4 pb-3 d-flex justify-content-between align-items-center">
                             <nav class="nav-tabs">
                                 <a href="/campaigndetail">Campaign Detail</a>
-                                <a href="/prepaymanagement" class="active">Prepay Request</a>
-                                <a href="/paymentmanagement">Payment Request</a>
+                                <a href="/prepaymanagement" >Prepay Request</a>
+                                <a href="/paymentmanagement" class="active">Payment Request</a>
                                 <a href="/prepayvoucher">Prepay Voucher</a>
                                 <a href="/paymentvoucher">Payment Voucher</a>
                                 <a href="/accountingbook">Accounting Book</a>
@@ -133,8 +133,8 @@
                     </div>
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
-                            <h6 class="text-white text-capitalize ps-3 mb-0">Prepay Request List</h6>
-                            <NavLink class="btn btn-dark mb-0 me-3" href="prepaycreate">Create Prepay Request</NavLink>
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Payment Request List</h6>
+                            <NavLink class="btn btn-dark mb-0 me-3" href="prepaycreate">Create Payment Request</NavLink>
                         </div>
                     </div>
 
@@ -155,12 +155,11 @@
                                     <tr>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 5%;">STT</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Sender</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 15%;">Expected Money</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 15%;">Actual Money</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 15%;">Assign From</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 10%;">File</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 10%;">Voucher</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 10%;">Status</th>
-                                        
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 15%;">Created Date</th>
                                         <th class="text-secondary opacity-7 text-center" style="width: 10%;">Action</th>
                                     </tr>
@@ -179,9 +178,9 @@
                                         </td>
                                         <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">2024-10-01</span></td>
                                         <td class="align-middle text-center">
-                                            <button class="btn btn-success btn-sm" onclick="approveRequest(this)">Approve</button>
-                                            <button class="btn btn-danger btn-sm" onclick="showDeclinePopup(this)">Decline</button>
-                                            <a class="btn btn-info btn-sm" href="prepaydetail">Detail</a>
+                                            @* <button class="btn btn-success btn-sm" onclick="approveRequest(this)">Approve</button>
+                                            <button class="btn btn-danger btn-sm" onclick="showDeclinePopup(this)">Decline</button> *@
+                                            <a class="btn btn-info btn-sm" href="paymentdetail">Detail</a>
                                         </td>
                                     </tr>
                                     <tr>
@@ -197,9 +196,9 @@
                                         </td>
                                         <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">2024-10-02</span></td>
                                         <td class="align-middle text-center">
-                                            <button class="btn btn-success btn-sm" onclick="approveRequest(this)">Approve</button>
-                                            <button class="btn btn-danger btn-sm" onclick="showDeclinePopup(this)">Decline</button>
-                                            <a class="btn btn-info btn-sm" href="prepaydetail">Detail</a>
+                                            @* <button class="btn btn-success btn-sm" onclick="approveRequest(this)">Approve</button>
+                                            <button class="btn btn-danger btn-sm" onclick="showDeclinePopup(this)">Decline</button> *@
+                                            <a class="btn btn-info btn-sm" href="paymentdetail">Detail</a>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -324,18 +323,25 @@
             }
         }
 
-                function filterTable() {
+        function filterTable() {
             const searchInput = document.getElementById('searchBox').value.toLowerCase();
-            const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
             const table = document.getElementById('prepayTable');
             const rows = table.getElementsByTagName('tr');
-            for (let i = 1; i < rows.length; i++) {
-                const sender = rows[i].cells[1].innerText.toLowerCase();
-                const status = rows[i].cells[6].innerText.toLowerCase();
 
-                const matchesSearch = sender.includes(searchInput);
-                const matchesStatus = !statusFilter || status === statusFilter;
-                rows[i].style.display = (matchesSearch && matchesStatus) ? '' : 'none';
+            for (let i = 1; i < rows.length; i++) {
+                const title = rows[i].cells[0].innerText.toLowerCase();
+                const sender = rows[i].cells[1].innerText.toLowerCase();
+                const status = rows[i].cells[5].innerText.toLowerCase();
+
+                let matchesSearch = title.includes(searchInput) || sender.includes(searchInput);
+                let matchesStatus = statusFilter === "" || status.includes(statusFilter.toLowerCase());
+
+                if (matchesSearch && matchesStatus) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
             }
         }
     </script>

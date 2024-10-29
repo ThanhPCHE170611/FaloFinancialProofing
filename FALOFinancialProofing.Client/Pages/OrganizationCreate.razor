@@ -45,107 +45,106 @@
 
 <body>
     <div class="container-fluid py-4">
-        <form>
-            <div class="row">
-                <div class="col-12">
-                    <div class="card my-4">
-                        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                            <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
-                                <h6 class="text-white text-capitalize ps-3 mb-0">Create Organization</h6>
-                            </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Create Organization</h6>
                         </div>
-                        <div class="card-body">
+                    </div>
+                    <div class="card-body">
 
-                            <div class="mb-3">
-                                <label for="organizationLogo" class="form-label">Logo</label>
-                                <input type="file" class="form-control" id="organizationLogo" accept="image/*" onchange="previewLogo()">
-                                <div id="logoPreview" class="mt-3"></div>
-                            </div>
+                        <div class="mb-3">
+                            <label for="organizationLogo" class="form-label">Logo</label>
+                            <input type="file" class="form-control" id="organizationLogo" accept="image/*" onchange="previewLogo()">
+                            <div id="logoPreview" class="mt-3"></div>
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="name" class="form-label">Name</label>
-                                <input type="text" class="form-control" id="name" placeholder="Enter Organization Name">
-                            </div>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="name" placeholder="Enter Organization Name">
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="mainOffice" class="form-label">Main Office</label>
-                                <input type="text" class="form-control" id="mainOffice" placeholder="Enter Main Office">
-                            </div>
+                        <div class="mb-3">
+                            <label for="mainOffice" class="form-label">Main Office</label>
+                            <input type="text" class="form-control" id="mainOffice" placeholder="Enter Main Office">
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="representative" class="form-label">Representative</label>
-                                <input type="text" class="form-control" id="representative" placeholder="Enter Representative's Name">
-                            </div>
+                        <div class="mb-3">
+                            <label for="representative" class="form-label">Representative</label>
+                            <input type="text" class="form-control" id="representative" placeholder="Enter Representative's Name">
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="phoneNumber" class="form-label">Phone Number</label>
-                                <input type="text" class="form-control" id="phoneNumber" placeholder="Enter Phone Number">
-                            </div>
+                        <div class="mb-3">
+                            <label for="phoneNumber" class="form-label">Phone Number</label>
+                            <input type="text" class="form-control" id="phoneNumber" placeholder="Enter Phone Number">
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" placeholder="Enter Email">
-                            </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" placeholder="Enter Email">
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="description" class="form-label">Description</label>
-                                <textarea class="form-control" id="description" rows="3" placeholder="Enter Description"></textarea>
-                            </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" rows="3" placeholder="Enter Description"></textarea>
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="vision" class="form-label">Vision</label>
-                                <textarea class="form-control" id="vision" rows="3" placeholder="Enter Vision"></textarea>
-                            </div>
+                        <div class="mb-3">
+                            <label for="vision" class="form-label">Vision</label>
+                            <textarea class="form-control" id="vision" rows="3" placeholder="Enter Vision"></textarea>
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="mission" class="form-label">Mission</label>
-                                <textarea class="form-control" id="mission" rows="3" placeholder="Enter Mission"></textarea>
-                            </div>
+                        <div class="mb-3">
+                            <label for="mission" class="form-label">Mission</label>
+                            <textarea class="form-control" id="mission" rows="3" placeholder="Enter Mission"></textarea>
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="coreValue" class="form-label">Core Value</label>
-                                <textarea class="form-control" id="coreValue" rows="3" placeholder="Enter Core Value"></textarea>
-                            </div>
+                        <div class="mb-3">
+                            <label for="coreValue" class="form-label">Core Value</label>
+                            <textarea class="form-control" id="coreValue" rows="3" placeholder="Enter Core Value"></textarea>
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="mainActivity" class="form-label">Main Activity</label>
-                                <textarea class="form-control" id="mainActivity" rows="3" placeholder="Enter Main Activity"></textarea>
-                            </div>
+                        <div class="mb-3">
+                            <label for="mainActivity" class="form-label">Main Activity</label>
+                            <textarea class="form-control" id="mainActivity" rows="3" placeholder="Enter Main Activity"></textarea>
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="interests" class="form-label">Interests</label>
-                                <input type="text" class="form-control" id="interests" placeholder="Enter Interests">
-                            </div>
+                        <div class="mb-3">
+                            <label for="interests" class="form-label">Interests</label>
+                            <input type="text" class="form-control" id="interests" placeholder="Enter Interests">
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="volunteerExperience" class="form-label">Volunteer Experience</label>
-                                <textarea class="form-control" id="volunteerExperience" rows="3" placeholder="Enter Volunteer Experience"></textarea>
-                            </div>
+                        <div class="mb-3">
+                            <label for="volunteerExperience" class="form-label">Volunteer Experience</label>
+                            <textarea class="form-control" id="volunteerExperience" rows="3" placeholder="Enter Volunteer Experience"></textarea>
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="volunteerObjectives" class="form-label">Volunteer Objectives</label>
-                                <textarea class="form-control" id="volunteerObjectives" rows="3" placeholder="Enter Volunteer Objectives"></textarea>
-                            </div>
+                        <div class="mb-3">
+                            <label for="volunteerObjectives" class="form-label">Volunteer Objectives</label>
+                            <textarea class="form-control" id="volunteerObjectives" rows="3" placeholder="Enter Volunteer Objectives"></textarea>
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="attachments" class="form-label">Attachments</label>
-                                <input type="file" class="form-control" id="attachments" multiple>
-                                <ul id="fileList"></ul>
-                            </div>
+                        <div class="mb-3">
+                            <label for="attachments" class="form-label">Attachments</label>
+                            <input type="file" class="form-control" id="attachments" multiple>
+                            <ul id="fileList"></ul>
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="bio" class="form-label">Bio</label>
-                                <textarea class="form-control" id="bio" rows="3" placeholder="Enter Bio"></textarea>
-                            </div>
+                        <div class="mb-3">
+                            <label for="bio" class="form-label">Bio</label>
+                            <textarea class="form-control" id="bio" rows="3" placeholder="Enter Bio"></textarea>
+                        </div>
 
-                            <div id="save-btn">
-                                <button type="submit" class="btn btn-warning">Create Organization</button>
-                            </div>
+                        <div id="save-btn">
+                            <button type="submit" class="btn btn-warning">Create Organization</button>
                         </div>
                     </div>
                 </div>
             </div>
-        </form>
+        </div>
+
     </div>
 
     <script>

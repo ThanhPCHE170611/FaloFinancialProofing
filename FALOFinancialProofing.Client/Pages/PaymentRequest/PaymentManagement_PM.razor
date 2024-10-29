@@ -1,4 +1,4 @@
-﻿@page "/prepaymanagement"
+﻿@page "/paymentmanagement_pm"
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,19 +13,19 @@
     <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
 
     <style>
-        .text-approved {
-            color: green;
-            font-weight: bold;
+        .badge-approved {
+            background-color: #28a745;
+            color: #fff;
         }
 
-        .text-declined {
-            color: red;
-            font-weight: bold;
+        .badge-declined {
+            background-color: #dc3545;
+            color: #fff;
         }
 
-        .text-pending {
-            color: gray;
-            font-weight: bold;
+        .badge-pending {
+            background-color: #FB8C00;
+            color: #fff;
         }
 
         .modal {
@@ -61,10 +61,6 @@
                 text-decoration: none;
                 cursor: pointer;
             }
-
-        .form-control {
-            margin-top: 10px;
-        }
 
         .nav-tabs {
             display: flex;
@@ -110,6 +106,10 @@
             border: 1px solid #ddd;
             border-radius: 5px;
         }
+
+        .form-control {
+            margin-top: 10px;
+        }
     </style>
 </head>
 
@@ -122,8 +122,8 @@
                         <div class="pt-4 pb-3 d-flex justify-content-between align-items-center">
                             <nav class="nav-tabs">
                                 <a href="/campaigndetail">Campaign Detail</a>
-                                <a href="/prepaymanagement" class="active">Prepay Request</a>
-                                <a href="/paymentmanagement">Payment Request</a>
+                                <a href="/prepaymanagement">Prepay Request</a>
+                                <a href="/paymentmanagement" class="active">Payment Request</a>
                                 <a href="/prepayvoucher">Prepay Voucher</a>
                                 <a href="/paymentvoucher">Payment Voucher</a>
                                 <a href="/accountingbook">Accounting Book</a>
@@ -133,8 +133,8 @@
                     </div>
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
-                            <h6 class="text-white text-capitalize ps-3 mb-0">Prepay Request List</h6>
-                            <NavLink class="btn btn-dark mb-0 me-3" href="prepaycreate">Create Prepay Request</NavLink>
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Payment Request List</h6>
+                            <NavLink class="btn btn-dark mb-0 me-3" href="prepaycreate">Create Payment Request</NavLink>
                         </div>
                     </div>
 
@@ -155,12 +155,11 @@
                                     <tr>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 5%;">STT</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Sender</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 15%;">Expected Money</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 15%;">Actual Money</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 15%;">Assign From</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 10%;">File</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 10%;">Voucher</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 10%;">Status</th>
-                                        
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 15%;">Created Date</th>
                                         <th class="text-secondary opacity-7 text-center" style="width: 10%;">Action</th>
                                     </tr>
@@ -173,15 +172,14 @@
                                         <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">Manager A</span></td>
                                         <td class="align-middle text-center"><a href="#" class="btn btn-link text-info" download="file.pdf">file.pdf</a></td>
                                         <td class="align-middle text-center"><a href="#" class="btn btn-link text-info" download="voucher1.pdf">voucher1.pdf</a></td>
-                                        @* <td class="align-middle text-center text-sm"><span class="text-pending text-xs font-weight-bold">Pending</span></td> *@
                                         <td class="align-middle text-center text-sm">
-                                            <span class="badge badge-sm bg-gradient-warning">Pending</span>
+                                            <span class="badge badge-sm badge-pending" id="status-1">Pending</span>
                                         </td>
                                         <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">2024-10-01</span></td>
                                         <td class="align-middle text-center">
                                             <button class="btn btn-success btn-sm" onclick="approveRequest(this)">Approve</button>
                                             <button class="btn btn-danger btn-sm" onclick="showDeclinePopup(this)">Decline</button>
-                                            <a class="btn btn-info btn-sm" href="prepaydetail">Detail</a>
+                                            <a class="btn btn-info btn-sm" href="paymentdetail">Detail</a>
                                         </td>
                                     </tr>
                                     <tr>
@@ -189,22 +187,20 @@
                                         <td><span class="text-secondary text-xs font-weight-bold">Jane Smith</span></td>
                                         <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">12.000.000</span></td>
                                         <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">Manager B</span></td>
-                                        <td class="align-middle text-center"><a href="#" class="btn btn-link text-info" download="filePrepay2.pdf">filePrepay2.pdf</a></td>
+                                        <td class="align-middle text-center"><a href="#" class="btn btn-link text-info" download="filePrepay2.pdf">filePayment2.pdf</a></td>
                                         <td class="align-middle text-center"><a href="#" class="btn btn-link text-info" download="voucher2.pdf">voucher2.pdf</a></td>
-                                        @* <td class="align-middle text-center text-sm"><span class="text-pending text-xs font-weight-bold">Pending</span></td> *@
                                         <td class="align-middle text-center text-sm">
-                                            <span class="badge badge-sm bg-gradient-warning">Pending</span>
+                                            <span class="badge badge-sm badge-pending" id="status-2">Pending</span>
                                         </td>
                                         <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">2024-10-02</span></td>
                                         <td class="align-middle text-center">
                                             <button class="btn btn-success btn-sm" onclick="approveRequest(this)">Approve</button>
                                             <button class="btn btn-danger btn-sm" onclick="showDeclinePopup(this)">Decline</button>
-                                            <a class="btn btn-info btn-sm" href="prepaydetail">Detail</a>
+                                            <a class="btn btn-info btn-sm" href="paymentdetail">Detail</a>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
-
                         </div>
                     </div>
                 </div>
@@ -220,35 +216,26 @@
                 <button class="btn btn-danger mt-3" onclick="submitDecline()">Submit</button>
             </div>
         </div>
-
-        <div id="detailModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal()">&times;</span>
-                <div id="voucherDetailContent"></div>
-            </div>
-        </div>
     </div>
-
-    <script src="../assets/js/core/popper.min.js"></script>
-    <script src="../assets/js/core/bootstrap.min.js"></script>
-    <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
-    <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
-
     <script>
         let currentDeclineButton = null;
 
         function approveRequest(button) {
             const row = button.closest('tr');
             const actionCell = row.querySelector('td:nth-child(9)');
+            const statusCell = row.querySelector('td:nth-child(7)');
 
             button.style.display = 'none';
             actionCell.querySelector('.btn-danger').style.display = 'none';
 
             const detailButton = actionCell.querySelector('.btn-info');
             const approvedText = document.createElement('span');
-            approvedText.classList.add('text-approved', 'me-2');
+            approvedText.classList.add('badge', 'badge-sm', 'badge-approved');
+            approvedText.id = 'status-' + row.cells[0].innerText.trim();
             approvedText.textContent = 'Approved';
-            actionCell.insertBefore(approvedText, detailButton);
+
+            statusCell.innerHTML = '';
+            statusCell.appendChild(approvedText);
         }
 
         function showDeclinePopup(button) {
@@ -267,81 +254,59 @@
 
             const row = currentDeclineButton.closest('tr');
             const actionCell = row.querySelector('td:nth-child(9)');
+            const statusCell = row.querySelector('td:nth-child(7)');
             currentDeclineButton.style.display = 'none';
             row.querySelector('.btn-success').style.display = 'none';
 
             const detailButton = actionCell.querySelector('.btn-info');
             const declinedText = document.createElement('span');
-            declinedText.classList.add('text-declined', 'me-2');
+            declinedText.classList.add('badge', 'badge-sm', 'badge-declined');
+            declinedText.id = 'status-' + row.cells[0].innerText.trim();
             declinedText.textContent = 'Declined';
-            actionCell.insertBefore(declinedText, detailButton);
 
-            row.querySelector('td:nth-child(7)').innerHTML = '<span class="text-declined text-xs font-weight-bold">Declined</span>';
+            statusCell.innerHTML = '';
+            statusCell.appendChild(declinedText);
+
             row.dataset.declineReason = reason;
-
             document.getElementById('declineReason').value = '';
             closeModal();
         }
 
-        function showDetail(button) {
-            const row = button.closest('tr');
-            const title = row.cells[0].innerText;
-            const sender = row.cells[1].innerText;
-            const money = row.cells[2].innerText;
-            const assignFrom = row.cells[3].innerText;
-            const file = row.cells[4].innerText;
-
-            let detailContent = `
-                <p><strong>Title:</strong> ${title}</p>
-                <p><strong>Sender:</strong> ${sender}</p>
-                <p><strong>Expected Money:</strong> ${money}</p>
-                <p><strong>Assign From:</strong> ${assignFrom}</p>
-                <p><strong>File:</strong> <a href="#" download="${file}">${file}</a></p>
-            `;
-
-            const declineReason = row.dataset.declineReason;
-            if (declineReason) {
-                detailContent += `<p><strong>Reason for Decline:</strong> ${declineReason}</p>`;
-            }
-
-            document.getElementById('voucherDetailContent').innerHTML = detailContent;
-            document.getElementById('detailModal').style.display = 'block';
-        }
-
         function closeModal() {
             document.getElementById('declineModal').style.display = 'none';
-            document.getElementById('detailModal').style.display = 'none';
         }
 
         window.onclick = function(event) {
             const declineModal = document.getElementById('declineModal');
-            const detailModal = document.getElementById('detailModal');
             if (event.target === declineModal) {
                 declineModal.style.display = 'none';
             }
-            if (event.target === detailModal) {
-                detailModal.style.display = 'none';
-            }
         }
-
-                function filterTable() {
+            function filterTable() {
             const searchInput = document.getElementById('searchBox').value.toLowerCase();
-            const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
             const table = document.getElementById('prepayTable');
             const rows = table.getElementsByTagName('tr');
-            for (let i = 1; i < rows.length; i++) {
-                const sender = rows[i].cells[1].innerText.toLowerCase();
-                const status = rows[i].cells[6].innerText.toLowerCase();
 
-                const matchesSearch = sender.includes(searchInput);
-                const matchesStatus = !statusFilter || status === statusFilter;
-                rows[i].style.display = (matchesSearch && matchesStatus) ? '' : 'none';
+            for (let i = 1; i < rows.length; i++) {
+                const title = rows[i].cells[0].innerText.toLowerCase();
+                const sender = rows[i].cells[1].innerText.toLowerCase();
+                const statusCell = rows[i].cells[6];
+                const status = statusCell.querySelector('.badge') ? statusCell.querySelector('.badge').innerText.toLowerCase() : '';
+
+                let matchesSearch = title.includes(searchInput) || sender.includes(searchInput);
+                let matchesStatus = statusFilter === "" || status.includes(statusFilter.toLowerCase());
+
+                if (matchesSearch && matchesStatus) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
             }
         }
+
     </script>
 
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
 </body>
 
 </html>
