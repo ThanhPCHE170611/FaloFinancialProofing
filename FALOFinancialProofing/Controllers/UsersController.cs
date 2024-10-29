@@ -59,28 +59,27 @@ namespace FALOFinancialProofing.Controllers
         }
 
         [Authorize]
-        [HttpPost("SetRoleLoginAfterLogin/{userRole}")]
+        [HttpGet("SetRoleLoginAfterLogin/{userRole}")]
         public IActionResult SetRoleLogin(string userRole)
         {
             HttpContext.Session.SetString("userRole", userRole);
-            Ok(new ApiResponse()
+            return Ok(new ApiResponse()
             {
                 Success = true,
                 Message = "Role Set Success!"
-            });
-            return Ok();
+            }); ;
         }
 
         [Authorize]
         [HttpGet("GetRoleLoginAfterLogin")]
-        public IActionResult GetRoleLogin()
+        public async Task<IActionResult> GetRoleLogin()
         {
             bool status = true;
             string message = "Role Set Success";
             try
             {
                 var userRole = HttpContext.Session.GetString("userRole");
-                if (!string.IsNullOrEmpty(userRole))
+                if (string.IsNullOrEmpty(userRole))
                 {
                     message = "Must Login To Get User Role!";
                     status = false;
