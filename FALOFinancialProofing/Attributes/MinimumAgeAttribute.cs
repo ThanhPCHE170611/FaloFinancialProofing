@@ -1,5 +1,6 @@
 ﻿using FALOFinancialProofing.Filters;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.WebSockets;
 
 namespace FALOFinancialProofing.Attributes
 {

@@ -86,7 +86,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             try
             {
                 var requestForm = await repository.Get(x => x.Id == dto.Id);
-                if(requestForm == null) return false;
+                if (requestForm == null) return false;
 
                 return await repository.DeleteAsync(requestForm);
             }
@@ -261,7 +261,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
 
         private bool ValidatedRequestForm(CreateFormRequest requestForm, System.Text.StringBuilder message)
         {
-            if(requestForm == null || requestForm.ExpectedMoney == null || requestForm.ApproverId == null)
+            if (requestForm == null || requestForm.ExpectedMoney == null || requestForm.ApproverId == null)
             {
                 message.Append("Expected money and ApproverId cannot be null");
                 return false;
@@ -285,7 +285,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 return false;
             }
             // check ApproverId exist in campain && ApproverId != CreatedBy && Role of ApproverId is greater than CreatedBy
-            if(requestForm.ApproverId == requestForm.CreatedBy)
+            if (requestForm.ApproverId == requestForm.CreatedBy)
             {
                 message.Append("Approver ID cannot equal CreatBy");
                 return false;
@@ -345,7 +345,8 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 {
                     return false;
                 }
-            } else
+            }
+            else
             {
                 // check approveId role is greater than createBy
                 if(createByRole.Equals(Resource.VolunteerRoleName) && approverRole.Equals(Resource.VolunteerLeaderRoleName))

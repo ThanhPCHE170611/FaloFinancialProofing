@@ -6,10 +6,8 @@ namespace FALOFinancialProofing.DTOs.CampaignDTO
 {
     public class CreateCampaignDTO
     {
-        //public int? Id { get; set; }
-
         [Required]
-        public string CreateBy { get; set; } 
+        public string CreateBy { get; set; }
         public string Title { get; set; }
         public string? Description { get; set; }
 
@@ -22,8 +20,8 @@ namespace FALOFinancialProofing.DTOs.CampaignDTO
         public string? Address { get; set; }
         [Required]
         public bool IsActive { get; set; }
-        public int? BankingNumber { get; set; }
+        public string? BankingNumber { get; set; }
         [Required]
-        public byte Status { get; set; }
+        public string Status { get; set; }
     }
 }

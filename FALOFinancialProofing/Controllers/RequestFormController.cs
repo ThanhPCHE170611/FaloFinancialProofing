@@ -23,8 +23,8 @@ namespace FALOFinancialProofing.Controllers
         private readonly IApproveProcessServices approveProcessServices;
         private readonly IVoucherServices voucherServices;
 
-        public RequestFormController(IRequestFormServices requestFormService, 
-            IAttachmentFileServices attachmentFileService, 
+        public RequestFormController(IRequestFormServices requestFormService,
+            IAttachmentFileServices attachmentFileService,
             IApproveProcessServices approveProcessServices,
             IVoucherServices voucherServices
             )
@@ -109,7 +109,7 @@ namespace FALOFinancialProofing.Controllers
                 return Ok(new
                 {
                     Success = false,
-                    Message = $"Create Request Failed {message}"  
+                    Message = $"Create Request Failed {message}"
                 });
             }
             // Create new RequestForm
@@ -124,7 +124,7 @@ namespace FALOFinancialProofing.Controllers
                 TypeId = IntConstant.PrePayRequestType
             };
             var newRequestForm = await requestFormService.CreateRequestFormAsync(newRequestFormInfor);
-            if(newRequestForm == null)
+            if (newRequestForm == null)
             {
                 return Ok(new
                 {
@@ -143,11 +143,11 @@ namespace FALOFinancialProofing.Controllers
             };
             var newApproveProcess = await approveProcessServices.CreateApproveProcessAsync(approveProcessDTO);
             //Create new AttachmentFile
-            if(requestFormRequest.UploadFiles != null && requestFormRequest.UploadFiles.Count > 0)
+            if (requestFormRequest.UploadFiles != null && requestFormRequest.UploadFiles.Count > 0)
             {
                 var attachmentFiles = await requestFormService.SaveAttachmentFilesAsync(validatedRequest.UploadFiles, newRequestForm.Id, newRequestForm.TypeId);
                 var canCreateAttachmentFiles = await attachmentFileService.CreateManyAttachmentFileAsync(attachmentFiles);
-                if(!canCreateAttachmentFiles)
+                if (!canCreateAttachmentFiles)
                 {
                     return Ok(new
                     {
@@ -156,7 +156,8 @@ namespace FALOFinancialProofing.Controllers
                     });
                 }
             }
-            if(requestFormRequest.VoucherFile != null && requestFormRequest.VoucherFile.Count > 0) {
+            if (requestFormRequest.VoucherFile != null && requestFormRequest.VoucherFile.Count > 0)
+            {
                 var newVouchers = await requestFormService.SaveUploadedVoucherAsync(newApproveProcess.Id, validatedRequest.VoucherFile);
                 var canCreateVouchers = await voucherServices.CreateManyVoucherAsync(newVouchers);
                 if (!canCreateVouchers)
@@ -168,13 +169,16 @@ namespace FALOFinancialProofing.Controllers
                     });
                 }
             }
-            
+
             return Ok(new
             {
                 Success = true,
                 Message = "Create new PrePay RequestForm successfully.",
-                Data = new {RequestId = newRequestForm.Id, 
-                ApproveProcessId = newApproveProcess.Id }
+                Data = new
+                {
+                    RequestId = newRequestForm.Id,
+                    ApproveProcessId = newApproveProcess.Id
+                }
             });
         }
 
@@ -265,27 +269,27 @@ namespace FALOFinancialProofing.Controllers
         public async Task<IActionResult> GetApproverListForVolunteer(int campaignId)
         {
             var approverListAsync = await requestFormService.GetApproverListForVolunteer(campaignId);
-            if(approverListAsync == null || approverListAsync.Count == 0)
+            if (approverListAsync == null || approverListAsync.Count == 0)
             {
                 return Ok(new
                 {
                     Success = false,
                     Message = "No Approver found."
                 });
-            } 
+            }
             return Ok(new
             {
                 Success = true,
                 Message = "Request Form retrieved successfully.",
                 Data = approverListAsync
             });
-            
+
         }
         [HttpGet("getapproverforvolunteerleader/{campaignId}")]
         public async Task<IActionResult> GetApproverForVolunteerLeader(int campaignId)
         {
             var approverAsync = await requestFormService.GetApproverForVolunteerLeader(campaignId);
-            if(approverAsync == null)
+            if (approverAsync == null)
             {
                 return Ok(new
                 {
@@ -300,12 +304,12 @@ namespace FALOFinancialProofing.Controllers
                 Data = approverAsync
             });
         }
-        
+
         [HttpGet("getapproverforaccounting/{campaignId}")]
         public async Task<IActionResult> GetApproverForAccounting(int campaignId)
         {
             var approverAsync = await requestFormService.GetApproverForAccounting(campaignId);
-            if(approverAsync == null)
+            if (approverAsync == null)
             {
                 return Ok(new
                 {
@@ -320,12 +324,12 @@ namespace FALOFinancialProofing.Controllers
                 Data = approverAsync
             });
         }
-        
+
         [HttpGet("getapproverforprojectmanagement/{campaignId}")]
         public async Task<IActionResult> GetApproverForProjectManagement(int campaignId)
         {
             var approverAsync = await requestFormService.GetApproverForProjectManagement(campaignId);
-            if(approverAsync == null)
+            if (approverAsync == null)
             {
                 return Ok(new
                 {
@@ -347,7 +351,7 @@ namespace FALOFinancialProofing.Controllers
             int page = IntConstant.PageNumberDefault)
         {
             var requestForms = await requestFormService.GetAllPrePayRequestInCampaign(campaignId, userId);
-            if(requestForms == null || requestForms.Count == 0)
+            if (requestForms == null || requestForms.Count == 0)
             {
                 return Ok(new
                 {
@@ -380,14 +384,14 @@ namespace FALOFinancialProofing.Controllers
                 Data = response
             });
         }
-        
+
         [HttpGet("getallpaymentrequestincampaign/{campaignId}")]
-        public async Task<IActionResult> GetAllPaymentRequestInCampaign(int campaignId, string userId, 
+        public async Task<IActionResult> GetAllPaymentRequestInCampaign(int campaignId, string userId,
             string? status,
             int page = IntConstant.PageNumberDefault)
         {
             var requestForms = await requestFormService.GetAllPaymentRequestInCampaign(campaignId, userId);
-            if(requestForms == null || requestForms.Count == 0)
+            if (requestForms == null || requestForms.Count == 0)
             {
                 return Ok(new
                 {

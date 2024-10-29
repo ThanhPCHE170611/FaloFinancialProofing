@@ -58,6 +58,43 @@ namespace FALOFinancialProofing.Controllers
             }
         }
 
+        [Authorize]
+        [HttpGet("SetRoleLoginAfterLogin/{userRole}")]
+        public IActionResult SetRoleLogin(string userRole)
+        {
+            HttpContext.Session.SetString("userRole", userRole);
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "Role Set Success!"
+            }); ;
+        }
+
+        [Authorize]
+        [HttpGet("GetRoleLoginAfterLogin")]
+        public async Task<IActionResult> GetRoleLogin()
+        {
+            bool status = true;
+            string message = "Role Set Success";
+            try
+            {
+                var userRole = HttpContext.Session.GetString("userRole");
+                if (string.IsNullOrEmpty(userRole))
+                {
+                    message = "Must Login To Get User Role!";
+                    status = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"GetRoleLogin: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = status,
+                Message = message
+            });
+        }
         [HttpGet("loginGG")]
         public IActionResult Login()
         {

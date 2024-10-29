@@ -65,7 +65,7 @@ namespace FALOFinancialProofing.Repository
             var query = _dbContext.Set<T>();
             return await query.Where(filter).FirstOrDefaultAsync();
         }
-
+      
         public async Task<T> InsertAsync(T entity)
         {
             await _dbContext.Set<T>().AddAsync(entity);

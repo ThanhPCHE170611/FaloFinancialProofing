@@ -9,5 +9,7 @@ namespace FALOFinancialProofing.Services.CreateCampaignFileServices
         Task<IEnumerable<CreateCampaignFile>> GetAllCreateCampaignFilesAsync();
         Task<bool> UpdateCreateCampaignFileAsync(CreateCampaignFile updateCampaignFile);
         Task<bool> DeleteCreateCampaignFileAsync(int id);
+        Task<List<CreateCampaignFile>> SaveUploadedFilesAsync(List<IFormFile> uploadFiles, int requestId);
+        Task<bool> CreateCreateCampaignFilesAsync(List<CreateCampaignFile> createCampaignFiles);
     }
 }

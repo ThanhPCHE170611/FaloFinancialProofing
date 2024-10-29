@@ -15,9 +15,9 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
         private readonly IRepository<CampaignMember, int> campaignMemberRepository;
         private readonly IRepository<RequestForm, int> requestFormRepository;
 
-        public ApproveProcessServices(IRepository<ApproveProcess, int> repository, 
-            IRepository<Campaign, int> campaignRepository, 
-            IRepository<CampaignMember, int> campaignMemberRepository, 
+        public ApproveProcessServices(IRepository<ApproveProcess, int> repository,
+            IRepository<Campaign, int> campaignRepository,
+            IRepository<CampaignMember, int> campaignMemberRepository,
             IRepository<RequestForm, int> requestFormRepository)
         {
             this.repository = repository;
@@ -41,7 +41,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
 
         private async Task<ApproveProcess> DTOToEntity(ApproveProcessRequest dto)
         {
-            return  new ApproveProcess
+            return new ApproveProcess
             {
                 Id = dto.Id != null ? dto.Id.Value : 0,
                 ApproveNumber = dto.ApproveNumber,
@@ -355,7 +355,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                 return requests;
             }
         }
-        
+
         public async Task<List<PrePayRequestFormViewRequest>?> GetAllPaymentRequestForVolunteerLeader(string userid, string currentRoleLoggedIn)
         {
             var requests = new List<PrePayRequestFormViewRequest>();
@@ -420,7 +420,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                     return new List<PrePayRequestFormViewRequest>();
                 }
                 // get all the campaign that userid is a Accounting
-                var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid 
+                var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid
                         && cm.IdentityRole.Name.Equals(Resource.AccountingRoleName)
                         && cm.IsActive)
                     .Include(cm => cm.Campaign)
@@ -472,7 +472,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                     return new List<PrePayRequestFormViewRequest>();
                 }
                 // get all the campaign that userid is a Accounting
-                var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid 
+                var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid
                         && cm.IdentityRole.Name.Equals(Resource.AccountingRoleName)
                         && cm.IsActive)
                     .Include(cm => cm.Campaign)
@@ -581,7 +581,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                 }
                 // get all the campaign that userid is a PM
                 var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid
-                        && cm.IdentityRole.Name.Equals(Resource.ProjectManagerRoleName")
+                        && cm.IdentityRole.Name.Equals(Resource.ProjectManagerRoleName)
                         && cm.IsActive)
                     .Include(cm => cm.Campaign)
                     .Include(cm => cm.IdentityRole)
@@ -625,6 +625,6 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
             }
         }
 
-        
+
     }
 }

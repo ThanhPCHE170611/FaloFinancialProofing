@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FALOFinancialProofing.Services.CreateProjectFileServices
 {
-    public class CreateProjectFileService: ICreateProjectFileService
+    public class CreateProjectFileService : ICreateProjectFileService
     {
         private readonly IRepository<CreateProjectFile, int> _createProjectFileRepository;
 
@@ -108,6 +108,74 @@ namespace FALOFinancialProofing.Services.CreateProjectFileServices
             }
 
             return result;
+        }
+        public async Task<List<CreateProjectFile>> SaveUploadedFilesAsync(List<IFormFile> uploadFiles, int requestId)
+        {
+            var attachmentFiles = new List<CreateProjectFile>();
+            try
+            {
+                // Kiểm tra nếu danh sách file không null và có file
+                if (uploadFiles != null && uploadFiles.Any())
+                {
+                    // Tạo đường dẫn thư mục lưu trữ
+                    var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "ProjectFileUploads");
+
+                    // Kiểm tra và tạo thư mục nếu chưa tồn tại
+                    if (!Directory.Exists(uploadFolder))
+                    {
+                        Directory.CreateDirectory(uploadFolder);
+                    }
+
+                    foreach (var file in uploadFiles)
+                    {
+                        // Tạo tên file mới để tránh trùng lặp bằng cách thêm GUID vào tên file
+                        var uniqueFileName = $"{Guid.NewGuid()}_{file.FileName}";
+
+                        // Tạo đường dẫn đầy đủ tới file sẽ lưu
+                        var filePath = Path.Combine(uploadFolder, uniqueFileName);
+
+                        // Sử dụng FileStream để lưu file vào đường dẫn
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+
+                        // Tạo DTO lưu thông tin file đã upload
+                        var attachmentFile = new CreateProjectFile
+                        {
+                            FilePath = uniqueFileName,  // Lưu tên file hoặc có thể lưu cả đường dẫn nếu cần
+                            RequestId = requestId
+                        };
+                        attachmentFiles.Add(attachmentFile);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi hoặc xử lý ngoại lệ tùy theo yêu cầu
+
+            }
+            return attachmentFiles;
+        }
+
+        public async Task<bool> CreateCreateProjectFilesAsync(List<CreateProjectFile> createProjectFiles)
+        {
+            var checkValid = false;
+            try
+            {
+                bool createdCreateProjectFile = await _createProjectFileRepository.InsertManyAsync(createProjectFiles);
+                if (!createdCreateProjectFile)
+                {
+                    throw new Exception("CreateProjectFiles Error");
+                }
+                checkValid = true;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"CreateCreateProjectFilesAsync: {ex.Message}");
+            }
+            return checkValid;
         }
     }
 }

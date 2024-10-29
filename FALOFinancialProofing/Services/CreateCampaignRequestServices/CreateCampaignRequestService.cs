@@ -114,5 +114,23 @@ namespace FALOFinancialProofing.Services.CreateCampaignRequestServices
 
             return result;
         }
+
+        public async Task<CreateCampaignRequest> CreateCreateCampaignRequestReturnEntityAsync(CreateCampaignRequest createCampaignRequest)
+        {
+            try
+            {
+                if (createCampaignRequest == null)
+                {
+                    throw new Exception("createCampaignRequest is null");
+                }
+                await _createCampaignRequestRepository.InsertAsync(createCampaignRequest);
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"CreateCreateCampaignRequestReturnEntityAsync: {ex.Message}!");
+            }
+
+            return createCampaignRequest;
+        }
     }
 }
