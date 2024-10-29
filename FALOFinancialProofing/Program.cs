@@ -1,4 +1,5 @@
-﻿using FALOFinancialProofing.Attributes;
+﻿using Example;
+using FALOFinancialProofing.Attributes;
 using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
@@ -71,6 +72,13 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped<ICreateProjectRequestApproveHistoryService, CreateProjectRequestApproveHistoryService>();
             builder.Services.AddScoped<ICampaignRequestApproveHistoryService, CampaignRequestApproveHistoryService>();
 
+            builder.Services.AddDistributedMemoryCache(); // Sử dụng bộ nhớ trong để lưu trữ session
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30); // Thiết lập thời gian timeout cho session
+                options.Cookie.HttpOnly = true; // Chỉ cho phép cookie session qua HTTP
+                options.Cookie.IsEssential = true; // Đánh dấu cookie session là cần thiết
+            });
 
             // Add Email Configs
             var emailConfig = configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
@@ -182,6 +190,7 @@ namespace FALOFinancialProofing
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseSession();
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();

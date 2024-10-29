@@ -611,6 +611,18 @@ namespace FALOFinancialProofing.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("RequestTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            TypeName = "Pre-Pay"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            TypeName = "Payment"
+                        });
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.SDG", b =>
