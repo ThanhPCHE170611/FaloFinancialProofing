@@ -226,6 +226,27 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
+        [HttpGet("GetAllCampaignByUserAttendIn/{userId}")]
+        public async Task<IActionResult> GetAllCampaignByUserIdAndRole(string userId, string currentRole)
+        {
+            var campaigns = await _campaignService.GetAllCampaignByUserIdAndRoleAsync(userId, currentRole);
+            if (campaigns == null || campaigns.Count == 0)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "No Campaigns found."
+                });
+            }
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "Campaigns retrieved successfully.",
+                Data = campaigns
+            });
+        }
+
 
     }
 }
