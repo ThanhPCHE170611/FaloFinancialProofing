@@ -241,7 +241,9 @@ namespace FALOFinancialProofing.Services.CampaignService
 
                 foreach (var campaign in allCampaigns)
                 {
-                    if(campaign.CampaignMembers.Any(cm => cm.UserId == userId && cm.IdentityRole.Name.Equals(currentRole)))
+                    if(campaign.CampaignMembers.Any(cm => cm.UserId == userId 
+                        && cm.IdentityRole.Name.Equals(currentRole)
+                        && cm.IsActive))
                     {
                         campaigns.Add(campaign);
                     }
