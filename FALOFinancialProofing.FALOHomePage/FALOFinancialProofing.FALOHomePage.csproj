@@ -1,0 +1,80 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\assets\css\style.css.map" />
+    <Content Remove="wwwroot\assets\images\logo\logo-light.svg" />
+    <Content Remove="wwwroot\assets\images\logo\logo.svg" />
+    <Content Remove="wwwroot\assets\images\preloader.svg" />
+    <Content Remove="wwwroot\assets\js\bootstrap.min.js" />
+    <Content Remove="wwwroot\assets\js\jquery-3.7.1.min.js" />
+    <Content Remove="wwwroot\assets\js\jquery.counterup.min.js" />
+    <Content Remove="wwwroot\assets\js\jquery.waypoints.js" />
+    <Content Remove="wwwroot\assets\js\magnific-popup.min.js" />
+    <Content Remove="wwwroot\assets\js\meanmenu.js" />
+    <Content Remove="wwwroot\assets\js\nice-select.min.js" />
+    <Content Remove="wwwroot\assets\js\script.js" />
+    <Content Remove="wwwroot\assets\js\swiper-bundle.min.js" />
+    <Content Remove="wwwroot\assets\js\wow.min.js" />
+    <Content Remove="wwwroot\assets\sass\style.scss" />
+    <Content Remove="wwwroot\assets\sass\_abstracts\_mixins.scss" />
+    <Content Remove="wwwroot\assets\sass\_abstracts\_variables.scss" />
+    <Content Remove="wwwroot\assets\sass\_base\_animation.scss" />
+    <Content Remove="wwwroot\assets\sass\_base\_typography.scss" />
+    <Content Remove="wwwroot\assets\sass\_components\_buttons.scss" />
+    <Content Remove="wwwroot\assets\sass\_components\_progress.scss" />
+    <Content Remove="wwwroot\assets\sass\_layout\_banner.scss" />
+    <Content Remove="wwwroot\assets\sass\_layout\_footer.scss" />
+    <Content Remove="wwwroot\assets\sass\_layout\_header.scss" />
+    <Content Remove="wwwroot\assets\sass\_layout\_section.scss" />
+    <Content Remove="wwwroot\assets\webfonts\fa-brands-400.woff2" />
+    <Content Remove="wwwroot\assets\webfonts\fa-duotone-900.woff2" />
+    <Content Remove="wwwroot\assets\webfonts\fa-light-300.woff2" />
+    <Content Remove="wwwroot\assets\webfonts\fa-regular-400.woff2" />
+    <Content Remove="wwwroot\assets\webfonts\fa-solid-900.woff2" />
+    <Content Remove="wwwroot\assets\webfonts\fa-thin-100.woff2" />
+    <Content Remove="wwwroot\assets\webfonts\fa-v4compatibility.woff2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\assets\css\style.css.map" />
+    <None Include="wwwroot\assets\images\logo\logo-light.svg" />
+    <None Include="wwwroot\assets\images\logo\logo.svg" />
+    <None Include="wwwroot\assets\images\preloader.svg" />
+    <None Include="wwwroot\assets\js\bootstrap.min.js" />
+    <None Include="wwwroot\assets\js\jquery-3.7.1.min.js" />
+    <None Include="wwwroot\assets\js\jquery.counterup.min.js" />
+    <None Include="wwwroot\assets\js\jquery.waypoints.js" />
+    <None Include="wwwroot\assets\js\magnific-popup.min.js" />
+    <None Include="wwwroot\assets\js\meanmenu.js" />
+    <None Include="wwwroot\assets\js\nice-select.min.js" />
+    <None Include="wwwroot\assets\js\script.js" />
+    <None Include="wwwroot\assets\js\swiper-bundle.min.js" />
+    <None Include="wwwroot\assets\js\wow.min.js" />
+    <None Include="wwwroot\assets\sass\style.scss" />
+    <None Include="wwwroot\assets\sass\_abstracts\_mixins.scss" />
+    <None Include="wwwroot\assets\sass\_abstracts\_variables.scss" />
+    <None Include="wwwroot\assets\sass\_base\_animation.scss" />
+    <None Include="wwwroot\assets\sass\_base\_typography.scss" />
+    <None Include="wwwroot\assets\sass\_components\_buttons.scss" />
+    <None Include="wwwroot\assets\sass\_components\_progress.scss" />
+    <None Include="wwwroot\assets\sass\_layout\_banner.scss" />
+    <None Include="wwwroot\assets\sass\_layout\_footer.scss" />
+    <None Include="wwwroot\assets\sass\_layout\_header.scss" />
+    <None Include="wwwroot\assets\sass\_layout\_section.scss" />
+    <None Include="wwwroot\assets\webfonts\fa-brands-400.woff2" />
+    <None Include="wwwroot\assets\webfonts\fa-duotone-900.woff2" />
+    <None Include="wwwroot\assets\webfonts\fa-light-300.woff2" />
+    <None Include="wwwroot\assets\webfonts\fa-regular-400.woff2" />
+    <None Include="wwwroot\assets\webfonts\fa-solid-900.woff2" />
+    <None Include="wwwroot\assets\webfonts\fa-thin-100.woff2" />
+    <None Include="wwwroot\assets\webfonts\fa-v4compatibility.woff2" />
+    <None Include="wwwroot\favicon.ico" />
+  </ItemGroup>
+
+</Project>

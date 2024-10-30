@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Pages\HomePage\CampaignList.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.8" PrivateAssets="all" />
   </ItemGroup>
@@ -1163,15 +1159,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <UpToDateCheckInput Remove="Pages\HomePage\CampaignList.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Pages\HomePage\CampaignList.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Pages\HomePage\CampaignList.razor" />
     <None Include="wwwroot\client-site-template\assets\css\style.css.map" />
     <None Include="wwwroot\client-site-template\assets\images\logo\logo-light.svg" />
     <None Include="wwwroot\client-site-template\assets\images\logo\logo.svg" />

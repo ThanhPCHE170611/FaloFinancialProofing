@@ -1,5 +1,30 @@
 ﻿@page "/login"
+@using FALOFinancialProofing.Client.Models
 @layout LayoutLogin
+@inject IJSRuntime JSRuntime
+
+@code {
+    private async Task HandleLogin()
+    {
+        var username = await JSRuntime.InvokeAsync<string>("eval", "$('#email').val()");
+        var password = await JSRuntime.InvokeAsync<string>("eval", "$('#password').val()");
+
+        // Call the login JavaScript function
+        var response = await JSRuntime.InvokeAsync<ApiResponse>("login", username, password);
+
+        // Handle the response
+        if (response.Success)
+        {
+            await JSRuntime.InvokeVoidAsync("eval", "$('#message').text('Login successful: ' + response.Message);");
+            // Optionally, handle token storage or redirection here
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("eval", "$('#message').text('Error: ' + response.Message);");
+        }
+    }
+}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,11 +55,11 @@
                     <label for="password" class="form-label">Password</label>
                     <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
                 </div>
-                <NavLink href="homepage">
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">Login</button>
+                        <button type="submit" class="btn btn-primary" @onclick="HandleLogin">Login</button>
                     </div>
-                </NavLink>
+                @* <NavLink href="campaignmanagement">
+                </NavLink> *@
                 <div class="text-center mt-3">
                     <hr>
                     <button type="button" class="btn btn-danger btn-block" onclick="alert('Login with Google')">

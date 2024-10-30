@@ -1,5 +1,6 @@
-﻿@page "/homepage"
+﻿@page "/testing"
 @layout EmptyLayout
+@inject IJSRuntime JSRuntime;
 
 @code {
     private bool isLoading = true;
@@ -39,13 +40,17 @@
     <link rel="stylesheet" href="../client-site-template/assets/css/nice-select.css">
     <!-- Style css -->
     <link rel="stylesheet" href="../client-site-template/assets/css/style.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     
 </head>
 
 <body>
 
     <!-- Preloader area start -->
-    @*if(isLoading
+    @if(isLoading)
     {
         <div id="loading">
             <div id="loading-center">
@@ -56,7 +61,7 @@
                 </div>
             </div>
         </div>
-    }*@
+    }
     <!-- Preloader area end -->
     <!-- Top header area start here -->
     <div class="header-top d-none d-lg-block">
@@ -308,7 +313,7 @@
                                     </span>
                                     <a href="cause-single.html" class="btn-inner">
                                         <span class="btn-text">
-                                            Đăng Ký
+                                            ĐĂNG KÝ
                                         </span>
                                     </a>
                                 </div>
@@ -328,7 +333,7 @@
                                     </span>
                                     <a href="cause-single.html" class="btn-inner">
                                         <span class="btn-text">
-                                            Đăng Ký
+                                            ĐĂNG KÝ
                                         </span>
                                     </a>
                                 </div>
@@ -358,6 +363,8 @@
                 <img class="banner__line__animation" src="../client-site-template/assets/images/shape/banner-line.png" alt="shape">
             </div>
         </section>
+
+
         <!-- Banner area end here -->
         <!-- Service area start here -->
         <section class="service-area pt-100 pb-100 sub-bg">
@@ -1696,7 +1703,7 @@
                                         <div class="con">
                                             <span>22, Nov 2023</span>
                                             <a href="blog-single.html">
-                                                Provide Healthy Impoverished..
+                                                Provide Healthy Impoverished
                                             </a>
                                         </div>
                                     </li>
@@ -1708,7 +1715,7 @@
                                             <span>18, Nov 2023</span>
                                             <a href="blog-single.html">
                                                 Rebecca’s New <br>
-                                                Album..
+                                                Album
                                             </a>
                                         </div>
                                     </li>
@@ -1768,9 +1775,10 @@
     <!-- Back to top area end here -->
     <!-- Jquery 3. 7. 1 Min Js -->
     <script src="../client-site-template/assets/js/jquery-3.7.1.min.js"></script>
-    <!-- Bootstrap min Js -->
-    <script src="../client-site-template/assets/js/bootstrap.min.js"></script>
-    <!-- Mean menu Js -->
+    <!-- Bootstrap min Js 
+         <script src="../client-site-template/assets/js/bootstrap.min.js"></script>
+    -->
+     <!-- Mean menu Js -->
     <script src="../client-site-template/assets/js/meanmenu.js"></script>
     <!-- Swiper bundle min Js -->
     <script src="../client-site-template/assets/js/swiper-bundle.min.js"></script>
@@ -1782,14 +1790,42 @@
     <script src="../client-site-template/assets/js/magnific-popup.min.js"></script>
     <!-- Nice select min Js -->
     <script src="../client-site-template/assets/js/nice-select.min.js"></script>
-    <!-- Isotope pkgd min Js -->
-    <script src="../client-site-template/assets/js/isotope.pkgd.min.js"></script>
-    <!-- Waypoints Js -->
+    <!-- Isotope pkgd min Js 
+         <script src="../client-site-template/assets/js/isotope.pkgd.min.js"></script>
+     -->
+     <!-- Waypoints Js -->
     <script src="../client-site-template/assets/js/jquery.waypoints.js"></script>
     <!-- Script Js -->
     <script src="../client-site-template/assets/js/script.js"></script>
-
     
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var scrollPath = document.querySelector(".scroll-up path");
+
+            if (scrollPath) {
+                var pathLength = scrollPath.getTotalLength();
+
+                // Set up for animation
+                scrollPath.style.transition = scrollPath.style.WebkitTransition = "none";
+                scrollPath.style.strokeDasharray = pathLength + " " + pathLength;
+                scrollPath.style.strokeDashoffset = pathLength;
+
+                // Trigger reflow
+                scrollPath.getBoundingClientRect();
+
+                // Start animation
+                scrollPath.style.transition = scrollPath.style.WebkitTransition =
+                    "stroke-dashoffset 10ms linear";
+
+                // Optionally animate the path
+                setTimeout(function () {
+                    scrollPath.style.strokeDashoffset = "0"; // Animate to 0 offset
+                }, 100);
+            } else {
+                console.error("Element not found: .scroll-up path");
+            }
+        });
+    </script>
 
 </body>
 
