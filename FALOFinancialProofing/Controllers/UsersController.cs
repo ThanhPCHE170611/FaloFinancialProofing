@@ -57,7 +57,18 @@ namespace FALOFinancialProofing.Controllers
                 });
             }
         }
-
+        // hiển thị thông tin danh sách người dùng không ở trong một chiến dịch cụ thể
+        [HttpGet("GetUserNotInCampaignById/{CampaignId}")]
+        public async Task<IActionResult> GetUserNotInCampaignById(int CampaignId)
+        {
+            var users = await authServices.GetUserNotInCampaignById(CampaignId);
+            return Ok(new ApiResponse()
+            {
+                Message = "Get Users Successfully!",
+                Data = users,
+                Success = true
+            });
+        }
         [Authorize]
         [HttpGet("SetRoleLoginAfterLogin/{userRole}")]
         public IActionResult SetRoleLogin(string userRole)

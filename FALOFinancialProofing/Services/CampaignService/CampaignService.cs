@@ -66,7 +66,36 @@ namespace FALOFinancialProofing.Services.CampaignService
                 return new List<Campaign>();
             }
         }
+        public async Task<List<CampaignInformation>> GetAllCampaignsByProjectIdAsync(int ProjectId)
+        {
+            List<CampaignInformation> data = null!;
+            try
+            {
+                data = await campaignRepository.GetAll().Where(p => p.ProjectId == ProjectId)
+                    .Select(p => new CampaignInformation()
+                    {
+                        CampaignId = p.Id,
+                        ProjectId = p.ProjectId,
+                        CreateBy = p.CreateBy,
+                        Title = p.Title,
+                        Description = p.Description,
+                        DateOfCreation = p.DateOfCreation,
+                        FundTarget = p.FundTarget,
+                        Image = p.Image,
+                        EndDate = p.EndDate,
+                        Address = p.Address,
+                        IsActive = p.IsActive,
+                        BankingNumber = p.BankingNumber,
+                        Status = p.Status
+                    }).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAllCampaignsByProjectIdAsync: {ex.Message}");
+            }
 
+            return data;
+        }
         public async Task<Campaign?> GetCampaignByIdAsync(int id)
         {
             try

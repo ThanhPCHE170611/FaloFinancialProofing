@@ -1,12 +1,16 @@
 ﻿using FALOFinancialProofing.Attributes.RoleAttributes;
+using FALOFinancialProofing.Constant;
 using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.CreateProjectFileServices;
 using FALOFinancialProofing.Services.CreateProjectRequestServices;
 using FALOFinancialProofing.Services.ProjectServices;
+using FALOFinancialProofing.Utilities;
+using Microsoft.AspNetCore.Components.QuickGrid;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata;
 using System.Text;
 
 namespace FALOFinancialProofing.Controllers
@@ -26,15 +30,82 @@ namespace FALOFinancialProofing.Controllers
             _createProjectFileService = createProjectFileService;
         }
 
-        // GET: api/Projects
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Project>>> GetProjects()
+        [HttpGet("GetAllProjectInSystem")]
+        public async Task<IActionResult> GetAllProjectInSystem(string? status, int currentPage = IntConstant.PageNumberDefault)
         {
-
-            return Ok(await _projectService.GetAllProjectsAsync());
+            List<ProjectInformation> data = null;
+            FilterPagingData filterPagingData = new FilterPagingData();
+            try
+            {
+                data = await _projectService.GetAllProjectInSystemAsync();
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "Get All Project By In System Failed!",
+                        Data = data
+                    });
+                }
+                if (!string.IsNullOrEmpty(status))
+                {
+                    data = data.FindAll(x => x.Status == status);
+                }
+                filterPagingData.DataCount = data.Count;
+                filterPagingData.CurrentPage = currentPage;
+                data = PaginationHelper.Paginate<ProjectInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                filterPagingData.Data = data;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAllProjectInSystem: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "Get All Project In System Successfully!",
+                Data = filterPagingData
+            });
         }
 
-        // GET: api/Projects/5
+        [HttpGet("GetAllProjectByUserId/{UserId}")]
+        public async Task<IActionResult> GetProjectsByUserIdAsync(string UserId, string? status, int currentPage = IntConstant.PageNumberDefault)
+        {
+            List<ProjectInformation> data = null;
+            FilterPagingData filterPagingData = new FilterPagingData();
+            try
+            {
+                data = await _projectService.GetAllProjectsByUserIdAsync(UserId);
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "Get All Project By UserId Failed!",
+                        Data = data
+                    });
+                }
+                if (!string.IsNullOrEmpty(status))
+                {
+                    data = data.FindAll(x => x.Status == status);
+                }
+                filterPagingData.DataCount = data.Count;
+                filterPagingData.CurrentPage = currentPage;
+                data = PaginationHelper.Paginate<ProjectInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                filterPagingData.Data = data;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetProjectsByUserId: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "Get All Project By UserId Successfully!",
+                Data = filterPagingData
+            });
+        }
+
         [HttpGet("GetProject/{id}")]
         public async Task<ActionResult<Project>> GetProject(int id)
         {

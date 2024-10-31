@@ -1,4 +1,5 @@
 ﻿using FALOFinancialProofing.Attributes.RoleAttributes;
+using FALOFinancialProofing.Constant;
 using FALOFinancialProofing.DTOs.CampaignDTO;
 using FALOFinancialProofing.DTOs.CreateProjectRequestDTO;
 using FALOFinancialProofing.DTOs.ProjectDTOs;
@@ -7,6 +8,7 @@ using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.CampaignService;
 using FALOFinancialProofing.Services.CreateCampaignFileServices;
 using FALOFinancialProofing.Services.CreateCampaignRequestServices;
+using FALOFinancialProofing.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 
@@ -48,24 +50,41 @@ namespace FALOFinancialProofing.Controllers
         //        Data = campaigns
         //    });
         //}
-        [HttpGet("GetAllCampaign")]
-        public async Task<IActionResult> GetAllCampaign()
+        [HttpGet("GetAllCampaignByProjectId/{ProjectId}")]
+        public async Task<IActionResult> GetAllCampaignByProjectId(int ProjectId, string? status, int currentPage = IntConstant.PageNumberDefault)
         {
-            var campaigns = await _campaignService.GetAllCampaignsAsync();
-            if (campaigns == null || campaigns.Count == 0)
+            List<CampaignInformation> data = null;
+            FilterPagingData filterPagingData = new FilterPagingData();
+            try
             {
-                return Ok(new
+                data = await _campaignService.GetAllCampaignsByProjectIdAsync(ProjectId);
+                if (data == null || data.Count == 0)
                 {
-                    Success = false,
-                    Message = "No Campaigns found."
-                });
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "Get All Campaign By ProjectId Failed!",
+                        Data = data
+                    });
+                }
+                if (!string.IsNullOrEmpty(status))
+                {
+                    data = data.FindAll(x => x.Status == status);
+                }
+                filterPagingData.DataCount = data.Count;
+                filterPagingData.CurrentPage = currentPage;
+                data = PaginationHelper.Paginate<CampaignInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                filterPagingData.Data = data;
             }
-
-            return Ok(new
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAllCampaignByProjectId: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
             {
                 Success = true,
-                Message = "Campaigns retrieved successfully.",
-                Data = campaigns
+                Message = "Get All Campaign By ProjectId Successfully!",
+                Data = filterPagingData
             });
         }
 
