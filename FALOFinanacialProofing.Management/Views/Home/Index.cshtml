@@ -1,0 +1,125 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    @* <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script> *@
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .campaign-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+        }
+
+        .campaign-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            border: 1px solid #ddd;
+            transition: box-shadow 0.3s;
+        }
+
+            .campaign-card:hover {
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            }
+
+        .campaign-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .campaign-cost, .campaign-status {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .campaign-status {
+            font-weight: 500;
+            color: #888;
+        }
+
+        .get-started-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #007bff;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+            .get-started-btn:hover {
+                color: #0056b3;
+            }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Home</h6>
+                        </div>
+                    </div>
+                    <div class="campaign-container">
+                        <div class="campaign-card">
+                            <div class="campaign-name">Campaign 1</div>
+                            <div class="campaign-cost">Total Estimated Cost: 10.000.000</div>
+                            <div class="campaign-status">Status: Pending</div>
+                            <a href="campaigndetail" class="get-started-btn">Get Started →</a>
+                        </div>
+                        <div class="campaign-card">
+                            <div class="campaign-name">Campaign 2</div>
+                            <div class="campaign-cost">Total Estimated Cost: 12.000.000</div>
+                            <div class="campaign-status">Status: Approved</div>
+                            <a href="campaigndetail" class="get-started-btn">Get Started →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../assets/js/core/popper.min.js"></script>
+    <script src="../assets/js/core/bootstrap.min.js"></script>
+    <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+    <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+    <script>
+        var win = navigator.platform.indexOf('Win') > -1;
+        if (win && document.querySelector('#sidenav-scrollbar')) {
+          var options = {
+            damping: '0.5'
+          }
+          Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+        }
+    </script>
+</body>
+</html>
