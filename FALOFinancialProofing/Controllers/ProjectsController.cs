@@ -106,18 +106,26 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
-        [HttpGet("GetProject/{id}")]
-        public async Task<ActionResult<Project>> GetProject(int id)
+        [HttpGet("GetProjectDetailsById/{ProjectId}")]
+        public async Task<IActionResult> GetProjectDetailsById(int ProjectId)
         {
-            var project = await _projectService.GetProjectByIdAsync(id);
+            var project = await _projectService.GetProjectDetailsByProjectId(ProjectId);
             if (project == null)
             {
-                return NotFound();
+                return Ok(new
+                {
+                    Success = false,
+                    Message = $"Project with Id = {ProjectId} not found."
+                });
             }
 
-            return project;
+            return Ok(new
+            {
+                Success = true,
+                Message = "Project retrieved successfully.",
+                Data = project
+            });
         }
-
         // PUT: api/Projects/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("UpdateProject")]

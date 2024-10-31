@@ -8,6 +8,7 @@ namespace FALOFinancialProofing.Models
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
         public DateOnly? BirthDate { get; set; }
+        public string? Image { get; set; }
         public ICollection<SDG> SDGs { get; set; } = new List<SDG>();
         public ICollection<SocialNetwork> SocialNetworks { get; set; } = new List<SocialNetwork>();
         public ICollection<CampaignMember> CampaignMembers { get; set; } = new List<CampaignMember>();
@@ -16,7 +17,7 @@ namespace FALOFinancialProofing.Models
         //public DateOnly? BirthDate { get; set; }
         public ICollection<CreateProjectRequest> SenderCreateProjectRequests { get; set; } = new List<CreateProjectRequest>();
         public ICollection<CreateProjectRequest> ReceiverCreateProjectRequests { get; set; } = new List<CreateProjectRequest>();
-        public ICollection<TransactionLog> TransactionLogs { get; set; } = new List<TransactionLog>();
+        //public ICollection<TransactionLog> TransactionLogs { get; set; } = new List<TransactionLog>();
         public ICollection<Project> Projects { get; set; } = new List<Project>();
 
         public ICollection<MoveNextCampaignStatusRequest> MoveNextCampaignStatusRequestSenderUsers { get; set; } = new List<MoveNextCampaignStatusRequest>();

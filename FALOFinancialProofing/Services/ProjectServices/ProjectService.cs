@@ -145,6 +145,8 @@ namespace FALOFinancialProofing.Services.ProjectServices
                 data = await _projectRepository.GetAll().Where(p => p.CreatedBy.Equals(UserId))
                     .Select(p => new ProjectInformation()
                     {
+                        id = p.Id,
+                        UserImage = p.User != null ? p.User.Image : "No Image",
                         CreatedBy = p.CreatedBy,
                         ProjectName = p.ProjectName,
                         Description = p.Description,
@@ -153,6 +155,7 @@ namespace FALOFinancialProofing.Services.ProjectServices
                         IsActive = p.IsActive,
                         OrganizationId = p.OrganizationId,
                         OrganizationName = p.Organization != null ? p.Organization.Name : "No Organization"
+
                     }).ToListAsync();
             }
             catch (Exception ex)
@@ -172,6 +175,7 @@ namespace FALOFinancialProofing.Services.ProjectServices
                     .Select(p => new ProjectInformation()
                     {
                         CreatedBy = p.CreatedBy,
+                        UserImage = p.User != null ? p.User.Image : "No Image",
                         ProjectName = p.ProjectName,
                         Description = p.Description,
                         DateOfCreation = p.DateOfCreation,
@@ -188,6 +192,36 @@ namespace FALOFinancialProofing.Services.ProjectServices
 
             return data;
         }
+        public async Task<ProjectInformation> GetProjectDetailsByProjectId(int ProjectId)
+        {
+            ProjectInformation data = null!;
+            try
+            {
+                data = await _projectRepository.GetAll().Where(p => p.Id == ProjectId)
+                    .Select(p => new ProjectInformation()
+                    {
+                        id = p.Id,
+                        UserImage = p.User != null ? p.User.Image : "No Image",
+                        CreatedBy = p.CreatedBy,
+                        ProjectName = p.ProjectName,
+                        Description = p.Description,
+                        DateOfCreation = p.DateOfCreation,
+                        Status = p.Status,
+                        IsActive = p.IsActive,
+                        OrganizationId = p.OrganizationId,
+                        OrganizationName = p.Organization != null ? p.Organization.Name : "No Organization"
+
+                    }).SingleOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAllProjectsByUserIdAsync: {ex.Message}");
+            }
+
+            return data;
+        }
+
+
         public async Task<bool> ValidateProjectCreateAsync(CreateProject createProject, StringBuilder message)
         {
             bool IsValid = false;

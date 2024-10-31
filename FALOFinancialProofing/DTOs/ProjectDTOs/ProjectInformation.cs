@@ -5,6 +5,8 @@ namespace FALOFinancialProofing.DTOs.ProjectDTOs
 {
     public class ProjectInformation
     {
+        public int id { get; set; }
+        public string UserImage { get; set; }
         public string CreatedBy { get; set; }
         public string ProjectName { get; set; }
         public string Description { get; set; }
@@ -13,5 +15,6 @@ namespace FALOFinancialProofing.DTOs.ProjectDTOs
         public bool IsActive { get; set; }
         public int? OrganizationId { get; set; }
         public string OrganizationName { get; set; }
+
     }
 }

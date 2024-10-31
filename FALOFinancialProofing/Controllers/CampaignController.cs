@@ -88,10 +88,10 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
-        [HttpGet("GetCampaignById/{id}")]
-        public async Task<IActionResult> GetCampaignById(int id)
+        [HttpGet("GetCampaignDetailsById/{id}")]
+        public async Task<IActionResult> GetCampaignDetailsById(int id)
         {
-            var campaign = await _campaignService.GetCampaignByIdAsync(id);
+            var campaign = await _campaignService.GetCampaignByCampaignIdAsync(id);
             if (campaign == null)
             {
                 return Ok(new

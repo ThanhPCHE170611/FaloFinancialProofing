@@ -13,6 +13,7 @@ namespace FALOFinancialProofing.DTOs.CampaignDTO
         public string? Description { get; set; }
         public DateTime DateOfCreation { get; set; }
         public double FundTarget { get; set; }
+        public double TotalMoneyEarned { get; set; }
         public string? Image { get; set; }
         public DateTime? EndDate { get; set; }
         public string? Address { get; set; }

@@ -17,6 +17,7 @@ namespace FALOFinancialProofing.Services.CampaignService
         Task<Campaign> ConvertDtoToBaseClass(CreateCampaignClientRequest createCampaignClientRequest);
         Task<Campaign> CreateCampaignReturnEntityAsync(Campaign createCampaign);
         Task<List<CampaignInformation>> GetAllCampaignsByProjectIdAsync(int ProjectId);
+        Task<CampaignInformation> GetCampaignByCampaignIdAsync(int CampaignId);
         //Task<Campaign> CreateCampaignAsync(Campaign campaign);
         //Task<Campaign> GetCampaignByIdAsync(int campaignId);
         //Task<IEnumerable<Campaign>> GetAllCampaignsAsync();
