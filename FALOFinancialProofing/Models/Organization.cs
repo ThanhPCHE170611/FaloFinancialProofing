@@ -1,4 +1,5 @@
 ﻿using FALOFinancialProofing.Core;
+using System.Text.Json.Serialization;
 
 namespace FALOFinancialProofing.Models
 {
@@ -20,6 +21,10 @@ namespace FALOFinancialProofing.Models
         public string VolunteerObjectives { get; set; }
         public string Attachments { get; set; }
         public string Bio { get; set; }
+        [JsonIgnore]
+        public ICollection<Project> Projects { get; set; } = new List<Project>();
+        [JsonIgnore]
+        public ICollection<OrganizationMember> OrganizationMembers { get; set; } = new List<OrganizationMember>();
 
     }
 }

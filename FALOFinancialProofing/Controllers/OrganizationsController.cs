@@ -38,6 +38,17 @@ namespace FALOFinancialProofing.Controllers
             return organization;
         }
 
+
+        [HttpGet("GetOrganizationsByUserId/{userId}")]
+        public async Task<ActionResult<List<Organization>>> GetOrganizationsByUserId(string userId)
+        {
+            var organization = await _organizationService.GetOrganizationsByUserIdAsync(userId);
+            if (organization == null)
+            {
+                return NotFound();
+            }
+            return Ok(organization);
+        }
         // PUT: api/Organizations/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("UpdateOrganization")]

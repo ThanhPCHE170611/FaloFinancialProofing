@@ -87,8 +87,8 @@ namespace FALOFinancialProofing.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<int?>("BankingNumber")
-                        .HasColumnType("int");
+                    b.Property<string>("BankingNumber")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -116,8 +116,8 @@ namespace FALOFinancialProofing.Migrations
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
 
-                    b.Property<byte>("Status")
-                        .HasColumnType("tinyint");
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -169,6 +169,36 @@ namespace FALOFinancialProofing.Migrations
                     b.ToTable("CampaignMembers");
                 });
 
+            modelBuilder.Entity("FALOFinancialProofing.Models.CampaignRequestApproveHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApproverId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("CampaignRequestId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateOfApproval")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsAllowed")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApproverId");
+
+                    b.HasIndex("CampaignRequestId");
+
+                    b.ToTable("CampaignRequestApproveHistories");
+                });
+
             modelBuilder.Entity("FALOFinancialProofing.Models.CreateCampaignFile", b =>
                 {
                     b.Property<int>("Id")
@@ -205,12 +235,11 @@ namespace FALOFinancialProofing.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("Feedback")
+                    b.Property<string>("Feedback")
                         .HasMaxLength(100)
-                        .HasColumnType("datetime2");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("ReceiverId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("SenderId")
@@ -223,7 +252,6 @@ namespace FALOFinancialProofing.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -270,15 +298,14 @@ namespace FALOFinancialProofing.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("Feedback")
+                    b.Property<string>("Feedback")
                         .HasMaxLength(100)
-                        .HasColumnType("datetime2");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
 
                     b.Property<string>("ReceiverId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("SenderId")
@@ -291,7 +318,6 @@ namespace FALOFinancialProofing.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -302,7 +328,37 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("CreateProjects");
+                    b.ToTable("CreateProjectRequests");
+                });
+
+            modelBuilder.Entity("FALOFinancialProofing.Models.CreateProjectRequestApproveHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApproverId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("CreateProjectRequestId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateOfApproval")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsAllowed")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApproverId");
+
+                    b.HasIndex("CreateProjectRequestId");
+
+                    b.ToTable("CreateProjectRequestApproveHistories");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.MoveNextCampaignStatusRequest", b =>
@@ -428,6 +484,33 @@ namespace FALOFinancialProofing.Migrations
                     b.ToTable("Organizations");
                 });
 
+            modelBuilder.Entity("FALOFinancialProofing.Models.OrganizationMember", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("JoinDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrganizationId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("OrganizationMember");
+                });
+
             modelBuilder.Entity("FALOFinancialProofing.Models.Project", b =>
                 {
                     b.Property<int>("Id")
@@ -447,17 +530,25 @@ namespace FALOFinancialProofing.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("OrganizationId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ProjectName")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedBy");
+
+                    b.HasIndex("OrganizationId");
 
                     b.ToTable("Projects");
                 });
@@ -520,6 +611,18 @@ namespace FALOFinancialProofing.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("RequestTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            TypeName = "Pre-Pay"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            TypeName = "Payment"
+                        });
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.SDG", b =>
@@ -760,6 +863,13 @@ namespace FALOFinancialProofing.Migrations
                             ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85g",
                             Name = "Volunteer",
                             NormalizedName = "VOLUNTEER"
+                        },
+                        new
+                        {
+                            Id = "83292e2c-6c86-4153-bdc5-760d05ec2299",
+                            ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85h",
+                            Name = "Project Management Board",
+                            NormalizedName = "PROJECT MANAGEMENT BOARD"
                         });
                 });
 
@@ -945,6 +1055,25 @@ namespace FALOFinancialProofing.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("FALOFinancialProofing.Models.CampaignRequestApproveHistory", b =>
+                {
+                    b.HasOne("FALOFinancialProofing.Models.User", "Approver")
+                        .WithMany("CampaignRequestApproveHistories")
+                        .HasForeignKey("ApproverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FALOFinancialProofing.Models.CreateCampaignRequest", "CreateCampaignRequest")
+                        .WithMany("CampaignRequestApproveHistories")
+                        .HasForeignKey("CampaignRequestId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Approver");
+
+                    b.Navigation("CreateCampaignRequest");
+                });
+
             modelBuilder.Entity("FALOFinancialProofing.Models.CreateCampaignFile", b =>
                 {
                     b.HasOne("FALOFinancialProofing.Models.CreateCampaignRequest", "CampaignRequest")
@@ -967,8 +1096,7 @@ namespace FALOFinancialProofing.Migrations
                     b.HasOne("FALOFinancialProofing.Models.User", "ReceiverUser")
                         .WithMany("CreateCampaignRequestReceivers")
                         .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("FALOFinancialProofing.Models.User", "SenderUser")
                         .WithMany("CreateCampaignRequestSenders")
@@ -1005,8 +1133,7 @@ namespace FALOFinancialProofing.Migrations
                     b.HasOne("FALOFinancialProofing.Models.User", "ReceiverUser")
                         .WithMany("ReceiverCreateProjectRequests")
                         .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("FALOFinancialProofing.Models.User", "SenderUser")
                         .WithMany("SenderCreateProjectRequests")
@@ -1019,6 +1146,25 @@ namespace FALOFinancialProofing.Migrations
                     b.Navigation("ReceiverUser");
 
                     b.Navigation("SenderUser");
+                });
+
+            modelBuilder.Entity("FALOFinancialProofing.Models.CreateProjectRequestApproveHistory", b =>
+                {
+                    b.HasOne("FALOFinancialProofing.Models.User", "Approver")
+                        .WithMany("CreateProjectRequestApproveHistories")
+                        .HasForeignKey("ApproverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FALOFinancialProofing.Models.CreateProjectRequest", "CreateProjectRequest")
+                        .WithMany("CreateProjectRequestApproveHistories")
+                        .HasForeignKey("CreateProjectRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Approver");
+
+                    b.Navigation("CreateProjectRequest");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.MoveNextCampaignStatusRequest", b =>
@@ -1048,6 +1194,25 @@ namespace FALOFinancialProofing.Migrations
                     b.Navigation("SenderUser");
                 });
 
+            modelBuilder.Entity("FALOFinancialProofing.Models.OrganizationMember", b =>
+                {
+                    b.HasOne("FALOFinancialProofing.Models.Organization", "Organization")
+                        .WithMany("OrganizationMembers")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FALOFinancialProofing.Models.User", "User")
+                        .WithMany("OrganizationMembers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Organization");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("FALOFinancialProofing.Models.Project", b =>
                 {
                     b.HasOne("FALOFinancialProofing.Models.User", "User")
@@ -1055,6 +1220,12 @@ namespace FALOFinancialProofing.Migrations
                         .HasForeignKey("CreatedBy")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("FALOFinancialProofing.Models.Organization", "Organization")
+                        .WithMany("Projects")
+                        .HasForeignKey("OrganizationId");
+
+                    b.Navigation("Organization");
 
                     b.Navigation("User");
                 });
@@ -1199,12 +1370,23 @@ namespace FALOFinancialProofing.Migrations
 
             modelBuilder.Entity("FALOFinancialProofing.Models.CreateCampaignRequest", b =>
                 {
+                    b.Navigation("CampaignRequestApproveHistories");
+
                     b.Navigation("CreateCampaignFiles");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.CreateProjectRequest", b =>
                 {
                     b.Navigation("CreateProjectFiles");
+
+                    b.Navigation("CreateProjectRequestApproveHistories");
+                });
+
+            modelBuilder.Entity("FALOFinancialProofing.Models.Organization", b =>
+                {
+                    b.Navigation("OrganizationMembers");
+
+                    b.Navigation("Projects");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.Project", b =>
@@ -1232,15 +1414,21 @@ namespace FALOFinancialProofing.Migrations
 
                     b.Navigation("CampaignMembers");
 
+                    b.Navigation("CampaignRequestApproveHistories");
+
                     b.Navigation("Campaigns");
 
                     b.Navigation("CreateCampaignRequestReceivers");
 
                     b.Navigation("CreateCampaignRequestSenders");
 
+                    b.Navigation("CreateProjectRequestApproveHistories");
+
                     b.Navigation("MoveNextCampaignStatusRequestReceiverUsers");
 
                     b.Navigation("MoveNextCampaignStatusRequestSenderUsers");
+
+                    b.Navigation("OrganizationMembers");
 
                     b.Navigation("Projects");
 
