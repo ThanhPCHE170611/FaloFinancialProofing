@@ -8,6 +8,8 @@ namespace FALOFinancialProofing.FALOHomePage
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddRazorPages();
+            builder.Services.AddSession();
 
             var app = builder.Build();
 
@@ -30,6 +32,9 @@ namespace FALOFinancialProofing.FALOHomePage
                 name: "default",
                 pattern: "{controller=Homepage}/{action=Index}/{id?}");
 
+            app.UseResponseCaching();
+            app.UseSession();
+            app.MapRazorPages();
             app.Run();
         }
     }
