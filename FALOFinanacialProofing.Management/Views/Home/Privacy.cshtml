@@ -1,6 +1,86 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+	ViewData["Title"] = "Privacy Policy";
 }
-<h1>@ViewData["Title"]</h1>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Danh Sách Tài Khoản Ngân Hàng</title>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 20px;
+		}
 
-<p>Use this page to detail your site's privacy policy.</p>
+		table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		table, th, td {
+			border: 1px solid #ccc;
+		}
+
+		th, td {
+			padding: 10px;
+			text-align: left;
+		}
+	</style>
+</head>
+<body>
+
+	<h1>Danh Sách Tài Khoản Ngân Hàng</h1>
+	<button id="fetch-accounts">Lấy Danh Sách Tài Khoản</button>
+	<table id="accounts-table">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Tên Tài Khoản</th>
+				<th>Số Dư</th>
+			</tr>
+		</thead>
+		<tbody>
+			<!-- Dữ liệu sẽ được chèn vào đây -->
+		</tbody>
+	</table>
+
+	<script>
+		$(document).ready(function() {
+			$('#fetch-accounts').on('click', function() {
+				$.ajax({
+					url: 'https://oauth.casso.vn/v2/accounts', // Địa chỉ API
+					type: 'GET',
+					headers: {
+						'Authorization': 'Apikey AK_CS.49e97f80981111ef98eebd0598ac83dd.Ygmpx0papfVQpILJU2C1OiQAfgqUckKQOSsi1w8o1KnvHfKvfY56YSR00UalsVheRhqU2jaa' // Thay thế bằng token xác thực của bạn
+					},
+							success: function(response) {
+			console.log(response); // Kiểm tra phản hồi từ API
+
+			// Kiểm tra xem 'accounts' có tồn tại và có phải là mảng không
+			if (Array.isArray(response.accounts)) {
+				$('#accounts-table tbody').empty();
+
+				// Duyệt qua danh sách tài khoản và chèn vào bảng
+				response.accounts.forEach(function(account) {
+					$('#accounts-table tbody').append(`
+						<tr>
+							<td>${account.id}</td>
+							<td>${account.name}</td>
+							<td>${account.balance}</td>
+						</tr>
+					`);
+				});
+			} else {
+				alert('Không tìm thấy danh sách tài khoản.');
+			}
+		},
+
+				});
+			});
+		});
+	</script>
+
+</body>
+</html>
