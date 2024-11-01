@@ -9,7 +9,7 @@ namespace FALOFinancialProofing.Models
         public string LastName { get; set; } = null!;
         public DateOnly? BirthDate { get; set; }
         public string? Image { get; set; }
-        public ICollection<SDG> SDGs { get; set; } = new List<SDG>();
+        public ICollection<UserSDG> UserSDGs { get; set; } = new List<UserSDG>();
         public ICollection<SocialNetwork> SocialNetworks { get; set; } = new List<SocialNetwork>();
         public ICollection<CampaignMember> CampaignMembers { get; set; } = new List<CampaignMember>();
         public ICollection<ApproveProcess> ApproveProcesses { get; set; } = new List<ApproveProcess>();

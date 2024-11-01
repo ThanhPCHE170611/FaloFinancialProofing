@@ -8,8 +8,6 @@ namespace FALOFinancialProofing.Models
         
         public string SDGName { get; set; }
 
-        public string UserId { get; set; }
-        [ForeignKey("UserId")]
-        public virtual User User { get; set; }
+        public ICollection<UserSDG> UserSDGs { get; set; } = new List<UserSDG>();
     }
 }
