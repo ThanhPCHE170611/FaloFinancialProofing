@@ -22,6 +22,29 @@ namespace FALOFinancialProofing.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("FALOFinancialProofing.Models.AccountingBook", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CampaignId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CampaignId")
+                        .IsUnique();
+
+                    b.ToTable("AccountingBooks");
+                });
+
             modelBuilder.Entity("FALOFinancialProofing.Models.ApproveProcess", b =>
                 {
                     b.Property<int>("Id")
@@ -637,13 +660,7 @@ namespace FALOFinancialProofing.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("SDGs");
                 });
@@ -780,6 +797,24 @@ namespace FALOFinancialProofing.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("Users", (string)null);
+                });
+
+            modelBuilder.Entity("FALOFinancialProofing.Models.UserSDG", b =>
+                {
+                    b.Property<int>("SDGId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.HasKey("SDGId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserSDGs");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.Voucher", b =>
@@ -976,6 +1011,17 @@ namespace FALOFinancialProofing.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("UserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("FALOFinancialProofing.Models.AccountingBook", b =>
+                {
+                    b.HasOne("FALOFinancialProofing.Models.Campaign", "Campaign")
+                        .WithOne("AccountingBook")
+                        .HasForeignKey("FALOFinancialProofing.Models.AccountingBook", "CampaignId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Campaign");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.ApproveProcess", b =>
@@ -1256,17 +1302,6 @@ namespace FALOFinancialProofing.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("FALOFinancialProofing.Models.SDG", b =>
-                {
-                    b.HasOne("FALOFinancialProofing.Models.User", "User")
-                        .WithMany("SDGs")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("FALOFinancialProofing.Models.SocialNetwork", b =>
                 {
                     b.HasOne("FALOFinancialProofing.Models.User", "User")
@@ -1287,6 +1322,25 @@ namespace FALOFinancialProofing.Migrations
                         .IsRequired();
 
                     b.Navigation("Campaign");
+                });
+
+            modelBuilder.Entity("FALOFinancialProofing.Models.UserSDG", b =>
+                {
+                    b.HasOne("FALOFinancialProofing.Models.SDG", "SDG")
+                        .WithMany("UserSDGs")
+                        .HasForeignKey("SDGId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FALOFinancialProofing.Models.User", "User")
+                        .WithMany("UserSDGs")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SDG");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.Voucher", b =>
@@ -1358,6 +1412,8 @@ namespace FALOFinancialProofing.Migrations
 
             modelBuilder.Entity("FALOFinancialProofing.Models.Campaign", b =>
                 {
+                    b.Navigation("AccountingBook");
+
                     b.Navigation("CampaignMembers");
 
                     b.Navigation("CreateCampaignRequests");
@@ -1409,6 +1465,11 @@ namespace FALOFinancialProofing.Migrations
                     b.Navigation("RequestForms");
                 });
 
+            modelBuilder.Entity("FALOFinancialProofing.Models.SDG", b =>
+                {
+                    b.Navigation("UserSDGs");
+                });
+
             modelBuilder.Entity("FALOFinancialProofing.Models.User", b =>
                 {
                     b.Navigation("ApproveProcesses");
@@ -1437,11 +1498,11 @@ namespace FALOFinancialProofing.Migrations
 
                     b.Navigation("RequestForms");
 
-                    b.Navigation("SDGs");
-
                     b.Navigation("SenderCreateProjectRequests");
 
                     b.Navigation("SocialNetworks");
+
+                    b.Navigation("UserSDGs");
                 });
 #pragma warning restore 612, 618
         }

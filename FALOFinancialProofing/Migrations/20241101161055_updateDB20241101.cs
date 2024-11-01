@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FALOFinancialProofing.Migrations
 {
     /// <inheritdoc />
-    public partial class initialDB29102024 : Migration
+    public partial class updateDB20241101 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -69,6 +69,19 @@ namespace FALOFinancialProofing.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SDGs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SDGName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SDGs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -76,6 +89,7 @@ namespace FALOFinancialProofing.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BirthDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -175,26 +189,6 @@ namespace FALOFinancialProofing.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SDGs",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SDGName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SDGs", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SDGs_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "SocialNetworks",
                 columns: table => new
                 {
@@ -209,30 +203,6 @@ namespace FALOFinancialProofing.Migrations
                     table.ForeignKey(
                         name: "FK_SocialNetworks_Users_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TransactionLogs",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SenderID = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    BankId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Amount = table.Column<double>(type: "float", nullable: false),
-                    CampaignId = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TransactionDate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TransactionLogs", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TransactionLogs_Users_SenderID",
-                        column: x => x.SenderID,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -297,6 +267,31 @@ namespace FALOFinancialProofing.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_UserRoles_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserSDGs",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    SDGId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserSDGs", x => new { x.SDGId, x.UserId });
+                    table.ForeignKey(
+                        name: "FK_UserSDGs_SDGs_SDGId",
+                        column: x => x.SDGId,
+                        principalTable: "SDGs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserSDGs_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -393,6 +388,26 @@ namespace FALOFinancialProofing.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AccountingBooks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CampaignId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AccountingBooks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AccountingBooks_Campaigns_CampaignId",
+                        column: x => x.CampaignId,
+                        principalTable: "Campaigns",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -533,6 +548,28 @@ namespace FALOFinancialProofing.Migrations
                         name: "FK_RequestForms_Users_CreatedBy",
                         column: x => x.CreatedBy,
                         principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TransactionLogs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BankId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Amount = table.Column<double>(type: "float", nullable: false),
+                    CampaignId = table.Column<int>(type: "int", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TransactionDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TransactionLogs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TransactionLogs_Campaigns_CampaignId",
+                        column: x => x.CampaignId,
+                        principalTable: "Campaigns",
                         principalColumn: "Id");
                 });
 
@@ -723,6 +760,12 @@ namespace FALOFinancialProofing.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_AccountingBooks_CampaignId",
+                table: "AccountingBooks",
+                column: "CampaignId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ApproveProcesses_ApproverId",
                 table: "ApproveProcesses",
                 column: "ApproverId");
@@ -885,19 +928,14 @@ namespace FALOFinancialProofing.Migrations
                 filter: "[NormalizedName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SDGs_UserId",
-                table: "SDGs",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_SocialNetworks_UserId",
                 table: "SocialNetworks",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TransactionLogs_SenderID",
+                name: "IX_TransactionLogs_CampaignId",
                 table: "TransactionLogs",
-                column: "SenderID");
+                column: "CampaignId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserClaims_UserId",
@@ -927,6 +965,11 @@ namespace FALOFinancialProofing.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserSDGs_UserId",
+                table: "UserSDGs",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Vouchers_ApproveId",
                 table: "Vouchers",
                 column: "ApproveId");
@@ -935,6 +978,9 @@ namespace FALOFinancialProofing.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AccountingBooks");
+
             migrationBuilder.DropTable(
                 name: "AttachmentFiles");
 
@@ -963,9 +1009,6 @@ namespace FALOFinancialProofing.Migrations
                 name: "RoleClaims");
 
             migrationBuilder.DropTable(
-                name: "SDGs");
-
-            migrationBuilder.DropTable(
                 name: "SocialNetworks");
 
             migrationBuilder.DropTable(
@@ -981,6 +1024,9 @@ namespace FALOFinancialProofing.Migrations
                 name: "UserRoles");
 
             migrationBuilder.DropTable(
+                name: "UserSDGs");
+
+            migrationBuilder.DropTable(
                 name: "UserTokens");
 
             migrationBuilder.DropTable(
@@ -994,6 +1040,9 @@ namespace FALOFinancialProofing.Migrations
 
             migrationBuilder.DropTable(
                 name: "Roles");
+
+            migrationBuilder.DropTable(
+                name: "SDGs");
 
             migrationBuilder.DropTable(
                 name: "ApproveProcesses");

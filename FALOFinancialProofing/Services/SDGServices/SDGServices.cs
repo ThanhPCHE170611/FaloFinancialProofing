@@ -36,7 +36,6 @@ namespace FALOFinancialProofing.Services.SDGServices
                 {
                     Id = sdg.Id != null ? sdg.Id.Value : 0,
                     SDGName = sdg.SDGName,
-                    UserId = sdg.UserId,
                 };
             } catch (Exception ex)
             {
@@ -79,20 +78,21 @@ namespace FALOFinancialProofing.Services.SDGServices
         {
             try
             {
-                return await sdgRepository.GetAll().Include(x => x.User).Select(
-                    sdg => new SDG
-                    {
-                        Id = sdg.Id,
-                        SDGName = sdg.SDGName,
-                        UserId = sdg.UserId,
-                        User = new User
-                        {
-                            Id = sdg.User.Id,
-                            FirstName = sdg.User.FirstName,
-                            LastName = sdg.User.LastName,
-                        }
-                    }
-                    ).ToListAsync();
+                //return await sdgRepository.GetAll().Include(x => x.User).Select(
+                //    sdg => new SDG
+                //    {
+                //        Id = sdg.Id,
+                //        SDGName = sdg.SDGName,
+                //        UserId = sdg.UserId,
+                //        User = new User
+                //        {
+                //            Id = sdg.User.Id,
+                //            FirstName = sdg.User.FirstName,
+                //            LastName = sdg.User.LastName,
+                //        }
+                //    }
+                //    ).ToListAsync();
+                return null;
             }
             catch (Exception e)
             {
@@ -104,20 +104,21 @@ namespace FALOFinancialProofing.Services.SDGServices
         {
             try
             {
-                return await sdgRepository.GetAll(x => x.Id == id).Include(x => x.User).Select(
-                    sdg => new SDG
-                    {
-                        Id = sdg.Id,
-                        SDGName = sdg.SDGName,
-                        UserId = sdg.UserId,
-                        User = new User
-                        {
-                            Id = sdg.User.Id,
-                            FirstName = sdg.User.FirstName,
-                            LastName = sdg.User.LastName,
-                        }
-                    }
-                    ).FirstOrDefaultAsync();
+                //return await sdgRepository.GetAll(x => x.Id == id).Include(x => x.User).Select(
+                //    sdg => new SDG
+                //    {
+                //        Id = sdg.Id,
+                //        SDGName = sdg.SDGName,
+                //        UserId = sdg.UserId,
+                //        User = new User
+                //        {
+                //            Id = sdg.User.Id,
+                //            FirstName = sdg.User.FirstName,
+                //            LastName = sdg.User.LastName,
+                //        }
+                //    }
+                //    ).FirstOrDefaultAsync();
+                return null;
             }
             catch (Exception e)
             {
@@ -129,20 +130,21 @@ namespace FALOFinancialProofing.Services.SDGServices
         {
             try
             {
-                return await sdgRepository.GetAll(x => x.UserId.Equals(userId)).Include(x => x.User).Select(
-                   sdg => new SDG
-                   {
-                       Id = sdg.Id,
-                       SDGName = sdg.SDGName,
-                       UserId = sdg.UserId,
-                       User = new User
-                       {
-                           Id = sdg.User.Id,
-                           FirstName = sdg.User.FirstName,
-                           LastName = sdg.User.LastName,
-                       }
-                   }
-                   ).ToListAsync();
+                //return await sdgRepository.GetAll(x => x.UserSDGs.Us.Equals(userId)).Include(x => x.UserSDGs).Select(
+                //   sdg => new SDG
+                //   {
+                //       Id = sdg.Id,
+                //       SDGName = sdg.SDGName,
+                //       UserId = sdg.UserId,
+                //       User = new User
+                //       {
+                //           Id = sdg.User.Id,
+                //           FirstName = sdg.User.FirstName,
+                //           LastName = sdg.User.LastName,
+                //       }
+                //   }
+                //   ).ToListAsync();
+                return null;
             }
             catch (Exception e)
             {
