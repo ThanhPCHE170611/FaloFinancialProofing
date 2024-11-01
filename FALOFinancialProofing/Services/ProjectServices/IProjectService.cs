@@ -16,6 +16,9 @@ namespace FALOFinancialProofing.Services.ProjectServices
         Task<Project> CreateProjectReturnEntityAsync(Project createProject);
         Task<bool> CheckProjectByUserIdAndProjectIdAsync(string pmUserId, int projectId);
         Task<bool> CheckProjectIsActiveAsync(int projectId);
+        Task<List<ProjectInformation>> GetAllProjectsByUserIdAsync(string UserId);
+        Task<List<ProjectInformation>> GetAllProjectInSystemAsync();
+        Task<ProjectInformation> GetProjectDetailsByProjectId(int ProjectId);
 
 
     }

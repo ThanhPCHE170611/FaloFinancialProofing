@@ -1,10 +1,14 @@
 ﻿using Azure;
 using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.DTOs.ProjectDTOs;
+using FALOFinancialProofing.DTOs.RoleDTOs;
+using FALOFinancialProofing.DTOs.UserDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
+using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services.EmailService;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -112,8 +116,81 @@ namespace FALOFinancialProofing.Services
         //        return newUser;
         //    }
         //}
+        public async Task<UserInformation> UserInformationProcess(User ui)
+        {
+            if (ui == null)
+            {
+                throw new ArgumentNullException(nameof(ui));
+            }
 
+            var roles = await userManager.GetRolesAsync(ui);
+            var roleDetails = new List<RoleInformation>();
 
+            foreach (var roleName in roles)
+            {
+                var role = await roleManager.FindByNameAsync(roleName);
+                if (role != null)
+                {
+                    roleDetails.Add(new RoleInformation
+                    {
+                        RoleId = role.Id,
+                        RoleName = role.Name
+                    });
+                }
+            }
+
+            return new UserInformation()
+            {
+                Id = ui.Id,
+                Email = ui.Email ?? string.Empty, // Xử lý null reference
+                FirstName = ui.FirstName ?? string.Empty, // Xử lý null reference
+                LastName = ui.LastName ?? string.Empty, // Xử lý null reference
+                BirthDate = ui.BirthDate,
+                Roles = roleDetails
+            };
+        }
+
+        public async Task<List<UserInformation>> GetUserNotInCampaignById(int CampaignId)
+        {
+
+            var Users = await userManager.Users.Where(u => !u.CampaignMembers.Any(cm => cm.CampaignId == CampaignId)).ToListAsync();
+            List<UserInformation> data = new List<UserInformation>();
+            try
+            {
+                foreach (var user in Users)
+                {
+                    var roles = await userManager.GetRolesAsync(user);
+                    var roleDetails = new List<RoleInformation>();
+
+                    foreach (var roleName in roles)
+                    {
+                        var role = await roleManager.FindByNameAsync(roleName);
+                        if (role != null)
+                        {
+                            roleDetails.Add(new RoleInformation
+                            {
+                                RoleId = role.Id,
+                                RoleName = role.Name
+                            });
+                        }
+                    }
+                    data.Add(new UserInformation()
+                    {
+                        Id = user.Id,
+                        Email = user.Email,
+                        FirstName = user.FirstName ,
+                        LastName = user.LastName,
+                        BirthDate = user.BirthDate,
+                        Roles = roleDetails
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetUserNotInCampaignById: {ex.Message}");
+            }
+            return data;
+        }
         public async Task<IdentityResult?> RegisterUser(SignUpRequest registerRequest)
         {
             var validatedInformationRequest = await ValidatedInformationRequest(registerRequest);

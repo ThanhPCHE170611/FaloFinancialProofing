@@ -18,6 +18,8 @@ namespace FALOFinancialProofing.Services.CampaignService
         Task<Campaign> CreateCampaignReturnEntityAsync(Campaign createCampaign);
         Task<List<Campaign>> GetAllCampaignByUserIdAndRoleAsync(string userId, string currentRole);
 
+        Task<List<CampaignInformation>> GetAllCampaignsByProjectIdAsync(int ProjectId);
+        Task<CampaignInformation> GetCampaignByCampaignIdAsync(int CampaignId);
         //Task<Campaign> CreateCampaignAsync(Campaign campaign);
         //Task<Campaign> GetCampaignByIdAsync(int campaignId);
         //Task<IEnumerable<Campaign>> GetAllCampaignsAsync();
