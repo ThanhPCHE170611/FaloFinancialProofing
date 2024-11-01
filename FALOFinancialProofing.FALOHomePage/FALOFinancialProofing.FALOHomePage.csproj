@@ -4,77 +4,654 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+	  <EnableDefaultContentItems>false</EnableDefaultContentItems>
   </PropertyGroup>
 
+	<ItemGroup>
+		<Content Include="wwwroot\**\*.svg" />
+		<Content Include="wwwroot\**\*.js" />
+		<Content Include="wwwroot\**\*.css" />
+		<Content Include="wwwroot\**\*.woff2" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Remove="wwwroot\css\style.css.map" />
+		<Content Remove="wwwroot\images\logo\logo-light.svg" />
+		<Content Remove="wwwroot\images\logo\logo.svg" />
+		<Content Remove="wwwroot\images\preloader.svg" />
+		<Content Remove="wwwroot\js\bootstrap.min.js" />
+		<Content Remove="wwwroot\js\jquery-3.7.1.min.js" />
+		<Content Remove="wwwroot\js\jquery.counterup.min.js" />
+		<Content Remove="wwwroot\js\jquery.waypoints.js" />
+		<Content Remove="wwwroot\js\magnific-popup.min.js" />
+		<Content Remove="wwwroot\js\meanmenu.js" />
+		<Content Remove="wwwroot\js\nice-select.min.js" />
+		<Content Remove="wwwroot\js\script.js" />
+		<Content Remove="wwwroot\js\swiper-bundle.min.js" />
+		<Content Remove="wwwroot\js\wow.min.js" />
+		<Content Remove="wwwroot\lib\css\style.css.map" />
+		<Content Remove="wwwroot\lib\images\logo\logo-light.svg" />
+		<Content Remove="wwwroot\lib\images\logo\logo.svg" />
+		<Content Remove="wwwroot\lib\images\preloader.svg" />
+		<Content Remove="wwwroot\lib\js\bootstrap.min.js" />
+		<Content Remove="wwwroot\lib\js\jquery-3.7.1.min.js" />
+		<Content Remove="wwwroot\lib\js\jquery.counterup.min.js" />
+		<Content Remove="wwwroot\lib\js\jquery.waypoints.js" />
+		<Content Remove="wwwroot\lib\js\magnific-popup.min.js" />
+		<Content Remove="wwwroot\lib\js\meanmenu.js" />
+		<Content Remove="wwwroot\lib\js\nice-select.min.js" />
+		<Content Remove="wwwroot\lib\js\script.js" />
+		<Content Remove="wwwroot\lib\js\swiper-bundle.min.js" />
+		<Content Remove="wwwroot\lib\js\wow.min.js" />
+		<Content Remove="wwwroot\sass\style.scss" />
+		<Content Remove="wwwroot\sass\_abstracts\_mixins.scss" />
+		<Content Remove="wwwroot\sass\_abstracts\_variables.scss" />
+		<Content Remove="wwwroot\sass\_base\_animation.scss" />
+		<Content Remove="wwwroot\sass\_base\_typography.scss" />
+		<Content Remove="wwwroot\sass\_components\_buttons.scss" />
+		<Content Remove="wwwroot\sass\_components\_progress.scss" />
+		<Content Remove="wwwroot\sass\_layout\_banner.scss" />
+		<Content Remove="wwwroot\sass\_layout\_footer.scss" />
+		<Content Remove="wwwroot\sass\_layout\_header.scss" />
+		<Content Remove="wwwroot\sass\_layout\_section.scss" />
+		<Content Remove="wwwroot\webfonts\fa-brands-400.woff2" />
+		<Content Remove="wwwroot\webfonts\fa-duotone-900.woff2" />
+		<Content Remove="wwwroot\webfonts\fa-light-300.woff2" />
+		<Content Remove="wwwroot\webfonts\fa-regular-400.woff2" />
+		<Content Remove="wwwroot\webfonts\fa-solid-900.woff2" />
+		<Content Remove="wwwroot\webfonts\fa-thin-100.woff2" />
+		<Content Remove="wwwroot\webfonts\fa-v4compatibility.woff2" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Views\Campaignpage\CampaignList.cshtml" />
+	  <None Remove="Views\Campaignpage\Index.cshtml" />
+	  <None Remove="Views\Donation\Index.cshtml" />
+	  <None Remove="Views\Homepage\Index.cshtml" />
+	  <None Remove="Views\Projectpage\Index.cshtml" />
+	  <None Remove="Views\Projectpage\ProjectList.cshtml" />
+	  <None Remove="Views\Shared\Error.cshtml" />
+	  <None Remove="Views\Shared\_Layout.cshtml" />
+	  <None Remove="Views\Shared\_ValidationScriptsPartial.cshtml" />
+	  <None Remove="Views\_ViewImports.cshtml" />
+	  <None Remove="Views\_ViewStart.cshtml" />
+	  <None Remove="wwwroot\js\CassoBankList.js" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Views\Campaignpage\CampaignList.cshtml" />
+	  <Content Include="Views\Campaignpage\Index.cshtml" />
+	  <Content Include="Views\Donation\Index.cshtml" />
+	  <Content Include="Views\Homepage\Index.cshtml" />
+	  <Content Include="Views\Projectpage\Index.cshtml" />
+	  <Content Include="Views\Projectpage\ProjectList.cshtml" />
+	  <Content Include="Views\Shared\Error.cshtml" />
+	  <Content Include="Views\Shared\_Layout.cshtml" />
+	  <Content Include="Views\Shared\_ValidationScriptsPartial.cshtml" />
+	  <Content Include="Views\_ViewImports.cshtml" />
+	  <Content Include="Views\_ViewStart.cshtml" />
+	</ItemGroup>
+
   <ItemGroup>
-    <Content Remove="wwwroot\assets\css\style.css.map" />
-    <Content Remove="wwwroot\assets\images\logo\logo-light.svg" />
-    <Content Remove="wwwroot\assets\images\logo\logo.svg" />
-    <Content Remove="wwwroot\assets\images\preloader.svg" />
-    <Content Remove="wwwroot\assets\js\bootstrap.min.js" />
-    <Content Remove="wwwroot\assets\js\jquery-3.7.1.min.js" />
-    <Content Remove="wwwroot\assets\js\jquery.counterup.min.js" />
-    <Content Remove="wwwroot\assets\js\jquery.waypoints.js" />
-    <Content Remove="wwwroot\assets\js\magnific-popup.min.js" />
-    <Content Remove="wwwroot\assets\js\meanmenu.js" />
-    <Content Remove="wwwroot\assets\js\nice-select.min.js" />
-    <Content Remove="wwwroot\assets\js\script.js" />
-    <Content Remove="wwwroot\assets\js\swiper-bundle.min.js" />
-    <Content Remove="wwwroot\assets\js\wow.min.js" />
-    <Content Remove="wwwroot\assets\sass\style.scss" />
-    <Content Remove="wwwroot\assets\sass\_abstracts\_mixins.scss" />
-    <Content Remove="wwwroot\assets\sass\_abstracts\_variables.scss" />
-    <Content Remove="wwwroot\assets\sass\_base\_animation.scss" />
-    <Content Remove="wwwroot\assets\sass\_base\_typography.scss" />
-    <Content Remove="wwwroot\assets\sass\_components\_buttons.scss" />
-    <Content Remove="wwwroot\assets\sass\_components\_progress.scss" />
-    <Content Remove="wwwroot\assets\sass\_layout\_banner.scss" />
-    <Content Remove="wwwroot\assets\sass\_layout\_footer.scss" />
-    <Content Remove="wwwroot\assets\sass\_layout\_header.scss" />
-    <Content Remove="wwwroot\assets\sass\_layout\_section.scss" />
-    <Content Remove="wwwroot\assets\webfonts\fa-brands-400.woff2" />
-    <Content Remove="wwwroot\assets\webfonts\fa-duotone-900.woff2" />
-    <Content Remove="wwwroot\assets\webfonts\fa-light-300.woff2" />
-    <Content Remove="wwwroot\assets\webfonts\fa-regular-400.woff2" />
-    <Content Remove="wwwroot\assets\webfonts\fa-solid-900.woff2" />
-    <Content Remove="wwwroot\assets\webfonts\fa-thin-100.woff2" />
-    <Content Remove="wwwroot\assets\webfonts\fa-v4compatibility.woff2" />
+    <None Include="wwwroot\css\style.css.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\logo\logo-light.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\logo\logo.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\preloader.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\js\bootstrap.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\js\jquery-3.7.1.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\js\jquery.counterup.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\js\jquery.waypoints.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\js\magnific-popup.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\js\meanmenu.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\js\nice-select.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\js\script.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\js\swiper-bundle.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\js\wow.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\sass\style.scss">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\sass\_abstracts\_mixins.scss">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\sass\_abstracts\_variables.scss">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\sass\_base\_animation.scss">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\sass\_base\_typography.scss">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\sass\_components\_buttons.scss">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\sass\_components\_progress.scss">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\sass\_layout\_banner.scss">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\sass\_layout\_footer.scss">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\sass\_layout\_header.scss">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\sass\_layout\_section.scss">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\webfonts\fa-brands-400.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\webfonts\fa-duotone-900.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\webfonts\fa-light-300.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\webfonts\fa-regular-400.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\webfonts\fa-solid-900.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\webfonts\fa-thin-100.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\webfonts\fa-v4compatibility.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\favicon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\assets\css\style.css.map" />
-    <None Include="wwwroot\assets\images\logo\logo-light.svg" />
-    <None Include="wwwroot\assets\images\logo\logo.svg" />
-    <None Include="wwwroot\assets\images\preloader.svg" />
-    <None Include="wwwroot\assets\js\bootstrap.min.js" />
-    <None Include="wwwroot\assets\js\jquery-3.7.1.min.js" />
-    <None Include="wwwroot\assets\js\jquery.counterup.min.js" />
-    <None Include="wwwroot\assets\js\jquery.waypoints.js" />
-    <None Include="wwwroot\assets\js\magnific-popup.min.js" />
-    <None Include="wwwroot\assets\js\meanmenu.js" />
-    <None Include="wwwroot\assets\js\nice-select.min.js" />
-    <None Include="wwwroot\assets\js\script.js" />
-    <None Include="wwwroot\assets\js\swiper-bundle.min.js" />
-    <None Include="wwwroot\assets\js\wow.min.js" />
-    <None Include="wwwroot\assets\sass\style.scss" />
-    <None Include="wwwroot\assets\sass\_abstracts\_mixins.scss" />
-    <None Include="wwwroot\assets\sass\_abstracts\_variables.scss" />
-    <None Include="wwwroot\assets\sass\_base\_animation.scss" />
-    <None Include="wwwroot\assets\sass\_base\_typography.scss" />
-    <None Include="wwwroot\assets\sass\_components\_buttons.scss" />
-    <None Include="wwwroot\assets\sass\_components\_progress.scss" />
-    <None Include="wwwroot\assets\sass\_layout\_banner.scss" />
-    <None Include="wwwroot\assets\sass\_layout\_footer.scss" />
-    <None Include="wwwroot\assets\sass\_layout\_header.scss" />
-    <None Include="wwwroot\assets\sass\_layout\_section.scss" />
-    <None Include="wwwroot\assets\webfonts\fa-brands-400.woff2" />
-    <None Include="wwwroot\assets\webfonts\fa-duotone-900.woff2" />
-    <None Include="wwwroot\assets\webfonts\fa-light-300.woff2" />
-    <None Include="wwwroot\assets\webfonts\fa-regular-400.woff2" />
-    <None Include="wwwroot\assets\webfonts\fa-solid-900.woff2" />
-    <None Include="wwwroot\assets\webfonts\fa-thin-100.woff2" />
-    <None Include="wwwroot\assets\webfonts\fa-v4compatibility.woff2" />
-    <None Include="wwwroot\favicon.ico" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <Content Update="wwwroot\css\all.min.css">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="wwwroot\css\animate.css">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="wwwroot\css\bootstrap.min.css">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="wwwroot\css\magnific-popup.css">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="wwwroot\css\meanmenu.css">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="wwwroot\css\nice-select.css">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="wwwroot\css\site.css">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="wwwroot\css\style.css">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="wwwroot\css\swiper-bundle.min.css">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+    <Content Update="wwwroot\images\about\about-image1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\about\about-image2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\about\about-info.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\about\about-two-image1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\about\AboutUs.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\banner\banner-image1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\banner\banner-image2.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\banner\banner-inner-page.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\banner\banner.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\banner\banner_2.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\banner\hero.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\bg\event-bg-image.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\bg\mission-bg.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\blog\blog-image1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\blog\blog-image2.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\blog\blog-image3.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\blog\blog-image4.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\blog\blog-image5.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\blog\blog-image6.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\blog\blog-single-image1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\blog\blog-single-image2.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\blog\blog-single-image3.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\blog\blog-single-sm1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\blog\blog-single-sm2.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\blog\comment-image1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\blog\comment-image2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\blog\post-sm1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\blog\post-sm2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\blog\post-sm3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\brand\brand-image1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\brand\brand-image2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\brand\brand-image3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\brand\brand-image4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\brand\brand-image5.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\cause\CampaignImages.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\cause\cause-image1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\cause\cause-image2.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\cause\cause-image3.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\cause\cause-image4.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\cause\cause-image5.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\cause\cause-image6.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\cause\cause-single-image.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\donate\donate-image1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\error\404.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\event\event-image1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\event\event-image2.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\event\event-image3.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\event\event-image4.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\event\event-single-image.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\event\Project_image.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\faq\faq-image1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\faq\faq-image2.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\favicon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\footer\footer-blog1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\footer\footer-blog2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\icon\about-icon1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\icon\about-icon2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\icon\counter1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\icon\counter2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\icon\counter3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\icon\counter4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\icon\mission-icon1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\icon\mission-icon2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\icon\mission-icon3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\icon\mission-icon4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\icon\service1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\icon\service2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\icon\service3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\menu\home1-image.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\menu\home2-image.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\project\project-image-big.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\project\project-image-sm.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\project\project-image1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\project\project-image2.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\project\project-image3.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\project\project-image4.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\project\project-single-sm1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\project\project-single-sm2.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\project\project-single.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\project\user.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\shape\about-dot.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\shape\about-dot2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\shape\about-dot3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\shape\about-line.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\shape\banner-line.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\shape\faq-shape.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\shape\footer-shape-left.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\shape\footer-shape-right.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\shape\hero-shape.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\shape\hero-shape2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\shape\service.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\team\team-image1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\team\team-image2.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\team\team-image3.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\team\team-image4.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\team\team-image5.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\team\team-image6.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\testimonial\shape\about-dot.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\testimonial\shape\about-dot2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\testimonial\shape\about-dot3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\testimonial\shape\about-line.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\testimonial\shape\banner-line.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\testimonial\shape\faq-shape.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\testimonial\shape\footer-shape-left.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\testimonial\shape\footer-shape-right.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\testimonial\shape\hero-shape.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\testimonial\shape\hero-shape2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\testimonial\shape\service.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\testimonial\testimonial-image1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\testimonial\testimonial-image2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\testimonial\testimonial-image3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\testimonial\testimonial-image4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\video\video-left-image.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\images\video\video-right-image.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\webfonts\fa-brands-400.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\webfonts\fa-duotone-900.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\webfonts\fa-light-300.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\webfonts\fa-regular-400.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\webfonts\fa-solid-900.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\webfonts\fa-thin-100.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\webfonts\fa-v4compatibility.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="wwwroot\images\about\about-image1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\images\about\about-image2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\images\about\about-info.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\images\about\about-two-image1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\images\about\AboutUs.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\images\banner\banner-image1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\images\banner\banner-image2.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\images\banner\banner-inner-page.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\images\banner\banner.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\images\banner\banner_2.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\images\banner\hero.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\images\bg\event-bg-image.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\images\bg\mission-bg.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\webfonts\fa-brands-400.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\webfonts\fa-duotone-900.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\webfonts\fa-light-300.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\webfonts\fa-regular-400.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\webfonts\fa-solid-900.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\webfonts\fa-thin-100.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\webfonts\fa-v4compatibility.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

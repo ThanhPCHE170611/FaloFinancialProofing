@@ -1,3 +1,5 @@
+using FALOFinancialProofing.FALOHomePage.Services;
+
 namespace FALOFinancialProofing.FALOHomePage
 {
     public class Program
@@ -10,6 +12,17 @@ namespace FALOFinancialProofing.FALOHomePage
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
             builder.Services.AddSession();
+            builder.Services.AddHttpClient();
+
+            //Build Session Service
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+            });
+            builder.Services.AddMemoryCache();
+
+            builder.Services.AddHostedService<BankDataPollingService>();
+            builder.Services.AddTransient<TransactionPollingDirect>();
 
             var app = builder.Build();
 

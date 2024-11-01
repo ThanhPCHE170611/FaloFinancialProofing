@@ -17,6 +17,11 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
             return View();
         }
 
+        public ActionResult ListPageRedirect()
+        {
+            return View("ProjectList");
+        }
+
         // GET: ProjectpageController/Create
         public ActionResult Create()
         {

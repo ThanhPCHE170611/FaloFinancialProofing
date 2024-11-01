@@ -23,6 +23,11 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
             return View();
         }
 
+        public ActionResult ListPageRedirect()
+        {
+            return View("CampaignList");
+        }
+
         // POST: CampaignpageController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]

@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,37 +7,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FALO Financial Proofing</title>
     <!-- Favicon img -->
-    <link rel="shortcut icon" href="~/assets/images/favicon.png">
+    <link rel="shortcut icon" href="~/images/favicon.png">
     <!-- Bootstarp min css -->
-    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
     <!-- Mean menu css -->
-    <link rel="stylesheet" href="~/assets/css/meanmenu.css">
+    <link rel="stylesheet" href="~/css/meanmenu.css">
     <!-- All min css -->
-    <link rel="stylesheet" href="~/assets/css/all.min.css">
+    <link rel="stylesheet" href="~/css/all.min.css">
     <!-- Swiper bundle min css -->
-    <link rel="stylesheet" href="~/assets/css/swiper-bundle.min.css">
+    <link rel="stylesheet" href="~/css/swiper-bundle.min.css">
     <!-- Magnigic popup css -->
-    <link rel="stylesheet" href="~/assets/css/magnific-popup.css">
+    <link rel="stylesheet" href="~/css/magnific-popup.css">
     <!-- Animate css -->
-    <link rel="stylesheet" href="~/assets/css/animate.css">
+    <link rel="stylesheet" href="~/css/animate.css">
     <!-- Nice select css -->
-    <link rel="stylesheet" href="~/assets/css/nice-select.css">
+    <link rel="stylesheet" href="~/css/nice-select.css">
     <!-- Style css -->
-    <link rel="stylesheet" href="~/assets/css/style.css">
+    <link rel="stylesheet" href="~/css/style.css">
+    <link href="~/css/site.css" rel="stylesheet" asp-append-version="true" />
 
     @RenderSection("Scripts", required: false)
 </head>
 <body>
     <!-- Preloader area start -->
-        <div id="loading">
-            <div id="loading-center">
-                <div id="loading-center-absolute">
-                    <div class="loading-icon text-center d-flex flex-column align-items-center justify-content-center">
-                        <img class="loading-logo" src="~/assets/images/preloader.svg" alt="icon">
-                    </div>
+    <div id="loading">
+        <div id="loading-center">
+            <div id="loading-center-absolute">
+                <div class="loading-icon text-center d-flex flex-column align-items-center justify-content-center">
+                    <img class="loading-logo" src="/images/preloader.svg" alt="icon">
                 </div>
             </div>
         </div>
+    </div>
     <!-- Preloader area end -->
     <!-- Header area start here -->
     <header class="header-area">
@@ -48,140 +50,9 @@
                 <div class="main-menu">
                     <nav>
                         <ul>
-                            <li class="has-megamenu">
-                                <a href="#0">Home</a>
-                                <ul class="sub-menu mega-menu menu-image">
-                                    <li>
-                                        <div class="image text-center">
-                                            <img src="/assets/images/menu/home1-image.jpg" alt="image">
-                                            <div class="btn__group">
-                                                <div class="btn-three">
-                                                    <span class="btn-circle">
-                                                    </span>
-                                                    <a href="index.html" class="btn-inner">
-                                                        <span class="btn-text">
-                                                            Multi Page
-                                                        </span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <h6 class="text-white">Home One</h6>
-                                        </div>
-                                        <div class="image text-center">
-                                            <img src="/assets/images/menu/home2-image.jpg" alt="image">
-                                            <div class="btn__group">
-                                                <div class="btn-three">
-                                                    <span class="btn-circle">
-                                                    </span>
-                                                    <a href="index-2.html" class="btn-inner">
-                                                        <span class="btn-text">
-                                                            Multi Page
-                                                        </span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <h6 class="text-white">Home Two</h6>
-                                        </div>
-                                        <div class="image text-center">
-                                            <img src="/assets/images/menu/home1-image.jpg" alt="image">
-                                            <div class="btn__group">
-                                                <div class="btn-three">
-                                                    <span class="btn-circle">
-                                                    </span>
-                                                    <a href="index-one-page.html" class="btn-inner">
-                                                        <span class="btn-text">
-                                                            One Page
-                                                        </span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <h6 class="text-white">Home One</h6>
-                                        </div>
-                                        <div class="image text-center">
-                                            <img src="/assets/images/menu/home2-image.jpg" alt="image">
-                                            <div class="btn__group">
-                                                <div class="btn-three">
-                                                    <span class="btn-circle">
-                                                    </span>
-                                                    <a href="index-2-one-page.html" class="btn-inner">
-                                                        <span class="btn-text">
-                                                            One Page
-                                                        </span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <h6 class="text-white">Home Two</h6>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li><a href="about.html">Về Chúng Tôi</a></li>
-                            <li>
-                                <a href="#0">Causes</a>
-                                <ul class="sub-menu">
-                                    <li>
-                                        <a href="cause.html">Causes Grid</a>
-                                    </li>
-                                    <li>
-                                        <a href="cause-list.html">Causes List</a>
-                                    </li>
-                                    <li>
-                                        <a href="cause-single.html">Causes Single</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="#0">Pages</a>
-                                <ul class="sub-menu">
-                                    <li>
-                                        <a href="project.html">Project</a>
-                                    </li>
-                                    <li>
-                                        <a href="project-single.html">Project Single</a>
-                                    </li>
-                                    <li>
-                                        <a href="team.html">Volunteer</a>
-                                    </li>
-                                    <li>
-                                        <a href="team-single.html">Volunteer Single</a>
-                                    </li>
-                                    <li>
-                                        <a href="faq.html">FAQ's</a>
-                                    </li>
-                                    <li>
-                                        <a href="error.html">404 Error</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="#0">Event</a>
-                                <ul class="sub-menu">
-                                    <li>
-                                        <a href="event.html">Event Grid</a>
-                                    </li>
-                                    <li>
-                                        <a href="event-list.html">Event List</a>
-                                    </li>
-                                    <li>
-                                        <a href="event-single.html">Event Single</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="#0">Blog</a>
-                                <ul class="sub-menu">
-                                    <li>
-                                        <a href="blog.html">Blog Grid</a>
-                                    </li>
-                                    <li>
-                                        <a href="blog-classic.html">Blog Classic</a>
-                                    </li>
-                                    <li>
-                                        <a href="blog-single.html">Blog Single</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li><a href="contact.html">Contact</a></li>
+                            <li><a href="@Url.Action("Index", "Homepage")">Về Chúng Tôi</a></li>
+                            <li><a href="@Url.Action("ListPageRedirect", "Projectpage")">Dự Án</a></li>
+                            <li><a href="@Url.Action("ListPageRedirect", "Campaignpage")">Chiến Dịch</a></li>
                         </ul>
                     </nav>
                 </div>
@@ -212,10 +83,10 @@
     <footer class="footer-area secondary-bg overflow-hidden">
         <div class="footer__main-wrp">
             <div class="footer__shape-left wow slideInLeft" data-wow-delay="200ms" data-wow-duration="1500ms">
-                <img class="footer__shape__animation" src="~/assets/images/shape/footer-shape-left.png" alt="shape">
+                <img class="footer__shape__animation" src="/images/shape/footer-shape-left.png" alt="shape">
             </div>
             <div class="footer__shape-right wow slideInRight" data-wow-delay="400ms" data-wow-duration="1500ms">
-                <img class="footer__shape__animation-right" src="~/assets/images/shape/footer-shape-right.png"
+                <img class="footer__shape__animation-right" src="/images/shape/footer-shape-right.png"
                      alt="shape">
             </div>
             <div class="container">
@@ -224,7 +95,7 @@
                         <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="00ms" data-wow-duration="1500ms">
                             <div class="footer__item">
                                 <a href="index.html" class="logo mb-40">
-                                    <img src="~/assets/images/logo/logo-light.svg" alt="image">
+                                    <img src="/images/logo/logo-light.svg" alt="image">
                                 </a>
                                 <p class="text-white">
                                     Phasellus ultricies aliquam volutpat
@@ -279,7 +150,7 @@
                                 <ul class="post">
                                     <li class="mb-3">
                                         <div class="image">
-                                            <img src="~/assets/images/footer/footer-blog1.png" alt="image">
+                                            <img src="/images/footer/footer-blog1.png" alt="image">
                                         </div>
                                         <div class="con">
                                             <span>22, Nov 2023</span>
@@ -290,7 +161,7 @@
                                     </li>
                                     <li>
                                         <div class="image">
-                                            <img src="~/assets/images/footer/footer-blog2.png" alt="image">
+                                            <img src="/images/footer/footer-blog2.png" alt="image">
                                         </div>
                                         <div class="con">
                                             <span>18, Nov 2023</span>
@@ -355,28 +226,28 @@
     </div>
     <!-- Back to top area end here -->
     <!-- Jquery 3. 7. 1 Min Js -->
-    <script src="~/assets/js/jquery-3.7.1.min.js"></script>
+    <script src="/js/jquery-3.7.1.min.js"></script>
     <!-- Bootstrap min Js
-         <script src="~/assets/js/bootstrap.min.js"></script>
+         <script src="~/js/bootstrap.min.js"></script>
     -->
     <!-- Mean menu Js -->
-    <script src="~/assets/js/meanmenu.js"></script>
+    <script src="/js/meanmenu.js"></script>
     <!-- Swiper bundle min Js -->
-    <script src="~/assets/js/swiper-bundle.min.js"></script>
+    <script src="/js/swiper-bundle.min.js"></script>
     <!-- Counterup min Js -->
-    <script src="~/assets/js/jquery.counterup.min.js"></script>
+    <script src="/js/jquery.counterup.min.js"></script>
     <!-- Wow min Js -->
-    <script src="~/assets/js/wow.min.js"></script>
+    <script src="/js/wow.min.js"></script>
     <!-- Magnific popup min Js -->
-    <script src="~/assets/js/magnific-popup.min.js"></script>
+    <script src="/js/magnific-popup.min.js"></script>
     <!-- Nice select min Js -->
-    <script src="~/assets/js/nice-select.min.js"></script>
+    <script src="/js/nice-select.min.js"></script>
     <!-- Isotope pkgd min Js
-         <script src="~/assets/js/isotope.pkgd.min.js"></script>
+         <script src="~/js/isotope.pkgd.min.js"></script>
      -->
     <!-- Waypoints Js -->
-    <script src="~/assets/js/jquery.waypoints.js"></script>
+    <script src="/js/jquery.waypoints.js"></script>
     <!-- Script Js -->
-    <script src="~/assets/js/script.js"></script>
+    <script src="/js/script.js"></script>
 </body>
 </html>

@@ -2941,10 +2941,10 @@ input {
   transition: var(--transition);
   background-color: var(--heading-color);
 }
-.service__item.active {
-  background-image: url(../../assets/images/shape/service.png);
-  background-color: var(--primary-color);
-}
+    .service__item.active {
+        background-image: url('../images/shape/service.png');
+        background-color: var(--primary-color);
+    }
 
 .about__image {
   position: relative;
