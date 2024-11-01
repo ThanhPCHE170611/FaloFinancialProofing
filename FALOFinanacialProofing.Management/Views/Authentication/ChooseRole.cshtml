@@ -1,4 +1,4 @@
-﻿@{
+﻿    @{
     Layout = null;
 }
 <!DOCTYPE html>
@@ -58,37 +58,51 @@
     <div class="role-container">
         <h2>Chọn Vai Trò</h2>
         <ul class="role-list" id="roleList">
-            
         </ul>
     </div>
 
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
           const jwtToken = localStorage.getItem('jwtToken');
           console.log(jwtToken);
           if (!jwtToken) {
             alert('Bạn chưa đăng nhập!');
-            window.location.href = '/login'; 
+            window.location.href = '/Authentication/Login';
             return;
           }
 
           try {
             const decodedToken = jwt_decode(jwtToken);
-            let roles = decodedToken.role || []; 
-            
+            let roles = decodedToken.role || [];
             if (!Array.isArray(roles)) {
-              roles = [roles]; 
+              roles = [roles];
             }
-
             const roleList = $('#roleList');
 
             roles.forEach(role => {
               const roleItem = $(`<li class="role-item">${role}</li>`);
               console.log(role);
-              roleItem.on('click', function() {
+              roleItem.on('click', function () {
                 localStorage.setItem('selectedRole', role);
-                // window.location.href = `/home?role=${role}`; 
-                window.location.href = `/Home/Index`; 
+                // window.location.href = `/home?role=${role}`;
+                $.ajax({
+                  url: `https://localhost:7294/api/Users/SetRoleLoginAfterLogin/${role}`,
+                  type: 'GET',
+                  contentType: 'application/json',
+                  headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                  },
+                  data: JSON.stringify({ userRole: role }),
+                  success: function (response) {
+                    console.log('Role được lưu thành công:', response);
+                    window.location.href = `/Home/Index`;
+                  },
+                  error: function (xhr, status, error) {
+                    console.error('Lỗi khi lưu role:', error);
+                    alert('Có lỗi xảy ra khi lưu role. Vui lòng thử lại.');
+                  }
+                });
+                // window.location.href = `/Home/Index`;
               });
 
               roleList.append(roleItem);
@@ -96,10 +110,9 @@
           } catch (error) {
             console.error('Lỗi khi giải mã token:', error);
             alert('Token không hợp lệ. Vui lòng đăng nhập lại.');
-            window.location.href = '/login';
+            window.location.href = '/Authentication/Login';
           }
         });
     </script>
-
 </body>
 </html>
