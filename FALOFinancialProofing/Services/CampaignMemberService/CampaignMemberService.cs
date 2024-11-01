@@ -1,19 +1,25 @@
 ﻿using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.DTOs.CampaignDTO;
 using FALOFinancialProofing.DTOs.CampaignMemberDTO;
+using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Text;
 
 namespace FALOFinancialProofing.Services.CampaignMemberService
 {
     public class CampaignMemberService : ICampaignMemberService
     {
         private readonly IRepository<CampaignMember, int> cmRepository;
-
-        public CampaignMemberService(IRepository<CampaignMember, int> _cmRepository)
+        private readonly IRepository<Campaign, int> campaignRepository;
+        private readonly AuthServices authServices;
+        public CampaignMemberService(IRepository<CampaignMember, int> _cmRepository, IRepository<Campaign, int> campaignRepository, AuthServices authServices)
         {
             cmRepository = _cmRepository;
+            this.campaignRepository = campaignRepository;
+            this.authServices = authServices;
         }
 
         public async Task<CampaignMember?> CreateCampaignMemberAsync(CreateCampaignMemberDTO createCampaignMemberDTO)
@@ -24,10 +30,10 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
 
                 if (existingCampaignMember != null)
                 {
-                    return null; 
+                    return null;
                 }
 
-                var newCampaignMember= await CreateCampaignMemberDTOToEntity(createCampaignMemberDTO);
+                var newCampaignMember = await CreateCampaignMemberDTOToEntity(createCampaignMemberDTO);
                 return await cmRepository.InsertAsync(newCampaignMember);
             }
             catch (Exception e)
@@ -80,6 +86,27 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             }
         }
 
+        public async Task<bool> UpdateCampaignMemberStatusAsync(UpdateCampaignMemberStatusDTO updateCampaignMemberStatusDTO)
+        {
+            try
+            {
+                var existingCampaignMember = await cmRepository.Get(updateCampaignMemberStatusDTO.Id);
+
+                if (existingCampaignMember == null)
+                {
+                    return false;
+                }
+
+                UpdateCampaignMemberStatusDTOToEntity(existingCampaignMember, updateCampaignMemberStatusDTO);
+
+                return await cmRepository.UpdateAsync(existingCampaignMember);
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"UpdateCampaignMemberStatusAsync: {ex.Message}");
+                return false;
+            }
+        }
 
         public async Task<bool> UpdateCampaignMemberAsync(UpdateCampaignMemberDTO updateCampaignMemberDTO)
         {
@@ -107,7 +134,10 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             campaignMember.Debt = updateCampaignMemberDTO.Debt;
             campaignMember.IsActive = updateCampaignMemberDTO.IsActive;
         }
-
+        private void UpdateCampaignMemberStatusDTOToEntity(CampaignMember campaignMember, UpdateCampaignMemberStatusDTO updateCampaignMemberStatusDTO)
+        {
+            campaignMember.IsActive = updateCampaignMemberStatusDTO.IsActive;
+        }
         public async Task<bool> DeleteCampaignMemberByIdAsync(int id)
         {
             try
@@ -122,7 +152,102 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 return false;
             }
         }
+        public CampaignMember ConvertToBaseClass(CreateManyCampaignMemberDTO createManyCampaignMemberDTO, int CampaignId)
+        {
+            return new CampaignMember()
+            {
+                CampaignId = CampaignId,
+                UserId = createManyCampaignMemberDTO.UserId,
+                RoleId = createManyCampaignMemberDTO.RoleId,
+                Debt = 0,
+                IsActive = true
+            };
+        }
 
-        
+        public async Task<List<CreateManyCampaignMemberDTO>> ValidateCampaignMembersCreateAsync(List<CreateManyCampaignMemberDTO> createManyCampaignMemberDTOs, int campaignId, StringBuilder message)
+        {
+            List<CreateManyCampaignMemberDTO> successDatas = new List<CreateManyCampaignMemberDTO>();
+            try
+            {
+                // check campaign Exist
+                var campaign = await campaignRepository.Get(campaignId);
+                if (campaign == null)
+                {
+                    throw new Exception($"Campaign not found with id = {campaignId}.");
+                }
+                var DbData = await cmRepository.GetAll()
+                    .Where(x => x.CampaignId == campaignId)
+                    .ToListAsync();
+                //var isExist = DbData.Any(cm => createManyCampaignMemberDTOs.Any(cmd => cmd.UserId == cm.UserId));
+                var checkExistFailData = false;
+                foreach (var item in createManyCampaignMemberDTOs)
+                {
+                    var checkUserInRole = await authServices.CheckUserInRoleId(item.UserId, item.RoleId, message);
+                    var isExist = DbData.Any(cm => cm.UserId == item.UserId);
+                    if (isExist || !checkUserInRole)
+                    {
+                        checkExistFailData = true;
+                    }
+                    else
+                    {
+                        successDatas.Add(item);
+                    }
+
+                }
+                if (checkExistFailData)
+                {
+                    message.Append($"Users already exist in Campaign with Id = {campaignId}.");
+                }
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"ValidateCampaignMembersCreateAsync: {ex.Message}");
+            }
+
+            return successDatas;
+        }
+
+        public async Task<List<CreateManyCampaignMemberDTO>> InValidCampaignMembersCreateAsync(List<CreateManyCampaignMemberDTO> createManyCampaignMemberDTOs, List<CreateManyCampaignMemberDTO> ValidCreateManyCampaignMemberDTOs)
+        {
+            List<CreateManyCampaignMemberDTO> InValidDatas = new List<CreateManyCampaignMemberDTO>();
+            try
+            {
+                InValidDatas = createManyCampaignMemberDTOs.Except(ValidCreateManyCampaignMemberDTOs).ToList();
+            }
+            catch (Exception ex)
+            {
+
+                await Console.Out.WriteLineAsync($"ValidateCampaignMembersCreateAsync: {ex.Message}");
+            }
+
+            return InValidDatas;
+        }
+        public async Task<bool> CreateManyCampaignMembersAsync(List<CreateManyCampaignMemberDTO> createManyCampaignMemberDTOs, int campaignId, StringBuilder message)
+        {
+            var IsValid = false;
+            try
+            {
+                if (createManyCampaignMemberDTOs == null || createManyCampaignMemberDTOs.Count == 0)
+                {
+                    throw new Exception("No data to create.");
+                }
+                List<CampaignMember> data = new List<CampaignMember>();
+                foreach (var item in createManyCampaignMemberDTOs)
+                {
+                    data.Add(ConvertToBaseClass(item, campaignId));
+                }
+                IsValid = await cmRepository.InsertManyAsync(data);
+                if (IsValid)
+                    message.Append("Create CampaignMembers Successfully!");
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"CreateManyCampaignMembersAsync: {ex.Message}");
+            }
+            return IsValid;
+        }
+
     }
 }
