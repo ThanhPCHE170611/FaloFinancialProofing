@@ -293,5 +293,29 @@ namespace FALOFinancialProofing.Services.CampaignService
 
             return createCampaign;
         }
+
+        public async Task<List<Campaign>> GetAllCampaignByUserIdAndRoleAsync(string userId, string currentRole)
+        {
+            var campaigns = new List<Campaign>();
+            try
+            {
+                var allCampaigns = await campaignRepository.GetAll().Include(c => c.CampaignMembers).ThenInclude(cm => cm.IdentityRole).ToListAsync();
+
+                foreach (var campaign in allCampaigns)
+                {
+                    if(campaign.CampaignMembers.Any(cm => cm.UserId == userId 
+                        && cm.IdentityRole.Name.Equals(currentRole)
+                        && cm.IsActive))
+                    {
+                        campaigns.Add(campaign);
+                    }
+                }
+                return campaigns;
+            }
+            catch (Exception ex)
+            {
+                return campaigns;
+            }
+        }
     }
 }
