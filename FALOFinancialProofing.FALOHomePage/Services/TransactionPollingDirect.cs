@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace FALOFinancialProofing.FALOHomePage.Services
 {
@@ -14,7 +15,7 @@ namespace FALOFinancialProofing.FALOHomePage.Services
         {
             using (var httpClient = _httpClientFactory.CreateClient())
             {
-                httpClient.DefaultRequestHeaders.Add("Authorization", "Apikey ");
+                httpClient.DefaultRequestHeaders.Add("Authorization", "Apikey");
                 var response = await httpClient.GetAsync("https://oauth.casso.vn/v2/transactions");
 
                 // Ensure the response is successful
@@ -35,7 +36,17 @@ namespace FALOFinancialProofing.FALOHomePage.Services
                     throw new Exception(apiResponse.Message); // Handle the error
                 }
 
-                return apiResponse.Data.Records; // Return the list of transactions
+                List <BankTransaction> transactionList = new List<BankTransaction>();
+
+                foreach (BankTransaction r in apiResponse.Data.Records)
+                {
+                    if(r != null && r.Amount > 0)
+                    {
+                        transactionList.Add(r);
+                    }
+                }
+
+                return transactionList; // Return the list of transactions
             }
         }
     }
