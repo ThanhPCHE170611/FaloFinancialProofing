@@ -42,7 +42,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<!-- Dữ liệu sẽ được chèn vào đây -->
+			
 		</tbody>
 	</table>
 
@@ -50,19 +50,17 @@
 		$(document).ready(function() {
 			$('#fetch-accounts').on('click', function() {
 				$.ajax({
-					url: 'https://oauth.casso.vn/v2/accounts', // Địa chỉ API
+					url: 'https://oauth.casso.vn/v2/accounts',
 					type: 'GET',
 					headers: {
-						'Authorization': 'Apikey AK_CS.49e97f80981111ef98eebd0598ac83dd.Ygmpx0papfVQpILJU2C1OiQAfgqUckKQOSsi1w8o1KnvHfKvfY56YSR00UalsVheRhqU2jaa' // Thay thế bằng token xác thực của bạn
+						'Authorization': 'Apikey AK_CS.5e3f98c0987011ef98eebd0598ac83dd.zKntSv5qWnmjiDZoy2xJJCRVs2g7Sqdk3XM4XvbfhPAla72SPbShdfMiSoEaIKYJQQBBvpMz' // Thay thế bằng token xác thực của bạn
 					},
 							success: function(response) {
-			console.log(response); // Kiểm tra phản hồi từ API
+			console.log(response); 
 
-			// Kiểm tra xem 'accounts' có tồn tại và có phải là mảng không
+
 			if (Array.isArray(response.accounts)) {
 				$('#accounts-table tbody').empty();
-
-				// Duyệt qua danh sách tài khoản và chèn vào bảng
 				response.accounts.forEach(function(account) {
 					$('#accounts-table tbody').append(`
 						<tr>

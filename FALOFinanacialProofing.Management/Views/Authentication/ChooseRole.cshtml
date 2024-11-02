@@ -74,17 +74,20 @@
           try {
             const decodedToken = jwt_decode(jwtToken);
             let roles = decodedToken.role || [];
+
             if (!Array.isArray(roles)) {
               roles = [roles];
             }
+
             const roleList = $('#roleList');
 
             roles.forEach(role => {
               const roleItem = $(`<li class="role-item">${role}</li>`);
-              console.log(role);
               roleItem.on('click', function () {
                 localStorage.setItem('selectedRole', role);
                 // window.location.href = `/home?role=${role}`;
+                const checkrole = localStorage.getItem('selectedRole');
+                console.log('checkroleSelected:',checkrole);
                 $.ajax({
                   url: `https://localhost:7294/api/Users/SetRoleLoginAfterLogin/${role}`,
                   type: 'GET',
@@ -102,7 +105,6 @@
                     alert('Có lỗi xảy ra khi lưu role. Vui lòng thử lại.');
                   }
                 });
-                // window.location.href = `/Home/Index`;
               });
 
               roleList.append(roleItem);
@@ -110,7 +112,7 @@
           } catch (error) {
             console.error('Lỗi khi giải mã token:', error);
             alert('Token không hợp lệ. Vui lòng đăng nhập lại.');
-            window.location.href = '/Authentication/Login';
+            // window.location.href = '/Authentication/Login';
           }
         });
     </script>

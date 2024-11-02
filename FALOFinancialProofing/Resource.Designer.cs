@@ -88,7 +88,7 @@ namespace FALOFinancialProofing {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ProjectManager.
+        ///   Looks up a localized string similar to Project Manager.
         /// </summary>
         public static string ProjectManagerRoleName {
             get {

@@ -342,6 +342,10 @@
                 rows[i].style.display = (matchesSearch && matchesStatus) ? '' : 'none';
             }
         }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const campaignId = urlParams.get('id');
+        console.log(campaignId);
     </script>
 
     <script async defer src="https://buttons.github.io/buttons.js"></script>
