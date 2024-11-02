@@ -61,6 +61,15 @@ namespace FALOFinancialProofing {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to AccountingBook.
+        /// </summary>
+        public static string AccountingBookFolderName {
+            get {
+                return ResourceManager.GetString("AccountingBookFolderName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Accounting.
         /// </summary>
         public static string AccountingRoleName {
