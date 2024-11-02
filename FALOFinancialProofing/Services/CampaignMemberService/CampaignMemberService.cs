@@ -96,7 +96,6 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 {
                     return false;
                 }
-
                 UpdateCampaignMemberStatusDTOToEntity(existingCampaignMember, updateCampaignMemberStatusDTO);
 
                 return await cmRepository.UpdateAsync(existingCampaignMember);

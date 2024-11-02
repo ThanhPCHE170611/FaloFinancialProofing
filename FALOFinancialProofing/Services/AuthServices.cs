@@ -111,6 +111,7 @@ namespace FALOFinancialProofing.Services
             {
                 var userDTO = new UserDto
                 {
+                    Id = user.Id,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Email = user.Email,
@@ -302,7 +303,7 @@ namespace FALOFinancialProofing.Services
                 new Claim(JwtRegisteredClaimNames.Sub, User.Email),
                 //tokenId
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                //new Claim("Id", User.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.NameId, User.Id),
                 //new Claim("TokenId", Guid.NewGuid().ToString()),
 
             };
