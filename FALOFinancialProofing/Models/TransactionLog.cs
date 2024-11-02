@@ -8,19 +8,21 @@ namespace FALOFinancialProofing.Models
 
         //[JsonPropertyOrder(3)]
         //public string ReceiverId { get; set; }
+        //[JsonPropertyOrder(2)]
+        //public string SenderID { get; set; }
+        //public User SenderUser { get; set; }
         [JsonPropertyOrder(2)]
-        public string SenderID { get; set; }
-        public User SenderUser { get; set; }
-        [JsonPropertyOrder(3)]
         public string BankId { get; set; }
-        [JsonPropertyOrder(4)]
+        [JsonPropertyOrder(3)]
         public double Amount { get; set; }
-        [JsonPropertyOrder(5)]
+        [JsonPropertyOrder(4)]
         public int CampaignId { get; set; } 
-        [JsonPropertyOrder(6)]
+        public Campaign Campaign { get; set; } 
+        [JsonPropertyOrder(5)]
         public string Description { get; set; }
-        [JsonPropertyOrder(7)]
+        [JsonPropertyOrder(6)]
         public DateTime TransactionDate { get; set; }
+       
 
     }
 }

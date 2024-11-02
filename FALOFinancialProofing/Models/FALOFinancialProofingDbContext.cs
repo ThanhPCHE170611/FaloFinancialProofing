@@ -24,6 +24,9 @@ namespace FALOFinancialProofing.Models
         public DbSet<Campaign> Campaigns { get; set; }
         public DbSet<CampaignMember> CampaignMembers { get; set; }
         public DbSet<SDG> SDGs { get; set; }
+
+        public DbSet<AccountingBook> AccountingBooks { get; set; }
+        public DbSet<UserSDG> UserSDGs { get; set; }
         public DbSet<SocialNetwork> SocialNetworks { get; set; }
         public DbSet<CreateProjectRequestApproveHistory> CreateProjectRequestApproveHistories { get; set; }
         public DbSet<CampaignRequestApproveHistory> CampaignRequestApproveHistories { get; set; }
@@ -86,10 +89,19 @@ namespace FALOFinancialProofing.Models
                 .HasForeignKey(r => r.TypeId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<SDG>()
-                .HasOne(s => s.User)
-                .WithMany(u => u.SDGs)
-                .HasForeignKey(s => s.UserId);
+            modelBuilder.Entity<UserSDG>()
+                .HasKey(us => new { us.SDGId, us.UserId });
+
+            modelBuilder.Entity<UserSDG>()
+                .HasOne(us => us.User)
+                .WithMany(u => u.UserSDGs)
+                .HasForeignKey(us => us.UserId);
+
+            modelBuilder.Entity<UserSDG>()
+                .HasOne(us => us.SDG)
+                .WithMany(s => s.UserSDGs)
+                .HasForeignKey(us => us.SDGId);
+
             modelBuilder.Entity<SocialNetwork>()
                 .HasOne(s => s.User)
                 .WithMany(u => u.SocialNetworks)
@@ -107,7 +119,13 @@ namespace FALOFinancialProofing.Models
                    .HasForeignKey(c => c.UserId)
                    .OnDelete(DeleteBehavior.Restrict);
             });
-
+            modelBuilder.Entity<TransactionLog>(entity =>
+            {
+                entity.HasOne(c => c.Campaign)
+                    .WithMany(u => u.TransactionLogs)
+                    .HasForeignKey(c => c.CampaignId)
+                    .OnDelete(DeleteBehavior.NoAction);
+            });
 
             modelBuilder.Entity<MoveNextCampaignStatusRequest>(entity =>
             {
@@ -149,9 +167,9 @@ namespace FALOFinancialProofing.Models
             });
             modelBuilder.Entity<User>(entity =>
             {
-                entity.HasMany(c => c.TransactionLogs)
-                    .WithOne(u => u.SenderUser)
-                    .HasForeignKey(c => c.SenderID);
+                //entity.HasMany(c => c.TransactionLogs)
+                //    .WithOne(u => u.SenderUser)
+                //    .HasForeignKey(c => c.SenderID);
                 entity.HasMany(c => c.Projects)
                    .WithOne(u => u.User)
                    .HasForeignKey(c => c.CreatedBy);
@@ -233,6 +251,11 @@ namespace FALOFinancialProofing.Models
 
 
             });
+
+            modelBuilder.Entity<Campaign>()
+                .HasOne(c => c.AccountingBook)
+                .WithOne(u => u.Campaign)
+                .HasForeignKey<AccountingBook>(c => c.CampaignId);
             RoleSeedData(modelBuilder);
             DeleteIdentityPrefix(modelBuilder);
         }

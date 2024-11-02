@@ -5,6 +5,7 @@ using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services;
+using FALOFinancialProofing.Services.AccountingBookServices;
 using FALOFinancialProofing.Services.ApproveProcessServices;
 using FALOFinancialProofing.Services.AttachmentFIleServices;
 using FALOFinancialProofing.Services.CampaignMemberService;
@@ -61,7 +62,7 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped<IAttachmentFileServices, AttachmentFileServices>();
             builder.Services.AddScoped<IApproveProcessServices, ApproveProcessServices>();
             builder.Services.AddScoped<IVoucherServices, VoucherServices>();
-
+            builder.Services.AddScoped<IAcccountingBookServices, AccountingBookServices>();
             builder.Services.AddScoped<ICreateCampaignFileService, CreateCampaignFileService>();
             builder.Services.AddScoped<ICreateCampaignRequestService, CreateCampaignRequestService>();
             builder.Services.AddScoped<IMoveNextCampaignStatusRequestService, MoveNextCampaignStatusRequestService>();

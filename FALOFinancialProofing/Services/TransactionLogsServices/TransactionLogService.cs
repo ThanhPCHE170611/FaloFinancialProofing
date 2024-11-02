@@ -18,7 +18,7 @@ namespace FALOFinancialProofing.Services.TransactionLogsServices
         {
             var transactionLog = new TransactionLog
             {
-                SenderID = createTransactionLog.SenderID,
+                //SenderID = createTransactionLog.SenderID,
                 CampaignId = createTransactionLog.CampaignId,
                 TransactionDate = createTransactionLog.TransactionDate,
                 Amount = createTransactionLog.Amount,
@@ -50,7 +50,7 @@ namespace FALOFinancialProofing.Services.TransactionLogsServices
 
         private void ConvertToBaseEntity(TransactionLog SourceTransactionLog, UpdateTransactionLog DesTransactionLog)
         {
-            SourceTransactionLog.SenderID = DesTransactionLog.SenderID;
+            //SourceTransactionLog.SenderID = DesTransactionLog.SenderID;
             SourceTransactionLog.Amount = DesTransactionLog.Amount;
             SourceTransactionLog.BankId = DesTransactionLog.BankId;
             SourceTransactionLog.Description = DesTransactionLog.Description;

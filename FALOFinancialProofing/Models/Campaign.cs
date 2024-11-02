@@ -42,6 +42,9 @@ namespace FALOFinancialProofing.Models
         public ICollection<RequestForm> RequestForms { get; set; } = new List<RequestForm>();
         public ICollection<MoveNextCampaignStatusRequest> MoveNextCampaignStatusRequests { get; set; } = new List<MoveNextCampaignStatusRequest>();
         public ICollection<CreateCampaignRequest> CreateCampaignRequests { get; set; } = new List<CreateCampaignRequest>();
+        public ICollection<TransactionLog> TransactionLogs { get; set; } = new List<TransactionLog>();
+
+        public AccountingBook? AccountingBook { get; set; }
 
     }
 }
