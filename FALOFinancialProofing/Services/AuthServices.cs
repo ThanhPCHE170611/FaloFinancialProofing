@@ -1,5 +1,6 @@
 ﻿using Azure;
 using FALOFinancialProofing.DTOs;
+using FALOFinancialProofing.DTOs.CampaignMemberDTO;
 using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.DTOs.RoleDTOs;
 using FALOFinancialProofing.DTOs.UserDTOs;
@@ -58,6 +59,32 @@ namespace FALOFinancialProofing.Services
                     throw new Exception("User not found");
                 }
                 var isInRole = await userManager.IsInRoleAsync(user, userRole);
+                if (!isInRole)
+                {
+                    throw new Exception("User Role is not permitted");
+                }
+                checkValid = true;
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"CheckUserInRole: {ex.Message}");
+            }
+            return checkValid;
+        }
+
+        public async Task<bool> CheckUserInRoleId(string userId, string userRoleID, StringBuilder message)
+        {
+            bool checkValid = false;
+            try
+            {
+                var user = await userManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    throw new Exception("User not found");
+                }
+                var role = await roleManager.FindByIdAsync(userRoleID);
+                var isInRole = await userManager.IsInRoleAsync(user, role.Name);
                 if (!isInRole)
                 {
                     throw new Exception("User Role is not permitted");
@@ -178,7 +205,7 @@ namespace FALOFinancialProofing.Services
                     {
                         Id = user.Id,
                         Email = user.Email,
-                        FirstName = user.FirstName ,
+                        FirstName = user.FirstName,
                         LastName = user.LastName,
                         BirthDate = user.BirthDate,
                         Roles = roleDetails
@@ -188,6 +215,40 @@ namespace FALOFinancialProofing.Services
             catch (Exception ex)
             {
                 await Console.Out.WriteLineAsync($"GetUserNotInCampaignById: {ex.Message}");
+            }
+            return data;
+        }
+
+        public async Task<List<SelectedUserInformation>> GetUserInformationList(List<CreateManyCampaignMemberDTO> createManyCampaignMemberDTOs)
+        {
+            var data = new List<SelectedUserInformation>();
+            try
+            {
+                foreach (var item in createManyCampaignMemberDTOs)
+                {
+                    var user = await userManager.FindByIdAsync(item.UserId);
+                    if (user != null)
+                    {
+                        var role = await roleManager.FindByIdAsync(item.RoleId);
+                        data.Add(new SelectedUserInformation()
+                        {
+                            Id = user.Id,
+                            Email = user.Email,
+                            FirstName = user.FirstName,
+                            LastName = user.LastName,
+                            BirthDate = user.BirthDate,
+                            RoleInformation = new RoleInformation
+                            {
+                                RoleId = role.Id,
+                                RoleName = role.Name
+                            }
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetUserInformationList: {ex.Message}");
             }
             return data;
         }
