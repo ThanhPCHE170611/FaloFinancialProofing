@@ -120,8 +120,10 @@
           }
           Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
         }
-        const checkrole = localStorage.getItem('selectedRole');
+        const checkrole = localStorage.getItem('loggingRole');
         console.log('checkroleSelected:',checkrole);
+        const userId = localStorage.getItem('userId');
+        console.log('User ID:', userId);
     </script>
 </body>
 </html>

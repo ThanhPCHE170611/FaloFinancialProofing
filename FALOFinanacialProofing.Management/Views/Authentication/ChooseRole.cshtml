@@ -84,9 +84,9 @@
             roles.forEach(role => {
               const roleItem = $(`<li class="role-item">${role}</li>`);
               roleItem.on('click', function () {
-                localStorage.setItem('selectedRole', role);
+                localStorage.setItem('loggingRole', role);
                 // window.location.href = `/home?role=${role}`;
-                const checkrole = localStorage.getItem('selectedRole');
+                const checkrole = localStorage.getItem('LoggingRole');
                 console.log('checkroleSelected:',checkrole);
                 $.ajax({
                   url: `https://localhost:7294/api/Users/SetRoleLoginAfterLogin/${role}`,

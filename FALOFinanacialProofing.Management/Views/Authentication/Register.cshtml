@@ -93,7 +93,7 @@
                     data: JSON.stringify(registerData),
                     success: function(response) {
                         if (response.Success) {
-                            $('#registerMessage').html('<span class="text-success">Register Successful</span>');
+                            $('#registerMessage').html('<span class="text-success">Register Success</span>');
                         } else {
                             $('#registerMessage').html('<span class="text-danger">' + response.message + '</span>');
                         }
