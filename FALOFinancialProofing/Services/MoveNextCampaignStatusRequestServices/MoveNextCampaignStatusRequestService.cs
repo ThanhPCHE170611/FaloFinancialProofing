@@ -61,12 +61,11 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                     throw new ArgumentNullException(nameof(requestDto), "DTO not null.");
                 }
                 Campaign campaign = await GetCampaignByIdAsync(requestDto.CampaignID);
-
                 if (campaign == null)
                 {
                     throw new InvalidOperationException("Not Found Campaign");
                 }
-                string nextStatus;
+                string nextStatus = "";
                 if (campaign.Status == CampaignStatus.FundRaising)
                 {
                     nextStatus = CampaignStatus.Implement;
@@ -77,24 +76,34 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                 }
                 else if (campaign.Status == CampaignStatus.Disbursement)
                 {
-                    nextStatus = CampaignStatus.Close;
+                    bool Ok = await HasDebtInCampaignAsync(requestDto.CampaignID);
+                    if (Ok)
+                    {
+                        nextStatus = CampaignStatus.Close;
+                    }
+                    //throw new InvalidOperationException("debt is not over yet");
+                   
                 }
                 else
                 {
                     throw new InvalidOperationException("Campaign closed, can not move next");
                 }
 
-                var request = new MoveNextCampaignStatusRequest
+                if (nextStatus != "")
                 {
-                    CampaignID = requestDto.CampaignID,
-                    StatusOfCampaign = nextStatus,
-                    Status = requestDto.Status,
-                    Title = requestDto.Title,
-                    SenderId = requestDto.SenderId,
-                    CreatedAt = requestDto.CreatedAt
-                };
-                await _moveNextCampaignStatusRequestRepository.InsertAsync(request);
-                return request;
+                    var request = new MoveNextCampaignStatusRequest
+                    {
+                        CampaignID = requestDto.CampaignID,
+                        StatusOfCampaign = nextStatus,
+                        Status = requestDto.Status,
+                        Title = requestDto.Title,
+                        SenderId = requestDto.SenderId,
+                        CreatedAt = requestDto.CreatedAt
+                    };
+                    await _moveNextCampaignStatusRequestRepository.InsertAsync(request);
+                    return request;
+                }
+                
             }
             catch (Exception ex)
             {
@@ -114,6 +123,27 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                 return null;
             }
         }
+
+        private async Task<bool> HasDebtInCampaignAsync(int campaignId)
+        {
+            bool IsValid = true;
+            try
+            {
+                List<CampaignMember> campaignMembers = new List<CampaignMember>();
+                campaignMembers = await _campaignMemberRepository.GetAll().Where(cm => cm.CampaignId == campaignId && cm.Debt != 0).ToListAsync();
+                if (campaignMembers.Count > 0)
+                {
+                    IsValid = false;
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return IsValid;
+        }
+
+
+
 
         public async Task<bool> ApproveOrRejectRequestAsync(int requestId, bool isApproved)
         {

@@ -109,9 +109,15 @@ namespace FALOFinancialProofing.Controllers
                 }
                 var request = await _moveNextCampaignStatusRequestService.CreateMoveNextCampaignStatusRequestAsync(requestDto);
                 //return CreatedAtAction(nameof(CreateMoveNextCampaignStatusRequestAsync), new { id = request.Id }, request); // Trả về kết quả
-
-                var responseDto = _moveNextCampaignStatusRequestService.MapToDto(request);
-                return Ok(responseDto);
+                if(request != null)
+                {
+                    var responseDto = _moveNextCampaignStatusRequestService.MapToDto(request);
+                    return Ok(responseDto);
+                }
+                else
+                {
+                    return BadRequest("can not create MoveNextCampaignStatusRequest");
+                }
             }
             catch (InvalidOperationException ex)
             {
