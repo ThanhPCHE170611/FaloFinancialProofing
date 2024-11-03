@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FALOFinancialProofing.Migrations
 {
     [DbContext(typeof(FALOFinancialProofingDbContext))]
-    [Migration("20241101161055_updateDB20241101")]
-    partial class updateDB20241101
+    [Migration("20241103140729_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -907,6 +907,13 @@ namespace FALOFinancialProofing.Migrations
                             ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85h",
                             Name = "Project Management Board",
                             NormalizedName = "PROJECT MANAGEMENT BOARD"
+                        },
+                        new
+                        {
+                            Id = "15db7f37-5dbc-4035-9b00-a0af4c3fe8bb",
+                            ConcurrencyStamp = "ba58588f-f626-41a0-8fca-b74481367335",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
                         });
                 });
 

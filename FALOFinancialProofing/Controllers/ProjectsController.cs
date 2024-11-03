@@ -29,7 +29,7 @@ namespace FALOFinancialProofing.Controllers
             _createProjectRequestService = createProjectRequestService;
             _createProjectFileService = createProjectFileService;
         }
-
+        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.Admin)]
         [HttpGet("GetAllProjectInSystem")]
         public async Task<IActionResult> GetAllProjectInSystem(string? status, int currentPage = IntConstant.PageNumberDefault)
         {
@@ -67,7 +67,7 @@ namespace FALOFinancialProofing.Controllers
                 Data = filterPagingData
             });
         }
-
+        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
         [HttpGet("GetAllProjectByUserId/{UserId}")]
         public async Task<IActionResult> GetProjectsByUserIdAsync(string UserId, string? status, int currentPage = IntConstant.PageNumberDefault)
         {
@@ -105,7 +105,7 @@ namespace FALOFinancialProofing.Controllers
                 Data = filterPagingData
             });
         }
-
+        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
         [HttpGet("GetProjectDetailsById/{ProjectId}")]
         public async Task<IActionResult> GetProjectDetailsById(int ProjectId)
         {
@@ -128,6 +128,7 @@ namespace FALOFinancialProofing.Controllers
         }
         // PUT: api/Projects/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
         [HttpPut("UpdateProject")]
         public async Task<IActionResult> PutProject([FromBody] Project UpdateProject)
         {
@@ -148,23 +149,25 @@ namespace FALOFinancialProofing.Controllers
 
             return Content(statusMessage);
         }
-        [HttpPost("CreateProject1", Name = "CreateProject1")]
-        public async Task CreateProject()
-        {
-            Project project = new Project()
-            {
-                CreatedBy = "09360c31-c34d-430c-a354-6bc3925e206d",
-                ProjectName = "Nguyen Duc Project",
-                DateOfCreation = DateTime.Now,
-                Description = "This is a project",
-                Status = "NotRunning",
-                OrganizationId = 1
-            };
-            var checkCreate = await _projectService.CreateProjectReturnEntityAsync(project);
-        }
+        #region TestData
+        //[HttpPost("CreateProject1", Name = "CreateProject1")]
+        //public async Task CreateProject()
+        //{
+        //    Project project = new Project()
+        //    {
+        //        CreatedBy = "09360c31-c34d-430c-a354-6bc3925e206d",
+        //        ProjectName = "Nguyen Duc Project",
+        //        DateOfCreation = DateTime.Now,
+        //        Description = "This is a project",
+        //        Status = "NotRunning",
+        //        OrganizationId = 1
+        //    };
+        //    var checkCreate = await _projectService.CreateProjectReturnEntityAsync(project);
+        //} 
+        #endregion
         // POST: api/Projects
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [RoleAttribute(AppRole.ProjectManager)] // mở nếu làm thật
+        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)] // mở nếu làm thật
         [HttpPost("CreateProject", Name = "CreateProject")]
         public async Task<ActionResult<Project>> PostProject([FromForm] CreateProject createProject)
         {
@@ -250,6 +253,7 @@ namespace FALOFinancialProofing.Controllers
         }
 
         // DELETE: api/Projects/5
+        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.Admin)]
         [HttpDelete("DeleteProject/{id}")]
         public async Task<IActionResult> DeleteProject(int id)
         {
