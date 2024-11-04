@@ -77,6 +77,30 @@ namespace FALOFinancialProofing.Services.OrganizationServices
 
             return organization;
         }
+        //* tạo thêm thông tin tổ chức ở userOrganization
+        public async Task<List<Organization>> GetOrganizationsByUserIdAsync(string userId)
+        {
+            List<Organization> organizations = null!;
+            try
+            {
+                // tìm organizations mà User đã tham gia
+                organizations = await _organizationRepository.GetAll()
+                    .Include(x => x.OrganizationMembers)
+                    .Where(o => o.OrganizationMembers.Any(om => om.UserId.Equals(userId)))
+                    .ToListAsync();
+                if (organizations == null)
+                {
+                    throw new Exception("organizations not found");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetOrganizationByUserIdAsync: {ex.Message}");
+            }
+
+            return organizations;
+        }
 
         public async Task<IEnumerable<Organization>> GetAllOrganizationsAsync()
         {

@@ -13,7 +13,11 @@ namespace FALOFinancialProofing.Models
         public string ProjectName { get; set; }
         public string Description { get; set; }
         public DateTime DateOfCreation { get; set; }
-        public bool Status { get; set; }
+        public string? Status { get; set; }
+        public bool IsActive { get; set; }
+        // id có thể null bởi vì thằng khách hàng không cần phải đăng kí với tổ chức( nếu để là 0 thì lỗi khóa ngoại)
+        public int? OrganizationId { get; set; }
+        public Organization Organization { get; set; }
         public ICollection<Campaign> Campaigns { get; set; }
         public ICollection<CreateProjectRequest> CreateProjectRequests { get; set; }
 

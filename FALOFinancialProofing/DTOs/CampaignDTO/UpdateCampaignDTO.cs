@@ -21,8 +21,8 @@ namespace FALOFinancialProofing.DTOs.CampaignDTO
         public string? Address { get; set; }
         [Required]
         public bool IsActive { get; set; }
-        public int? BankingNumber { get; set; }
-        //[Required]
-        //public string Status { get; set; }
+        public string? BankingNumber { get; set; }
+        [Required]
+        public string Status { get; set; }
     }
 }

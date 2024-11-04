@@ -109,5 +109,74 @@ namespace FALOFinancialProofing.Services.CreateCampaignFileServices
 
             return result;
         }
+
+        public async Task<List<CreateCampaignFile>> SaveUploadedFilesAsync(List<IFormFile> uploadFiles, int requestId)
+        {
+            var attachmentFiles = new List<CreateCampaignFile>();
+            try
+            {
+                // Kiểm tra nếu danh sách file không null và có file
+                if (uploadFiles != null && uploadFiles.Any())
+                {
+                    // Tạo đường dẫn thư mục lưu trữ
+                    var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "CampaignFileUploads");
+
+                    // Kiểm tra và tạo thư mục nếu chưa tồn tại
+                    if (!Directory.Exists(uploadFolder))
+                    {
+                        Directory.CreateDirectory(uploadFolder);
+                    }
+
+                    foreach (var file in uploadFiles)
+                    {
+                        // Tạo tên file mới để tránh trùng lặp bằng cách thêm GUID vào tên file
+                        var uniqueFileName = $"{Guid.NewGuid()}_{file.FileName}";
+
+                        // Tạo đường dẫn đầy đủ tới file sẽ lưu
+                        var filePath = Path.Combine(uploadFolder, uniqueFileName);
+
+                        // Sử dụng FileStream để lưu file vào đường dẫn
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+
+                        // Tạo DTO lưu thông tin file đã upload
+                        var attachmentFile = new CreateCampaignFile
+                        {
+                            FilePath = uniqueFileName,  // Lưu tên file hoặc có thể lưu cả đường dẫn nếu cần
+                            RequestId = requestId
+                        };
+                        attachmentFiles.Add(attachmentFile);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi hoặc xử lý ngoại lệ tùy theo yêu cầu
+
+            }
+            return attachmentFiles;
+        }
+
+        public async Task<bool> CreateCreateCampaignFilesAsync(List<CreateCampaignFile> createCampaignFiles)
+        {
+            var checkValid = false;
+            try
+            {
+                bool createdCreateCampaignFile = await _createCampaignFileRepository.InsertManyAsync(createCampaignFiles);
+                if (!createdCreateCampaignFile)
+                {
+                    throw new Exception("CreateCampaignFiles Error");
+                }
+                checkValid = true;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"CreateCreateCampaignFilesAsync: {ex.Message}");
+            }
+            return checkValid;
+        }
     }
 }

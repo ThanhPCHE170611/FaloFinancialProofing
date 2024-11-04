@@ -20,7 +20,9 @@ namespace FALOFinancialProofing.DTOs
         [Required]
         public string ApproverId { get; set; }
 
-        public List<IFormFile> UploadFiles { get; set; }
+        public List<IFormFile>? UploadFiles { get; set; }
+
+        public List<IFormFile>? VoucherFile { get; set; }
 
         public bool? IsValidate { get; set; } = false;
     }

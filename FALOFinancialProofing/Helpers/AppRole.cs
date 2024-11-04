@@ -7,6 +7,7 @@
         public const string Accounting = "Accounting";
         public const string Volunteer = "Volunteer";
         public const string ProjectManagementBoard = "Project Management Board";
+        public const string Admin = "Admin";
         //public const string HR = "Human Resources";
     }
 }

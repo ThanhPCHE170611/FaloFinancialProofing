@@ -117,7 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AccountingBookFolderName" xml:space="preserve">
+    <value>AccountingBook</value>
+  </data>
+  <data name="AccountingRoleName" xml:space="preserve">
+    <value>Accounting</value>
+  </data>
+  <data name="ApprovedStatus" xml:space="preserve">
+    <value>Approved</value>
+  </data>
   <data name="ProcessStatus" xml:space="preserve">
     <value>Process</value>
+  </data>
+  <data name="ProjectManagerRoleName" xml:space="preserve">
+    <value>ProjectManager</value>
+  </data>
+  <data name="RejectedStatus" xml:space="preserve">
+    <value>Rejected</value>
+  </data>
+  <data name="VolunteerLeaderRoleName" xml:space="preserve">
+    <value>Volunteer Leader</value>
+  </data>
+  <data name="VolunteerRoleName" xml:space="preserve">
+    <value>Volunteer</value>
   </data>
 </root>
