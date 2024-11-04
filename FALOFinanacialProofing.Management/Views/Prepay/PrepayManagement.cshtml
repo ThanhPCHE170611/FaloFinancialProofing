@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "PrepayManagement";
 }
 
@@ -15,106 +14,7 @@
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
-
-    <style>
-        .text-approved {
-            color: green;
-            font-weight: bold;
-        }
-
-        .text-declined {
-            color: red;
-            font-weight: bold;
-        }
-
-        .text-pending {
-            color: gray;
-            font-weight: bold;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            padding-top: 100px;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 50%;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-            .close:hover, .close:focus {
-                color: black;
-                text-decoration: none;
-                cursor: pointer;
-            }
-
-        .form-control {
-            margin-top: 10px;
-        }
-
-        .nav-tabs {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #e0e0e0;
-        }
-
-            .nav-tabs a {
-                padding: 10px 20px;
-                text-decoration: none;
-                color: #000;
-                background-color: #f1f1f1;
-                border-radius: 5px;
-            }
-
-                .nav-tabs a.active {
-                    background-color: #EC407A;
-                    color: #fff;
-                }
-
-                .nav-tabs a:hover {
-                    background-color: #007bff;
-                    color: #fff;
-                }
-
-        .search-filter-container {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .search-box {
-            width: 70%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .filter-box {
-            width: 25%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-    </style>
+    <link href="~/css/prepaymanagement.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -146,7 +46,7 @@
                         <input type="text" id="searchBox" class="search-box" placeholder="Search by Sender" onkeyup="filterTable()">
                         <select id="statusFilter" class="filter-box" onchange="filterTable()">
                             <option value="">Filter by Status</option>
-                            <option value="Pending">Pending</option>
+                            <option value="Process">Process</option>
                             <option value="Approved">Approved</option>
                             <option value="Declined">Declined</option>
                         </select>
@@ -170,74 +70,42 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">1</span></td>
-                                        <td><span class="text-secondary text-xs font-weight-bold">John Doe</span></td>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">9.000.000</span></td>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">Manager A</span></td>
-                                        <td class="align-middle text-center"><a href="#" class="btn btn-link text-info" download="file.pdf">file.pdf</a></td>
-                                        <td class="align-middle text-center"><a href="#" class="btn btn-link text-info" download="voucher1.pdf">voucher1.pdf</a></td>
-                                        @* <td class="align-middle text-center text-sm"><span class="text-pending text-xs font-weight-bold">Pending</span></td> *@
-                                        <td class="align-middle text-center text-sm">
-                                            <span class="badge badge-sm bg-gradient-warning">Pending</span>
-                                        </td>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">2024-10-01</span></td>
-                                        <td class="align-middle text-center">
-                                            <button class="btn btn-success btn-sm" onclick="approveRequest(this)">Approve</button>
-                                            <button class="btn btn-danger btn-sm" onclick="showDeclinePopup(this)">Decline</button>
-                                            <a class="btn btn-info btn-sm" asp-controller="Prepay" asp-action="PrepayDetail">Detail</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">2</span></td>
-                                        <td><span class="text-secondary text-xs font-weight-bold">Jane Smith</span></td>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">12.000.000</span></td>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">Manager B</span></td>
-                                        <td class="align-middle text-center"><a href="#" class="btn btn-link text-info" download="filePrepay2.pdf">filePrepay2.pdf</a></td>
-                                        <td class="align-middle text-center"><a href="#" class="btn btn-link text-info" download="voucher2.pdf">voucher2.pdf</a></td>
-                                        @* <td class="align-middle text-center text-sm"><span class="text-pending text-xs font-weight-bold">Pending</span></td> *@
-                                        <td class="align-middle text-center text-sm">
-                                            <span class="badge badge-sm bg-gradient-warning">Pending</span>
-                                        </td>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">2024-10-02</span></td>
-                                        <td class="align-middle text-center">
-                                            <button class="btn btn-success btn-sm" onclick="approveRequest(this)">Approve</button>
-                                            <button class="btn btn-danger btn-sm" onclick="showDeclinePopup(this)">Decline</button>
-                                            <a class="btn btn-info btn-sm" asp-controller="Prepay" asp-action="PrepayDetail">Detail</a>
-                                        </td>
-                                    </tr>
                                 </tbody>
                             </table>
 
                         </div>
                     </div>
                 </div>
+                <div class="pagination-container text-center mt-4">
+                    <div id="pagination"></div>
+                </div>
             </div>
         </div>
+    </div>
 
-        <div id="declineModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal()">&times;</span>
-                <h3>Decline Request</h3>
-                <label for="declineReason">Reason for Decline:</label>
-                <textarea id="declineReason" class="form-control" rows="4" placeholder="Enter reason"></textarea>
-                <button class="btn btn-danger mt-3" onclick="submitDecline()">Submit</button>
-            </div>
+    <div id="declineModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3>Decline Request</h3>
+            <label for="declineReason">Reason for Decline:</label>
+            <textarea id="declineReason" class="form-control" rows="4" placeholder="Enter reason"></textarea>
+            <button class="btn btn-danger mt-3" onclick="submitDecline()">Submit</button>
         </div>
+    </div>
 
-        <div id="detailModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal()">&times;</span>
-                <div id="voucherDetailContent"></div>
-            </div>
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="voucherDetailContent"></div>
         </div>
+    </div>
     </div>
 
     <script src="../assets/js/core/popper.min.js"></script>
     <script src="../assets/js/core/bootstrap.min.js"></script>
     <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
     <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         let currentDeclineButton = null;
 
@@ -328,7 +196,7 @@
             }
         }
 
-                function filterTable() {
+        function filterTable() {
             const searchInput = document.getElementById('searchBox').value.toLowerCase();
             const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
             const table = document.getElementById('prepayTable');
@@ -343,9 +211,284 @@
             }
         }
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const campaignId = urlParams.get('campaignid');
-        console.log(campaignId);
+          // Function to approve request based on role
+            function approveRequest(button, requestId) {
+                console.log("helo");
+                const userId = localStorage.getItem('userId');
+            const checkrole = localStorage.getItem('loggingRole');
+            const jwtToken = localStorage.getItem('jwtToken');
+                // If role is "Volunteer Leader"
+                if (checkrole === "Volunteer Leader") {
+                    $.ajax({
+                        url: `https://localhost:7294/api/ApproveProcess/approverequestforvolunteerleader/${requestId}`,
+                        method: 'GET',
+                        data: {
+                            userid: userId,
+                            currentLoggingRole: checkrole
+                        },
+                        headers: {
+                            'Authorization': `Bearer ${jwtToken}`
+                        },
+                        success: function (response) {
+                            console.log(checkrole);
+                            console.log(userId);
+                            if (response.success) {
+                                updateRowToApproved(button);
+                                alert("Request approved successfully for Volunteer Leader.");
+                            } else {
+                                alert(response.message || "Failed to approve the request.");
+                            }
+                        },
+                        error: function () {
+                            alert('Error occurred while approving the request for Volunteer Leader. Please try again.');
+                        }
+                    });
+                }
+
+                // If role is "Accounting"
+                else if (checkrole === "Accounting") {
+                    $.ajax({
+                        url: `https://localhost:7294/api/ApproveProcess/approverequestforaccounting/${requestId}`,
+                        method: 'GET',
+                        data: {
+                            userid: userId,
+                            currentLoggingRole: checkrole
+                        },
+                        headers: {
+                            'Authorization': `Bearer ${jwtToken}`
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                // Show file input popup for voucher submission
+                                showFileUploadPopup(requestId);
+                            } else {
+                                alert(response.message || "Failed to approve the request.");
+                            }
+                        },
+                        error: function () {
+                            alert('Error occurred while approving the request for Accounting. Please try again.');
+                        }
+                    });
+                }
+            }
+
+            // Function to update the UI after approval
+            function updateRowToApproved(button) {
+                const row = button.closest('tr');
+                const actionCell = row.querySelector('td:nth-child(9)');
+
+                // Hide approve and decline buttons
+                button.style.display = 'none';
+                actionCell.querySelector('.btn-danger').style.display = 'none';
+
+                // Update status to "Approved"
+                const detailButton = actionCell.querySelector('.btn-info');
+                const approvedText = document.createElement('span');
+                approvedText.classList.add('text-approved', 'me-2');
+                approvedText.textContent = 'Approved';
+                actionCell.insertBefore(approvedText, detailButton);
+            }
+
+            // Function to show file upload popup for Accounting role
+            function showFileUploadPopup(requestId) {
+                const fileInputHtml = `
+                    <div id="fileUploadPopup" class="file-upload-popup">
+                        <h3>Submit Prepay Voucher</h3>
+                        <input type="file" id="voucherFiles" multiple>
+                        <button onclick="submitVoucherFiles(${requestId})">Submit</button>
+                        <button onclick="closeFileUploadPopup()">Cancel</button>
+                    </div>
+                `;
+                $('body').append(fileInputHtml);
+            }
+
+            // Function to submit voucher files
+            function submitVoucherFiles(requestId) {
+                const files = $('#voucherFiles')[0].files;
+
+                if (files.length === 0) {
+                    alert("Please select at least one file.");
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('userid', userId);
+                formData.append('currentLoggingRole', checkrole);
+                formData.append('requestid', requestId);
+                for (let i = 0; i < files.length; i++) {
+                    formData.append('voucherFiles', files[i]);
+                }
+
+                $.ajax({
+                    url: `https://localhost:7294/api/ApproveProcess/approverequestforaccounting`,
+                    method: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        if (response.success) {
+                            closeFileUploadPopup();
+                            alert("Voucher files submitted successfully.");
+                        } else {
+                            alert(response.message || "Failed to submit voucher files.");
+                        }
+                    },
+                    error: function () {
+                        alert('Error occurred while submitting voucher files. Please try again.');
+                    }
+                });
+            }
+
+            // Function to close file upload popup
+            function closeFileUploadPopup() {
+                $('#fileUploadPopup').remove();
+            }
+
+        $(document).ready(function () {
+            const userId = localStorage.getItem('userId');
+            const campaignId = new URLSearchParams(window.location.search).get('campaignid');
+            const checkrole = localStorage.getItem('loggingRole');
+            const jwtToken = localStorage.getItem('jwtToken');
+            let currentPage = 1;
+            const pageSize = 5;
+
+            function formatDateTime(dateString) {
+                if (!dateString) return 'N/A';
+
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) {
+                    return 'Invalid Date';
+                }
+
+                const formattedDate = date.getDate().toString().padStart(2, '0') + '-' +
+                    (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                    date.getFullYear();
+
+                const formattedTime = date.getHours().toString().padStart(2, '0') + ':' +
+                    date.getMinutes().toString().padStart(2, '0') + ':' +
+                    date.getSeconds().toString().padStart(2, '0');
+
+                return formattedDate + ' ' + formattedTime;
+            }
+
+          
+
+
+            function loadPrepayRequests(page) {
+                let apiUrl;
+
+                // Determine API URL based on role
+                switch (checkrole) {
+                    case "Accounting":
+                        apiUrl = `https://localhost:7294/api/ApproveProcess/getallprepayrequestforaccountingincampaign/${userId}?currentLoggingRole=${checkrole}&campaignId=${campaignId}&page=${page}`;
+                        break;
+                    case "Project Manager":
+                        apiUrl = `https://localhost:7294/api/ApproveProcess/getallprepayrequestforprojectmanagerincampaign/${userId}?currentLoggingRole=${checkrole}&campaignId=${campaignId}&page=${page}`;
+                        break;
+                    case "Volunteer Leader":
+                        apiUrl = `https://localhost:7294/api/ApproveProcess/getallprepayrequestforvolunteerleaderincampaign/${userId}?currentLoggingRole=${checkrole}&campaignId=${campaignId}&page=${page}`;
+                        break;
+                    default: // For "Volunteer" and other unspecified roles
+                        apiUrl = `https://localhost:7294/api/RequestForm/getallprepayrequestincampaign/${campaignId}?userId=${userId}&page=${page}`;
+                        break;
+                }
+
+                $.ajax({
+                    url: apiUrl,
+                    method: 'GET',
+                    headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                    },
+                    success: function (response) {
+                        if (response.success && response.data.data.length > 0) {
+                            const prepayRequests = response.data.data;
+                            const tbody = $('#prepayTable tbody');
+                            tbody.empty();
+
+                            prepayRequests.forEach((request, index) => {
+                                const statusClass = request.status === "Approved" ? "bg-gradient-success" :
+                                                    request.status === "Declined" ? "bg-gradient-danger" :
+                                                    "bg-gradient-warning";
+                                const statusLabel = `<span class="badge badge-sm ${statusClass}">${request.status}</span>`;
+
+                                // Check if createdBy matches userId to conditionally show action buttons
+                                let actionButtons = `<a class="btn btn-info btn-sm" href="/Prepay/PrepayDetail">Detail</a>`;
+                                if (checkrole !== "Volunteer" && request.createdBy !== userId) {
+                                    actionButtons = `
+                                        <button class="btn btn-success btn-sm" onclick="approveRequest(this,'${request.id}' )">Approve</button>
+                                        <button class="btn btn-danger btn-sm" onclick="showDeclinePopup(this)">Decline</button>
+                                        ${actionButtons}
+                                    `;
+                                }
+
+                                // Handle attachments
+                                let attachmentLinks = '';
+                                if (request.attachmentFiles && request.attachmentFiles.length > 0) {
+                                    attachmentLinks = request.attachmentFiles.map(file => `
+                                        <a href="${file.filePath}" class="btn btn-link text-info" download="${file.filePath}">${file.filePath}</a>
+                                    `).join('<br>');
+                                } else {
+                                    attachmentLinks = '<span class="text-muted">No Attachments</span>';
+                                }
+
+                                // Handle vouchers
+                                let voucherLinks = '';
+                                if (request.voucherFiles && request.voucherFiles.length > 0) {
+                                    voucherLinks = request.voucherFiles.map(file => `
+                                        <a href="${file.filePath}" class="btn btn-link text-info" download="${file.filePath}">${file.filePath}</a>
+                                    `).join('<br>');
+                                } else {
+                                    voucherLinks = '<span class="text-muted">No Attachments</span>';
+                                }
+
+                                // Append row to table body
+                                tbody.append(`
+                                    <tr>
+                                        <td class="align-middle text-center text-sm">${index + 1}</td>
+                                        <td><span class="text-secondary text-xs font-weight-bold">${request.createdBy}</span></td>
+                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${request.expectedMoney}</span></td>
+                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${request.description}</span></td>
+                                        <td class="align-middle text-center">${attachmentLinks}</td>
+                                        <td class="align-middle text-center">${voucherLinks}</td>
+                                        <td class="align-middle text-center text-sm">${statusLabel}</td>
+                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${formatDateTime(request.createAt)}</span></td>
+                                        <td class="align-middle text-center">${actionButtons}</td>
+                                    </tr>
+                                `);
+                            });
+
+                            setupPagination(response.data.totalRecords, page);
+                        } else {
+                            $('#prepayTable tbody').html('<tr><td colspan="9" class="text-center">No RequestForms found.</td></tr>');
+                        }
+                    },
+                    error: function () {
+                        alert('Failed to load prepay requests. Please try again.');
+                    }
+                });
+            }
+
+            function setupPagination(totalRecords, currentPage) {
+                const totalPages = Math.ceil(totalRecords / pageSize);
+                const paginationContainer = $('#pagination');
+                paginationContainer.empty();
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageButton = $(`<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}">${i}</button>`);
+                    pageButton.on('click', () => changePage(i));
+                    paginationContainer.append(pageButton);
+                }
+            }
+
+            window.changePage = function (page) {
+                currentPage = page;
+                loadPrepayRequests(page);
+            };
+
+            loadPrepayRequests(currentPage);
+        });
+
+
+
     </script>
 
     <script async defer src="https://buttons.github.io/buttons.js"></script>

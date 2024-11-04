@@ -129,7 +129,7 @@
                     </div>
 
                     <div id="save-btn">
-                        <button class="btn btn-warning btn-lg" style="margin-left:10px">Create</button>
+                        <button class="btn btn-warning btn-lg" id="create-btn" style="margin-left:10px">Create</button>
                         <div>
                             <a asp-controller="Prepay" asp-action="PrepayManagement" class="btn btn-success btn-lg" style="margin-left:10px">Cancel</a>
                         </div>
@@ -162,27 +162,46 @@
             const jwtToken = localStorage.getItem('jwtToken');
             const urlParams = new URLSearchParams(window.location.search);
             const campaignId = urlParams.get('campaignid');
+            const checkrole = localStorage.getItem('loggingRole');
+
             console.log(userId);
-            console.log(jwtToken);
             console.log(campaignId);
+            console.log(checkrole);
 
             var today = new Date();
             var date =today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
             var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
             var dateTime = date +'T'+ time;
 
+            let apiUrl;
+            if (checkrole === "Volunteer") {
+                apiUrl = `https://localhost:7294/api/RequestForm/getapproverlistforvolunteer/${campaignId}`;
+            } else if (checkrole === "Volunteer Leader") {
+                apiUrl = `https://localhost:7294/api/RequestForm/getapproverforvolunteerleader/${campaignId}`;
+            } else if (checkrole === "Accounting") {
+                apiUrl = `https://localhost:7294/api/RequestForm/getapproverforaccounting/${campaignId}`;
+            } else if (checkrole === "Project Manager") {
+                apiUrl = `https://localhost:7294/api/RequestForm/getapproverforprojectmanagement/${campaignId}`;
+            } else {
+                alert('Invalid role. Please check your role and try again.');
+                return;
+            }
+
             $.ajax({
-                url: `https://localhost:7294/api/RequestForm/getapproverlistforvolunteer/${campaignId}`,
+                url: apiUrl,
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`
                 },
                 success: function (response) {
                     if (response.success && response.data.length > 0) {
+                        console.log(response.data.length);
                         response.data.forEach(function (approver) {
                             console.log(approver.fullName);
                             $('#assignFrom').append(new Option(approver.fullName, approver.userId));
                         });
+                    } else if(response.success && response.data.length === undefined) {
+                        $('#assignFrom').append(new Option(response.data.fullName, response.data.userId));
                     } else {
                         alert('No approver found for this campaign.');
                     }
@@ -192,7 +211,7 @@
                 }
             });
 
-            $('#save-btn .btn').on('click', function () {
+            $('#create-btn').on('click', function () {
                 const sender = $('#sender').val();
                 const expectedMoney = $('#expectedMoney').val();
                 const assignFrom = $('#assignFrom').val();
