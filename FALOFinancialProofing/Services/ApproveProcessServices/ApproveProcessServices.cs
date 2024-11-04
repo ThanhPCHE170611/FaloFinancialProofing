@@ -398,7 +398,8 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                             {
                                 FilePath = af.FilePath,
                                 RequestId = af.RequestId
-                            }).ToList()
+                            }).ToList(),
+                            ApproveProcessStatus = (rf.ApproveProcesses.FirstOrDefault(x => x.ApproverId.Equals(userid)) == null ? "null" : rf.ApproveProcesses.FirstOrDefault(x => x.ApproverId.Equals(userid)).ApproveStatus)
                         }).ToListAsync();
                     if (requestForms != null && requestForms.Count > 0)
                     {
