@@ -50,6 +50,7 @@ namespace FALOFinancialProofing.Controllers
         //        Data = campaigns
         //    });
         //}
+        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
         [HttpGet("GetAllCampaignByProjectId/{ProjectId}")]
         public async Task<IActionResult> GetAllCampaignByProjectId(int ProjectId, string? status, int currentPage = IntConstant.PageNumberDefault)
         {
@@ -87,7 +88,7 @@ namespace FALOFinancialProofing.Controllers
                 Data = filterPagingData
             });
         }
-
+        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
         [HttpGet("GetCampaignDetailsById/{id}")]
         public async Task<IActionResult> GetCampaignDetailsById(int id)
         {
@@ -131,7 +132,7 @@ namespace FALOFinancialProofing.Controllers
         }
 
 
-        [RoleAttribute(AppRole.ProjectManager)] // mở nếu làm thật
+        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]// mở nếu làm thật
         [HttpPost("CreateCampaignClient", Name = "CreateCampaignClient")]
         public async Task<ActionResult<Campaign>> PostCampaign([FromForm] CreateCampaignClientRequest createCampaignClientRequest)
         {
@@ -205,6 +206,7 @@ namespace FALOFinancialProofing.Controllers
 
             return Content(stringBuilderMessage.ToString());
         }
+        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
         [HttpPut("UpdateCampaign")]
         public async Task<IActionResult> UpdateCampaign([FromBody] UpdateCampaignDTO updateCampaignDTO)
         {
@@ -225,6 +227,7 @@ namespace FALOFinancialProofing.Controllers
                 Message = "Campaign updated successfully."
             });
         }
+        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.Admin)]
         [HttpDelete("DeleteCampaignById/{id}")]
         public async Task<IActionResult> DeleteCampaignById(int id)
         {

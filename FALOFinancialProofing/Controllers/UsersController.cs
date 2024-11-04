@@ -22,6 +22,8 @@ using FALOFinancialProofing.Helpers;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
+using FALOFinancialProofing.DTOs.UserDTOs;
+using FALOFinancialProofing.Attributes.RoleAttributes;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -57,6 +59,22 @@ namespace FALOFinancialProofing.Controllers
                 });
             }
         }
+        [RoleAttribute(AppRole.Admin)]
+        [HttpPut("Update-User-Role")]
+        public async Task<IActionResult> UpdateUserRole([FromBody] UpdateUserRole updateUserRole)
+        {
+
+            StringBuilder message = new StringBuilder();
+            var isValid = await authServices.UpdateUserRoleAsync(updateUserRole, message);
+            return Ok(new
+            {
+                Success = isValid,
+                Message = message.ToString()
+            });
+
+
+        }
+        [Authorize]
         // hiển thị thông tin danh sách người dùng không ở trong một chiến dịch cụ thể
         [HttpGet("GetUserNotInCampaignById/{CampaignId}")]
         public async Task<IActionResult> GetUserNotInCampaignById(int CampaignId)

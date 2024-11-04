@@ -399,6 +399,40 @@ namespace FALOFinancialProofing.Services
 
             return forgotPasswordLink;
         }
+        public async Task<bool> UpdateUserRoleAsync(UpdateUserRole updateUserRole, StringBuilder message)
+        {
+            User user = null!;
+            bool result = false;
+            try
+            {
+                user = await userManager.FindByIdAsync(updateUserRole.UserId);
+                if (user == null)
+                {
+                    throw new Exception("User not found in system!");
+                }
+                var role = await roleManager.FindByIdAsync(updateUserRole.RoleId);
+                if (role == null)
+                {
+                    throw new Exception("Role not found in system!");
+                }
+                result = await userManager.AddToRoleAsync(user, role.Name) == IdentityResult.Success;
+                if (result)
+                {
+                    message.Append("User role updated successfully");
+                }
+                else
+                {
+                    message.Append("User role update failed");
+                }
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"UpdateUserRoleAsync: {ex.Message}");
+            }
+
+            return result;
+        }
 
 
 

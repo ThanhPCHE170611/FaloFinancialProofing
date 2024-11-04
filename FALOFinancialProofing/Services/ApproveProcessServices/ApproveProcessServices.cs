@@ -4,6 +4,7 @@ using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using Humanizer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FALOFinancialProofing.Services.ApproveProcessServices
 {
@@ -379,8 +380,11 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
 
                 foreach (var campaign in campaigns)
                 {
-                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id && x.TypeId == IntConstant.PaymentRequestType)
+                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id 
+                        && x.TypeId == IntConstant.PaymentRequestType
+                        && !x.ApproveProcesses.Where(x => x.ApproverId == userid).IsNullOrEmpty())
                         .Include(x => x.AttachmentFiles)
+                        .Include(x => x.ApproveProcesses)
                         .Select(rf => new PrePayRequestFormViewRequest
                         {
                             Id = rf.Id,
