@@ -382,7 +382,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                 {
                     var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id 
                         && x.TypeId == IntConstant.PaymentRequestType
-                        && !x.ApproveProcesses.Any(x => x.ApproverId.Equals(userid)))
+                        && x.ApproveProcesses.Any(x => x.ApproverId.Equals(userid)))
                         .Include(x => x.AttachmentFiles)
                         .Include(x => x.ApproveProcesses)
                         .Select(rf => new PrePayRequestFormViewRequest
