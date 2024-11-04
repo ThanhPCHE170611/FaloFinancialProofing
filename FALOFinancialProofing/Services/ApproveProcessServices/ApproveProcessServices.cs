@@ -327,8 +327,11 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
 
                 foreach (var campaign in campaigns)
                 {
-                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id && x.TypeId == IntConstant.PrePayRequestType)
+                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id 
+                    && x.TypeId == IntConstant.PrePayRequestType
+                    && x.ApproveProcesses.Any(x => x.ApproverId.Equals(userid)))
                         .Include(x => x.AttachmentFiles)
+                        .Include(x => x.ApproveProcesses)
                         .Select(rf => new PrePayRequestFormViewRequest
                         {
                             Id = rf.Id,
@@ -342,7 +345,8 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                             {
                                 FilePath = af.FilePath,
                                 RequestId = af.RequestId
-                            }).ToList()
+                            }).ToList(),
+                            ApproveProcessStatus = (rf.ApproveProcesses.FirstOrDefault(x => x.ApproverId.Equals(userid)) == null ? "null" : rf.ApproveProcesses.FirstOrDefault(x => x.ApproverId.Equals(userid)).ApproveStatus)
                         }).ToListAsync();
                     if (requestForms != null && requestForms.Count > 0)
                     {
@@ -437,8 +441,11 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
 
                 foreach (var campaign in campaigns)
                 {
-                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id && x.TypeId == IntConstant.PrePayRequestType)
+                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id 
+                    && x.TypeId == IntConstant.PrePayRequestType
+                    && x.ApproveProcesses.Any(x => x.ApproverId.Equals(userid)))
                         .Include(x => x.AttachmentFiles)
+                        .Include(x => x.ApproveProcesses)
                         .Select(rf => new PrePayRequestFormViewRequest
                         {
                             Id = rf.Id,
@@ -452,7 +459,8 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                             {
                                 FilePath = af.FilePath,
                                 RequestId = af.RequestId
-                            }).ToList()
+                            }).ToList(),
+                            ApproveProcessStatus = (rf.ApproveProcesses.FirstOrDefault(x => x.ApproverId.Equals(userid)) == null ? "null" : rf.ApproveProcesses.FirstOrDefault(x => x.ApproverId.Equals(userid)).ApproveStatus)
                         }).ToListAsync();
                     if (requestForms != null && requestForms.Count > 0)
                     {
@@ -489,8 +497,11 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
 
                 foreach (var campaign in campaigns)
                 {
-                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id && x.TypeId == IntConstant.PaymentRequestType)
+                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id
+                    && x.TypeId == IntConstant.PaymentRequestType
+                    && x.ApproveProcesses.Any(x => x.ApproverId.Equals(userid)))
                         .Include(x => x.AttachmentFiles)
+                        .Include(x => x.ApproveProcesses)
                         .Select(rf => new PrePayRequestFormViewRequest
                         {
                             Id = rf.Id,
@@ -504,7 +515,8 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                             {
                                 FilePath = af.FilePath,
                                 RequestId = af.RequestId
-                            }).ToList()
+                            }).ToList(),
+                            ApproveProcessStatus = (rf.ApproveProcesses.FirstOrDefault(x => x.ApproverId.Equals(userid)) == null ? "null" : rf.ApproveProcesses.FirstOrDefault(x => x.ApproverId.Equals(userid)).ApproveStatus)
                         }).ToListAsync();
                     if (requestForms != null && requestForms.Count > 0)
                     {
@@ -542,7 +554,9 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
 
                 foreach (var campaign in campaigns)
                 {
-                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id && x.TypeId == IntConstant.PrePayRequestType)
+                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id 
+                    && x.TypeId == IntConstant.PrePayRequestType
+                    && x.ApproveProcesses.Any(x => x.ApproverId.Equals(userid)))
                         .Include(x => x.AttachmentFiles)
                         .Include(x => x.ApproveProcesses)
                         .ThenInclude(x => x.Vouchers)
@@ -560,7 +574,8 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                                 FilePath = af.FilePath,
                                 RequestId = af.RequestId
                             }).ToList(),
-                            VoucherFile = rf.ApproveProcesses.SelectMany(ap => ap.Vouchers).ToList()
+                            VoucherFile = rf.ApproveProcesses.SelectMany(ap => ap.Vouchers).ToList(),
+                            ApproveProcessStatus = (rf.ApproveProcesses.FirstOrDefault(x => x.ApproverId.Equals(userid)) == null ? "null" : rf.ApproveProcesses.FirstOrDefault(x => x.ApproverId.Equals(userid)).ApproveStatus)
                         }).ToListAsync();
                     if (requestForms != null && requestForms.Count > 0)
                     {
@@ -597,7 +612,9 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
 
                 foreach (var campaign in campaigns)
                 {
-                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id && x.TypeId == IntConstant.PaymentRequestType)
+                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id 
+                    && x.TypeId == IntConstant.PaymentRequestType
+                    && x.ApproveProcesses.Any(x => x.ApproverId.Equals(userid)))
                         .Include(x => x.AttachmentFiles)
                         .Include(x => x.ApproveProcesses)
                         .ThenInclude(x => x.Vouchers)
@@ -615,7 +632,8 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                                 FilePath = af.FilePath,
                                 RequestId = af.RequestId
                             }).ToList(),
-                            VoucherFile = rf.ApproveProcesses.SelectMany(ap => ap.Vouchers).ToList()
+                            VoucherFile = rf.ApproveProcesses.SelectMany(ap => ap.Vouchers).ToList(),
+                            ApproveProcessStatus = (rf.ApproveProcesses.FirstOrDefault(x => x.ApproverId.Equals(userid)) == null ? "null" : rf.ApproveProcesses.FirstOrDefault(x => x.ApproverId.Equals(userid)).ApproveStatus)
                         }).ToListAsync();
                     if (requestForms != null && requestForms.Count > 0)
                     {
