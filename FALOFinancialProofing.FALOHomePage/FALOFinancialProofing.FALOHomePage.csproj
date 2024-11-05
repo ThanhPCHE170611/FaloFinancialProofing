@@ -15,7 +15,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Remove="wwwroot\css\style.css.map" />
 		<Content Remove="wwwroot\images\logo\logo-light.svg" />
 		<Content Remove="wwwroot\images\logo\logo.svg" />
 		<Content Remove="wwwroot\images\preloader.svg" />
@@ -97,9 +96,9 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\css\style.css.map">
+    <Content Include="wwwroot\css\style.css.map">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
     <None Include="wwwroot\images\logo\logo-light.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
