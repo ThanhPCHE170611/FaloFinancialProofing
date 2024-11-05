@@ -32,5 +32,6 @@ namespace FALOFinancialProofing.Services.RequestFormServices
         Task<List<RequestFormWithAttachmentApprovementVoucher>?> GetAllPrePayRequestInCampaign(int campaignId, string userId);
         Task<bool> IsRequestFormCreateByProjectManager(RequestForm? requestForm);
         Task<List<RequestFormWithAttachmentApprovementVoucher>?> GetAllPaymentRequestInCampaign(int campaignId, string userId);
+        Task<RequestFormWithAttachmentApprovementVoucher?> GetRequestDetailByRequestId(int requestId);
     }
 }
