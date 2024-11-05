@@ -27,7 +27,6 @@ namespace FALOFinancialProofing.Controllers
                     });
             }
 
-            // Trả về file để trình duyệt tự động tải xuống
             return File(fileBytes, contentType, downloadFileName);
         }
     }

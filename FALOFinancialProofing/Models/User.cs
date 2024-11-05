@@ -8,7 +8,8 @@ namespace FALOFinancialProofing.Models
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
         public DateOnly? BirthDate { get; set; }
-        public ICollection<SDG> SDGs { get; set; } = new List<SDG>();
+        public string? Image { get; set; }
+        public ICollection<UserSDG> UserSDGs { get; set; } = new List<UserSDG>();
         public ICollection<SocialNetwork> SocialNetworks { get; set; } = new List<SocialNetwork>();
         public ICollection<CampaignMember> CampaignMembers { get; set; } = new List<CampaignMember>();
         public ICollection<ApproveProcess> ApproveProcesses { get; set; } = new List<ApproveProcess>();
@@ -16,7 +17,7 @@ namespace FALOFinancialProofing.Models
         //public DateOnly? BirthDate { get; set; }
         public ICollection<CreateProjectRequest> SenderCreateProjectRequests { get; set; } = new List<CreateProjectRequest>();
         public ICollection<CreateProjectRequest> ReceiverCreateProjectRequests { get; set; } = new List<CreateProjectRequest>();
-        public ICollection<TransactionLog> TransactionLogs { get; set; } = new List<TransactionLog>();
+        //public ICollection<TransactionLog> TransactionLogs { get; set; } = new List<TransactionLog>();
         public ICollection<Project> Projects { get; set; } = new List<Project>();
 
         public ICollection<MoveNextCampaignStatusRequest> MoveNextCampaignStatusRequestSenderUsers { get; set; } = new List<MoveNextCampaignStatusRequest>();
@@ -26,6 +27,9 @@ namespace FALOFinancialProofing.Models
         public ICollection<CreateCampaignRequest> CreateCampaignRequestSenders { get; set; } = new List<CreateCampaignRequest>();
         public ICollection<CreateCampaignRequest> CreateCampaignRequestReceivers { get; set; } = new List<CreateCampaignRequest>();
         public ICollection<Campaign> Campaigns { get; set; } = new List<Campaign>();
+        public ICollection<OrganizationMember> OrganizationMembers { get; set; } = new List<OrganizationMember>();
+        public ICollection<CreateProjectRequestApproveHistory> CreateProjectRequestApproveHistories { get; set; } = new List<CreateProjectRequestApproveHistory>();
+        public ICollection<CampaignRequestApproveHistory> CampaignRequestApproveHistories { get; set; } = new List<CampaignRequestApproveHistory>();
 
         //public string? Gender { get; set; }
         //public string? Address { get; set; }

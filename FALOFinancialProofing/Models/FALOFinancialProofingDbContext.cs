@@ -14,7 +14,7 @@ namespace FALOFinancialProofing.Models
 
         public DbSet<TransactionLog> TransactionLogs { get; set; }
         public DbSet<CreateProjectFile> CreateProjectFiles { get; set; }
-        public DbSet<CreateProjectRequest> CreateProjects { get; set; }
+        public DbSet<CreateProjectRequest> CreateProjectRequests { get; set; }
         public DbSet<CreateCampaignFile> CreateCampaignFiles { get; set; }
         public DbSet<CreateCampaignRequest> CreateCampaignRequests { get; set; }
         public DbSet<MoveNextCampaignStatusRequest> MoveNextCampaignStatusRequests { get; set; }
@@ -24,7 +24,12 @@ namespace FALOFinancialProofing.Models
         public DbSet<Campaign> Campaigns { get; set; }
         public DbSet<CampaignMember> CampaignMembers { get; set; }
         public DbSet<SDG> SDGs { get; set; }
+
+        public DbSet<AccountingBook> AccountingBooks { get; set; }
+        public DbSet<UserSDG> UserSDGs { get; set; }
         public DbSet<SocialNetwork> SocialNetworks { get; set; }
+        public DbSet<CreateProjectRequestApproveHistory> CreateProjectRequestApproveHistories { get; set; }
+        public DbSet<CampaignRequestApproveHistory> CampaignRequestApproveHistories { get; set; }
 
 
         public DbSet<RequestForm> RequestForms { get; set; }
@@ -84,10 +89,19 @@ namespace FALOFinancialProofing.Models
                 .HasForeignKey(r => r.TypeId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<SDG>()
-                .HasOne(s => s.User)
-                .WithMany(u => u.SDGs)
-                .HasForeignKey(s => s.UserId);
+            modelBuilder.Entity<UserSDG>()
+                .HasKey(us => new { us.SDGId, us.UserId });
+
+            modelBuilder.Entity<UserSDG>()
+                .HasOne(us => us.User)
+                .WithMany(u => u.UserSDGs)
+                .HasForeignKey(us => us.UserId);
+
+            modelBuilder.Entity<UserSDG>()
+                .HasOne(us => us.SDG)
+                .WithMany(s => s.UserSDGs)
+                .HasForeignKey(us => us.SDGId);
+
             modelBuilder.Entity<SocialNetwork>()
                 .HasOne(s => s.User)
                 .WithMany(u => u.SocialNetworks)
@@ -105,7 +119,13 @@ namespace FALOFinancialProofing.Models
                    .HasForeignKey(c => c.UserId)
                    .OnDelete(DeleteBehavior.Restrict);
             });
-
+            modelBuilder.Entity<TransactionLog>(entity =>
+            {
+                entity.HasOne(c => c.Campaign)
+                    .WithMany(u => u.TransactionLogs)
+                    .HasForeignKey(c => c.CampaignId)
+                    .OnDelete(DeleteBehavior.NoAction);
+            });
 
             modelBuilder.Entity<MoveNextCampaignStatusRequest>(entity =>
             {
@@ -147,9 +167,9 @@ namespace FALOFinancialProofing.Models
             });
             modelBuilder.Entity<User>(entity =>
             {
-                entity.HasMany(c => c.TransactionLogs)
-                    .WithOne(u => u.SenderUser)
-                    .HasForeignKey(c => c.SenderID);
+                //entity.HasMany(c => c.TransactionLogs)
+                //    .WithOne(u => u.SenderUser)
+                //    .HasForeignKey(c => c.SenderID);
                 entity.HasMany(c => c.Projects)
                    .WithOne(u => u.User)
                    .HasForeignKey(c => c.CreatedBy);
@@ -160,6 +180,11 @@ namespace FALOFinancialProofing.Models
                   .WithOne(u => u.User)
                   .HasForeignKey(c => c.CreateBy)
                   .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasMany(c => c.CampaignRequestApproveHistories)
+                  .WithOne(u => u.Approver)
+                  .HasForeignKey(c => c.ApproverId);
+
             });
             modelBuilder.Entity<Project>(entity =>
             {
@@ -173,6 +198,7 @@ namespace FALOFinancialProofing.Models
                 entity.HasMany(c => c.CreateCampaignFiles)
                     .WithOne(u => u.CampaignRequest)
                     .HasForeignKey(c => c.RequestId);
+
                 entity.HasOne(c => c.Campaign)
                    .WithMany(u => u.CreateCampaignRequests)
                    .HasForeignKey(c => c.CampaignId);
@@ -185,8 +211,51 @@ namespace FALOFinancialProofing.Models
                 entity.HasOne(c => c.ReceiverUser)
                  .WithMany(u => u.CreateCampaignRequestReceivers)
                  .HasForeignKey(c => c.ReceiverId)
-                 .OnDelete(DeleteBehavior.NoAction); ;
+                 .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasMany(c => c.CampaignRequestApproveHistories)
+               .WithOne(u => u.CreateCampaignRequest)
+               .HasForeignKey(c => c.CampaignRequestId)
+               .OnDelete(DeleteBehavior.Restrict);
+
             });
+
+            modelBuilder.Entity<Organization>(entity =>
+            {
+                entity.HasMany(c => c.Projects)
+                    .WithOne(u => u.Organization)
+                    .HasForeignKey(c => c.OrganizationId);
+
+            });
+
+            modelBuilder.Entity<OrganizationMember>(entity =>
+            {
+                entity.HasOne(c => c.User)
+                    .WithMany(u => u.OrganizationMembers)
+                    .HasForeignKey(c => c.UserId);
+                entity.HasOne(c => c.Organization)
+                  .WithMany(u => u.OrganizationMembers)
+                  .HasForeignKey(c => c.OrganizationId);
+
+            });
+
+            modelBuilder.Entity<CreateProjectRequestApproveHistory>(entity =>
+            {
+                entity.HasOne(c => c.CreateProjectRequest)
+                    .WithMany(u => u.CreateProjectRequestApproveHistories)
+                    .HasForeignKey(c => c.CreateProjectRequestId);
+
+                entity.HasOne(c => c.Approver)
+                 .WithMany(u => u.CreateProjectRequestApproveHistories)
+                 .HasForeignKey(c => c.ApproverId);
+
+
+            });
+
+            modelBuilder.Entity<Campaign>()
+                .HasOne(c => c.AccountingBook)
+                .WithOne(u => u.Campaign)
+                .HasForeignKey<AccountingBook>(c => c.CampaignId);
             RoleSeedData(modelBuilder);
             DeleteIdentityPrefix(modelBuilder);
         }
@@ -199,8 +268,15 @@ namespace FALOFinancialProofing.Models
                 new IdentityRole { Id = "205d4496-4ac8-40d9-84b9-e09e1ada7a49", Name = AppRole.ProjectManager, NormalizedName = AppRole.ProjectManager.ToUpper(), ConcurrencyStamp = "acccef8b-20f3-4de0-8ee9-5a3690f094ed" },
                 new IdentityRole { Id = "4e7b2c09-e0b0-4ddd-9694-ebf3e21e2472", Name = AppRole.VolunteerLeader, NormalizedName = AppRole.VolunteerLeader.ToUpper(), ConcurrencyStamp = "1a777fbf-24db-4247-bd76-db376d703ea9" },
                 new IdentityRole { Id = "83292e2c-6c86-4153-bdc5-760d05ec2293", Name = AppRole.Accounting, NormalizedName = AppRole.Accounting.ToUpper(), ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85f" },
-                new IdentityRole { Id = "83292e2c-6c86-4153-bdc5-760d05ec2295", Name = AppRole.Volunteer, NormalizedName = AppRole.Volunteer.ToUpper(), ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85g" }
+                new IdentityRole { Id = "83292e2c-6c86-4153-bdc5-760d05ec2295", Name = AppRole.Volunteer, NormalizedName = AppRole.Volunteer.ToUpper(), ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85g" },
+                 new IdentityRole { Id = "83292e2c-6c86-4153-bdc5-760d05ec2299", Name = AppRole.ProjectManagementBoard, NormalizedName = AppRole.ProjectManagementBoard.ToUpper(), ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85h" },
+                 new IdentityRole { Id = "15db7f37-5dbc-4035-9b00-a0af4c3fe8bb", Name = AppRole.Admin, NormalizedName = AppRole.Admin.ToUpper(), ConcurrencyStamp = "ba58588f-f626-41a0-8fca-b74481367335" }
             );
+
+            modelBuilder.Entity<RequestType>().HasData(
+                new RequestType { Id = 1, TypeName = "Pre-Pay" },
+                new RequestType { Id = 2, TypeName = "Payment" }
+             );
         }
 
         public void DeleteIdentityPrefix(ModelBuilder modelBuilder)

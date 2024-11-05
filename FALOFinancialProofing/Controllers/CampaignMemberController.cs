@@ -1,9 +1,14 @@
-﻿using FALOFinancialProofing.DTOs.CampaignDTO;
+﻿using FALOFinancialProofing.Attributes.RoleAttributes;
+using FALOFinancialProofing.DTOs.CampaignDTO;
 using FALOFinancialProofing.DTOs.CampaignMemberDTO;
+using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -12,10 +17,12 @@ namespace FALOFinancialProofing.Controllers
     public class CampaignMemberController : ControllerBase
     {
         private readonly ICampaignMemberService _campaignMemberService;
+        private readonly AuthServices authServices;
 
-        public CampaignMemberController(ICampaignMemberService campaignMemberService)
+        public CampaignMemberController(ICampaignMemberService campaignMemberService, AuthServices authServices)
         {
             _campaignMemberService = campaignMemberService;
+            this.authServices = authServices;
         }
 
         [HttpGet("GetAllCampaignMember")]
@@ -80,7 +87,44 @@ namespace FALOFinancialProofing.Controllers
                 Data = createCampaignMember
             });
         }
+        [RoleAttribute(AppRole.ProjectManager)]
+        [HttpPost("CreateManyCampaignMembers/{CampaignId}")]
+        public async Task<IActionResult> CreateManyCampaignMembers(int CampaignId, [FromBody] List<CreateManyCampaignMemberDTO> createManyCampaignMemberDTOs)
+        {
+            var message = new StringBuilder();
 
+            var ValidCreateManyCampaignMemberDTOs = await _campaignMemberService.ValidateCampaignMembersCreateAsync(createManyCampaignMemberDTOs, CampaignId, message);
+            var invalidData = await _campaignMemberService.InValidCampaignMembersCreateAsync(createManyCampaignMemberDTOs, ValidCreateManyCampaignMemberDTOs);
+            var InvalidUserInformation = await authServices.GetUserInformationList(invalidData);
+            var CheckCreateSuccess = await _campaignMemberService.CreateManyCampaignMembersAsync(ValidCreateManyCampaignMemberDTOs, CampaignId, message);
+            return Ok(new ApiResponse()
+            {
+                Success = CheckCreateSuccess,
+                Message = message.ToString(),
+                Data = InvalidUserInformation // danh sách dữ liệu không được add vào
+            }
+            );
+        }
+        [HttpPut("UpdateCampaignMemberStatus")]
+        public async Task<IActionResult> UpdateCampaignMemberStatus([FromBody] UpdateCampaignMemberStatusDTO updateCampaignMemberStatusDTO)
+        {
+
+            var canUpdateCampaignMember = await _campaignMemberService.UpdateCampaignMemberStatusAsync(updateCampaignMemberStatusDTO);
+            if (!canUpdateCampaignMember)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = $"CampaignMember with Id = {updateCampaignMemberStatusDTO.Id} not found or could not be updated."
+                });
+            }
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "CampaignMember updated successfully."
+            });
+        }
         [HttpPut("UpdateCampaignMember")]
         public async Task<IActionResult> UpdateCampaignMember([FromBody] UpdateCampaignMemberDTO updateCampaignMemberDTO)
         {

@@ -1,9 +1,15 @@
 ﻿using Azure;
 using FALOFinancialProofing.DTOs;
+using FALOFinancialProofing.DTOs.CampaignMemberDTO;
+using FALOFinancialProofing.DTOs.ProjectDTOs;
+using FALOFinancialProofing.DTOs.RoleDTOs;
+using FALOFinancialProofing.DTOs.UserDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
+using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services.EmailService;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -42,7 +48,56 @@ namespace FALOFinancialProofing.Services
             _linkGenerator = linkGenerator;
 
         }
+        public async Task<bool> CheckUserInRole(string userId, string userRole, StringBuilder message)
+        {
+            bool checkValid = false;
+            try
+            {
+                var user = await userManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    throw new Exception("User not found");
+                }
+                var isInRole = await userManager.IsInRoleAsync(user, userRole);
+                if (!isInRole)
+                {
+                    throw new Exception("User Role is not permitted");
+                }
+                checkValid = true;
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"CheckUserInRole: {ex.Message}");
+            }
+            return checkValid;
+        }
 
+        public async Task<bool> CheckUserInRoleId(string userId, string userRoleID, StringBuilder message)
+        {
+            bool checkValid = false;
+            try
+            {
+                var user = await userManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    throw new Exception("User not found");
+                }
+                var role = await roleManager.FindByIdAsync(userRoleID);
+                var isInRole = await userManager.IsInRoleAsync(user, role.Name);
+                if (!isInRole)
+                {
+                    throw new Exception("User Role is not permitted");
+                }
+                checkValid = true;
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"CheckUserInRole: {ex.Message}");
+            }
+            return checkValid;
+        }
         public async Task<UserDto?> LoginUser(SignInModel userLogin)
         {
             var user = await userManager.FindByNameAsync(userLogin.UserName);
@@ -56,6 +111,7 @@ namespace FALOFinancialProofing.Services
             {
                 var userDTO = new UserDto
                 {
+                    Id = user.Id,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Email = user.Email,
@@ -88,8 +144,115 @@ namespace FALOFinancialProofing.Services
         //        return newUser;
         //    }
         //}
+        public async Task<UserInformation> UserInformationProcess(User ui)
+        {
+            if (ui == null)
+            {
+                throw new ArgumentNullException(nameof(ui));
+            }
 
+            var roles = await userManager.GetRolesAsync(ui);
+            var roleDetails = new List<RoleInformation>();
 
+            foreach (var roleName in roles)
+            {
+                var role = await roleManager.FindByNameAsync(roleName);
+                if (role != null)
+                {
+                    roleDetails.Add(new RoleInformation
+                    {
+                        RoleId = role.Id,
+                        RoleName = role.Name
+                    });
+                }
+            }
+
+            return new UserInformation()
+            {
+                Id = ui.Id,
+                Email = ui.Email ?? string.Empty, // Xử lý null reference
+                FirstName = ui.FirstName ?? string.Empty, // Xử lý null reference
+                LastName = ui.LastName ?? string.Empty, // Xử lý null reference
+                BirthDate = ui.BirthDate,
+                Roles = roleDetails
+            };
+        }
+
+        public async Task<List<UserInformation>> GetUserNotInCampaignById(int CampaignId)
+        {
+
+            var Users = await userManager.Users.Where(u => !u.CampaignMembers.Any(cm => cm.CampaignId == CampaignId)).ToListAsync();
+            List<UserInformation> data = new List<UserInformation>();
+            try
+            {
+                foreach (var user in Users)
+                {
+                    var roles = await userManager.GetRolesAsync(user);
+                    var roleDetails = new List<RoleInformation>();
+
+                    foreach (var roleName in roles)
+                    {
+                        var role = await roleManager.FindByNameAsync(roleName);
+                        if (role != null)
+                        {
+                            roleDetails.Add(new RoleInformation
+                            {
+                                RoleId = role.Id,
+                                RoleName = role.Name
+                            });
+                        }
+                    }
+                    data.Add(new UserInformation()
+                    {
+                        Id = user.Id,
+                        Email = user.Email,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        BirthDate = user.BirthDate,
+                        Roles = roleDetails
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetUserNotInCampaignById: {ex.Message}");
+            }
+            return data;
+        }
+
+        public async Task<List<SelectedUserInformation>> GetUserInformationList(List<CreateManyCampaignMemberDTO> createManyCampaignMemberDTOs)
+        {
+            var data = new List<SelectedUserInformation>();
+            try
+            {
+                foreach (var item in createManyCampaignMemberDTOs)
+                {
+                    var user = await userManager.FindByIdAsync(item.UserId);
+                    if (user != null)
+                    {
+                        var role = await roleManager.FindByIdAsync(item.RoleId);
+                        data.Add(new SelectedUserInformation()
+                        {
+                            Id = user.Id,
+                            Email = user.Email,
+                            FirstName = user.FirstName,
+                            LastName = user.LastName,
+                            BirthDate = user.BirthDate,
+                            RoleInformation = new RoleInformation
+                            {
+                                RoleId = role.Id,
+                                RoleName = role.Name
+                            }
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetUserInformationList: {ex.Message}");
+            }
+            return data;
+        }
         public async Task<IdentityResult?> RegisterUser(SignUpRequest registerRequest)
         {
             var validatedInformationRequest = await ValidatedInformationRequest(registerRequest);
@@ -140,7 +303,7 @@ namespace FALOFinancialProofing.Services
                 new Claim(JwtRegisteredClaimNames.Sub, User.Email),
                 //tokenId
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                //new Claim("Id", User.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.NameId, User.Id),
                 //new Claim("TokenId", Guid.NewGuid().ToString()),
 
             };
@@ -235,6 +398,40 @@ namespace FALOFinancialProofing.Services
             );
 
             return forgotPasswordLink;
+        }
+        public async Task<bool> UpdateUserRoleAsync(UpdateUserRole updateUserRole, StringBuilder message)
+        {
+            User user = null!;
+            bool result = false;
+            try
+            {
+                user = await userManager.FindByIdAsync(updateUserRole.UserId);
+                if (user == null)
+                {
+                    throw new Exception("User not found in system!");
+                }
+                var role = await roleManager.FindByIdAsync(updateUserRole.RoleId);
+                if (role == null)
+                {
+                    throw new Exception("Role not found in system!");
+                }
+                result = await userManager.AddToRoleAsync(user, role.Name) == IdentityResult.Success;
+                if (result)
+                {
+                    message.Append("User role updated successfully");
+                }
+                else
+                {
+                    message.Append("User role update failed");
+                }
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"UpdateUserRoleAsync: {ex.Message}");
+            }
+
+            return result;
         }
 
 

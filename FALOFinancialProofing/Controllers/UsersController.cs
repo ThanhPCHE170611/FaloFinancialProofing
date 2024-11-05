@@ -22,6 +22,8 @@ using FALOFinancialProofing.Helpers;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
+using FALOFinancialProofing.DTOs.UserDTOs;
+using FALOFinancialProofing.Attributes.RoleAttributes;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -57,7 +59,71 @@ namespace FALOFinancialProofing.Controllers
                 });
             }
         }
+        [RoleAttribute(AppRole.Admin)]
+        [HttpPut("Update-User-Role")]
+        public async Task<IActionResult> UpdateUserRole([FromBody] UpdateUserRole updateUserRole)
+        {
 
+            StringBuilder message = new StringBuilder();
+            var isValid = await authServices.UpdateUserRoleAsync(updateUserRole, message);
+            return Ok(new
+            {
+                Success = isValid,
+                Message = message.ToString()
+            });
+
+
+        }
+        [Authorize]
+        // hiển thị thông tin danh sách người dùng không ở trong một chiến dịch cụ thể
+        [HttpGet("GetUserNotInCampaignById/{CampaignId}")]
+        public async Task<IActionResult> GetUserNotInCampaignById(int CampaignId)
+        {
+            var users = await authServices.GetUserNotInCampaignById(CampaignId);
+            return Ok(new ApiResponse()
+            {
+                Message = "Get Users Successfully!",
+                Data = users,
+                Success = true
+            });
+        }
+        [Authorize]
+        [HttpGet("SetRoleLoginAfterLogin/{userRole}")]
+        public IActionResult SetRoleLogin(string userRole)
+        {
+            HttpContext.Session.SetString("userRole", userRole);
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "Role Set Success!"
+            }); ;
+        }
+
+        [Authorize]
+        [HttpGet("GetRoleLoginAfterLogin")]
+        public async Task<IActionResult> GetRoleLogin()
+        {
+            bool status = true;
+            string message = "Role Set Success";
+            try
+            {
+                var userRole = HttpContext.Session.GetString("userRole");
+                if (string.IsNullOrEmpty(userRole))
+                {
+                    message = "Must Login To Get User Role!";
+                    status = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"GetRoleLogin: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = status,
+                Message = message
+            });
+        }
         [HttpGet("loginGG")]
         public IActionResult Login()
         {
