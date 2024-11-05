@@ -11,7 +11,7 @@ namespace FALOFinancialProofing.FALOHomePage.Services
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<List<BankTransaction>> GetTransactionAsync()
+        public async Task<List<TransactionDetails>> GetTransactionAsync()
         {
             using (var httpClient = _httpClientFactory.CreateClient())
             {
@@ -38,9 +38,9 @@ namespace FALOFinancialProofing.FALOHomePage.Services
 
                 
 
-                List <BankTransaction> transactionList = new List<BankTransaction>();
+                List <TransactionDetails> transactionList = new List<TransactionDetails>();
 
-                foreach (BankTransaction r in apiResponse.Data.Records)
+                foreach (TransactionDetails r in apiResponse.Data.Records)
                 {
                     if(r != null && r.Amount > 0)
                     {
@@ -52,12 +52,7 @@ namespace FALOFinancialProofing.FALOHomePage.Services
         }
     }
 
-    public class ApiResponseTesting
-    {
-        public int Error { get; set; }
-        public string Message { get; set; }
-        public List<BankAccount> Data { get; set; }
-    }
+    
 
 
     public class ApiResponse
@@ -75,7 +70,7 @@ namespace FALOFinancialProofing.FALOHomePage.Services
         public int PrevPage { get; set; }
         public int TotalPages { get; set; }
         public int TotalRecords { get; set; }
-        public List<BankTransaction> Records { get; set; }
+        public List<TransactionDetails> Records { get; set; }
     }
 
     public class BankTransaction
@@ -99,31 +94,22 @@ namespace FALOFinancialProofing.FALOHomePage.Services
         public string BankCodeName { get; set; }
     }
 
-    public class BankAccount
+    public class TransactionDetails
     {
-        public int Id { get; set; }
-        public string AccountNumber { get; set; }
-        public string AccountName { get; set; }
-        public string AccountType { get; set; }
-        public decimal? Balance { get; set; }
-        public string Currency { get; set; }
-        public string Swift { get; set; }
-        public string Citad { get; set; }
-        public string ServiceType { get; set; }
-        public string BankName { get; set; }
-        public int Bin { get; set; }
-        public string BankCodeName { get; set; }
-        public string Memo { get; set; }
-        public int ConnectStatus { get; set; }
-        public DateTime BeginningSettingDate { get; set; }
-        public DateTime? BeginningTxnDate { get; set; } // Nullable
-        public decimal BeginningBalance { get; set; }
-        public decimal CreditTxnTotal { get; set; }
-        public decimal CreditTxnAmount { get; set; }
-        public decimal DebitTxnTotal { get; set; }
-        public decimal DebitTxnAmount { get; set; }
-        public DateTime? LockSyncDate { get; set; } // Nullable
-        public decimal? EndingBalance { get; set; }
-        public DateTime EndingTxnDate { get; set; }
+        public int PrivateId { get; set; }
+        public string Reference { get; set; }
+        public DateTime? BookingDate { get; set; }
+        public DateTime? TransactionDate { get; set; }
+        public DateTime? TransactionDateTime { get; set; }
+        public long Amount { get; set; }
+        public string Description { get; set; }
+        public long? RunningBalance { get; set; }
+        public string VirtualAccountNumber { get; set; }
+        public string VirtualAccountName { get; set; }
+        public string PaymentChannel { get; set; }
+        public string CounterAccountNumber { get; set; }
+        public string CounterAccountName { get; set; }
+        public string CounterAccountBankId { get; set; }
+        public string CounterAccountBankName { get; set; }
     }
 }

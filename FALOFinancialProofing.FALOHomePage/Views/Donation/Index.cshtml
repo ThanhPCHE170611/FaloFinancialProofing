@@ -1,5 +1,5 @@
 ﻿@using FALOFinancialProofing.FALOHomePage.Services
-@model List<BankTransaction>
+@model List<TransactionDetails>
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -22,25 +22,23 @@
     <table class="table table-bordered table-hover" id="transactions-table">
         <thead>
             <tr>
-                <th scope="col">ID Giao Dịch</th>
                 <th scope="col">Mã Giao Dịch</th>
-                <th scope="col">Nội Dung Giao Dịch</th>
+                <th scope="col">Thời Điểm Giao Dịch</th>
                 <th scope="col">Số Tiền</th>
-                <th scope="col">Ngày Giao Dịch</th>
+                <th scope="col">Nội Dung Giao Dịch</th>
                 <th scope="col">Tài Khoản Giao Dịch</th> 
+
             </tr>
         </thead>
         <tbody>
             @foreach (var transaction in Model)
             {
                 <tr>
-                    <td scope="col">@transaction.Id</td>
-                    <td scope="col">@transaction.Tid</td>
-                    <td scope="col">@transaction.Description</td>
+                    <td scope="col">@transaction.Reference</td>
+                    <td scope="col">@transaction.TransactionDateTime</td>
                     <td scope="col">@transaction.Amount</td>
-                    <td scope="col">@transaction.When.ToString("g")</td>
-                    <td scope="col">@transaction.BankSubAccId</td>
-                    <td scope="col">@transaction.AccountId</td> 
+                    <td scope="col">@transaction.Description</td> 
+                    <td scope="col">@transaction.CounterAccountNumber</td>
                 </tr>
             }
         </tbody>
