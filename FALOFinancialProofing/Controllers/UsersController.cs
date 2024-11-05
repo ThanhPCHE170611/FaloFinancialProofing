@@ -186,6 +186,27 @@ namespace FALOFinancialProofing.Controllers
             }
         }
 
+        [HttpPost("Admin-Register")]
+        public async Task<IActionResult> AdminRegister([FromBody] SignUpRequest registerRequest)
+        {
+            var user = await authServices.RegisterUser(registerRequest);
+            if (user == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "Register Failed"
+                });
+            }
+            else
+            {
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Register Success",
+                });
+            }
+        }
         [HttpPost("ForgotPassword")]
         [AllowAnonymous]
         public async Task<IActionResult> ForgotPassword([Required] string email)
