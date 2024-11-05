@@ -23,6 +23,7 @@ namespace FALOFinancialProofing.FALOHomePage
 
             builder.Services.AddHostedService<BankDataPollingService>();
             builder.Services.AddTransient<TransactionPollingDirect>();
+            builder.Services.AddTransient<BankAccountService>();
 
             var app = builder.Build();
 

@@ -1,5 +1,5 @@
 ﻿@using FALOFinancialProofing.FALOHomePage.Services
-@model List<BankTransaction>
+@model IEnumerable<BankAccount>
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -17,17 +17,14 @@
 </style>
 
 <div class="container">
-    <h2>Sao Kê</h2>
+    <h2>Tài khoản ngân hàng</h2>
 
-    <table class="table table-bordered table-hover" id="transactions-table">
+    <table class="table table-bordered table-hover">
         <thead>
             <tr>
-                <th scope="col">ID Giao Dịch</th>
-                <th scope="col">Mã Giao Dịch</th>
-                <th scope="col">Nội Dung Giao Dịch</th>
-                <th scope="col">Số Tiền</th>
-                <th scope="col">Ngày Giao Dịch</th>
-                <th scope="col">Tài Khoản Giao Dịch</th> 
+                <th scope="col">Account ID</th>
+                <th scope="col">Account Number</th>
+                <th scope="col">Account Name</th>
             </tr>
         </thead>
         <tbody>
@@ -35,12 +32,9 @@
             {
                 <tr>
                     <td scope="col">@transaction.Id</td>
-                    <td scope="col">@transaction.Tid</td>
-                    <td scope="col">@transaction.Description</td>
-                    <td scope="col">@transaction.Amount</td>
-                    <td scope="col">@transaction.When.ToString("g")</td>
-                    <td scope="col">@transaction.BankSubAccId</td>
-                    <td scope="col">@transaction.AccountId</td> 
+                    <td scope="col">@transaction.AccountNumber</td>
+                    <td scope="col">@transaction.AccountName</td>
+                    <td scope="col">Chọn</td>
                 </tr>
             }
         </tbody>
@@ -53,7 +47,7 @@
     // Function to fetch and update transactions
     function fetchTransactions() {
         $.ajax({
-            url: '@Url.Action("GetTransactionAsync", "TransactionPollingDirect")', // URL to call
+            url: '@Url.Action("GetAccounts", "BankAccount")', // URL to call
             type: 'GET',
             success: function (data) {
                 // Clear the current table
@@ -63,13 +57,10 @@
                 data.forEach(function (transaction) {
                     $('#transactions-table tbody').append(
                         `<tr>
-                                <td>${transaction.id}</td>
-                                <td>${transaction.tid}</td>
-                                <td>${transaction.description}</td>
-                                <td>${transaction.amount}</td>
-                                <td>${new Date(transaction.when).toLocaleString()}</td>
-                                <td>${transaction.bankSubAccId}</td>
-                            </tr>`
+                                                <td>${transaction.id}</td>
+                                                <td>${transaction.accountNumber}</td>
+                                                <td>${transaction.accountName}</td>
+                                            </tr>`
                     );
                 });
             },

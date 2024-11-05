@@ -9,15 +9,24 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
     {
         // GET: DonationController
         private readonly TransactionPollingDirect _transactionPollingDirect;
-        public DonationController(TransactionPollingDirect transactionPollingDirect)
+        private readonly BankAccountService bankAccountService;
+        public DonationController(TransactionPollingDirect transactionPollingDirect, BankAccountService bankData)
         {
             _transactionPollingDirect = transactionPollingDirect;
+            bankAccountService = bankData;
         }
         public async Task<IActionResult> Index()
         {
             var transactions = await _transactionPollingDirect.GetTransactionAsync();
             return View(transactions);
         }
+
+        public async Task<IActionResult> ViewAccounts()
+        {
+            var accounts = await bankAccountService.GetAccounts();
+            return View(accounts);
+        }
+
 
         // GET: DonationController/Details/5
         public ActionResult Details(int id)

@@ -15,8 +15,8 @@ namespace FALOFinancialProofing.FALOHomePage.Services
         {
             using (var httpClient = _httpClientFactory.CreateClient())
             {
-                httpClient.DefaultRequestHeaders.Add("Authorization", "Apikey");
-                var response = await httpClient.GetAsync("https://oauth.casso.vn/v2/transactions");
+                httpClient.DefaultRequestHeaders.Add("Authorization", "Apikey AK_CS.5e3f98c0987011ef98eebd0598ac83dd.zKntSv5qWnmjiDZoy2xJJCRVs2g7Sqdk3XM4XvbfhPAla72SPbShdfMiSoEaIKYJQQBBvpMz");
+                var response = await httpClient.GetAsync("https://oauth.casso.vn/v2/accounts/9957/transactions");
 
                 // Ensure the response is successful
                 if (!response.IsSuccessStatusCode)
@@ -36,6 +36,8 @@ namespace FALOFinancialProofing.FALOHomePage.Services
                     throw new Exception(apiResponse.Message); // Handle the error
                 }
 
+                
+
                 List <BankTransaction> transactionList = new List<BankTransaction>();
 
                 foreach (BankTransaction r in apiResponse.Data.Records)
@@ -45,11 +47,18 @@ namespace FALOFinancialProofing.FALOHomePage.Services
                         transactionList.Add(r);
                     }
                 }
-
                 return transactionList; // Return the list of transactions
             }
         }
     }
+
+    public class ApiResponseTesting
+    {
+        public int Error { get; set; }
+        public string Message { get; set; }
+        public List<BankAccount> Data { get; set; }
+    }
+
 
     public class ApiResponse
     {
@@ -88,5 +97,33 @@ namespace FALOFinancialProofing.FALOHomePage.Services
         public string CorresponsiveBankName { get; set; }
         public int AccountId { get; set; }
         public string BankCodeName { get; set; }
+    }
+
+    public class BankAccount
+    {
+        public int Id { get; set; }
+        public string AccountNumber { get; set; }
+        public string AccountName { get; set; }
+        public string AccountType { get; set; }
+        public decimal? Balance { get; set; }
+        public string Currency { get; set; }
+        public string Swift { get; set; }
+        public string Citad { get; set; }
+        public string ServiceType { get; set; }
+        public string BankName { get; set; }
+        public int Bin { get; set; }
+        public string BankCodeName { get; set; }
+        public string Memo { get; set; }
+        public int ConnectStatus { get; set; }
+        public DateTime BeginningSettingDate { get; set; }
+        public DateTime? BeginningTxnDate { get; set; } // Nullable
+        public decimal BeginningBalance { get; set; }
+        public decimal CreditTxnTotal { get; set; }
+        public decimal CreditTxnAmount { get; set; }
+        public decimal DebitTxnTotal { get; set; }
+        public decimal DebitTxnAmount { get; set; }
+        public DateTime? LockSyncDate { get; set; } // Nullable
+        public decimal? EndingBalance { get; set; }
+        public DateTime EndingTxnDate { get; set; }
     }
 }
