@@ -17,6 +17,6 @@ namespace FALOFinancialProofing.DTOs
         public string? ApproveProcessStatus { get; set; }
         public List<AttachmentFileRequest> AttachmentFiles { get; set; }
 
-        public List<Voucher>? VoucherFile { get; set; }
+        public List<Voucher>? VoucherFiles { get; set; }
     }
 }

@@ -574,7 +574,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                                 FilePath = af.FilePath,
                                 RequestId = af.RequestId
                             }).ToList(),
-                            VoucherFile = rf.ApproveProcesses.SelectMany(ap => ap.Vouchers).ToList(),
+                            VoucherFiles = rf.ApproveProcesses.SelectMany(ap => ap.Vouchers).ToList(),
                             ApproveProcessStatus = (rf.ApproveProcesses.FirstOrDefault(x => x.ApproverId.Equals(userid)) == null ? "null" : rf.ApproveProcesses.FirstOrDefault(x => x.ApproverId.Equals(userid)).ApproveStatus)
                         }).ToListAsync();
                     if (requestForms != null && requestForms.Count > 0)
@@ -632,7 +632,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                                 FilePath = af.FilePath,
                                 RequestId = af.RequestId
                             }).ToList(),
-                            VoucherFile = rf.ApproveProcesses.SelectMany(ap => ap.Vouchers).ToList(),
+                            VoucherFiles = rf.ApproveProcesses.SelectMany(ap => ap.Vouchers).ToList(),
                             ApproveProcessStatus = (rf.ApproveProcesses.FirstOrDefault(x => x.ApproverId.Equals(userid)) == null ? "null" : rf.ApproveProcesses.FirstOrDefault(x => x.ApproverId.Equals(userid)).ApproveStatus)
                         }).ToListAsync();
                     if (requestForms != null && requestForms.Count > 0)
