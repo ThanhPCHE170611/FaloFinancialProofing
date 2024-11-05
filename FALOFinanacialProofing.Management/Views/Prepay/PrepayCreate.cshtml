@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "PrepayCreate";
 }
 <!DOCTYPE html>
@@ -164,14 +163,18 @@
             const campaignId = urlParams.get('campaignid');
             const checkrole = localStorage.getItem('loggingRole');
 
-            console.log(userId);
-            console.log(campaignId);
-            console.log(checkrole);
-
             var today = new Date();
-            var date =today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-            var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-            var dateTime = date +'T'+ time;
+            var year = today.getFullYear();
+            var month = String(today.getMonth() + 1).padStart(2, '0');
+            var day = String(today.getDate()).padStart(2, '0');
+            var hours = String(today.getHours()).padStart(2, '0');
+            var minutes = String(today.getMinutes()).padStart(2, '0');
+            var seconds = String(today.getSeconds()).padStart(2, '0');
+
+            var date = `${year}-${month}-${day}`;
+            var time = `${hours}:${minutes}:${seconds}`;
+            var dateTime = `${date}T${time}`;
+            console.log(dateTime);
 
             let apiUrl;
             if (checkrole === "Volunteer") {
@@ -212,7 +215,6 @@
             });
 
             $('#create-btn').on('click', function () {
-                const sender = $('#sender').val();
                 const expectedMoney = $('#expectedMoney').val();
                 const assignFrom = $('#assignFrom').val();
                 const description = $('#description').val();
@@ -234,6 +236,13 @@
                 Array.from(files).forEach(file => {
                     formData.append('UploadFiles', file);
                 });
+
+                console.log(assignFrom);
+                console.log(userId);
+                console.log(expectedMoney);
+                console.log(campaignId);
+                console.log(description);
+                console.log(dateTime);
 
                 $.ajax({
                     url: 'https://localhost:7294/api/RequestForm/creatnewprepayrequest',

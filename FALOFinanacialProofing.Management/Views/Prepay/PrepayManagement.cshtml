@@ -675,22 +675,24 @@
                                 const statusLabel = `<span class="badge badge-sm ${statusClass}">${request.status}</span>`;
 
                                 let actionButtons = `<a class="btn btn-info btn-sm" href="/Prepay/PrepayDetail?requestId=${request.id}">Detail</a>`;
+                                const isApproved = request.approveProcessStatus === "Approved";
+                                const isRejected = request.approveProcessStatus === "Rejected";
                                 if (checkrole !== "Volunteer" && request.createdBy !== userId) {
                                     actionButtons = `
                                         <button class="btn btn-success btn-sm" onclick="approveRequest(this,'${request.id}' )">Approve</button>
                                         <button class="btn btn-danger btn-sm" onclick="declineRequest(this, '${request.id}')">Rejected</button>
                                         ${actionButtons}
                                     `;
-                                }
-                                const isApproved = request.approveProcessStatus === "Approved";
-                                const isRejected = request.approveProcessStatus === "Rejected";
-                                if (isApproved) {
-                                    actionButtons = `<span class="text-approved me-2" style="margin-left:25px">Approved</span>
+                                    if (isApproved) {
+                                        actionButtons = `<span class="text-approved me-2" style="margin-left:25px">Approved</span>
                                                     <a onclick="showDetail(this)" class="text-blue me-2">Detail</a>`;
-                                } else if (isRejected) {
-                                    actionButtons = `<span class="text-declined me-2">Rejected</span>
+                                    } else if (isRejected) {
+                                        actionButtons = `<span class="text-declined me-2">Rejected</span>
                                                     <a onclick="showDetail(this)" class="text-blue me-2">Detail</a>`;
-                                }
+                                    }
+                                } 
+                                
+                                
 
                                 let attachmentLinks = '';
                                 if (request.attachmentFiles && request.attachmentFiles.length > 0) {
@@ -717,7 +719,7 @@
                                 tbody.append(`
                                     <tr data-request-id="${request.id}">
                                         <td class="align-middle text-center text-sm">${index + 1}</td>
-                                        <td><span class="text-secondary text-xs font-weight-bold">${request.createdBy}</span></td>
+                                        <td><span class="text-secondary text-xs font-weight-bold">${request.createByName}</span></td>
                                         <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${request.expectedMoney}</span></td>
                                         <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${request.description}</span></td>
                                         <td class="align-middle text-center">${attachmentLinks}</td>
