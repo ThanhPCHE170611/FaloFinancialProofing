@@ -332,6 +332,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                     && x.ApproveProcesses.Any(x => x.ApproverId.Equals(userid)))
                         .Include(x => x.AttachmentFiles)
                         .Include(x => x.ApproveProcesses)
+                        .Include(x => x.User)
                         .Select(rf => new PrePayRequestFormViewRequest
                         {
                             Id = rf.Id,
@@ -340,6 +341,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                             ExpectedMoney = rf.ExpectedMoney,
                             Status = rf.Status,
                             CreatedBy = rf.CreatedBy,
+                            CreateByName = rf.User.FirstName + " " + rf.User.LastName,
                             CampaignId = rf.CampaignId,
                             AttachmentFiles = rf.AttachmentFiles.Select(af => new AttachmentFileRequest
                             {
@@ -389,6 +391,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                         && x.ApproveProcesses.Any(x => x.ApproverId.Equals(userid)))
                         .Include(x => x.AttachmentFiles)
                         .Include(x => x.ApproveProcesses)
+                        .Include(x => x.User)
                         .Select(rf => new PrePayRequestFormViewRequest
                         {
                             Id = rf.Id,
@@ -397,6 +400,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                             ExpectedMoney = rf.ExpectedMoney,
                             Status = rf.Status,
                             CreatedBy = rf.CreatedBy,
+                            CreateByName = rf.User.FirstName + " " + rf.User.LastName,
                             CampaignId = rf.CampaignId,
                             AttachmentFiles = rf.AttachmentFiles.Select(af => new AttachmentFileRequest
                             {
@@ -446,6 +450,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                     && x.ApproveProcesses.Any(x => x.ApproverId.Equals(userid)))
                         .Include(x => x.AttachmentFiles)
                         .Include(x => x.ApproveProcesses)
+                        .Include(x => x.User)
                         .Select(rf => new PrePayRequestFormViewRequest
                         {
                             Id = rf.Id,
@@ -454,6 +459,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                             ExpectedMoney = rf.ExpectedMoney,
                             Status = rf.Status,
                             CreatedBy = rf.CreatedBy,
+                            CreateByName = rf.User.FirstName + " " + rf.User.LastName,
                             CampaignId = rf.CampaignId,
                             AttachmentFiles = rf.AttachmentFiles.Select(af => new AttachmentFileRequest
                             {
@@ -502,6 +508,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                     && x.ApproveProcesses.Any(x => x.ApproverId.Equals(userid)))
                         .Include(x => x.AttachmentFiles)
                         .Include(x => x.ApproveProcesses)
+                        .Include(x => x.User)
                         .Select(rf => new PrePayRequestFormViewRequest
                         {
                             Id = rf.Id,
@@ -510,6 +517,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                             ExpectedMoney = rf.ExpectedMoney,
                             Status = rf.Status,
                             CreatedBy = rf.CreatedBy,
+                            CreateByName = rf.User.FirstName + " " + rf.User.LastName,
                             CampaignId = rf.CampaignId,
                             AttachmentFiles = rf.AttachmentFiles.Select(af => new AttachmentFileRequest
                             {
@@ -557,6 +565,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                     var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id 
                     && x.TypeId == IntConstant.PrePayRequestType
                     && x.ApproveProcesses.Any(x => x.ApproverId.Equals(userid)))
+                        .Include(x => x.User)
                         .Include(x => x.AttachmentFiles)
                         .Include(x => x.ApproveProcesses)
                         .ThenInclude(x => x.Vouchers)
@@ -568,6 +577,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                             ExpectedMoney = rf.ExpectedMoney,
                             Status = rf.Status,
                             CreatedBy = rf.CreatedBy,
+                            CreateByName = rf.User.FirstName + " " + rf.User.LastName,
                             CampaignId = rf.CampaignId,
                             AttachmentFiles = rf.AttachmentFiles.Select(af => new AttachmentFileRequest
                             {
@@ -615,6 +625,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                     var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id 
                     && x.TypeId == IntConstant.PaymentRequestType
                     && x.ApproveProcesses.Any(x => x.ApproverId.Equals(userid)))
+                        .Include(x => x.User)
                         .Include(x => x.AttachmentFiles)
                         .Include(x => x.ApproveProcesses)
                         .ThenInclude(x => x.Vouchers)
@@ -626,6 +637,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                             ExpectedMoney = rf.ExpectedMoney,
                             Status = rf.Status,
                             CreatedBy = rf.CreatedBy,
+                            CreateByName = rf.User.FirstName + " " + rf.User.LastName,
                             CampaignId = rf.CampaignId,
                             AttachmentFiles = rf.AttachmentFiles.Select(af => new AttachmentFileRequest
                             {
