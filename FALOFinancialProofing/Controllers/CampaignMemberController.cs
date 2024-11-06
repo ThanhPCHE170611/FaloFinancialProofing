@@ -1,14 +1,19 @@
 ﻿using FALOFinancialProofing.Attributes.RoleAttributes;
+using FALOFinancialProofing.Constant;
 using FALOFinancialProofing.DTOs.CampaignDTO;
 using FALOFinancialProofing.DTOs.CampaignMemberDTO;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services;
+using FALOFinancialProofing.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -43,6 +48,45 @@ namespace FALOFinancialProofing.Controllers
                 Success = true,
                 Message = "CampaignMembers retrieved successfully.",
                 Data = campaignMembers
+            });
+        }
+
+        [HttpGet("GetAllCampaignMemberByUserIdAndRoleId")]
+        public async Task<IActionResult> GetAllCampaignMemberByUserIdAndRoleId(string userId, string roleId, bool? isActive, int currentPage = IntConstant.PageNumberDefault)
+        {
+            List<CampaignMemberInformation> data = null;
+            FilterPagingData filterPagingData = new FilterPagingData();
+            try
+            {
+                data = await _campaignMemberService.GetAllCampaignMemberByUserIdAndRoleIdAsync(userId, roleId);
+
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "GetAllCampaignMember By UserIdAndRoleId Failed!",
+                        Data = data
+                    });
+                }
+                if (isActive != null)
+                {
+                    data = data.FindAll(x => x.IsActive == isActive);
+                }
+                filterPagingData.DataCount = data.Count;
+                filterPagingData.CurrentPage = currentPage;
+                data = PaginationHelper.Paginate<CampaignMemberInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                filterPagingData.Data = data;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAllCampaignMemberByUserIdAndRoleId: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "GetAllCampaignMember By UserIdAndRoleId Successfully!",
+                Data = filterPagingData
             });
         }
 
@@ -108,14 +152,14 @@ namespace FALOFinancialProofing.Controllers
         [HttpPut("UpdateCampaignMemberStatus")]
         public async Task<IActionResult> UpdateCampaignMemberStatus([FromBody] UpdateCampaignMemberStatusDTO updateCampaignMemberStatusDTO)
         {
-
-            var canUpdateCampaignMember = await _campaignMemberService.UpdateCampaignMemberStatusAsync(updateCampaignMemberStatusDTO);
+            StringBuilder message = new StringBuilder();
+            var canUpdateCampaignMember = await _campaignMemberService.UpdateCampaignMemberStatusAsync(updateCampaignMemberStatusDTO, message);
             if (!canUpdateCampaignMember)
             {
                 return Ok(new
                 {
                     Success = false,
-                    Message = $"CampaignMember with Id = {updateCampaignMemberStatusDTO.Id} not found or could not be updated."
+                    Message = message.ToString()
                 });
             }
 

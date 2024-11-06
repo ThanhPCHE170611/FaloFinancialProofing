@@ -383,6 +383,32 @@ namespace FALOFinancialProofing.Services
             return null;
         }
 
+        public async Task<IdentityResult?> RegisterDonor(SignUpRequest registerRequest)
+        {
+            var validatedInformationRequest = await ValidatedInformationRequest(registerRequest);
+            if (validatedInformationRequest == null)
+            {
+                return null;
+            }
+            else
+            {
+                var newUser = new User
+                {
+                    FirstName = validatedInformationRequest.FirstName,
+                    LastName = validatedInformationRequest.LastName,
+                    Email = validatedInformationRequest.Email,
+                    UserName = validatedInformationRequest.UserName,
+                    TwoFactorEnabled = true,
+                };
+                var result = await userManager.CreateAsync(newUser, registerRequest.Password);
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(newUser, AppRole.Donor);
+                    return result;
+                }
+            }
+            return null;
+        }
         public async Task<IdentityResult?> AdminRegisterUser(SignUpAdminRequest registerRequest)
         {
             var validatedInformationRequest = await ValidatedInformationRequest(registerRequest);

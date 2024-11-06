@@ -189,6 +189,28 @@ namespace FALOFinancialProofing.Controllers
             }
         }
 
+        [HttpPost("Donor-Register")]
+        public async Task<IActionResult> DonorRegister([FromBody] SignUpRequest registerRequest)
+        {
+            var user = await authServices.RegisterDonor(registerRequest);
+            if (user == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "Register Failed"
+                });
+            }
+            else
+            {
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Register Success",
+                });
+            }
+        }
+
         [HttpPost("Admin-Register")]
         public async Task<IActionResult> AdminRegister([FromBody] SignUpAdminRequest registerRequest)
         {
