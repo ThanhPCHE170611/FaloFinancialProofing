@@ -53,7 +53,7 @@ namespace FALOFinancialProofing.Controllers
                 }
                 filterPagingData.DataCount = data.Count;
                 filterPagingData.CurrentPage = currentPage;
-                data = PaginationHelper.Paginate<ProjectInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                data = PaginationHelper.Paginate<ProjectInformation>(data.AsQueryable(), currentPage, 6).ToList();
                 filterPagingData.Data = data;
             }
             catch (Exception ex)

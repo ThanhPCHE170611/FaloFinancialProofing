@@ -63,6 +63,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Views\Authentication\ForgotPassword.cshtml" />
+	  <None Remove="Views\Authentication\Login.cshtml" />
+	  <None Remove="Views\Authentication\Register.cshtml" />
 	  <None Remove="Views\Campaignpage\CampaignList.cshtml" />
 	  <None Remove="Views\Campaignpage\Index.cshtml" />
 	  <None Remove="Views\Donation\Create.cshtml" />
@@ -80,6 +83,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Include="Views\Authentication\ForgotPassword.cshtml" />
+	  <Content Include="Views\Authentication\Login.cshtml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Views\Authentication\Register.cshtml" />
 	  <Content Include="Views\Campaignpage\CampaignList.cshtml" />
 	  <Content Include="Views\Campaignpage\Index.cshtml" />
 	  <Content Include="Views\Donation\Create.cshtml" />
@@ -655,6 +663,10 @@
     <None Update="wwwroot\webfonts\fa-v4compatibility.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Views\Errors\" />
   </ItemGroup>
 
 </Project>

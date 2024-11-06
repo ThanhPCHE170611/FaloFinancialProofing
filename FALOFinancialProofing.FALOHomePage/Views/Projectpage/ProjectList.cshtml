@@ -8,9 +8,9 @@
     <section class="banner__inner-page bg-image pt-160 pb-160 bg-image"
              data-background="/images/banner/banner_2.jpg">
         <div class="container">
-            <h2 class="wow fadeInUp" data-wow-delay="00ms" data-wow-duration="1500ms">Event Grid</h2>
+            <h2 class="wow fadeInUp" data-wow-delay="00ms" data-wow-duration="1500ms">Danh Sách Dự Án</h2>
             <div class="breadcrumb-list wow fadeInUp" data-wow-delay="200ms" data-wow-duration="1500ms">
-                <a href="index.html">Home</a><span><i class="fa-regular fa-angles-right mx-2"></i>Event Grid</span>
+                <a href="index.html">Home</a><span><i class="fa-regular fa-angles-right mx-2"></i>Dự Án</span>
             </div>
         </div>
     </section>
@@ -18,363 +18,130 @@
     <!-- Event area start here -->
     <section class="event-area pt-120 pb-120">
         <div class="container">
-            <div class="row g-4">
+            <div class="row g-4" id="projectsContainer">
                 <div class="col-xl-4 col-md-6 wow fadeInUp" data-wow-delay="00ms" data-wow-duration="1500ms">
-                    <div class="event__inner-item">
-                        <div class="image">
-                            <img src="/images/event/Project_image.jpg" alt="image">
-                            <span class="blog-tag">22, Nov 2023</span>
-                        </div>
-                        <div class="blog__content pt-4">
-                            <ul>
-                                <li>
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_219_65)">
-                                            <path d="M7.5 9.16669C7.5 9.82973 7.76339 10.4656 8.23223 10.9345C8.70107 11.4033 9.33696 11.6667 10 11.6667C10.663 11.6667 11.2989 11.4033 11.7678 10.9345C12.2366 10.4656 12.5 9.82973 12.5 9.16669C12.5 8.50365 12.2366 7.86776 11.7678 7.39892C11.2989 6.93008 10.663 6.66669 10 6.66669C9.33696 6.66669 8.70107 6.93008 8.23223 7.39892C7.76339 7.86776 7.5 8.50365 7.5 9.16669Z"
-                                                  stroke="#F74F22" stroke-width="2" stroke-linecap="round"
-                                                  stroke-linejoin="round" />
-                                            <path d="M14.7148 13.8808L11.179 17.4167C10.8665 17.7289 10.4428 17.9042 10.0011 17.9042C9.55933 17.9042 9.13567 17.7289 8.82315 17.4167L5.28649 13.8808C4.35417 12.9485 3.71927 11.7606 3.46206 10.4674C3.20485 9.17419 3.3369 7.83376 3.84149 6.61561C4.34608 5.39745 5.20057 4.35628 6.29689 3.62376C7.39321 2.89123 8.68213 2.50024 10.0007 2.50024C11.3192 2.50024 12.6081 2.89123 13.7044 3.62376C14.8007 4.35628 15.6552 5.39745 16.1598 6.61561C16.6644 7.83376 16.7965 9.17419 16.5392 10.4674C16.282 11.7606 15.6471 12.9485 14.7148 13.8808Z"
-                                                  stroke="#F74F22" stroke-width="2" stroke-linecap="round"
-                                                  stroke-linejoin="round" />
-                                        </g>
-                                        <defs>
-                                            <clipPath>
-                                                <rect width="20" height="20" fill="white" />
-                                            </clipPath>
-                                        </defs>
-                                    </svg>
-                                    <a href="blog-single.html">
-                                        <span class="primary-hover transition">
-                                            New
-                                            york,
-                                            USA
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <svg width="19" height="19" viewBox="0 0 19 19" fill="none"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12.8846 11.1778L10.2354 9.191V5.14378C10.2354 4.73684 9.90649 4.4079 9.49955 4.4079C9.09261 4.4079 8.76367 4.73684 8.76367 5.14378V9.55898C8.76367 9.79076 8.87259 10.0093 9.05802 10.1477L12.0015 12.3553C12.1285 12.4509 12.2832 12.5026 12.4422 12.5025C12.6667 12.5025 12.8875 12.4016 13.0317 12.2074C13.2761 11.8828 13.2098 11.4214 12.8846 11.1778Z"
-                                              fill="#F74F22" />
-                                        <path d="M9.5 0C4.26138 0 0 4.26138 0 9.5C0 14.7386 4.26138 19 9.5 19C14.7386 19 19 14.7386 19 9.5C19 4.26138 14.7386 0 9.5 0ZM9.5 17.5283C5.07378 17.5283 1.47172 13.9262 1.47172 9.5C1.47172 5.07378 5.07378 1.47172 9.5 1.47172C13.927 1.47172 17.5283 5.07378 17.5283 9.5C17.5283 13.9262 13.9262 17.5283 9.5 17.5283Z"
-                                              fill="#F74F22" />
-                                    </svg>
-                                    <span>09:00 PM</span>
-                                </li>
-                            </ul>
-                            <h4 class="mt-15 mb-15">
-                                <a href="@Url.Action("RedirectToProjectPage", "Homepage")" class="primary-hover fw-bold mt-4">
-                                    Rebecca's
-                                    New
-                                    Album
-                                    Aid
-                                    for the Needy
-                                </a>
-                            </h4>
-                            <p>Embarrassing hidden in middle of All the lorem Ipsum on the Internet to repeat</p>
-                            <a class="mt-4 read-more fw-bold transition" href="@Url.Action("RedirectToProjectPage", "Homepage")">
-                                EXPLORE MORE <i class="fa-solid fa-arrow-right ms-1"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-4 col-md-6 wow fadeInUp" data-wow-delay="200ms" data-wow-duration="1500ms">
-                    <div class="event__inner-item">
-                        <div class="image">
-                            <img src="/images/event/Project_image.jpg" alt="image">
-                            <span class="blog-tag">22, Nov 2023</span>
-                        </div>
-                        <div class="blog__content pt-4">
-                            <ul>
-                                <li>
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_219_65)">
-                                            <path d="M7.5 9.16669C7.5 9.82973 7.76339 10.4656 8.23223 10.9345C8.70107 11.4033 9.33696 11.6667 10 11.6667C10.663 11.6667 11.2989 11.4033 11.7678 10.9345C12.2366 10.4656 12.5 9.82973 12.5 9.16669C12.5 8.50365 12.2366 7.86776 11.7678 7.39892C11.2989 6.93008 10.663 6.66669 10 6.66669C9.33696 6.66669 8.70107 6.93008 8.23223 7.39892C7.76339 7.86776 7.5 8.50365 7.5 9.16669Z"
-                                                  stroke="#F74F22" stroke-width="2" stroke-linecap="round"
-                                                  stroke-linejoin="round" />
-                                            <path d="M14.7148 13.8808L11.179 17.4167C10.8665 17.7289 10.4428 17.9042 10.0011 17.9042C9.55933 17.9042 9.13567 17.7289 8.82315 17.4167L5.28649 13.8808C4.35417 12.9485 3.71927 11.7606 3.46206 10.4674C3.20485 9.17419 3.3369 7.83376 3.84149 6.61561C4.34608 5.39745 5.20057 4.35628 6.29689 3.62376C7.39321 2.89123 8.68213 2.50024 10.0007 2.50024C11.3192 2.50024 12.6081 2.89123 13.7044 3.62376C14.8007 4.35628 15.6552 5.39745 16.1598 6.61561C16.6644 7.83376 16.7965 9.17419 16.5392 10.4674C16.282 11.7606 15.6471 12.9485 14.7148 13.8808Z"
-                                                  stroke="#F74F22" stroke-width="2" stroke-linecap="round"
-                                                  stroke-linejoin="round" />
-                                        </g>
-                                        <defs>
-                                            <clipPath>
-                                                <rect width="20" height="20" fill="white" />
-                                            </clipPath>
-                                        </defs>
-                                    </svg>
-                                    <a href="@Url.Action("RedirectToProjectPage", "Homepage")">
-                                        <span class="primary-hover transition">
-                                            New
-                                            york,
-                                            USA
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <svg width="19" height="19" viewBox="0 0 19 19" fill="none"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12.8846 11.1778L10.2354 9.191V5.14378C10.2354 4.73684 9.90649 4.4079 9.49955 4.4079C9.09261 4.4079 8.76367 4.73684 8.76367 5.14378V9.55898C8.76367 9.79076 8.87259 10.0093 9.05802 10.1477L12.0015 12.3553C12.1285 12.4509 12.2832 12.5026 12.4422 12.5025C12.6667 12.5025 12.8875 12.4016 13.0317 12.2074C13.2761 11.8828 13.2098 11.4214 12.8846 11.1778Z"
-                                              fill="#F74F22" />
-                                        <path d="M9.5 0C4.26138 0 0 4.26138 0 9.5C0 14.7386 4.26138 19 9.5 19C14.7386 19 19 14.7386 19 9.5C19 4.26138 14.7386 0 9.5 0ZM9.5 17.5283C5.07378 17.5283 1.47172 13.9262 1.47172 9.5C1.47172 5.07378 5.07378 1.47172 9.5 1.47172C13.927 1.47172 17.5283 5.07378 17.5283 9.5C17.5283 13.9262 13.9262 17.5283 9.5 17.5283Z"
-                                              fill="#F74F22" />
-                                    </svg>
-                                    <span>09:00 PM</span>
-                                </li>
-                            </ul>
-                            <h4 class="mt-15 mb-15">
-                                <a href="@Url.Action("RedirectToProjectPage", "Homepage")" class="primary-hover">
-                                    Rebecca's
-                                    Charity Album A Brilliant.
-                                </a>
-                            </h4>
-                            <p>Embarrassing hidden in middle of All the lorem Ipsum on the Internet to repeat</p>
-                            <a class="mt-4 read-more fw-bold transition" href="event-single.html">
-                                EXPLORE MORE <i class="fa-solid fa-arrow-right ms-1"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-4 col-md-6 wow fadeInUp" data-wow-delay="400ms" data-wow-duration="1500ms">
-                    <div class="event__inner-item">
-                        <div class="image">
-                            <img src="/images/event/Project_image.jpg" alt="image">
-                            <span class="blog-tag">22, Nov 2023</span>
-                        </div>
-                        <div class="blog__content pt-4">
-                            <ul>
-                                <li>
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_219_65)">
-                                            <path d="M7.5 9.16669C7.5 9.82973 7.76339 10.4656 8.23223 10.9345C8.70107 11.4033 9.33696 11.6667 10 11.6667C10.663 11.6667 11.2989 11.4033 11.7678 10.9345C12.2366 10.4656 12.5 9.82973 12.5 9.16669C12.5 8.50365 12.2366 7.86776 11.7678 7.39892C11.2989 6.93008 10.663 6.66669 10 6.66669C9.33696 6.66669 8.70107 6.93008 8.23223 7.39892C7.76339 7.86776 7.5 8.50365 7.5 9.16669Z"
-                                                  stroke="#F74F22" stroke-width="2" stroke-linecap="round"
-                                                  stroke-linejoin="round" />
-                                            <path d="M14.7148 13.8808L11.179 17.4167C10.8665 17.7289 10.4428 17.9042 10.0011 17.9042C9.55933 17.9042 9.13567 17.7289 8.82315 17.4167L5.28649 13.8808C4.35417 12.9485 3.71927 11.7606 3.46206 10.4674C3.20485 9.17419 3.3369 7.83376 3.84149 6.61561C4.34608 5.39745 5.20057 4.35628 6.29689 3.62376C7.39321 2.89123 8.68213 2.50024 10.0007 2.50024C11.3192 2.50024 12.6081 2.89123 13.7044 3.62376C14.8007 4.35628 15.6552 5.39745 16.1598 6.61561C16.6644 7.83376 16.7965 9.17419 16.5392 10.4674C16.282 11.7606 15.6471 12.9485 14.7148 13.8808Z"
-                                                  stroke="#F74F22" stroke-width="2" stroke-linecap="round"
-                                                  stroke-linejoin="round" />
-                                        </g>
-                                        <defs>
-                                            <clipPath>
-                                                <rect width="20" height="20" fill="white" />
-                                            </clipPath>
-                                        </defs>
-                                    </svg>
-                                    <a href="@Url.Action("RedirectToProjectPage", "Homepage")">
-                                        <span class="primary-hover transition">
-                                            New
-                                            york,
-                                            USA
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <svg width="19" height="19" viewBox="0 0 19 19" fill="none"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12.8846 11.1778L10.2354 9.191V5.14378C10.2354 4.73684 9.90649 4.4079 9.49955 4.4079C9.09261 4.4079 8.76367 4.73684 8.76367 5.14378V9.55898C8.76367 9.79076 8.87259 10.0093 9.05802 10.1477L12.0015 12.3553C12.1285 12.4509 12.2832 12.5026 12.4422 12.5025C12.6667 12.5025 12.8875 12.4016 13.0317 12.2074C13.2761 11.8828 13.2098 11.4214 12.8846 11.1778Z"
-                                              fill="#F74F22" />
-                                        <path d="M9.5 0C4.26138 0 0 4.26138 0 9.5C0 14.7386 4.26138 19 9.5 19C14.7386 19 19 14.7386 19 9.5C19 4.26138 14.7386 0 9.5 0ZM9.5 17.5283C5.07378 17.5283 1.47172 13.9262 1.47172 9.5C1.47172 5.07378 5.07378 1.47172 9.5 1.47172C13.927 1.47172 17.5283 5.07378 17.5283 9.5C17.5283 13.9262 13.9262 17.5283 9.5 17.5283Z"
-                                              fill="#F74F22" />
-                                    </svg>
-                                    <span>09:00 PM</span>
-                                </li>
-                            </ul>
-                            <h4 class="mt-15 mb-15">
-                                <a href="@Url.Action("RedirectToProjectPage", "Homepage")" class="primary-hover">
-                                    A Nation's
-                                    Benevolence Displayed
-                                </a>
-                            </h4>
-                            <p>Embarrassing hidden in middle of All the lorem Ipsum on the Internet to repeat</p>
-                            <a class="mt-4 read-more fw-bold transition" href="event-single.html">
-                                EXPLORE MORE <i class="fa-solid fa-arrow-right ms-1"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-4 col-md-6 wow fadeInUp" data-wow-delay="00ms" data-wow-duration="1500ms">
-                    <div class="event__inner-item">
-                        <div class="image">
-                            <img src="/images/event/Project_image.jpg" alt="image">
-                            <span class="blog-tag">22, Nov 2023</span>
-                        </div>
-                        <div class="blog__content pt-4">
-                            <ul>
-                                <li>
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_219_65)">
-                                            <path d="M7.5 9.16669C7.5 9.82973 7.76339 10.4656 8.23223 10.9345C8.70107 11.4033 9.33696 11.6667 10 11.6667C10.663 11.6667 11.2989 11.4033 11.7678 10.9345C12.2366 10.4656 12.5 9.82973 12.5 9.16669C12.5 8.50365 12.2366 7.86776 11.7678 7.39892C11.2989 6.93008 10.663 6.66669 10 6.66669C9.33696 6.66669 8.70107 6.93008 8.23223 7.39892C7.76339 7.86776 7.5 8.50365 7.5 9.16669Z"
-                                                  stroke="#F74F22" stroke-width="2" stroke-linecap="round"
-                                                  stroke-linejoin="round" />
-                                            <path d="M14.7148 13.8808L11.179 17.4167C10.8665 17.7289 10.4428 17.9042 10.0011 17.9042C9.55933 17.9042 9.13567 17.7289 8.82315 17.4167L5.28649 13.8808C4.35417 12.9485 3.71927 11.7606 3.46206 10.4674C3.20485 9.17419 3.3369 7.83376 3.84149 6.61561C4.34608 5.39745 5.20057 4.35628 6.29689 3.62376C7.39321 2.89123 8.68213 2.50024 10.0007 2.50024C11.3192 2.50024 12.6081 2.89123 13.7044 3.62376C14.8007 4.35628 15.6552 5.39745 16.1598 6.61561C16.6644 7.83376 16.7965 9.17419 16.5392 10.4674C16.282 11.7606 15.6471 12.9485 14.7148 13.8808Z"
-                                                  stroke="#F74F22" stroke-width="2" stroke-linecap="round"
-                                                  stroke-linejoin="round" />
-                                        </g>
-                                        <defs>
-                                            <clipPath>
-                                                <rect width="20" height="20" fill="white" />
-                                            </clipPath>
-                                        </defs>
-                                    </svg>
-                                    <a href="@Url.Action("RedirectToProjectPage", "Homepage")">
-                                        <span class="primary-hover transition">
-                                            New
-                                            york,
-                                            USA
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <svg width="19" height="19" viewBox="0 0 19 19" fill="none"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12.8846 11.1778L10.2354 9.191V5.14378C10.2354 4.73684 9.90649 4.4079 9.49955 4.4079C9.09261 4.4079 8.76367 4.73684 8.76367 5.14378V9.55898C8.76367 9.79076 8.87259 10.0093 9.05802 10.1477L12.0015 12.3553C12.1285 12.4509 12.2832 12.5026 12.4422 12.5025C12.6667 12.5025 12.8875 12.4016 13.0317 12.2074C13.2761 11.8828 13.2098 11.4214 12.8846 11.1778Z"
-                                              fill="#F74F22" />
-                                        <path d="M9.5 0C4.26138 0 0 4.26138 0 9.5C0 14.7386 4.26138 19 9.5 19C14.7386 19 19 14.7386 19 9.5C19 4.26138 14.7386 0 9.5 0ZM9.5 17.5283C5.07378 17.5283 1.47172 13.9262 1.47172 9.5C1.47172 5.07378 5.07378 1.47172 9.5 1.47172C13.927 1.47172 17.5283 5.07378 17.5283 9.5C17.5283 13.9262 13.9262 17.5283 9.5 17.5283Z"
-                                              fill="#F74F22" />
-                                    </svg>
-                                    <span>09:00 PM</span>
-                                </li>
-                            </ul>
-                            <h4 class="mt-15 mb-15">
-                                <a href="@Url.Action("RedirectToProjectPage", "Homepage")" class="primary-hover">
-                                    Rebecca's
-                                    Charity Showcases Nation's
-                                </a>
-                            </h4>
-                            <p>Embarrassing hidden in middle of All the lorem Ipsum on the Internet to repeat</p>
-                            <a class="mt-4 read-more fw-bold transition" href="event-single.html">
-                                EXPLORE MORE <i class="fa-solid fa-arrow-right ms-1"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-4 col-md-6 wow fadeInUp" data-wow-delay="200ms" data-wow-duration="1500ms">
-                    <div class="event__inner-item">
-                        <div class="image">
-                            <img src="/images/event/Project_image.jpg" alt="image">
-                            <span class="blog-tag">22, Nov 2023</span>
-                        </div>
-                        <div class="blog__content pt-4">
-                            <ul>
-                                <li>
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_219_65)">
-                                            <path d="M7.5 9.16669C7.5 9.82973 7.76339 10.4656 8.23223 10.9345C8.70107 11.4033 9.33696 11.6667 10 11.6667C10.663 11.6667 11.2989 11.4033 11.7678 10.9345C12.2366 10.4656 12.5 9.82973 12.5 9.16669C12.5 8.50365 12.2366 7.86776 11.7678 7.39892C11.2989 6.93008 10.663 6.66669 10 6.66669C9.33696 6.66669 8.70107 6.93008 8.23223 7.39892C7.76339 7.86776 7.5 8.50365 7.5 9.16669Z"
-                                                  stroke="#F74F22" stroke-width="2" stroke-linecap="round"
-                                                  stroke-linejoin="round" />
-                                            <path d="M14.7148 13.8808L11.179 17.4167C10.8665 17.7289 10.4428 17.9042 10.0011 17.9042C9.55933 17.9042 9.13567 17.7289 8.82315 17.4167L5.28649 13.8808C4.35417 12.9485 3.71927 11.7606 3.46206 10.4674C3.20485 9.17419 3.3369 7.83376 3.84149 6.61561C4.34608 5.39745 5.20057 4.35628 6.29689 3.62376C7.39321 2.89123 8.68213 2.50024 10.0007 2.50024C11.3192 2.50024 12.6081 2.89123 13.7044 3.62376C14.8007 4.35628 15.6552 5.39745 16.1598 6.61561C16.6644 7.83376 16.7965 9.17419 16.5392 10.4674C16.282 11.7606 15.6471 12.9485 14.7148 13.8808Z"
-                                                  stroke="#F74F22" stroke-width="2" stroke-linecap="round"
-                                                  stroke-linejoin="round" />
-                                        </g>
-                                        <defs>
-                                            <clipPath>
-                                                <rect width="20" height="20" fill="white" />
-                                            </clipPath>
-                                        </defs>
-                                    </svg>
-                                    <a href="@Url.Action("RedirectToProjectPage", "Homepage")">
-                                        <span class="primary-hover transition">
-                                            New
-                                            york,
-                                            USA
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <svg width="19" height="19" viewBox="0 0 19 19" fill="none"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12.8846 11.1778L10.2354 9.191V5.14378C10.2354 4.73684 9.90649 4.4079 9.49955 4.4079C9.09261 4.4079 8.76367 4.73684 8.76367 5.14378V9.55898C8.76367 9.79076 8.87259 10.0093 9.05802 10.1477L12.0015 12.3553C12.1285 12.4509 12.2832 12.5026 12.4422 12.5025C12.6667 12.5025 12.8875 12.4016 13.0317 12.2074C13.2761 11.8828 13.2098 11.4214 12.8846 11.1778Z"
-                                              fill="#F74F22" />
-                                        <path d="M9.5 0C4.26138 0 0 4.26138 0 9.5C0 14.7386 4.26138 19 9.5 19C14.7386 19 19 14.7386 19 9.5C19 4.26138 14.7386 0 9.5 0ZM9.5 17.5283C5.07378 17.5283 1.47172 13.9262 1.47172 9.5C1.47172 5.07378 5.07378 1.47172 9.5 1.47172C13.927 1.47172 17.5283 5.07378 17.5283 9.5C17.5283 13.9262 13.9262 17.5283 9.5 17.5283Z"
-                                              fill="#F74F22" />
-                                    </svg>
-                                    <span>09:00 PM</span>
-                                </li>
-                            </ul>
-                            <h4 class="mt-15 mb-15">
-                                <a href="@Url.Action("RedirectToProjectPage", "Homepage")">
-                                    Rebecca's
-                                    Album Supports Needy
-                                </a>
-                            </h4>
-                            <p>Embarrassing hidden in middle of All the lorem Ipsum on the Internet to repeat</p>
-                            <a class="mt-4 read-more fw-bold transition" href="@Url.Action("RedirectToProjectPage", "Homepage")">
-                                EXPLORE MORE <i class="fa-solid fa-arrow-right ms-1"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-4 col-md-6 wow fadeInUp" data-wow-delay="400ms" data-wow-duration="1500ms">
-                    <div class="event__inner-item">
-                        <div class="image">
-                            <img src="/images/event/Project_image.jpg" alt="image">
-                            <span class="blog-tag">22, Nov 2023</span>
-                        </div>
-                        <div class="blog__content pt-4">
-                            <ul>
-                                <li>
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_219_65)">
-                                            <path d="M7.5 9.16669C7.5 9.82973 7.76339 10.4656 8.23223 10.9345C8.70107 11.4033 9.33696 11.6667 10 11.6667C10.663 11.6667 11.2989 11.4033 11.7678 10.9345C12.2366 10.4656 12.5 9.82973 12.5 9.16669C12.5 8.50365 12.2366 7.86776 11.7678 7.39892C11.2989 6.93008 10.663 6.66669 10 6.66669C9.33696 6.66669 8.70107 6.93008 8.23223 7.39892C7.76339 7.86776 7.5 8.50365 7.5 9.16669Z"
-                                                  stroke="#F74F22" stroke-width="2" stroke-linecap="round"
-                                                  stroke-linejoin="round" />
-                                            <path d="M14.7148 13.8808L11.179 17.4167C10.8665 17.7289 10.4428 17.9042 10.0011 17.9042C9.55933 17.9042 9.13567 17.7289 8.82315 17.4167L5.28649 13.8808C4.35417 12.9485 3.71927 11.7606 3.46206 10.4674C3.20485 9.17419 3.3369 7.83376 3.84149 6.61561C4.34608 5.39745 5.20057 4.35628 6.29689 3.62376C7.39321 2.89123 8.68213 2.50024 10.0007 2.50024C11.3192 2.50024 12.6081 2.89123 13.7044 3.62376C14.8007 4.35628 15.6552 5.39745 16.1598 6.61561C16.6644 7.83376 16.7965 9.17419 16.5392 10.4674C16.282 11.7606 15.6471 12.9485 14.7148 13.8808Z"
-                                                  stroke="#F74F22" stroke-width="2" stroke-linecap="round"
-                                                  stroke-linejoin="round" />
-                                        </g>
-                                        <defs>
-                                            <clipPath>
-                                                <rect width="20" height="20" fill="white" />
-                                            </clipPath>
-                                        </defs>
-                                    </svg>
-                                    <a href="@Url.Action("RedirectToProjectPage", "Homepage")">
-                                        <span class="primary-hover transition">
-                                            New
-                                            york,
-                                            USA
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <svg width="19" height="19" viewBox="0 0 19 19" fill="none"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12.8846 11.1778L10.2354 9.191V5.14378C10.2354 4.73684 9.90649 4.4079 9.49955 4.4079C9.09261 4.4079 8.76367 4.73684 8.76367 5.14378V9.55898C8.76367 9.79076 8.87259 10.0093 9.05802 10.1477L12.0015 12.3553C12.1285 12.4509 12.2832 12.5026 12.4422 12.5025C12.6667 12.5025 12.8875 12.4016 13.0317 12.2074C13.2761 11.8828 13.2098 11.4214 12.8846 11.1778Z"
-                                              fill="#F74F22" />
-                                        <path d="M9.5 0C4.26138 0 0 4.26138 0 9.5C0 14.7386 4.26138 19 9.5 19C14.7386 19 19 14.7386 19 9.5C19 4.26138 14.7386 0 9.5 0ZM9.5 17.5283C5.07378 17.5283 1.47172 13.9262 1.47172 9.5C1.47172 5.07378 5.07378 1.47172 9.5 1.47172C13.927 1.47172 17.5283 5.07378 17.5283 9.5C17.5283 13.9262 13.9262 17.5283 9.5 17.5283Z"
-                                              fill="#F74F22" />
-                                    </svg>
-                                    <span>09:00 PM</span>
-                                </li>
-                            </ul>
-                            <h4 class="mt-15 mb-15">
-                                <a href="@Url.Action("RedirectToProjectPage", "Homepage")" class="primary-hover">
-                                    Rebecca's
-                                    New
-                                    Album
-                                    Aid
-                                    for the Needy
-                                </a>
-                            </h4>
-                            <p>Embarrassing hidden in middle of All the lorem Ipsum on the Internet to repeat</p>
-                            <a class="mt-4 read-more fw-bold transition" href="@Url.Action("RedirectToProjectPage", "Homepage")">
-                                EXPLORE MORE <i class="fa-solid fa-arrow-right ms-1"></i>
-                            </a>
-                        </div>
-                    </div>
                 </div>
             </div>
-            <div class="pegi justify-content-center mt-80">
-                <a href="#0" class="active">01</a>
-                <a href="#0">02</a>
-                <a href="#0">03</a>
-                <a href="#0"><i class="fa-solid fa-arrow-right-long primary-color transition"></i></a>
+            <div class="pegi justify-content-center mt-80 pagination" id="paginationControls">
             </div>
         </div>
     </section>
     <!-- Event area end here -->
 </main>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        loadProjects(1);
+    });
+
+    
+
+    // Function to load projects with pagination
+    function loadProjects(pageNumber = 1) {
+        $.ajax({
+            url: `https://localhost:7294/api/Projects/GetAllProjectInSystem?status=Running&currentPage=${pageNumber}`,  // Adjust URL if necessary, e.g., for a specific controller
+            type: 'GET',
+            data: {
+                status: null,  // You can set the status filter if needed
+                currentPage: pageNumber
+            },
+            success: function (response) {
+                if (response.success) {
+                    renderProjects(response.data);
+                    renderPagination(response.data.dataCount, pageNumber);
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function (error) {
+                console.error("Error loading projects:", error);
+            }
+        });
+    }
+
+    // Function to render the projects data as cards
+    function renderProjects(data) {
+        var projectsContainer = $('#projectsContainer');
+        projectsContainer.empty();  // Clear existing data
+
+        data.data.forEach(function (project) {
+            var date = new Date(project.dateOfCreation);
+
+            // Format the date as "Jan 1, 2024"
+            var formattedDate = date.toLocaleDateString('en-US', {
+                month: 'short',  // "Jan"
+                day: 'numeric',  // "1"
+                year: 'numeric'  // "2024"
+            });
+
+            var url = '/Projectpage/Index/' + project.id;
+
+            var cardHtml = `<div class="col-xl-4 col-md-6 wow fadeInUp" data-wow-delay="200ms" data-wow-duration="1500ms">
+                            <div class="event__inner-item">
+                                <div class="image">
+                                    <img src="/images/event/Project_image.jpg" alt="image">
+                                            <span class="blog-tag">${formattedDate || 'Date'}</span>
+                                </div>
+                                <div class="blog__content pt-4">
+                                    <ul>
+                                        <li>
+                                           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M14.5435 5.19275C14.5435 7.69093 12.4989 9.7355 10.0008 9.7355C7.50262 9.7355 5.45804 7.69093 5.45804 5.19275C5.45804 2.69457 7.50258 0.65 10.0008 0.65C12.4989 0.65 14.5435 2.69458 14.5435 5.19275Z"
+                                                      stroke="#F74F22" stroke-width="1.3" />
+                                                <path d="M18.2644 14.6706C18.1052 14.9458 17.9241 15.2073 17.7169 15.4766L17.7168 15.4765L17.7089 15.4873C17.4203 15.8788 17.0845 16.2373 16.7294 16.5924C16.4326 16.8892 16.0932 17.186 15.7567 17.4385C14.0794 18.6911 12.0621 19.3499 9.97814 19.3499C7.89836 19.3499 5.88506 18.6938 4.20976 17.4461C3.84588 17.1504 3.51367 16.8792 3.22686 16.5924L3.2199 16.5854L3.21272 16.5787C2.85663 16.2436 2.54238 15.8877 2.24745 15.4874L2.24747 15.4873L2.24414 15.4829C2.06192 15.24 1.8732 14.9756 1.71919 14.7169C1.83618 14.4559 1.98455 14.1847 2.14521 13.9526L2.14533 13.9527L2.15284 13.9413C3.06984 12.5556 4.53705 11.6388 6.16642 11.4148L6.186 11.4121L6.20538 11.4082C6.23087 11.4031 6.29494 11.4117 6.34548 11.4496L6.34546 11.4496L6.34947 11.4525C7.41651 12.2401 8.68629 12.6453 10.0008 12.6453C11.3153 12.6453 12.5851 12.2401 13.6521 11.4525L13.6521 11.4525L13.6561 11.4496C13.6715 11.438 13.7403 11.408 13.8492 11.4167C15.4688 11.6435 16.9121 12.5568 17.8524 13.9468L17.8524 13.9469L17.8564 13.9526C18.0165 14.1839 18.1557 14.4231 18.2644 14.6706Z"
+                                                      stroke="#F74F22" stroke-width="1.3" />
+                                            </svg>
+                                            <a href="${url}">
+                                                <span class="primary-hover transition">${project.createdBy || 'Created By'}</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <h4 class="mt-15 mb-15">
+                                            <a href="${url}">${project.projectName || 'Project Title'}</a>
+                                    </h4>
+                                    <p>${project.description || 'No description available.'}</p>
+                                        <a class="mt-4 read-more fw-bold transition" href="${url}">
+                                        EXPLORE MORE <i class="fa-solid fa-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                `;
+            projectsContainer.append(cardHtml);
+        });
+    }
+
+    // Function to render pagination controls
+    function renderPagination(totalRecords, currentPage) {
+        var pageSize = 6;
+        var totalPages = Math.ceil(totalRecords / pageSize);
+        console.log('Total Records:', totalRecords);  // Debugging line
+        console.log('Current Page:', currentPage);    // Debugging line
+        var paginationControls = $('#paginationControls');
+        paginationControls.empty();  // Clear existing pagination buttons
+
+        // Render "Previous" button
+        if (currentPage > 1) {
+            paginationControls.append(`<button onclick="loadProjects(${currentPage - 1})"><i class="fa-solid fa-arrow-left-long primary-color transition"></i></button>`);
+        }
+
+        // Render page number buttons with some optimization
+        var startPage = Math.max(1, currentPage - 2);  // Show 2 pages before current
+        var endPage = Math.min(totalPages, currentPage + 2);  // Show 2 pages after current
+
+        for (var i = startPage; i <= endPage; i++) {
+            if (i === currentPage) {
+                paginationControls.append(`<button class="active" disabled>${i}</button>`);  // Disabled button for current page
+            } else {
+                paginationControls.append(`<button onclick="loadProjects(${i})">${i}</button>`);
+            }
+        }
+
+        // Render "Next" button
+        if (currentPage < totalPages) {
+            paginationControls.append(`<button onclick="loadProjects(${currentPage + 1})"><i class="fa-solid fa-arrow-right-long primary-color transition"></i></button>`);
+        }
+    }
+</script>

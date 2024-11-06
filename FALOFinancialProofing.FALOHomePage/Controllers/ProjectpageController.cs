@@ -1,14 +1,62 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FALOFinancialProofing.FALOHomePage.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace FALOFinancialProofing.FALOHomePage.Controllers
 {
     public class ProjectpageController : Controller
     {
-        // GET: ProjectpageController
-        public ActionResult Index()
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public ProjectpageController(IHttpClientFactory httpClientFactory)
         {
-            return View();
+            _httpClientFactory = httpClientFactory;
+        }
+        // GET: ProjectpageController
+        public async Task<IActionResult> Index(int? id)
+        {
+            if (id == null)
+            {
+                return View();
+            }
+            else
+            {
+                try
+                {
+                    // Get HttpClient from the factory
+                    var client = _httpClientFactory.CreateClient();
+
+                    // Make a GET request to the API
+                    var response = await client.GetStringAsync("https://localhost:7294/api/Projects/GetProjectDetailsById/6");
+
+                    // Deserialize the JSON response into an object
+                    var projectDetails = JsonConvert.DeserializeObject<ApiResponseProject>(response);
+
+                    string url = "https://localhost:7294/api/Campaign/GetAllCampaignByProjectId/" + id +"?currentPage=1";
+                    // Get all campaigns through project id
+                    var responseCampaigns = await client.GetStringAsync("https://localhost:7294/api/Campaign/GetAllCampaignByProjectId/6?currentPage=1");
+                    var campaigns = JsonConvert.DeserializeObject<ApiResponseCampaign>(responseCampaigns);
+
+                    // Check if campaigns data is valid
+                    if (campaigns?.Data?.Data == null)
+                    {
+                        // Handle the case where there are no campaigns or invalid data
+                        campaigns.Data = new CampaignData { Data = new List<CampaignDTO>() }; // Provide an empty list
+                    }
+
+                    ViewBag.projectDetails = projectDetails.Data;
+                    ViewBag.campaigns = campaigns.Data.Data;
+
+                    // Pass the ViewModel to the view
+                    return View();
+                }
+                catch (Exception ex)
+                {
+                    return View();
+                }
+
+            }
         }
 
         // GET: ProjectpageController/Details/5

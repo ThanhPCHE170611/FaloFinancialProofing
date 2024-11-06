@@ -1,46 +1,44 @@
-﻿using FALOFinancialProofing.FALOHomePage.Services;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FALOFinancialProofing.FALOHomePage.Controllers
 {
-    
-    public class DonationController : Controller
+    public class AuthenticationController : Controller
     {
-        // GET: DonationController
-        private readonly TransactionPollingDirect _transactionPollingDirect;
-        private readonly BankAccountService bankAccountService;
-        public DonationController(TransactionPollingDirect transactionPollingDirect, BankAccountService bankData)
+        // GET: AuthenticationController
+        public ActionResult Index()
         {
-            _transactionPollingDirect = transactionPollingDirect;
-            bankAccountService = bankData;
-        }
-        public async Task<IActionResult> Index(int id)
-        {
-            var transactions = await _transactionPollingDirect.GetTransactionAsync(id);
-            return View(transactions);
+            return View();
         }
 
-        public async Task<IActionResult> ViewAccounts()
+        public ActionResult Login()
         {
-            var accounts = await bankAccountService.GetAccounts();
-            return View(accounts);
+            return View();
         }
 
+        public ActionResult Register()
+        {
+            return View();
+        }
 
-        // GET: DonationController/Details/5
+        public ActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        // GET: AuthenticationController/Details/5
         public ActionResult Details(int id)
         {
             return View();
         }
 
-        // GET: DonationController/Create
+        // GET: AuthenticationController/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: DonationController/Create
+        // POST: AuthenticationController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection)
@@ -55,13 +53,13 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
             }
         }
 
-        // GET: DonationController/Edit/5
+        // GET: AuthenticationController/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: DonationController/Edit/5
+        // POST: AuthenticationController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
@@ -76,13 +74,13 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
             }
         }
 
-        // GET: DonationController/Delete/5
+        // GET: AuthenticationController/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: DonationController/Delete/5
+        // POST: AuthenticationController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)

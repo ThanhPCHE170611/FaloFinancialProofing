@@ -11,12 +11,12 @@ namespace FALOFinancialProofing.FALOHomePage.Services
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<List<TransactionDetails>> GetTransactionAsync()
+        public async Task<List<TransactionDetails>> GetTransactionAsync(int id)
         {
             using (var httpClient = _httpClientFactory.CreateClient())
             {
-                httpClient.DefaultRequestHeaders.Add("Authorization", "Apikey AK_CS.5e3f98c0987011ef98eebd0598ac83dd.zKntSv5qWnmjiDZoy2xJJCRVs2g7Sqdk3XM4XvbfhPAla72SPbShdfMiSoEaIKYJQQBBvpMz");
-                var response = await httpClient.GetAsync("https://oauth.casso.vn/v2/accounts/9957/transactions");
+                httpClient.DefaultRequestHeaders.Add("Authorization", "Apikey");
+                var response = await httpClient.GetAsync($"https://oauth.casso.vn/v2/accounts/{id}/transactions");
 
                 // Ensure the response is successful
                 if (!response.IsSuccessStatusCode)

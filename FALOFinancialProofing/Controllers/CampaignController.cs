@@ -50,7 +50,8 @@ namespace FALOFinancialProofing.Controllers
         //        Data = campaigns
         //    });
         //}
-        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
+
+        //[RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
         [HttpGet("GetAllCampaignByProjectId/{ProjectId}")]
         public async Task<IActionResult> GetAllCampaignByProjectId(int ProjectId, string? status, int currentPage = IntConstant.PageNumberDefault)
         {
@@ -88,7 +89,7 @@ namespace FALOFinancialProofing.Controllers
                 Data = filterPagingData
             });
         }
-        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
+        //[RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
         [HttpGet("GetCampaignDetailsById/{id}")]
         public async Task<IActionResult> GetCampaignDetailsById(int id)
         {
