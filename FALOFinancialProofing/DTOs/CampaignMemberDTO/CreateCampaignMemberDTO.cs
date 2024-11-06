@@ -9,6 +9,7 @@ namespace FALOFinancialProofing.DTOs.CampaignMemberDTO
         public int CampaignId { get; set; }
 
         public string UserId { get; set; } = null!;
+        public string RoleId { get; set; } = null!;
 
     }
 }

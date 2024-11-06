@@ -9,7 +9,7 @@ namespace FALOFinancialProofing.Controllers
     [ApiController]
     public class WebHooksController : ControllerBase
     {
-        private const string APIKey = "AK_CS.a86bc6e09b7111ef8a02890bf6befcfe.7ck5OvlLrnfpprkrZOWgPqT8PAvkUVHvfeZ3A7E2sjvqjVYbtUnsTUULw2ISqa0QKLY4goIL";
+        //private const string APIKey =";
         private const string SecureToken = "EE965E354266AE15B5BFC92DC3416";
         [HttpPost("create-webhook")]
         public IActionResult CreateItem([FromBody] TransactionRequest item)

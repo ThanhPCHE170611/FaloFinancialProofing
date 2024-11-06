@@ -37,8 +37,9 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 var newCampaignMember = await CreateCampaignMemberDTOToEntity(createCampaignMemberDTO);
                 return await cmRepository.InsertAsync(newCampaignMember);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
+                await Console.Out.WriteLineAsync($"CreateCampaignMemberAsync: {ex.Message}");
                 return null;
             }
         }
@@ -70,16 +71,35 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             };
         }
 
-        public async Task<List<CampaignMember>> GetAllCampaignMembersAsync()
+        public async Task<List<CampaignMemberInformation>> GetAllCampaignMembersAsync()
         {
+            var campaignMembers = new List<CampaignMemberInformation>();
             try
             {
-                return await cmRepository.GetAll().ToListAsync();
+                campaignMembers = await cmRepository.GetAll()
+                    .Select(cm => new CampaignMemberInformation()
+                    {
+                        id = cm.Id,
+                        UserId = cm.UserId,
+                        UserName = cm.User.UserName,
+                        FirstName = cm.User.FirstName,
+                        LastName = cm.User.LastName,
+                        CampaignId = cm.CampaignId,
+                        CampaignTitle = cm.Campaign.Title,
+                        Debt = cm.Debt,
+                        IsActive = cm.IsActive,
+                        roleInformation = new RoleInformation()
+                        {
+                            RoleId = cm.RoleId,
+                            RoleName = cm.IdentityRole.Name
+                        }
+                    }).ToListAsync();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return new List<CampaignMember>();
+                await Console.Out.WriteLineAsync($"GetAllCampaignMemberByUserIdAndRoleIdAsync: {ex.Message}");
             }
+            return campaignMembers;
         }
 
         public async Task<List<CampaignMemberInformation>> GetAllCampaignMemberByUserIdAndRoleIdAsync(string userId, string roleId)
@@ -111,18 +131,74 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             }
             return campaignMembers;
         }
-        public async Task<CampaignMember?> GetCampaignMemberByIdAsync(int id)
+        public async Task<CampaignMemberInformation?> GetCampaignMemberByIdAsync(int id)
         {
             try
             {
-                return await cmRepository.Get(x => x.Id == id);
+                var campaignMember = new CampaignMemberInformation();
+                try
+                {
+                    campaignMember = await cmRepository.GetAll().Where(cm => cm.Id == id).Select(cm => new CampaignMemberInformation()
+                    {
+                        id = cm.Id,
+                        UserId = cm.UserId,
+                        UserName = cm.User.UserName,
+                        FirstName = cm.User.FirstName,
+                        LastName = cm.User.LastName,
+                        CampaignId = cm.CampaignId,
+                        CampaignTitle = cm.Campaign.Title,
+                        Debt = cm.Debt,
+                        IsActive = cm.IsActive,
+                        roleInformation = new RoleInformation()
+                        {
+                            RoleId = cm.RoleId,
+                            RoleName = cm.IdentityRole.Name
+                        }
+                    }).SingleOrDefaultAsync();
+                }
+                catch (Exception ex)
+                {
+                    await Console.Out.WriteLineAsync($"GetAllCampaignMemberByUserIdAndRoleIdAsync: {ex.Message}");
+                }
+                return campaignMember;
             }
             catch (Exception e)
             {
                 return null;
             }
         }
-
+        public async Task<List<CampaignMemberInformation>> GetAllCampaignMemberByCampaignIdAsync(int campaignId)
+        {
+            var campaignMembers = new List<CampaignMemberInformation>();
+            try
+            {
+                campaignMembers = await cmRepository.GetAll()
+                    .Where(cm => cm.CampaignId == campaignId)
+                    .Select(cm => new CampaignMemberInformation()
+                    {
+                        id = cm.Id,
+                        UserId = cm.UserId,
+                        UserName = cm.User.UserName,
+                        FirstName = cm.User.FirstName,
+                        LastName = cm.User.LastName,
+                        CampaignId = cm.CampaignId,
+                        CampaignTitle = cm.Campaign.Title,
+                        Debt = cm.Debt,
+                        IsActive = cm.IsActive,
+                        roleInformation = new RoleInformation()
+                        {
+                            RoleId = cm.RoleId,
+                            RoleName = cm.IdentityRole.Name
+                        }
+                    }).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAllCampaignMemberByCampaignIdAsync: {ex.Message}");
+            }
+            return campaignMembers;
+        }
+        //?
         public async Task<CampaignMember?> GetCampaignMemberByUserIdAsync(string userid)
         {
             try

@@ -7,8 +7,8 @@ namespace FALOFinancialProofing.Services
 {
     public interface ICampaignMemberService
     {
-        Task<List<CampaignMember>> GetAllCampaignMembersAsync();
-        Task<CampaignMember?> GetCampaignMemberByIdAsync(int id);
+        Task<List<CampaignMemberInformation>> GetAllCampaignMembersAsync();
+        Task<CampaignMemberInformation?> GetCampaignMemberByIdAsync(int id);
         Task<CampaignMember?> GetCampaignMemberByUserIdAsync(string userid);
 
         Task<CampaignMember?> CreateCampaignMemberAsync(CreateCampaignMemberDTO createCampaignMemberDTO);
@@ -22,5 +22,6 @@ namespace FALOFinancialProofing.Services
         Task<List<CreateManyCampaignMemberDTO>> InValidCampaignMembersCreateAsync(List<CreateManyCampaignMemberDTO> createManyCampaignMemberDTOs, List<CreateManyCampaignMemberDTO> ValidCreateManyCampaignMemberDTOs);
         Task<bool> UpdateCampaignMemberStatusAsync(UpdateCampaignMemberStatusDTO updateCampaignMemberStatusDTO, StringBuilder message);
         Task<List<CampaignMemberInformation>> GetAllCampaignMemberByUserIdAndRoleIdAsync(string userId, string roleId);
+        Task<List<CampaignMemberInformation>> GetAllCampaignMemberByCampaignIdAsync(int campaignId);
     }
 }
