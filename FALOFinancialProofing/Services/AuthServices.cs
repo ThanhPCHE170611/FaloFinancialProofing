@@ -284,6 +284,78 @@ namespace FALOFinancialProofing.Services
             }
             return data;
         }
+
+        public async Task<List<UserInformation_Admin>> GetAccountList()
+        {
+            var data = new List<UserInformation_Admin>();
+            try
+            {
+                //var    users = await userManager.Users.ToListAsync();
+                data = await userManager.Users.Select(u => new UserInformation_Admin()
+                {
+                    Id = u.Id,
+                    Email = u.Email,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    BirthDate = u.BirthDate,
+                    Roles = u.UserRoles.Select(ur => new RoleInformation
+                    {
+                        RoleId = ur.RoleId,
+                        RoleName = roleManager.Roles.FirstOrDefault(r => r.Id == ur.RoleId).Name
+                    }).ToList(),
+                    SocialNetworkRequests = u.SocialNetworks.Select(snr => new SocialNetworkRequest
+                    {
+                        Id = snr.Id,
+                        UserId = snr.UserId,
+                        SocialNetworksLink = snr.SocialNetworksLink,
+                    }).ToList()
+                }).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAccountList: {ex.Message}");
+            }
+
+            return data;
+        }
+
+        public async Task<UserInformation_Admin> GetAccount(string UserId, StringBuilder message)
+        {
+            UserInformation_Admin data = null!;
+            try
+            {
+                data = await userManager.Users.Where(u => u.Id == UserId).Select(u => new UserInformation_Admin()
+                {
+                    Id = u.Id,
+                    Email = u.Email,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    BirthDate = u.BirthDate,
+                    Roles = u.UserRoles.Select(ur => new RoleInformation
+                    {
+                        RoleId = ur.RoleId,
+                        RoleName = roleManager.Roles.FirstOrDefault(r => r.Id == ur.RoleId).Name
+                    }).ToList(),
+                    SocialNetworkRequests = u.SocialNetworks.Select(snr => new SocialNetworkRequest
+                    {
+                        Id = snr.Id,
+                        UserId = snr.UserId,
+                        SocialNetworksLink = snr.SocialNetworksLink,
+                    }).ToList()
+                }).FirstOrDefaultAsync();
+                if (data == null)
+                {
+                    throw new Exception("User not found in system!");
+                }
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"GetAccount: {ex.Message}");
+            }
+
+            return data;
+        }
         public async Task<IdentityResult?> RegisterUser(SignUpRequest registerRequest)
         {
             var validatedInformationRequest = await ValidatedInformationRequest(registerRequest);
@@ -310,6 +382,33 @@ namespace FALOFinancialProofing.Services
             }
             return null;
         }
+
+        public async Task<IdentityResult?> AdminRegisterUser(SignUpAdminRequest registerRequest)
+        {
+            var validatedInformationRequest = await ValidatedInformationRequest(registerRequest);
+            if (validatedInformationRequest == null)
+            {
+                return null;
+            }
+            else
+            {
+                var newUser = new User
+                {
+                    FirstName = validatedInformationRequest.FirstName,
+                    LastName = validatedInformationRequest.LastName,
+                    Email = validatedInformationRequest.Email,
+                    UserName = validatedInformationRequest.UserName,
+                    TwoFactorEnabled = true,
+                };
+                var result = await userManager.CreateAsync(newUser, registerRequest.Password);
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRolesAsync(newUser, registerRequest.Roles);
+                    return result;
+                }
+            }
+            return null;
+        }
         private async Task<SignUpRequest> ValidatedInformationRequest(SignUpRequest registerRequest)
         {
             //Validate information
@@ -321,6 +420,16 @@ namespace FALOFinancialProofing.Services
             return null;
         }
 
+        private async Task<SignUpAdminRequest> ValidatedInformationRequest(SignUpAdminRequest registerRequest)
+        {
+            //Validate information
+
+            if (true)
+            {
+                return registerRequest;
+            }
+            return null;
+        }
         public async Task<TokenModel> GenerateToken(UserDto User)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();

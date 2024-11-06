@@ -41,6 +41,25 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 return null;
             }
         }
+
+        public async Task<CampaignMember?> CreateCampaignMemberAsync(CampaignMember campaignMember)
+        {
+            try
+            {
+                var existingCampaignMember = await cmRepository.Get(x => x.CampaignId == campaignMember.CampaignId && x.UserId == campaignMember.UserId);
+
+                if (existingCampaignMember != null)
+                {
+                    return null;
+                }
+
+                return await cmRepository.InsertAsync(campaignMember);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
         private async Task<CampaignMember> CreateCampaignMemberDTOToEntity(CreateCampaignMemberDTO createCampaignMemberDTO)
         {
             return new CampaignMember
@@ -128,6 +147,26 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 return false;
             }
         }
+        //public async Task<bool> UpdateCampaignMemberAsync(CampaignMember campaignMember)
+        //{
+        //    try
+        //    {
+        //        var existingCampaignMember = await cmRepository.Get(campaignMember.Id);
+
+        //        if (existingCampaignMember == null)
+        //        {
+        //            return false;
+        //        }
+
+                
+
+        //        return await cmRepository.UpdateAsync(existingCampaignMember);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return false;
+        //    }
+        //}
 
         private void UpdateCampaignMemberDTOToEntity(CampaignMember campaignMember, UpdateCampaignMemberDTO updateCampaignMemberDTO)
         {
