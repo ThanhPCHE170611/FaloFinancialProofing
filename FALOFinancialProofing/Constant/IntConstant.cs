@@ -4,6 +4,7 @@
     {
         // Page size for pagination default
         public static readonly int PageSize = 5;
+        public static readonly int PageSizeCustom = 6;
 
         public const int PageNumberDefault = 1;
 
