@@ -49,11 +49,11 @@ namespace FALOFinancialProofing.Controllers
                     return Ok(new ApiResponse()
                     {
                         Success = false,
-                        Message = "Get All Campaign By ProjectId Failed!",
+                        Message = "Get All CreateProjectRequests Failed!",
                         Data = data
                     });
                 }
-                message.Append("Get CreateProjectRequests Successfully!");
+                message.Append("Get All CreateProjectRequests Successfully!");
                 if (!string.IsNullOrEmpty(status))
                 {
                     data = data.FindAll(x => x.Status.Equals(status));
@@ -65,7 +65,7 @@ namespace FALOFinancialProofing.Controllers
             }
             catch (Exception ex)
             {
-                message.Append("Get CreateProjectRequests Failed!");
+                message.Append("Get All CreateProjectRequests Failed!");
                 await Console.Out.WriteLineAsync(ex.Message);
             }
             return Ok(new ApiResponse()
@@ -75,7 +75,7 @@ namespace FALOFinancialProofing.Controllers
                 Data = data
             });
         }
-
+        // sender use this
         [HttpGet("GetAllCreateProjectRequestsByUserId/{UserId}")]
         public async Task<IActionResult> GetAllCreateProjectRequestsByUserId(string UserId, string? status, int currentPage = IntConstant.PageNumberDefault)
         {
@@ -116,7 +116,7 @@ namespace FALOFinancialProofing.Controllers
         }
         // GET: api/CreateProjectRequests/5
         [HttpGet("GetCreateProjectRequest/{id}")]
-        public async Task<ActionResult<CreateProjectRequest>> GetCreateProjectRequest(int id)
+        public async Task<ActionResult<CreateProjectRequestInformation>> GetCreateProjectRequest(int id)
         {
 
             var createProjectRequest = await _createProjectRequestService.GetCreateProjectRequestByIdAsync(id);
