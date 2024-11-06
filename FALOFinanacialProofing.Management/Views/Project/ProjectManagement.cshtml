@@ -87,7 +87,7 @@
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 5%;">STT</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="width: 25%;">Project</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 25%;">Organizer</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Start Date</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Created Date</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Status</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Action</th>
                                     </tr>
@@ -173,6 +173,81 @@
                 }
             }
         }
+        $(document).ready(function () {
+            const jwtToken = localStorage.getItem('jwtToken');
+            const checkrole = localStorage.getItem('loggingRole');
+
+            if (checkrole === "Project Manager") {
+                $('.action-buttons').hide();
+            }
+
+            // Function to fetch project requests
+            function fetchProjectRequests() {
+                $.ajax({
+                    url: 'https://localhost:7294/api/CreateProjectRequests/GetCreateProjectRequestByPMB',
+                    type: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${jwtToken}`
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            populateTable(response.data);
+                        } else {
+                            alert('Failed to retrieve project requests: ' + response.Message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error fetching project requests:', error);
+                        alert('An error occurred while fetching project requests.');
+                    }
+                });
+            }
+
+            function populateTable(data) {
+                const tableBody = $('#projectTable tbody');
+                tableBody.empty(); 
+
+                data.forEach((request, index) => {
+                    const statusClass = getStatusClass(request.status); 
+
+                    let actionButtons = `
+                        <button class="btn btn-success btn-sm" onclick="approveProject(${request.Id})">Approve</button>
+                        <button class="btn btn-danger btn-sm" onclick="declineProject(${request.Id})">Decline</button>
+                    `;
+
+                    if (checkrole === "Project Manager") {
+                        actionButtons = ''; 
+                    }
+
+                    const row = `
+                        <tr>
+                            <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${index + 1}</span></td>
+                            <td><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">${request.title}</span></div></td>
+                            <td><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">${request.Organizer}</span></div></td>
+                            <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${request.CreatedDate}</span></td>
+                            <td class="align-middle text-center text-sm">
+                                <span class="badge badge-sm ${statusClass}" id="status-${request.Id}">${request.Status}</span>
+                            </td>
+                            <td class="align-middle text-center">
+                                <span id="action-${request.Id}" class="action-buttons">${actionButtons}</span>
+                                <a href="/Project/ProjectDetail/${request.Id}" class="btn btn-info btn-sm">Detail</a>
+                            </td>
+                        </tr>
+                    `;
+
+                    tableBody.append(row);
+                });
+            }
+
+            function getStatusClass(status) {
+                if (status === "Approved") return "badge-approved";
+                if (status === "Rejected") return "badge-declined";
+                return "badge-pending";
+            }
+
+            fetchProjectRequests();
+        });
+
     </script>
 
     <script async defer src="https://buttons.github.io/buttons.js"></script>
