@@ -1,19 +1,11 @@
 ﻿using FALOFinancialProofing.Attributes.RoleAttributes;
 using FALOFinancialProofing.Constant;
-using FALOFinancialProofing.DTOs.CampaignDTO;
 using FALOFinancialProofing.DTOs.CampaignMemberDTO;
 using FALOFinancialProofing.Helpers;
-using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services;
 using FALOFinancialProofing.Utilities;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -30,8 +22,8 @@ namespace FALOFinancialProofing.Controllers
             this.authServices = authServices;
         }
 
-        [HttpGet("GetAllCampaignMember")]
-        public async Task<IActionResult> GetAllCampaignMember()
+        [HttpGet("GetAllCampaignMembers")]
+        public async Task<IActionResult> GetAllCampaignMembers()
         {
             var campaignMembers = await _campaignMemberService.GetAllCampaignMembersAsync();
             if (campaignMembers == null || campaignMembers.Count == 0)
@@ -51,8 +43,8 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
-        [HttpGet("GetAllCampaignMemberByUserIdAndRoleId")]
-        public async Task<IActionResult> GetAllCampaignMemberByUserIdAndRoleId(string userId, string roleId, bool? isActive, int currentPage = IntConstant.PageNumberDefault)
+        [HttpGet("GetAllCampaignMembersByUserIdAndRoleId")]
+        public async Task<IActionResult> GetAllCampaignMembersByUserIdAndRoleId(string userId, string roleId, bool? isActive, int currentPage = IntConstant.PageNumberDefault)
         {
             List<CampaignMemberInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -90,8 +82,8 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
-        [HttpGet("GetCampaignMemberByCampaignIdAndUserId/{id}")]
-        public async Task<IActionResult> GetCampaignMemberByCampaignIdAndUserId(int id)
+        [HttpGet("GetCampaignMemberById/{id}")]
+        public async Task<IActionResult> GetCampaignMemberById(int id)
         {
             var campaignMember = await _campaignMemberService.GetCampaignMemberByIdAsync(id);
             if (campaignMember == null)
@@ -189,8 +181,8 @@ namespace FALOFinancialProofing.Controllers
                 Message = "CampaignMember updated successfully."
             });
         }
-        [HttpDelete("DeleteCampaignMemberByCampaignIdAndUserId/{id}")]
-        public async Task<IActionResult> DeleteCampaignMemberByCampaignIdAndUserId(int id)
+        [HttpDelete("DeleteCampaignMemberById/{id}")]
+        public async Task<IActionResult> DeleteCampaignMemberById(int id)
         {
             var deleteResult = await _campaignMemberService.DeleteCampaignMemberByIdAsync(id);
             if (!deleteResult)

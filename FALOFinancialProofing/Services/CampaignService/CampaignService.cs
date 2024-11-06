@@ -7,6 +7,7 @@ using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services.CreateProjectRequestServices;
 using FALOFinancialProofing.Services.ProjectServices;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 
@@ -56,16 +57,39 @@ namespace FALOFinancialProofing.Services.CampaignService
                 Status = createCampaignDTO.Status
             };
         }
-        public async Task<List<Campaign>> GetAllCampaignsAsync()
+        public async Task<List<CampaignInformation>> GetAllCampaignsAsync()
         {
+            List<CampaignInformation> data = null!;
             try
             {
-                return await campaignRepository.GetAll().ToListAsync();
+                data = await campaignRepository.GetAll()
+                    .Select(p => new CampaignInformation()
+                    {
+                        FirstName = p.User.FirstName,
+                        LastName = p.User.LastName,
+                        CampaignId = p.Id,
+                        ProjectId = p.ProjectId,
+                        CreateBy = p.CreateBy,
+                        Title = p.Title,
+                        Description = p.Description,
+                        DateOfCreation = p.DateOfCreation,
+                        FundTarget = p.FundTarget,
+                        Image = p.Image,
+                        EndDate = p.EndDate,
+                        Address = p.Address,
+                        IsActive = p.IsActive,
+                        BankingNumber = p.BankingNumber,
+                        BankId = p.BankId,
+                        Status = p.Status,
+                        TotalMoneyEarned = p.TransactionLogs.Sum(x => x.Amount)
+                    }).ToListAsync();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return new List<Campaign>();
+                await Console.Out.WriteLineAsync($"GetAllCampaignsAsync: {ex.Message}");
             }
+
+            return data;
         }
         public async Task<List<CampaignInformation>> GetAllCampaignsByProjectIdAsync(int ProjectId)
         {
@@ -101,6 +125,8 @@ namespace FALOFinancialProofing.Services.CampaignService
 
             return data;
         }
+
+
 
         public async Task<CampaignInformation> GetCampaignByCampaignIdAsync(int CampaignId)
         {

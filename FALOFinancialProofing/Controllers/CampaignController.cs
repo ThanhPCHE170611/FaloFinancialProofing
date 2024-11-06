@@ -58,6 +58,48 @@ namespace FALOFinancialProofing.Controllers
         //        Data = campaigns
         //    });
         //}
+
+        [HttpGet("GetAllCampaignInSystem")]
+        public async Task<IActionResult> GetAllCampaignInSystem(string? status, bool? IsActive, int currentPage = IntConstant.PageNumberDefault)
+        {
+            List<CampaignInformation> data = null;
+            FilterPagingData filterPagingData = new FilterPagingData();
+            try
+            {
+                data = await _campaignService.GetAllCampaignsAsync();
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "Get All Project By In System Failed!",
+                        Data = data
+                    });
+                }
+                if (!string.IsNullOrEmpty(status))
+                {
+                    data = data.FindAll(x => x.Status == status);
+                }
+                if (IsActive != null)
+                {
+                    data = data.FindAll(x => x.IsActive == IsActive);
+                }
+                filterPagingData.DataCount = data.Count;
+                filterPagingData.CurrentPage = currentPage;
+                data = PaginationHelper.Paginate<CampaignInformation>(data.AsQueryable(), currentPage, IntConstant.PageSizeCustom).ToList();
+                filterPagingData.Data = data;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAllProjectInSystem: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "Get All Project In System Successfully!",
+                Data = filterPagingData
+            });
+        }
         //[RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
         [HttpGet("GetAllCampaignByProjectId/{ProjectId}")]
         public async Task<IActionResult> GetAllCampaignByProjectId(int ProjectId, string? status, int currentPage = IntConstant.PageNumberDefault)
@@ -94,6 +136,51 @@ namespace FALOFinancialProofing.Controllers
                 Success = true,
                 Message = "Get All Campaign By ProjectId Successfully!",
                 Data = filterPagingData
+            });
+        }
+
+
+
+        [HttpGet("GetFourCampaignByFilter")]
+        public async Task<IActionResult> GetFourCampaignByFilter(bool IsActive, bool OrderByAscending, int numOfElements)
+        {
+            List<CampaignInformation> data = null;
+            try
+            {
+                data = await _campaignService.GetAllCampaignsAsync();
+                data = data.Take(numOfElements).ToList();
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "GetFourCampaignByFilter Failed!",
+                        Data = data
+                    });
+                }
+                if (IsActive)
+                {
+                    data = data.FindAll(x => x.IsActive);
+                }
+                if (OrderByAscending)
+                {
+                    data = data.OrderBy(o => o.DateOfCreation).ToList();
+                }
+                else
+                {
+                    data = data.OrderByDescending(o => o.DateOfCreation).ToList();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetFourCampaignByFilter: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "Get Four Campaign By ProjectId Successfully!",
+
             });
         }
         //[RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]

@@ -8,7 +8,7 @@ namespace FALOFinancialProofing.Services.ProjectServices
     {
         Task<bool> CreateProjectAsync(Project createProject);
         Task<Project> GetProjectByIdAsync(int id);
-        Task<IEnumerable<Project>> GetAllProjectsAsync();
+        Task<IEnumerable<ProjectInformation>> GetAllProjectsAsync();
         Task<bool> UpdateProjectAsync(Project updateProject);
         Task<bool> DeleteProjectAsync(int id);
         Task<bool> ValidateProjectCreateAsync(CreateProject createProject, StringBuilder message);
