@@ -40,6 +40,20 @@
                 list-style: none;
             }
 
+        #voucherList {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+            #voucherList li {
+                padding: 5px 10px;
+                background-color: #e0e0e0;
+                border-radius: 5px;
+                list-style: none;
+            }
+
         .nav-tabs {
             display: flex;
             justify-content: space-around;
@@ -126,6 +140,11 @@
                             <input type="file" class="form-control" id="attachments" multiple>
                             <ul id="fileList">
                             </ul>
+                        </div>
+                        <div class="mb-3" id="voucherInput" style="display: none;">
+                            <label for="vouchers" class="form-label">Vouchers</label>
+                            <input type="file" class="form-control" id="vouchers" multiple>
+                            <ul id="voucherList"></ul>
                         </div>
                     </div>
 

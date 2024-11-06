@@ -470,7 +470,47 @@ function updateRowToRejected(button) {
     statusCell.appendChild(declinedText);
 }
 
+function downloadAttachment(fileName) {
+    $.ajax({
+        url: `https://localhost:7294/api/AttachmentFile/downloadprepayattachmentfile/${fileName}`,
+        method: 'GET',
+        xhrFields: {
+            responseType: 'blob'
+        },
+        success: function (response, status, xhr) {
+            const contentType = xhr.getResponseHeader('Content-Type');
+            const blob = new Blob([response], { type: contentType });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = fileName;
+            link.click();
+        },
+        error: function () {
+            alert('Failed to download attachment file. Please try again.');
+        }
+    });
+}
 
+function downloadVoucher(fileName) {
+    $.ajax({
+        url: `https://localhost:7294/api/Voucher/downloadprepayvoucherfile/${fileName}`,
+        method: 'GET',
+        xhrFields: {
+            responseType: 'blob'
+        },
+        success: function (response, status, xhr) {
+            const contentType = xhr.getResponseHeader('Content-Type');
+            const blob = new Blob([response], { type: contentType });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = fileName;
+            link.click();
+        },
+        error: function () {
+            alert('Failed to download voucher file. Please try again.');
+        }
+    });
+}
 
 $(document).ready(function () {
     const userId = localStorage.getItem('userId');
@@ -527,6 +567,7 @@ $(document).ready(function () {
     }
 
 
+    
 
 
     function loadPrepayRequests(page) {
@@ -582,13 +623,11 @@ $(document).ready(function () {
                             }
                         }
 
-
-
                         let attachmentLinks = '';
                         if (request.attachmentFiles && request.attachmentFiles.length > 0) {
                             attachmentLinks = request.attachmentFiles.map(file => `
-                                        <a href="${file.filePath}" class="btn btn-link text-info" download="${file.filePath}">${file.filePath}</a>
-                                    `).join('<br>');
+                                <a href="javascript:void(0);" onclick="downloadAttachment('${file.filePath}')" class="btn btn-link text-info">${file.filePath}</a>
+                            `).join('<br>');
                         } else {
                             attachmentLinks = '<span class="text-muted">No Attachments</span>';
                         }
@@ -598,14 +637,16 @@ $(document).ready(function () {
                             const validFiles = request.voucherFiles.filter(file => file.filePath);
                             if (validFiles.length > 0) {
                                 voucherLinks = validFiles.map(file => `
-                                        <a href="${file.filePath}" class="btn btn-link text-info" download="${file.filePath}">${file.filePath}</a>
-                                        `).join('<br>');
+                                <a href="javascript:void(0);" onclick="downloadVoucher('${file.filePath}')" class="btn btn-link text-info">${file.filePath}</a>
+                                `).join('<br>');
                             } else {
                                 voucherLinks = '<span class="text-muted">No Attachments</span>';
                             }
                         } else {
                             voucherLinks = '<span class="text-muted">No Attachments</span>';
                         }
+
+                        
                         tbody.append(`
                                     <tr data-request-id="${request.id}">
                                         <td class="align-middle text-center text-sm">${index + 1}</td>

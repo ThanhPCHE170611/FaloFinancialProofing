@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "ProjectManagement";
 }
 <!DOCTYPE html>
@@ -51,6 +50,16 @@
             border-radius: 5px;
             border: 1px solid #ddd;
         }
+
+        .text-declined {
+            color: red;
+            font-weight: bold;
+        }
+
+        .text-approved {
+            color: green;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -85,8 +94,8 @@
                                 <thead>
                                     <tr>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 5%;">STT</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="width: 25%;">Project</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 25%;">Organizer</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="width: 25%;">Project</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 25%;">Created By</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Created Date</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Status</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Action</th>
@@ -138,7 +147,7 @@
     <script src="../assets/js/core/bootstrap.min.js"></script>
     <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
     <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         function approveProject(id) {
             document.getElementById('status-' + id).className = 'badge badge-sm badge-approved';
@@ -146,10 +155,67 @@
             document.getElementById('action-' + id).innerHTML = '';
         }
 
-        function declineProject(id) {
-            document.getElementById('status-' + id).className = 'badge badge-sm badge-declined';
-            document.getElementById('status-' + id).innerText = 'Declined';
-            document.getElementById('action-' + id).innerHTML = '';
+        function updateRowToApprovedForPM(button) {
+            const row = button.closest('tr');
+            const actionCell = row.querySelector('td:nth-child(6)');
+            const statusCell = row.querySelector('td:nth-child(5)');
+
+            const declinedText = document.createElement('span');
+            declinedText.classList.add('badge', 'badge-sm', 'bg-gradient-success');
+            declinedText.textContent = 'Approved';
+
+            button.style.display = 'none';
+            actionCell.querySelector('.btn-info').style.display = 'none';
+            actionCell.querySelector('.btn-danger').style.display = 'none';
+
+            const approvedText = document.createElement('span');
+            approvedText.classList.add('text-approved', 'me-2');
+            approvedText.textContent = 'Approved';
+
+            const detailLink = document.createElement('a');
+            detailLink.href = '#';
+            detailLink.classList.add('text-blue');
+            detailLink.textContent = 'Detail';
+            detailLink.addEventListener('click', function (event) {
+                event.preventDefault();
+                showDetail();
+            });
+            actionCell.appendChild(approvedText);
+            actionCell.appendChild(detailLink);
+            statusCell.innerHTML = '';
+            statusCell.appendChild(declinedText);
+        }
+
+        function updateRowToRejected(button) {
+            const row = button.closest('tr');
+            const actionCell = row.querySelector('td:nth-child(6)');
+            const statusCell = row.querySelector('td:nth-child(5)');
+
+            const declinedText = document.createElement('span');
+            declinedText.classList.add('badge', 'badge-sm', 'bg-gradient-danger');
+            declinedText.textContent = 'Rejected';
+
+            button.style.display = 'none';
+            actionCell.querySelector('.btn-info').style.display = 'none';
+            actionCell.querySelector('.btn-success').style.display = 'none';
+
+            const rejectedText = document.createElement('span');
+            rejectedText.classList.add('text-declined', 'me-2');
+            rejectedText.textContent = 'Rejected';
+
+            const detailLink = document.createElement('a');
+            detailLink.href = '#';
+            detailLink.classList.add('text-blue');
+            detailLink.textContent = 'Detail';
+            detailLink.addEventListener('click', function (event) {
+                event.preventDefault();
+                showDetail();
+            });
+
+            actionCell.appendChild(rejectedText);
+            actionCell.appendChild(detailLink);
+            statusCell.innerHTML = '';
+            statusCell.appendChild(declinedText);
         }
 
         function filterTable() {
@@ -173,16 +239,90 @@
                 }
             }
         }
+        function formatDateTime(dateString) {
+            if (!dateString) return 'N/A';
+
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) {
+                return 'Invalid Date';
+            }
+
+            const formattedDate = date.getDate().toString().padStart(2, '0') + '-' +
+                (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                date.getFullYear();
+
+            const formattedTime = date.getHours().toString().padStart(2, '0') + ':' +
+                date.getMinutes().toString().padStart(2, '0') + ':' +
+                date.getSeconds().toString().padStart(2, '0');
+
+            return formattedDate + ' ' + formattedTime;
+        }
+
+        function handleProjectApproval(button,createProjectRequestId, isAllowed) {
+            const userId = localStorage.getItem('userId');
+
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const hours = String(today.getHours()).padStart(2, '0');
+            const minutes = String(today.getMinutes()).padStart(2, '0');
+            const seconds = String(today.getSeconds()).padStart(2, '0');
+            const dateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+
+            const payload = {
+                createProjectRequestId: createProjectRequestId,
+                approverId: userId,
+                dateOfApproval: dateTime,
+                isAllowed: isAllowed
+            };
+
+            console.log(isAllowed);
+            console.log(createProjectRequestId);
+            console.log(dateTime);
+            console.log(userId);
+
+            const jwtToken = localStorage.getItem('jwtToken');
+            $.ajax({
+                url: 'https://localhost:7294/api/CreateProjectRequestApproveHistories/CreateCreateProjectRequestApproveHistory',
+                type: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                contentType: 'application/json',
+                data: JSON.stringify(payload),
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message || 'Action completed successfully!');
+                        if (isAllowed) {
+                            updateRowToApprovedForPM(button);
+                        } else {
+                            updateRowToRejected(button);
+                        }
+                    } else {
+                        alert('Failed: ' + response.Message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error in project approval:', error);
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        }
+
         $(document).ready(function () {
             const jwtToken = localStorage.getItem('jwtToken');
             const checkrole = localStorage.getItem('loggingRole');
+            let currentPage = 1;
+            const pageSize = 5;
 
             if (checkrole === "Project Manager") {
                 $('.action-buttons').hide();
             }
 
-            // Function to fetch project requests
-            function fetchProjectRequests() {
+            
+
+            function fetchProjectRequests(page) {
                 $.ajax({
                     url: 'https://localhost:7294/api/CreateProjectRequests/GetCreateProjectRequestByPMB',
                     type: 'GET',
@@ -191,6 +331,7 @@
                     },
                     success: function (response) {
                         if (response.success) {
+
                             populateTable(response.data);
                         } else {
                             alert('Failed to retrieve project requests: ' + response.Message);
@@ -205,33 +346,40 @@
 
             function populateTable(data) {
                 const tableBody = $('#projectTable tbody');
-                tableBody.empty(); 
+                tableBody.empty();
 
                 data.forEach((request, index) => {
-                    const statusClass = getStatusClass(request.status); 
+                    const statusClass = getStatusClass(request.status);
 
                     let actionButtons = `
-                        <button class="btn btn-success btn-sm" onclick="approveProject(${request.Id})">Approve</button>
-                        <button class="btn btn-danger btn-sm" onclick="declineProject(${request.Id})">Decline</button>
+                        <button class="btn btn-success btn-sm" onclick="handleProjectApproval(this,${request.id}, true)">Approve</button>
+                        <button class="btn btn-danger btn-sm" onclick="handleProjectApproval(this,${request.id}, false)">Decline</button>
+                        <a class="btn btn-info btn-sm" href="/Project/ProjectDetail/${request.id}">Detail</a>
                     `;
+                    if (request.status === "Approved") {
+                        actionButtons = `<span class="text-approved me-2" style="margin-left:25px">Approved</span>
+                                                    <a href="/Prepay/PrepayDetail?requestId=${request.id}" class="text-blue me-2" >Detail</a>`;
+                    } else if (request.status === "Rejected") {
+                        actionButtons = `<span class="text-declined me-2" style="margin-left:25px">Rejected</span>
+                                                    <a href="/Prepay/PrepayDetail?requestId=${request.id}" class="text-blue me-2">Detail</a>`;
+                    }
 
                     if (checkrole === "Project Manager") {
-                        actionButtons = ''; 
+                        actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectDetail/${request.id}">Detail</a>
+                        
+                        `;
                     }
 
                     const row = `
                         <tr>
                             <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${index + 1}</span></td>
-                            <td><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">${request.title}</span></div></td>
-                            <td><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">${request.Organizer}</span></div></td>
-                            <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${request.CreatedDate}</span></td>
+                            <td class="align-middle text-center text-sm"><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">${request.title}</span></div></td>
+                            <td class="align-middle text-center text-sm"><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">${request.senderName}</span></div></td>
+                            <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${formatDateTime(request.createdAt)}</span></td>
                             <td class="align-middle text-center text-sm">
-                                <span class="badge badge-sm ${statusClass}" id="status-${request.Id}">${request.Status}</span>
+                                <span class="badge badge-sm ${statusClass}">${request.status}</span>
                             </td>
-                            <td class="align-middle text-center">
-                                <span id="action-${request.Id}" class="action-buttons">${actionButtons}</span>
-                                <a href="/Project/ProjectDetail/${request.Id}" class="btn btn-info btn-sm">Detail</a>
-                            </td>
+                            <td class="align-middle text-center">${actionButtons}</td>
                         </tr>
                     `;
 
@@ -240,7 +388,7 @@
             }
 
             function getStatusClass(status) {
-                if (status === "Approved") return "badge-approved";
+                if (status === "Accepted") return "badge-approved";
                 if (status === "Rejected") return "badge-declined";
                 return "badge-pending";
             }

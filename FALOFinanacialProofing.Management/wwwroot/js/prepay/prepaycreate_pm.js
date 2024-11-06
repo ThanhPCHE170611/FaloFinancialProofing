@@ -12,12 +12,29 @@ document.getElementById('attachments').addEventListener('change', function (e) {
         fileList.appendChild(li);
     });
 });
+document.getElementById('vouchers').addEventListener('change', function (e) {
+    const voucherList = document.getElementById('voucherList');
+    voucherList.innerHTML = '';
+    Array.from(e.target.files).forEach(file => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(file);
+        a.textContent = file.name;
+        a.download = file.name;
+        li.appendChild(a);
+        voucherList.appendChild(li);
+    });
+});
 
 $(document).ready(function () {
     const userId = localStorage.getItem('userId');
     const jwtToken = localStorage.getItem('jwtToken');
     const campaignId = localStorage.getItem('campaignId');
     const checkrole = localStorage.getItem('loggingRole');
+
+    if (checkrole === "Accounting") {
+        $('#voucherInput').show();
+    }
 
     var today = new Date();
     var year = today.getFullYear();
@@ -39,6 +56,7 @@ $(document).ready(function () {
         apiUrl = `https://localhost:7294/api/RequestForm/getapproverforvolunteerleader/${campaignId}`;
     } else if (checkrole === "Accounting") {
         apiUrl = `https://localhost:7294/api/RequestForm/getapproverforaccounting/${campaignId}`;
+        
     } else if (checkrole === "Project Manager") {
         apiUrl = `https://localhost:7294/api/RequestForm/getapproverforprojectmanagement/${campaignId}`;
     } else {
@@ -75,6 +93,7 @@ $(document).ready(function () {
         const assignFrom = $('#assignFrom').val();
         const description = $('#description').val();
         const files = $('#attachments')[0].files;
+        const vouchers = $('#vouchers')[0].files;
 
         if (!expectedMoney || !assignFrom || !description) {
             alert('Please fill in all required fields.');
@@ -90,8 +109,16 @@ $(document).ready(function () {
         formData.append('CreateAt', dateTime);
 
         Array.from(files).forEach(file => {
+            console.log(file);
             formData.append('UploadFiles', file);
         });
+
+        if (checkrole === "Accounting") {
+            Array.from(vouchers).forEach(voucher => {
+                console.log("abcxy"+voucher);
+                formData.append('VoucherFile', voucher);
+            });
+        }
 
         console.log(assignFrom);
         console.log(userId);
