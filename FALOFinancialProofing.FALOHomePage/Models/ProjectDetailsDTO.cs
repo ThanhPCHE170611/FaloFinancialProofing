@@ -12,6 +12,8 @@
         public string CreatedBy { get; set; }  
         public string UserImage { get; set; }  
         public int? OrganizationId { get; set; }  
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
 
         //public ProjectDetailsDTO(int id, string name, string description, DateTime d, bool isActive, string oname, string status, string create, string image, int? oid)
         //{

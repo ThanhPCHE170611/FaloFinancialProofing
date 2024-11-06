@@ -28,14 +28,14 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
                     var client = _httpClientFactory.CreateClient();
 
                     // Make a GET request to the API
-                    var response = await client.GetStringAsync("https://localhost:7294/api/Projects/GetProjectDetailsById/6");
+                    var response = await client.GetStringAsync($"https://localhost:7294/api/Projects/GetProjectDetailsById/{id}");
 
                     // Deserialize the JSON response into an object
                     var projectDetails = JsonConvert.DeserializeObject<ApiResponseProject>(response);
 
                     string url = "https://localhost:7294/api/Campaign/GetAllCampaignByProjectId/" + id +"?currentPage=1";
                     // Get all campaigns through project id
-                    var responseCampaigns = await client.GetStringAsync("https://localhost:7294/api/Campaign/GetAllCampaignByProjectId/6?currentPage=1");
+                    var responseCampaigns = await client.GetStringAsync(url);
                     var campaigns = JsonConvert.DeserializeObject<ApiResponseCampaign>(responseCampaigns);
 
                     // Check if campaigns data is valid

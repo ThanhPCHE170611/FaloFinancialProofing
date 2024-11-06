@@ -15,7 +15,7 @@ namespace FALOFinancialProofing.FALOHomePage.Services
         {
             using (var httpClient = _httpClientFactory.CreateClient())
             {
-                httpClient.DefaultRequestHeaders.Add("Authorization", "Apikey");
+                httpClient.DefaultRequestHeaders.Add("Authorization", "Apikey AK_CS.f39aa8f09b4611ef8a02890bf6befcfe.ZezZ1de1t7dboeUXKHCPedBNFLJYILWlQHwzjjCeo6aD74ZeoUyHZnQllHIE68uBqXxL28VB");
                 var response = await httpClient.GetAsync($"https://oauth.casso.vn/v2/accounts/{id}/transactions");
 
                 // Ensure the response is successful
