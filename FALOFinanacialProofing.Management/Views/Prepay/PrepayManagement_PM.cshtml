@@ -220,11 +220,13 @@
 
         $(document).ready(function () {
             const userId = localStorage.getItem('userId');
-            const campaignId = new URLSearchParams(window.location.search).get('campaignid');
+            const campaignId = localStorage.getItem('campaignId');
             const checkrole = localStorage.getItem('loggingRole');
             const jwtToken = localStorage.getItem('jwtToken');
             let currentPage = 1;
             const pageSize = 5;
+
+            console.log(campaignId);
 
             function formatDateTime(dateString) {
                 if (!dateString) return 'N/A';

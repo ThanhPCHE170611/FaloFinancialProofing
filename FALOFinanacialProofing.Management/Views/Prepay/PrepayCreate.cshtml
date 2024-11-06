@@ -159,8 +159,7 @@
         $(document).ready(function () {
             const userId = localStorage.getItem('userId');
             const jwtToken = localStorage.getItem('jwtToken');
-            const urlParams = new URLSearchParams(window.location.search);
-            const campaignId = urlParams.get('campaignid');
+            const campaignId = localStorage.getItem('campaignId');
             const checkrole = localStorage.getItem('loggingRole');
 
             var today = new Date();
