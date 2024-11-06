@@ -29,7 +29,14 @@ namespace FALOFinanacialProofing.Management.Controllers
         {
             return View();
         }
-
+        public ActionResult PrepayCreate_PM()
+        {
+            return View();
+        }
+        public ActionResult PrepayDetail_PM()
+        {
+            return View();
+        }
 
 
         // GET: PrepayController/Details/5

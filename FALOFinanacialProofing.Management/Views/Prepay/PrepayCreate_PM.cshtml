@@ -84,12 +84,14 @@
                         <div class="pt-4 pb-3 d-flex justify-content-between align-items-center">
                             <nav class="nav-tabs" id="navTabs">
                                 <a asp-controller="Campaign" asp-action="CampaignDetail">Campaign Detail</a>
-                                <a asp-controller="Prepay" asp-action="PrepayManagement" class="active">Prepay Request</a>
+                                <a asp-controller="Prepay" asp-action="PrepayManagement">Prepay Request</a>
                                 <a asp-controller="Payment" asp-action="PaymentManagement">Payment Request</a>
                                 <a asp-controller="Prepay" asp-action="PrepayVoucher">Prepay Voucher</a>
                                 <a asp-controller="Payment" asp-action="PaymentVoucher">Payment Voucher</a>
                                 <a asp-controller="Accounting" asp-action="AccountingBookCampaign">Accounting Book</a>
                                 <a asp-controller="Campaign" asp-action="Member">Member</a>
+                                <a asp-controller="Prepay" asp-action="PrepayManagement_PM" class="active">Prepay Created Request</a>
+                                <a asp-controller="Payment" asp-action="PaymentManagement_PM">Payment Created Request</a>
                             </nav>
                         </div>
                     </div>
@@ -130,7 +132,7 @@
                     <div id="save-btn">
                         <button class="btn btn-warning btn-lg" id="create-btn" style="margin-left:10px">Create</button>
                         <div>
-                            <a asp-controller="Prepay" asp-action="PrepayManagement" class="btn btn-success btn-lg" style="margin-left:10px">Cancel</a>
+                            <a asp-controller="Prepay" asp-action="PrepayManagement_PM" class="btn btn-success btn-lg" style="margin-left:10px">Cancel</a>
                         </div>
                     </div>
                 </div>
@@ -141,7 +143,7 @@
     <script src="../assets/js/core/popper.min.js"></script>
     <script src="../assets/js/core/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="~/js/prepay/prepaycreate.js"></script>
+    <script src="~/js/prepay/prepaycreate_pm.js"></script>
 </body>
 
 </html>

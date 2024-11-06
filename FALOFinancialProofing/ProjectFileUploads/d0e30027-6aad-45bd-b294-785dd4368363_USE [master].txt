@@ -1,0 +1,480 @@
+USE [master]
+GO
+/****** Object:  Database [SWP_Project]    Script Date: 29/05/2023 9:51:14 CH ******/
+CREATE DATABASE [SWP_Project]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'SWP_Project', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\DATA\SWP_Project.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+ LOG ON 
+( NAME = N'SWP_Project_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\DATA\SWP_Project_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+ WITH CATALOG_COLLATION = DATABASE_DEFAULT
+GO
+ALTER DATABASE [SWP_Project] SET COMPATIBILITY_LEVEL = 150
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [SWP_Project].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+ALTER DATABASE [SWP_Project] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [SWP_Project] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [SWP_Project] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [SWP_Project] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [SWP_Project] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [SWP_Project] SET AUTO_CLOSE ON 
+GO
+ALTER DATABASE [SWP_Project] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [SWP_Project] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [SWP_Project] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [SWP_Project] SET CURSOR_DEFAULT  GLOBAL 
+GO
+ALTER DATABASE [SWP_Project] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [SWP_Project] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [SWP_Project] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [SWP_Project] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [SWP_Project] SET  ENABLE_BROKER 
+GO
+ALTER DATABASE [SWP_Project] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [SWP_Project] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [SWP_Project] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [SWP_Project] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+ALTER DATABASE [SWP_Project] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [SWP_Project] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+ALTER DATABASE [SWP_Project] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [SWP_Project] SET RECOVERY SIMPLE 
+GO
+ALTER DATABASE [SWP_Project] SET  MULTI_USER 
+GO
+ALTER DATABASE [SWP_Project] SET PAGE_VERIFY CHECKSUM  
+GO
+ALTER DATABASE [SWP_Project] SET DB_CHAINING OFF 
+GO
+ALTER DATABASE [SWP_Project] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+GO
+ALTER DATABASE [SWP_Project] SET TARGET_RECOVERY_TIME = 60 SECONDS 
+GO
+ALTER DATABASE [SWP_Project] SET DELAYED_DURABILITY = DISABLED 
+GO
+ALTER DATABASE [SWP_Project] SET ACCELERATED_DATABASE_RECOVERY = OFF  
+GO
+ALTER DATABASE [SWP_Project] SET QUERY_STORE = OFF
+GO
+USE [SWP_Project]
+GO
+/****** Object:  Table [dbo].[Address]    Script Date: 29/05/2023 9:51:14 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Address](
+	[AddressID] [int] NOT NULL,
+	[Street] [nvarchar](100) NOT NULL,
+	[address_line1] [nvarchar](500) NOT NULL,
+	[address_line2] [nvarchar](500) NULL,
+	[city] [nvarchar](100) NULL,
+	[region] [nvarchar](100) NULL,
+	[postalcode] [varchar](100) NULL,
+	[CountryID] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[AddressID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Cart]    Script Date: 29/05/2023 9:51:14 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Cart](
+	[CartID] [int] NOT NULL,
+	[UserID] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[CartID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[cart_item]    Script Date: 29/05/2023 9:51:14 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[cart_item](
+	[cart_itemID] [int] NOT NULL,
+	[CartID] [int] NULL,
+	[ProductID] [int] NULL,
+	[Quantity] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[cart_itemID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Category]    Script Date: 29/05/2023 9:51:14 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Category](
+	[CategoryID] [int] NOT NULL,
+	[CategoryName] [nvarchar](100) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[CategoryID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Country]    Script Date: 29/05/2023 9:51:14 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Country](
+	[CountryID] [int] NOT NULL,
+	[CountryName] [nvarchar](100) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[CountryID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Marketing]    Script Date: 29/05/2023 9:51:14 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Marketing](
+	[MarketingID] [int] NOT NULL,
+	[MKTName] [nvarchar](100) NULL,
+	[Event] [nvarchar](100) NULL,
+	[DatePublish] [date] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[MarketingID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[OrderDetails]    Script Date: 29/05/2023 9:51:14 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[OrderDetails](
+	[OrderDetailID] [int] NOT NULL,
+	[ProductID] [int] NULL,
+	[OrderID] [int] NULL,
+	[Quantity] [int] NULL,
+	[Price] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[OrderDetailID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Product]    Script Date: 29/05/2023 9:51:14 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Product](
+	[ProductID] [int] NOT NULL,
+	[CategoryID] [int] NULL,
+	[ProductName] [nvarchar](100) NOT NULL,
+	[Collection] [nvarchar](200) NULL,
+	[Color] [nvarchar](50) NULL,
+	[Product_img] [nvarchar](250) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ProductID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Promotion]    Script Date: 29/05/2023 9:51:14 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Promotion](
+	[PromotionID] [int] NOT NULL,
+	[PromotionName] [nvarchar](100) NULL,
+	[PromotionDescription] [nvarchar](500) NULL,
+	[DiscountRate] [int] NULL,
+	[StartDate] [date] NULL,
+	[EndDate] [date] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[PromotionID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[PromotionCategory]    Script Date: 29/05/2023 9:51:14 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PromotionCategory](
+	[CategoryID] [int] NOT NULL,
+	[PromotionID] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[CategoryID] ASC,
+	[PromotionID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[shop_order]    Script Date: 29/05/2023 9:51:14 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[shop_order](
+	[shop_orderID] [int] NOT NULL,
+	[UserID] [int] NULL,
+	[AddressID] [int] NULL,
+	[Order_total] [int] NULL,
+	[Order_status] [nvarchar](100) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[shop_orderID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[User]    Script Date: 29/05/2023 9:51:14 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[User](
+	[UserID] [int] NOT NULL,
+	[UserName] [nvarchar](100) NOT NULL,
+	[Password] [nvarchar](100) NOT NULL,
+	[Email] [nvarchar](100) NOT NULL,
+	[FirstName] [nvarchar](100) NULL,
+	[LastName] [nvarchar](100) NULL,
+	[Dob] [date] NULL,
+	[Sex] [bit] NULL,
+	[Phone] [int] NULL,
+	[Role] [nvarchar](20) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[UserID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[UserAddress]    Script Date: 29/05/2023 9:51:14 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[UserAddress](
+	[AddressID] [int] NULL,
+	[UserID] [int] NULL
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[UserReview]    Script Date: 29/05/2023 9:51:14 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[UserReview](
+	[UserReviewID] [int] NOT NULL,
+	[UserID] [int] NULL,
+	[rating_value] [int] NULL,
+	[OrderDetailID] [int] NULL,
+	[Comment] [nvarchar](500) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[UserReviewID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Variation]    Script Date: 29/05/2023 9:51:14 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Variation](
+	[VariationID] [int] NOT NULL,
+	[ProductID] [int] NULL,
+	[Qty_in_stock] [int] NOT NULL,
+	[Size] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[VariationID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+INSERT [dbo].[Category] ([CategoryID], [CategoryName]) VALUES (1, N'Dresses')
+GO
+INSERT [dbo].[Category] ([CategoryID], [CategoryName]) VALUES (2, N'Tees')
+GO
+INSERT [dbo].[Category] ([CategoryID], [CategoryName]) VALUES (3, N'Bottoms')
+GO
+INSERT [dbo].[Category] ([CategoryID], [CategoryName]) VALUES (4, N'Tops')
+GO
+INSERT [dbo].[Category] ([CategoryID], [CategoryName]) VALUES (5, N'Denim')
+GO
+INSERT [dbo].[Category] ([CategoryID], [CategoryName]) VALUES (6, N'Shoes & Accessories')
+GO
+INSERT [dbo].[Category] ([CategoryID], [CategoryName]) VALUES (7, N'Swim')
+GO
+INSERT [dbo].[Category] ([CategoryID], [CategoryName]) VALUES (8, N'Sports & Skirts')
+GO
+INSERT [dbo].[Category] ([CategoryID], [CategoryName]) VALUES (61, N'Bags')
+GO
+INSERT [dbo].[Category] ([CategoryID], [CategoryName]) VALUES (62, N'Shoes')
+GO
+INSERT [dbo].[Category] ([CategoryID], [CategoryName]) VALUES (63, N'Hats')
+GO
+INSERT [dbo].[Category] ([CategoryID], [CategoryName]) VALUES (64, N'Socks')
+GO
+INSERT [dbo].[Category] ([CategoryID], [CategoryName]) VALUES (81, N'Shorts')
+GO
+INSERT [dbo].[Category] ([CategoryID], [CategoryName]) VALUES (82, N'Skirts')
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img]) VALUES (101, 1, N'The Ribbed Cotton Cross-Back Dress', NULL, N'Navy', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/1ffc045c_e889')
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img]) VALUES (201, 2, N'The Premium Weight Muscle Tee', NULL, N'Black', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/d56b1d2a_392a')
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img]) VALUES (301, 3, N'The Organic Straight-Leg Pant', NULL, N'Black', N'https://media.everlane.com/image/upload/c_fill,w_384,ar_1:1,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/18c4f697_504b')
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img]) VALUES (401, 4, N'The Boxy Oxford', NULL, N'White', N'https://media.everlane.com/image/upload/c_fill,w_384,ar_1:1,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/2af356d6_5fae')
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img]) VALUES (501, 5, N'The Way-High® Jean', NULL, N'Blue', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/9a37a4dc_0c8b')
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img]) VALUES (611, 61, N'The ReNew Transit Backpack', NULL, N'Black', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/c7a13781_f35a')
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img]) VALUES (621, 62, N'The ReLeather® Tennis Shoe', NULL, N'White', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/1052b176_f87f')
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img]) VALUES (631, 63, N'The Baseball Cap', NULL, N'Black', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/1b09229f_6da8')
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img]) VALUES (641, 64, N'The Organic Cotton No-Show Sock 3-Pack', NULL, N'Black', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/8203aefe_ab84')
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img]) VALUES (701, 7, N'The Square-Neck Bikini Top', NULL, N'Black', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/c163b86a_c50d')
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img]) VALUES (821, 82, N'The Dream Mini Skirt', NULL, N'Black', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/fbb62c02_9db4')
+GO
+ALTER TABLE [dbo].[Address]  WITH CHECK ADD FOREIGN KEY([CountryID])
+REFERENCES [dbo].[Country] ([CountryID])
+GO
+ALTER TABLE [dbo].[Cart]  WITH CHECK ADD FOREIGN KEY([UserID])
+REFERENCES [dbo].[User] ([UserID])
+GO
+ALTER TABLE [dbo].[cart_item]  WITH CHECK ADD FOREIGN KEY([CartID])
+REFERENCES [dbo].[Cart] ([CartID])
+GO
+ALTER TABLE [dbo].[cart_item]  WITH CHECK ADD FOREIGN KEY([ProductID])
+REFERENCES [dbo].[Product] ([ProductID])
+GO
+ALTER TABLE [dbo].[OrderDetails]  WITH CHECK ADD FOREIGN KEY([OrderID])
+REFERENCES [dbo].[shop_order] ([shop_orderID])
+GO
+ALTER TABLE [dbo].[OrderDetails]  WITH CHECK ADD FOREIGN KEY([ProductID])
+REFERENCES [dbo].[Product] ([ProductID])
+GO
+ALTER TABLE [dbo].[Product]  WITH CHECK ADD FOREIGN KEY([CategoryID])
+REFERENCES [dbo].[Category] ([CategoryID])
+GO
+ALTER TABLE [dbo].[PromotionCategory]  WITH CHECK ADD FOREIGN KEY([CategoryID])
+REFERENCES [dbo].[Category] ([CategoryID])
+GO
+ALTER TABLE [dbo].[PromotionCategory]  WITH CHECK ADD FOREIGN KEY([PromotionID])
+REFERENCES [dbo].[Promotion] ([PromotionID])
+GO
+ALTER TABLE [dbo].[shop_order]  WITH CHECK ADD FOREIGN KEY([AddressID])
+REFERENCES [dbo].[Address] ([AddressID])
+GO
+ALTER TABLE [dbo].[shop_order]  WITH CHECK ADD FOREIGN KEY([UserID])
+REFERENCES [dbo].[User] ([UserID])
+GO
+ALTER TABLE [dbo].[UserAddress]  WITH CHECK ADD FOREIGN KEY([AddressID])
+REFERENCES [dbo].[Address] ([AddressID])
+GO
+ALTER TABLE [dbo].[UserAddress]  WITH CHECK ADD FOREIGN KEY([UserID])
+REFERENCES [dbo].[User] ([UserID])
+GO
+ALTER TABLE [dbo].[UserReview]  WITH CHECK ADD FOREIGN KEY([OrderDetailID])
+REFERENCES [dbo].[OrderDetails] ([OrderDetailID])
+GO
+ALTER TABLE [dbo].[UserReview]  WITH CHECK ADD FOREIGN KEY([UserID])
+REFERENCES [dbo].[User] ([UserID])
+GO
+ALTER TABLE [dbo].[Variation]  WITH CHECK ADD FOREIGN KEY([ProductID])
+REFERENCES [dbo].[Product] ([ProductID])
+GO
+USE [master]
+GO
+ALTER DATABASE [SWP_Project] SET  READ_WRITE 
+GO
+alter table Product
+add Price float
+USE [SWP_Project]
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img], [Price]) VALUES (1001, 1, N'The Ribbed Cotton Cross-Back Dress', NULL, N'Blue', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/1ffc045c_e889', 1340200)
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img], [Price]) VALUES (1002, 1, N'The Smock Dress', NULL, N'Black', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/a3b1cf3e_c713', 2896300)
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img], [Price]) VALUES (2001, 2, N'The Premium Weight Muscle Tee', NULL, N'Black', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/d56b1d2a_392a', 1104500)
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img], [Price]) VALUES (2002, 2, N'The Organic Cotton Cutaway Tank', NULL, N'White', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/647333c8_7a7b', 736400)
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img], [Price]) VALUES (3001, 3, N'The Organic Straight-Leg Pant', NULL, N'Black', N'https://media.everlane.com/image/upload/c_fill,w_384,ar_1:1,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/18c4f697_504b', 2405400)
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img], [Price]) VALUES (3002, 3, N'The Utility Barrel Pant', NULL, N'White', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/94385ed0_57bc', 2405400)
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img], [Price]) VALUES (4001, 4, N'The Boxy Oxford', NULL, N'White', N'https://media.everlane.com/image/upload/c_fill,w_384,ar_1:1,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/2af356d6_5fae', 2160000)
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img], [Price]) VALUES (4002, 4, N'The Clean Silk Short-Sleeve Square Shirt', NULL, N'Brown', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/148fd86e_c887', 3436300)
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img], [Price]) VALUES (5001, 5, N'The Way-High® Jean', NULL, N'Blue', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/9a37a4dc_0c8b', 2172200)
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img], [Price]) VALUES (5002, 5, N'The ’90s Cheeky® Jean', NULL, N'Blue', N'https://media.everlane.com/image/upload/c_fill,w_384,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/0c7d505f_ff2b', 1890000)
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img], [Price]) VALUES (6101, 61, N'The ReNew Transit Backpack', NULL, N'Black', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/c7a13781_f35a', 2331800)
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img], [Price]) VALUES (6102, 61, N'The Renew Transit Catch-All Case', NULL, N'White', N'https://media.everlane.com/image/upload/c_fill,w_384,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/57c4968a_27c1', 859100)
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img], [Price]) VALUES (6201, 62, N'The ReLeather® Tennis Shoe', NULL, N'White', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/1052b176_f87f', 1890000)
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img], [Price]) VALUES (6202, 62, N'The Modern Loafer', NULL, N'Black', N'https://media.everlane.com/image/upload/c_fill,w_384,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/0b6b1956_9e8c', 4049900)
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img], [Price]) VALUES (6301, 63, N'The Baseball Cap', NULL, N'Black', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/1b09229f_6da8', 981800)
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img], [Price]) VALUES (6302, 63, N'The Nylon 5-Panel Cap', NULL, N'Black', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/6ecff345_8967', 785400)
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img], [Price]) VALUES (6401, 64, N'The Organic Cotton No-Show Sock 3-Pack', NULL, N'Black', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/8203aefe_ab84', 687300)
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img], [Price]) VALUES (6402, 64, N'The Organic Cotton Ribbed Crew Sock 3-Pack', NULL, N'Black', N'https://media.everlane.com/image/upload/c_fill,w_384,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/48ba175d_7986', 859100)
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img], [Price]) VALUES (7001, 7, N'The Square-Neck Bikini Top', NULL, N'Black', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/c163b86a_c50d', 1227300)
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img], [Price]) VALUES (7002, 7, N'The ReNew Plunge Triangle Top', NULL, N'Green', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/ba73eaac_6648', 859100)
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img], [Price]) VALUES (8101, 81, N'The Way-High® Jean Short', NULL, N'Blue', N'https://media.everlane.com/image/upload/c_fill,w_384,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/e0fb096f_95fe', 1251800)
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img], [Price]) VALUES (8102, 81, N'The A-Line Denim Short', NULL, N'Black', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/4825a47a_9264', 1669100)
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img], [Price]) VALUES (8201, 82, N'The Dream Mini Skirt', NULL, N'Black', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/fbb62c02_9db4', 1423600)
+GO
+INSERT [dbo].[Product] ([ProductID], [CategoryID], [ProductName], [Collection], [Color], [Product_img], [Price]) VALUES (8202, 82, N'The City Stripe Midi Skirt', NULL, N'White', N'https://media.everlane.com/image/upload/c_fill,w_1080,ar_4:5,q_auto,dpr_1.0,f_auto,fl_progressive:steep/i/cefd0264_bad6', 2199300)
+GO
