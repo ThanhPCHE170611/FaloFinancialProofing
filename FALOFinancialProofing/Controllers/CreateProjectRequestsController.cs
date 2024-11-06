@@ -1,7 +1,11 @@
 ﻿using FALOFinancialProofing.Attributes.RoleAttributes;
+using FALOFinancialProofing.Constant;
+using FALOFinancialProofing.DTOs.CampaignDTO;
+using FALOFinancialProofing.DTOs.CreateProjectRequestDTO;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.CreateProjectRequestServices;
+using FALOFinancialProofing.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,10 +34,10 @@ namespace FALOFinancialProofing.Controllers
 
         [RoleAttribute(AppRole.ProjectManagementBoard)]
         [HttpGet("GetCreateProjectRequestByPMB")]
-        public async Task<ActionResult<IEnumerable<CreateProjectRequest>>> GetCreateProjectRequests()
+        public async Task<ActionResult<IEnumerable<CreateProjectRequestInformation>>> GetCreateProjectRequests()
         {
             StringBuilder message = new StringBuilder();
-            IEnumerable<CreateProjectRequest> data = null;
+            IEnumerable<CreateProjectRequestInformation> data = null;
             try
             {
                 data = await _createProjectRequestService.GetAllCreateProjectRequestsByPMBAsync(message);
@@ -49,6 +53,44 @@ namespace FALOFinancialProofing.Controllers
                 Success = true,
                 Message = message.ToString(),
                 Data = data
+            });
+        }
+
+        [HttpGet("GetAllProjectsByUserId/{ProjectId}")]
+        public async Task<IActionResult> GetAllProjectsByUserId(int UserId, string? status, int currentPage = IntConstant.PageNumberDefault)
+        {
+            List<CampaignInformation> data = null;
+            FilterPagingData filterPagingData = new FilterPagingData();
+            try
+            {
+                data = await _campaignService.GetAllCampaignsByProjectIdAsync(ProjectId);
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "Get All Campaign By ProjectId Failed!",
+                        Data = data
+                    });
+                }
+                if (!string.IsNullOrEmpty(status))
+                {
+                    data = data.FindAll(x => x.Status == status);
+                }
+                filterPagingData.DataCount = data.Count;
+                filterPagingData.CurrentPage = currentPage;
+                data = PaginationHelper.Paginate<CampaignInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                filterPagingData.Data = data;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAllCampaignByProjectId: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "Get All Campaign By ProjectId Successfully!",
+                Data = filterPagingData
             });
         }
         // GET: api/CreateProjectRequests/5

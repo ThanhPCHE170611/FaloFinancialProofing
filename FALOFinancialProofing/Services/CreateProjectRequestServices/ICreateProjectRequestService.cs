@@ -1,4 +1,5 @@
-﻿using FALOFinancialProofing.Models;
+﻿using FALOFinancialProofing.DTOs.CreateProjectRequestDTO;
+using FALOFinancialProofing.Models;
 using System.Text;
 
 namespace FALOFinancialProofing.Services.CreateProjectRequestServices
@@ -11,6 +12,6 @@ namespace FALOFinancialProofing.Services.CreateProjectRequestServices
         Task<bool> UpdateCreateProjectRequestAsync(CreateProjectRequest updateProjectRequest);
         Task<bool> DeleteCreateProjectRequestAsync(int id);
         Task<CreateProjectRequest> CreateCreateProjectRequestReturnEntityAsync(CreateProjectRequest createCreateProjectRequest);
-        Task<IEnumerable<CreateProjectRequest>> GetAllCreateProjectRequestsByPMBAsync(StringBuilder message);
+        Task<IEnumerable<CreateProjectRequestInformation>> GetAllCreateProjectRequestsByPMBAsync(StringBuilder message);
     }
 }

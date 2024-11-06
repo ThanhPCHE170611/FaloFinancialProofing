@@ -200,7 +200,7 @@ namespace FALOFinancialProofing.Controllers
                 {
                     ProjectId = project.Id,
                     SenderId = createProject.CreatedBy,
-                    Title = "Create Project",
+                    Title = $"Create {checkProjectCreated.ProjectName} Project",
                     CreatedAt = DateTime.Now,
                     Status = RequestStatus.Pending
                 };

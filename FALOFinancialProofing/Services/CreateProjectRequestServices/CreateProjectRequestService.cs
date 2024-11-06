@@ -1,4 +1,6 @@
-﻿using FALOFinancialProofing.DTOs.ProjectDTOs;
+﻿using FALOFinancialProofing.DTOs.CreateProjectFileDTO;
+using FALOFinancialProofing.DTOs.CreateProjectRequestDTO;
+using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
@@ -92,17 +94,37 @@ namespace FALOFinancialProofing.Services.CreateProjectRequestServices
             return data;
         }
 
-        public async Task<IEnumerable<CreateProjectRequest>> GetAllCreateProjectRequestsByPMBAsync(StringBuilder message)
+        public async Task<IEnumerable<CreateProjectRequestInformation>> GetAllCreateProjectRequestsByPMBAsync(StringBuilder message)
         {
-            List<CreateProjectRequest> data = null!;
+            List<CreateProjectRequestInformation> data = null!;
             try
             {
-                data = await _createProjectRequestRepository.GetAll().Where(pr => pr.Status.Equals(RequestStatus.Pending)).ToListAsync();
+                data = await _createProjectRequestRepository.GetAll()
+                    .Where(pr => pr.Status.Equals(RequestStatus.Pending))
+                    .Select(s => new CreateProjectRequestInformation()
+                    {
+                        Id = s.Id,
+                        SenderId = s.SenderId,
+                        SenderName = $"{s.SenderUser.FirstName} {s.SenderUser.LastName}",
+                        ReceiverId = s.ReceiverId,
+                        ReceiverName = $"{s.ReceiverUser.FirstName} {s.ReceiverUser.LastName}",
+                        ProjectId = s.ProjectId,
+                        Title = s.Title,
+                        CreatedAt = s.CreatedAt,
+                        Feedback = s.Feedback,
+                        Status = s.Status,
+                        CreateProjectFiles = s.CreateProjectFiles.Select(f => new CreateProjectFileInformation()
+                        {
+                            Id = f.Id,
+                            RequestId = f.RequestId,
+                            FilePath = f.FilePath
+                        }).ToList()
+                    }).ToListAsync();
             }
             catch (Exception ex)
             {
                 message.Append(ex.Message);
-                await Console.Out.WriteLineAsync($"GetAllCreateProjectRequests: {ex.Message}");
+                await Console.Out.WriteLineAsync($"GetAllCreateProjectRequestsByPMBAsync: {ex.Message}");
             }
 
             return data;
