@@ -174,6 +174,7 @@ namespace FALOFinancialProofing.Services.ProjectServices
                 data = await _projectRepository.GetAll()
                     .Select(p => new ProjectInformation()
                     {
+                        id = p.Id,
                         CreatedBy = p.CreatedBy,
                         UserImage = p.User != null ? p.User.Image : "No Image",
                         ProjectName = p.ProjectName,

@@ -1,6 +1,7 @@
 ﻿using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.DTOs.CampaignDTO;
 using FALOFinancialProofing.DTOs.CampaignMemberDTO;
+using FALOFinancialProofing.DTOs.RoleDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
@@ -41,6 +42,25 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 return null;
             }
         }
+
+        public async Task<CampaignMember?> CreateCampaignMemberAsync(CampaignMember campaignMember)
+        {
+            try
+            {
+                var existingCampaignMember = await cmRepository.Get(x => x.CampaignId == campaignMember.CampaignId && x.UserId == campaignMember.UserId);
+
+                if (existingCampaignMember != null)
+                {
+                    return null;
+                }
+
+                return await cmRepository.InsertAsync(campaignMember);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
         private async Task<CampaignMember> CreateCampaignMemberDTOToEntity(CreateCampaignMemberDTO createCampaignMemberDTO)
         {
             return new CampaignMember
@@ -62,6 +82,35 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             }
         }
 
+        public async Task<List<CampaignMemberInformation>> GetAllCampaignMemberByUserIdAndRoleIdAsync(string userId, string roleId)
+        {
+            var campaignMembers = new List<CampaignMemberInformation>();
+            try
+            {
+                campaignMembers = await cmRepository.GetAll().Where(cm => cm.UserId.Equals(userId) && roleId.Equals(roleId)).Select(cm => new CampaignMemberInformation()
+                {
+                    id = cm.Id,
+                    UserId = cm.UserId,
+                    UserName = cm.User.UserName,
+                    FirstName = cm.User.FirstName,
+                    LastName = cm.User.LastName,
+                    CampaignId = cm.CampaignId,
+                    CampaignTitle = cm.Campaign.Title,
+                    Debt = cm.Debt,
+                    IsActive = cm.IsActive,
+                    roleInformation = new RoleInformation()
+                    {
+                        RoleId = cm.RoleId,
+                        RoleName = cm.IdentityRole.Name
+                    }
+                }).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAllCampaignMemberByUserIdAndRoleIdAsync: {ex.Message}");
+            }
+            return campaignMembers;
+        }
         public async Task<CampaignMember?> GetCampaignMemberByIdAsync(int id)
         {
             try
@@ -86,7 +135,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             }
         }
 
-        public async Task<bool> UpdateCampaignMemberStatusAsync(UpdateCampaignMemberStatusDTO updateCampaignMemberStatusDTO)
+        public async Task<bool> UpdateCampaignMemberStatusAsync(UpdateCampaignMemberStatusDTO updateCampaignMemberStatusDTO, StringBuilder message)
         {
             try
             {
@@ -94,15 +143,19 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
 
                 if (existingCampaignMember == null)
                 {
-                    return false;
+                    throw new Exception("CampaignMember not found.");
                 }
-
+                if (existingCampaignMember.Debt != 0)
+                {
+                    throw new Exception("Cannot deactivate CampaignMember with debt greater than 0.");
+                }
                 UpdateCampaignMemberStatusDTOToEntity(existingCampaignMember, updateCampaignMemberStatusDTO);
 
                 return await cmRepository.UpdateAsync(existingCampaignMember);
             }
             catch (Exception ex)
             {
+                message.Append(ex.Message);
                 await Console.Out.WriteLineAsync($"UpdateCampaignMemberStatusAsync: {ex.Message}");
                 return false;
             }
@@ -128,6 +181,26 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 return false;
             }
         }
+        //public async Task<bool> UpdateCampaignMemberAsync(CampaignMember campaignMember)
+        //{
+        //    try
+        //    {
+        //        var existingCampaignMember = await cmRepository.Get(campaignMember.Id);
+
+        //        if (existingCampaignMember == null)
+        //        {
+        //            return false;
+        //        }
+
+
+
+        //        return await cmRepository.UpdateAsync(existingCampaignMember);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return false;
+        //    }
+        //}
 
         private void UpdateCampaignMemberDTOToEntity(CampaignMember campaignMember, UpdateCampaignMemberDTO updateCampaignMemberDTO)
         {

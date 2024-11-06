@@ -5,10 +5,14 @@ using FALOFinancialProofing.DTOs.CreateProjectRequestDTO;
 using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
+using FALOFinancialProofing.Repository;
+using FALOFinancialProofing.Services;
+using FALOFinancialProofing.Services.CampaignMemberService;
 using FALOFinancialProofing.Services.CampaignService;
 using FALOFinancialProofing.Services.CreateCampaignFileServices;
 using FALOFinancialProofing.Services.CreateCampaignRequestServices;
 using FALOFinancialProofing.Utilities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 
@@ -22,12 +26,16 @@ namespace FALOFinancialProofing.Controllers
         private readonly ICampaignService _campaignService;
         private readonly ICreateCampaignRequestService _createCampaignRequestService;
         private readonly ICreateCampaignFileService _createCampaignFileService;
+        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly ICampaignMemberService _campaignMemberService;
 
-        public CampaignController(ICampaignService campaignService, ICreateCampaignRequestService createCampaignRequestService, ICreateCampaignFileService createCampaignFileService)
+        public CampaignController(ICampaignService campaignService, ICreateCampaignRequestService createCampaignRequestService, ICreateCampaignFileService createCampaignFileService, RoleManager<IdentityRole> roleManager, ICampaignMemberService campaignMemberService)
         {
             _campaignService = campaignService;
             _createCampaignRequestService = createCampaignRequestService;
             _createCampaignFileService = createCampaignFileService;
+            this.roleManager = roleManager;
+            _campaignMemberService = campaignMemberService;
         }
 
         //[HttpGet("GetAllCampaign")]
@@ -161,6 +169,17 @@ namespace FALOFinancialProofing.Controllers
                         Message = stringBuilderMessage.ToString()
                     });
                 }
+                // add PM Vào campaingMember
+                var Role = await roleManager.FindByNameAsync(AppRole.ProjectManager);
+                CampaignMember PMCampaignMember = new CampaignMember()
+                {
+                    CampaignId = checkCampaignCreated.Id,
+                    UserId = checkCampaignCreated.CreateBy,
+                    Debt = 0,
+                    IsActive = true,
+                    RoleId = Role.Id
+                };
+                await _campaignMemberService.CreateCampaignMemberAsync(PMCampaignMember);
                 // tạo request trước mới tạo fileAttach
                 CreateCampaignRequest createCampaignRequest = new CreateCampaignRequest()
                 {
