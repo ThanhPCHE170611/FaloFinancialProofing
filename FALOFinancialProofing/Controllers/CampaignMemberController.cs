@@ -82,6 +82,45 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
+        [HttpGet("GetAllCampaignMembersByCampaignId")]
+        public async Task<IActionResult> GetAllCampaignMembersByCampaignId(int CampaignId, bool? isActive, int currentPage = IntConstant.PageNumberDefault)
+        {
+            List<CampaignMemberInformation> data = null;
+            FilterPagingData filterPagingData = new FilterPagingData();
+            try
+            {
+                data = await _campaignMemberService.GetAllCampaignMemberByCampaignIdAsync(CampaignId);
+
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "GetAllCampaignMembers By CampaignId Failed!",
+                        Data = data
+                    });
+                }
+                if (isActive != null)
+                {
+                    data = data.FindAll(x => x.IsActive == isActive);
+                }
+                filterPagingData.DataCount = data.Count;
+                filterPagingData.CurrentPage = currentPage;
+                data = PaginationHelper.Paginate<CampaignMemberInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                filterPagingData.Data = data;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAllCampaignMemberByUserIdAndRoleId: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "GetAllCampaignMember By CampaignId Successfully!",
+                Data = filterPagingData
+            });
+        }
+
         [HttpGet("GetCampaignMemberById/{id}")]
         public async Task<IActionResult> GetCampaignMemberById(int id)
         {
