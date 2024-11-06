@@ -180,7 +180,7 @@ namespace FALOFinancialProofing.Controllers
             {
                 Success = true,
                 Message = "Get Four Campaign By ProjectId Successfully!",
-
+                Data = data
             });
         }
         //[RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
