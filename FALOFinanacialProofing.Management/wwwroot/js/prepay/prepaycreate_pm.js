@@ -139,7 +139,7 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.success) {
                     alert('Create new PrePay RequestForm successfully.');
-                    window.location.href = `/Prepay/PrepayManagement?campaignid=${campaignId}`;
+                    window.location.href = `/Prepay/PrepayManagement_PM?campaignid=${campaignId}`;
                 } else {
                     alert('Error: ' + response.Message);
                 }

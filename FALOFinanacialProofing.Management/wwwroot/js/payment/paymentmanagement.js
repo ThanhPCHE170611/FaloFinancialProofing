@@ -208,7 +208,7 @@ function approveRequest(button, requestId) {
                 console.log(checkrole);
                 console.log(userId);
                 if (response.success) {
-                    updateRowToApproved(button);
+                    updateRowToApproved(button, requestId);
                     alert("Request approved successfully for Volunteer Leader.");
                 } else {
                     alert(response.message || "Failed to approve the request.");
@@ -260,7 +260,7 @@ function approveRequest(button, requestId) {
                 console.log(checkrole);
                 console.log(userId);
                 if (response.success) {
-                    updateRowToApprovedForPM(button);
+                    updateRowToApprovedForPM(button, requestId);
                     alert("Request approved successfully for Volunteer Leader.");
                 } else {
                     alert(response.message || "Failed to approve the request.");
@@ -291,7 +291,7 @@ function declineRequest(button, requestId) {
             },
             success: function (response) {
                 if (response.success) {
-                    updateRowToRejected(button);
+                    updateRowToRejected(button, requestId);
                     alert("Request declined successfully for Volunteer Leader.");
                 } else {
                     alert(response.message || "Failed to decline the request.");
@@ -315,7 +315,7 @@ function declineRequest(button, requestId) {
             },
             success: function (response) {
                 if (response.success) {
-                    updateRowToRejected(button);
+                    updateRowToRejected(button, requestId);
                     alert("Request declined successfully for Volunteer Leader.");
                 } else {
                     alert(response.message || "Failed to decline the request.");
@@ -339,7 +339,7 @@ function declineRequest(button, requestId) {
             },
             success: function (response) {
                 if (response.success) {
-                    updateRowToRejected(button);
+                    updateRowToRejected(button, requestId);
                     alert("Request declined successfully for Volunteer Leader.");
                 } else {
                     alert(response.message || "Failed to decline the request.");
@@ -352,7 +352,7 @@ function declineRequest(button, requestId) {
     }
 }
 
-function updateRowToApproved(button) {
+function updateRowToApproved(button, id) {
     const row = button.closest('tr');
     const actionCell = row.querySelector('td:nth-child(9)');
     const statusCell = row.querySelector('td:nth-child(7)');
@@ -367,13 +367,9 @@ function updateRowToApproved(button) {
     approvedText.textContent = 'Approved';
 
     const detailLink = document.createElement('a');
-    detailLink.href = '#';
+    detailLink.href = `/Payment/PaymentDetail?requestId=${id}`;
     detailLink.classList.add('text-blue');
     detailLink.textContent = 'Detail';
-    detailLink.addEventListener('click', function (event) {
-        event.preventDefault();
-        showDetail();
-    });
     actionCell.appendChild(approvedText);
     actionCell.appendChild(detailLink);
 }
@@ -395,19 +391,15 @@ function updateRowToApprovedForAcc(requestId) {
     approvedText.textContent = 'Approved';
 
     const detailLink = document.createElement('a');
-    detailLink.href = '#';
+    detailLink.href = `/Payment/PaymentDetail?requestId=${requestId}`;
     detailLink.classList.add('text-blue');
     detailLink.textContent = 'Detail';
-    detailLink.addEventListener('click', function (event) {
-        event.preventDefault();
-        showDetail();
-    });
     actionCell.innerHTML = '';
     actionCell.appendChild(approvedText);
     actionCell.appendChild(detailLink);
 }
 
-function updateRowToApprovedForPM(button) {
+function updateRowToApprovedForPM(button, id) {
     const row = button.closest('tr');
     const actionCell = row.querySelector('td:nth-child(9)');
     const statusCell = row.querySelector('td:nth-child(7)');
@@ -425,20 +417,17 @@ function updateRowToApprovedForPM(button) {
     approvedText.textContent = 'Approved';
 
     const detailLink = document.createElement('a');
-    detailLink.href = '#';
+    detailLink.href = `/Payment/PaymentDetail?requestId=${id}`;
     detailLink.classList.add('text-blue');
     detailLink.textContent = 'Detail';
-    detailLink.addEventListener('click', function (event) {
-        event.preventDefault();
-        showDetail();
-    });
+
     actionCell.appendChild(approvedText);
     actionCell.appendChild(detailLink);
     statusCell.innerHTML = '';
     statusCell.appendChild(declinedText);
 }
 
-function updateRowToRejected(button) {
+function updateRowToRejected(button, id) {
     const row = button.closest('tr');
     const actionCell = row.querySelector('td:nth-child(9)');
     const statusCell = row.querySelector('td:nth-child(7)');
@@ -456,13 +445,9 @@ function updateRowToRejected(button) {
     rejectedText.textContent = 'Rejected';
 
     const detailLink = document.createElement('a');
-    detailLink.href = '#';
+    detailLink.href = `/Payment/PaymentDetail?requestId=${id}`;
     detailLink.classList.add('text-blue');
     detailLink.textContent = 'Detail';
-    detailLink.addEventListener('click', function (event) {
-        event.preventDefault();
-        showDetail();
-    });
 
     actionCell.appendChild(rejectedText);
     actionCell.appendChild(detailLink);
@@ -475,7 +460,7 @@ function updateRowToRejected(button) {
 $(document).ready(function () {
     const userId = localStorage.getItem('userId');
     // const campaignId = new URLSearchParams(window.location.search).get('campaignid');
-    const campaignId = localStorage.getItem('campaignid');
+    const campaignId = localStorage.getItem('campaignId');
     const checkrole = localStorage.getItem('loggingRole');
     const jwtToken = localStorage.getItem('jwtToken');
     let currentPage = 1;
@@ -530,7 +515,47 @@ $(document).ready(function () {
         return formattedDate + ' ' + formattedTime;
     }
 
+    function downloadAttachment(fileName) {
+        $.ajax({
+            url: `https://localhost:7294/api/AttachmentFile/downloadprepayattachmentfile/${fileName}`,
+            method: 'GET',
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function (response, status, xhr) {
+                const contentType = xhr.getResponseHeader('Content-Type');
+                const blob = new Blob([response], { type: contentType });
+                const link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = fileName;
+                link.click();
+            },
+            error: function () {
+                alert('Failed to download attachment file. Please try again.');
+            }
+        });
+    }
 
+    function downloadVoucher(fileName) {
+        $.ajax({
+            url: `https://localhost:7294/api/Voucher/downloadprepayvoucherfile/${fileName}`,
+            method: 'GET',
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function (response, status, xhr) {
+                const contentType = xhr.getResponseHeader('Content-Type');
+                const blob = new Blob([response], { type: contentType });
+                const link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = fileName;
+                link.click();
+            },
+            error: function () {
+                alert('Failed to download voucher file. Please try again.');
+            }
+        });
+    }
 
 
     function loadPrepayRequests(page) {
@@ -591,8 +616,8 @@ $(document).ready(function () {
                         let attachmentLinks = '';
                         if (request.attachmentFiles && request.attachmentFiles.length > 0) {
                             attachmentLinks = request.attachmentFiles.map(file => `
-                                        <a href="${file.filePath}" class="btn btn-link text-info" download="${file.filePath}">${file.filePath}</a>
-                                    `).join('<br>');
+                                <a href="javascript:void(0);" onclick="downloadAttachment('${file.filePath}')" class="btn btn-link text-info">${file.filePath}</a>
+                                `).join('<br>');
                         } else {
                             attachmentLinks = '<span class="text-muted">No Attachments</span>';
                         }
@@ -602,8 +627,8 @@ $(document).ready(function () {
                             const validFiles = request.voucherFiles.filter(file => file.filePath);
                             if (validFiles.length > 0) {
                                 voucherLinks = validFiles.map(file => `
-                                        <a href="${file.filePath}" class="btn btn-link text-info" download="${file.filePath}">${file.filePath}</a>
-                                        `).join('<br>');
+                                <a href="javascript:void(0);" onclick="downloadVoucher('${file.filePath}')" class="btn btn-link text-info">${file.filePath}</a>
+                                `).join('<br>');
                             } else {
                                 voucherLinks = '<span class="text-muted">No Attachments</span>';
                             }

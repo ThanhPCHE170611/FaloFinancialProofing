@@ -19,6 +19,8 @@ $(document).ready(function () {
     const campaignId = localStorage.getItem('campaignId');
     const checkrole = localStorage.getItem('loggingRole');
 
+    console.log(campaignId);
+
     if (checkrole && checkrole !== 'Volunteer') {
         const newLink = document.createElement('a');
         newLink.setAttribute('asp-controller', 'Prepay');

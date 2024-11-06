@@ -331,10 +331,10 @@
                     },
                     success: function (response) {
                         if (response.success) {
-
-                            populateTable(response.data);
+                            console.log("API response data:", response.data); 
+                            populateTable(response.data.data);
                         } else {
-                            alert('Failed to retrieve project requests: ' + response.Message);
+                            alert('Failed to retrieve project requests: ' + response.message);
                         }
                     },
                     error: function (xhr, status, error) {
