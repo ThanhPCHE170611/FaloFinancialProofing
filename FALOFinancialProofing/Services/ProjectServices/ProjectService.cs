@@ -123,12 +123,28 @@ namespace FALOFinancialProofing.Services.ProjectServices
 
             return checkValid;
         }
-        public async Task<IEnumerable<Project>> GetAllProjectsAsync()
+        public async Task<IEnumerable<ProjectInformation>> GetAllProjectsAsync()
         {
-            List<Project> data = null!;
+            List<ProjectInformation> data = null!;
             try
             {
-                data = await _projectRepository.GetAll().ToListAsync();
+                data = await _projectRepository.GetAll()
+                      .Select(p => new ProjectInformation()
+                      {
+                          id = p.Id,
+                          UserImage = p.User != null ? p.User.Image : "No Image",
+                          CreatedBy = p.CreatedBy,
+                          FirstName = p.User.FirstName,
+                          LastName = p.User.LastName,
+                          ProjectName = p.ProjectName,
+                          Description = p.Description,
+                          DateOfCreation = p.DateOfCreation,
+                          Status = p.Status,
+                          IsActive = p.IsActive,
+                          OrganizationId = p.OrganizationId,
+                          OrganizationName = p.Organization != null ? p.Organization.Name : "No Organization"
+
+                      }).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -148,6 +164,8 @@ namespace FALOFinancialProofing.Services.ProjectServices
                         id = p.Id,
                         UserImage = p.User != null ? p.User.Image : "No Image",
                         CreatedBy = p.CreatedBy,
+                        FirstName = p.User.FirstName,
+                        LastName = p.User.LastName,
                         ProjectName = p.ProjectName,
                         Description = p.Description,
                         DateOfCreation = p.DateOfCreation,
@@ -174,8 +192,11 @@ namespace FALOFinancialProofing.Services.ProjectServices
                 data = await _projectRepository.GetAll()
                     .Select(p => new ProjectInformation()
                     {
+                        id = p.Id,
                         CreatedBy = p.CreatedBy,
                         UserImage = p.User != null ? p.User.Image : "No Image",
+                        FirstName = p.User.FirstName,
+                        LastName = p.User.LastName,
                         ProjectName = p.ProjectName,
                         Description = p.Description,
                         DateOfCreation = p.DateOfCreation,
@@ -202,6 +223,8 @@ namespace FALOFinancialProofing.Services.ProjectServices
                     {
                         id = p.Id,
                         UserImage = p.User != null ? p.User.Image : "No Image",
+                        FirstName = p.User.FirstName,
+                        LastName = p.User.LastName,
                         CreatedBy = p.CreatedBy,
                         ProjectName = p.ProjectName,
                         Description = p.Description,

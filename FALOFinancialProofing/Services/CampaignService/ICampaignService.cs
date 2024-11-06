@@ -7,7 +7,7 @@ namespace FALOFinancialProofing.Services.CampaignService
     public interface ICampaignService
     {
         Task<bool> CreateCampaignRequestAsync(CreateCampaignClientRequest createCampaignClientRequest);
-        Task<List<Campaign>> GetAllCampaignsAsync();
+        Task<List<CampaignInformation>> GetAllCampaignsAsync();
         Task<Campaign?> GetCampaignByIdAsync(int id);
         Task<Campaign?> CreateCampaignAsync(CreateCampaignDTO createCampaignDTO);
         Task<bool> UpdateCampaignAsync(UpdateCampaignDTO updateCampaignDTO);

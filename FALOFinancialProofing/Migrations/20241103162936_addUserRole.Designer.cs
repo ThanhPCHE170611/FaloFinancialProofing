@@ -4,6 +4,7 @@ using FALOFinancialProofing.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FALOFinancialProofing.Migrations
 {
     [DbContext(typeof(FALOFinancialProofingDbContext))]
-    partial class FALOFinancialProofingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241103162936_addUserRole")]
+    partial class addUserRole
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -109,9 +112,6 @@ namespace FALOFinancialProofing.Migrations
                     b.Property<string>("Address")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
-
-                    b.Property<int?>("BankId")
-                        .HasColumnType("int");
 
                     b.Property<string>("BankingNumber")
                         .HasColumnType("nvarchar(max)");
@@ -914,13 +914,6 @@ namespace FALOFinancialProofing.Migrations
                             ConcurrencyStamp = "ba58588f-f626-41a0-8fca-b74481367335",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "15db7f37-5dbc-4035-9b00-a0af4c3fe8bd",
-                            ConcurrencyStamp = "ba58588f-f626-41a0-8fca-b74481367337",
-                            Name = "Donor",
-                            NormalizedName = "DONOR"
                         });
                 });
 
