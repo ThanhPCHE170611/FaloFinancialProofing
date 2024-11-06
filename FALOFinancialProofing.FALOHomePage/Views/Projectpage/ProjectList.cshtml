@@ -76,6 +76,7 @@
             });
 
             var url = '/Projectpage/Index/' + project.id;
+            var creator = project.firstName + ' ' + project.lastName;
 
             var cardHtml = `<div class="col-xl-4 col-md-6 wow fadeInUp" data-wow-delay="200ms" data-wow-duration="1500ms">
                             <div class="event__inner-item">
@@ -94,7 +95,7 @@
                                                       stroke="#F74F22" stroke-width="1.3" />
                                             </svg>
                                             <a href="${url}">
-                                                <span class="primary-hover transition">${project.firstName} ${project.lastName}</span>
+                                                <span class="primary-hover transition">${creator}</span>
                                             </a>
                                         </li>
                                     </ul>
