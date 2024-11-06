@@ -65,12 +65,15 @@ namespace FALOFinancialProofing.Services.CampaignRequestApproveHistoryServices
                             campaign.IsActive = true;
                             campaign.Status = RequestStatus.FundRaising;
                             campaign.BankingNumber = createCampaignRequestApproveHistoryClientRequest.BankingNumber;
+                            campaign.BankId = createCampaignRequestApproveHistoryClientRequest.BankId;
+
                         }
                         else
                         {
                             CampaignRequest.Status = RequestStatus.Rejected;
                             campaign.IsActive = false;
                             campaign.BankingNumber = null;
+                            campaign.BankId = null;
                             campaign.Status = RequestStatus.Rejected;
                         }
                     }
@@ -87,6 +90,7 @@ namespace FALOFinancialProofing.Services.CampaignRequestApproveHistoryServices
                             CampaignRequest.Status = RequestStatus.Rejected;
                             campaign.IsActive = false;
                             campaign.BankingNumber = null;
+                            campaign.BankId = null;
                             campaign.Status = RequestStatus.Rejected;
                             await _campaignRepository.UpdateAsync(campaign);
                             await _createCampaignRequestRepository.UpdateAsync(CampaignRequest);
@@ -100,6 +104,7 @@ namespace FALOFinancialProofing.Services.CampaignRequestApproveHistoryServices
                             campaign.IsActive = true;
                             campaign.Status = RequestStatus.FundRaising;
                             campaign.BankingNumber = createCampaignRequestApproveHistoryClientRequest.BankingNumber;
+                            campaign.BankId = createCampaignRequestApproveHistoryClientRequest.BankId;
                         }
                     }
 
@@ -122,6 +127,7 @@ namespace FALOFinancialProofing.Services.CampaignRequestApproveHistoryServices
                         CampaignRequest.Status = RequestStatus.Rejected;
                         campaign.IsActive = false;
                         campaign.BankingNumber = null;
+                        campaign.BankId = null;
                         campaign.Status = RequestStatus.Rejected;
                     }
                     else

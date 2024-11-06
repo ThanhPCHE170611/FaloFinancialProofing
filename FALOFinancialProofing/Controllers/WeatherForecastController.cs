@@ -1,6 +1,7 @@
 using FALOFinancialProofing.Attributes;
 using FALOFinancialProofing.Attributes.RoleAttributes;
 using FALOFinancialProofing.Helpers;
+using FALOFinancialProofing.Services;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,9 +20,11 @@ namespace FALOFinancialProofing.Controllers
 
         private readonly ILogger<WeatherForecastController> _logger;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        private readonly BankService bankService;
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, BankService bankService)
         {
             _logger = logger;
+            this.bankService = bankService;
         }
 
 
@@ -82,6 +85,38 @@ namespace FALOFinancialProofing.Controllers
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToArray();
+        }
+        //[HttpGet("ReturnImage")]
+        //public async Task<IActionResult> GetImageByAPI()
+        //{
+        //    var filePath = "E:\\PRN231\\PRNPEImage\\ACB.png";
+        //    if (!System.IO.File.Exists(filePath))
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var image = System.IO.File.OpenRead(filePath);
+        //    return File(image, "image/png");
+        //}
+
+        [HttpGet("Get-Banks")]
+        public async Task<IActionResult> GetBanks()
+        {
+            var b = await bankService.GetBanks();
+            BankRequest bankRequest = new BankRequest()
+            {
+                accountNo = 1016161976,
+                accountName = "Nguyen Van Duc",
+                acqId = 970436,
+                amount = 100000,
+                addInfo = "Test chuyen tien",
+                format = "text",
+                template = "print"
+            };
+            var response = await bankService.GetQRCode(bankRequest);
+            var image = bankService.ConvertBase64ToImage(response.data.qrDataURL);
+
+            return File(image, "image/png");
         }
     }
 }

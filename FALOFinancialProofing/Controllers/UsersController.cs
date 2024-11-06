@@ -24,6 +24,9 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using FALOFinancialProofing.DTOs.UserDTOs;
 using FALOFinancialProofing.Attributes.RoleAttributes;
+using FALOFinancialProofing.Constant;
+using FALOFinancialProofing.DTOs.CampaignDTO;
+using FALOFinancialProofing.Utilities;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -186,6 +189,117 @@ namespace FALOFinancialProofing.Controllers
             }
         }
 
+        [HttpPost("Donor-Register")]
+        public async Task<IActionResult> DonorRegister([FromBody] SignUpRequest registerRequest)
+        {
+            var user = await authServices.RegisterDonor(registerRequest);
+            if (user == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "Register Failed"
+                });
+            }
+            else
+            {
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Register Success",
+                });
+            }
+        }
+
+        [HttpPost("Admin-Register")]
+        public async Task<IActionResult> AdminRegister([FromBody] SignUpAdminRequest registerRequest)
+        {
+            var user = await authServices.AdminRegisterUser(registerRequest);
+            if (user == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "Register Failed"
+                });
+            }
+            else
+            {
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Register Success",
+                });
+            }
+        }
+        [RoleAttribute(AppRole.Admin)]
+        [HttpGet("GetAccountList")]
+        public async Task<IActionResult> GetAllAccountInSystem(int currentPage = IntConstant.PageNumberDefault)
+        {
+            List<UserInformation_Admin> data = null;
+            FilterPagingData filterPagingData = new FilterPagingData();
+            try
+            {
+                data = await authServices.GetAccountList();
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "Get All Account Failed!",
+                        Data = data
+                    });
+                }
+
+                filterPagingData.DataCount = data.Count;
+                filterPagingData.CurrentPage = currentPage;
+                data = PaginationHelper.Paginate<UserInformation_Admin>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                filterPagingData.Data = data;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAllAccountInSystem: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "Get All Accounts In System Successfully!",
+                Data = filterPagingData
+            });
+        }
+
+        [RoleAttribute(AppRole.Admin)]
+        [HttpGet("GetAccount/{UserId}")]
+        public async Task<IActionResult> GetAccount(string UserId)
+        {
+            StringBuilder message = new StringBuilder();
+            UserInformation_Admin data = null;
+            try
+            {
+                data = await authServices.GetAccount(UserId, message);
+                if (data == null)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = message.ToString(),
+                        Data = data
+                    });
+                }
+                message.Append("Get Account Successfully!");
+
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAllAccountInSystem: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = message.ToString(),
+                Data = data
+            });
+        }
         [HttpPost("ForgotPassword")]
         [AllowAnonymous]
         public async Task<IActionResult> ForgotPassword([Required] string email)

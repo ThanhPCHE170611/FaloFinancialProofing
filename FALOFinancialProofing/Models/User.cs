@@ -30,7 +30,7 @@ namespace FALOFinancialProofing.Models
         public ICollection<OrganizationMember> OrganizationMembers { get; set; } = new List<OrganizationMember>();
         public ICollection<CreateProjectRequestApproveHistory> CreateProjectRequestApproveHistories { get; set; } = new List<CreateProjectRequestApproveHistory>();
         public ICollection<CampaignRequestApproveHistory> CampaignRequestApproveHistories { get; set; } = new List<CampaignRequestApproveHistory>();
-
+        public virtual ICollection<IdentityUserRole<string>> UserRoles { get; set; } = new List<IdentityUserRole<string>>();
         //public string? Gender { get; set; }
         //public string? Address { get; set; }
         //public string? PhoneNumber { get; set; }

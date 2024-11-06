@@ -29,7 +29,7 @@ namespace FALOFinancialProofing.Controllers
             _createProjectRequestService = createProjectRequestService;
             _createProjectFileService = createProjectFileService;
         }
-        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.Admin)]
+        //[RoleAttribute(AppRole.ProjectManagementBoard, AppRole.Admin)]
         [HttpGet("GetAllProjectInSystem")]
         public async Task<IActionResult> GetAllProjectInSystem(string? status, int currentPage = IntConstant.PageNumberDefault)
         {
@@ -53,7 +53,7 @@ namespace FALOFinancialProofing.Controllers
                 }
                 filterPagingData.DataCount = data.Count;
                 filterPagingData.CurrentPage = currentPage;
-                data = PaginationHelper.Paginate<ProjectInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                data = PaginationHelper.Paginate<ProjectInformation>(data.AsQueryable(), currentPage, IntConstant.PageSizeCustom).ToList();
                 filterPagingData.Data = data;
             }
             catch (Exception ex)
@@ -67,7 +67,7 @@ namespace FALOFinancialProofing.Controllers
                 Data = filterPagingData
             });
         }
-        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
+        //[RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
         [HttpGet("GetAllProjectByUserId/{UserId}")]
         public async Task<IActionResult> GetProjectsByUserIdAsync(string UserId, string? status, int currentPage = IntConstant.PageNumberDefault)
         {
@@ -105,7 +105,7 @@ namespace FALOFinancialProofing.Controllers
                 Data = filterPagingData
             });
         }
-        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
+        //[RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
         [HttpGet("GetProjectDetailsById/{ProjectId}")]
         public async Task<IActionResult> GetProjectDetailsById(int ProjectId)
         {
@@ -200,7 +200,7 @@ namespace FALOFinancialProofing.Controllers
                 {
                     ProjectId = project.Id,
                     SenderId = createProject.CreatedBy,
-                    Title = "Create Project",
+                    Title = $"Create {checkProjectCreated.ProjectName} Project",
                     CreatedAt = DateTime.Now,
                     Status = RequestStatus.Pending
                 };
