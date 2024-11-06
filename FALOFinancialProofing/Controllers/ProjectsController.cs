@@ -1,5 +1,6 @@
 ﻿using FALOFinancialProofing.Attributes.RoleAttributes;
 using FALOFinancialProofing.Constant;
+using FALOFinancialProofing.DTOs.CampaignDTO;
 using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
@@ -31,7 +32,7 @@ namespace FALOFinancialProofing.Controllers
         }
         //[RoleAttribute(AppRole.ProjectManagementBoard, AppRole.Admin)]
         [HttpGet("GetAllProjectInSystem")]
-        public async Task<IActionResult> GetAllProjectInSystem(string? status, int currentPage = IntConstant.PageNumberDefault)
+        public async Task<IActionResult> GetAllProjectInSystem(string? status, bool? IsActive, int currentPage = IntConstant.PageNumberDefault)
         {
             List<ProjectInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -50,6 +51,10 @@ namespace FALOFinancialProofing.Controllers
                 if (!string.IsNullOrEmpty(status))
                 {
                     data = data.FindAll(x => x.Status == status);
+                }
+                if (IsActive != null)
+                {
+                    data = data.FindAll(x => x.IsActive == IsActive);
                 }
                 filterPagingData.DataCount = data.Count;
                 filterPagingData.CurrentPage = currentPage;
@@ -200,7 +205,7 @@ namespace FALOFinancialProofing.Controllers
                 {
                     ProjectId = project.Id,
                     SenderId = createProject.CreatedBy,
-                    Title = $"Create {checkProjectCreated.ProjectName} Project",
+                    Title = $"{checkProjectCreated.ProjectName}",
                     CreatedAt = DateTime.Now,
                     Status = RequestStatus.Pending
                 };
@@ -270,6 +275,48 @@ namespace FALOFinancialProofing.Controllers
             }
 
             return Content(statusMessage);
+        }
+        [HttpGet("GetFourProjectByFilter")]
+        public async Task<IActionResult> GetFourProjectByFilter(bool IsActive, bool OrderByAscending, int numOfElements)
+        {
+            List<ProjectInformation> data = null;
+            try
+            {
+                data = (await _projectService.GetAllProjectsAsync()).ToList();
+                data = data.Take(numOfElements).ToList();
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "GetFourProjectByFilter Failed!",
+                        Data = data
+                    });
+                }
+                if (IsActive)
+                {
+                    data = data.FindAll(x => x.IsActive);
+                }
+                if (OrderByAscending)
+                {
+                    data = data.OrderBy(o => o.DateOfCreation).ToList();
+                }
+                else
+                {
+                    data = data.OrderByDescending(o => o.DateOfCreation).ToList();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetFourProjectByFilter: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "GetFourProjectByFilter Successfully!",
+
+            });
         }
     }
 }

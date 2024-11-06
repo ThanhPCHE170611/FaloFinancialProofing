@@ -8,6 +8,8 @@ namespace FALOFinancialProofing.DTOs.ProjectDTOs
         public int id { get; set; }
         public string UserImage { get; set; }
         public string CreatedBy { get; set; }
+        public string FirstName { get; set; } = null!;
+        public string LastName { get; set; } = null!;
         public string ProjectName { get; set; }
         public string Description { get; set; }
         public DateTime DateOfCreation { get; set; }
