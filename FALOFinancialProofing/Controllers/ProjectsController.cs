@@ -315,7 +315,7 @@ namespace FALOFinancialProofing.Controllers
             {
                 Success = true,
                 Message = "GetFourProjectByFilter Successfully!",
-
+                Data = data
             });
         }
     }

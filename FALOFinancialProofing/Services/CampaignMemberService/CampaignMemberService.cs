@@ -37,8 +37,9 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 var newCampaignMember = await CreateCampaignMemberDTOToEntity(createCampaignMemberDTO);
                 return await cmRepository.InsertAsync(newCampaignMember);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
+                await Console.Out.WriteLineAsync($"CreateCampaignMemberAsync: {ex.Message}");
                 return null;
             }
         }
