@@ -9,6 +9,7 @@ using FALOFinancialProofing.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -34,14 +35,33 @@ namespace FALOFinancialProofing.Controllers
 
         [RoleAttribute(AppRole.ProjectManagementBoard)]
         [HttpGet("GetCreateProjectRequestByPMB")]
-        public async Task<ActionResult<IEnumerable<CreateProjectRequestInformation>>> GetCreateProjectRequests()
+        public async Task<ActionResult<List<CreateProjectRequestInformation>>> GetCreateProjectRequests(string? status, int currentPage = IntConstant.PageNumberDefault)
         {
             StringBuilder message = new StringBuilder();
-            IEnumerable<CreateProjectRequestInformation> data = null;
+            FilterPagingData filterPagingData = new FilterPagingData();
+            List<CreateProjectRequestInformation> data = null;
             try
             {
-                data = await _createProjectRequestService.GetAllCreateProjectRequestsByPMBAsync(message);
+                data = (await _createProjectRequestService.GetAllCreateProjectRequestsByPMBAsync(message))
+                    .ToList();
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "Get All Campaign By ProjectId Failed!",
+                        Data = data
+                    });
+                }
                 message.Append("Get CreateProjectRequests Successfully!");
+                if (!string.IsNullOrEmpty(status))
+                {
+                    data = data.FindAll(x => x.Status.Equals(status));
+                }
+                filterPagingData.DataCount = data.Count;
+                filterPagingData.CurrentPage = currentPage;
+                data = PaginationHelper.Paginate<CreateProjectRequestInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                filterPagingData.Data = data;
             }
             catch (Exception ex)
             {
@@ -56,14 +76,15 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
-        [HttpGet("GetAllProjectsByUserId/{ProjectId}")]
-        public async Task<IActionResult> GetAllProjectsByUserId(int UserId, string? status, int currentPage = IntConstant.PageNumberDefault)
+        [HttpGet("GetAllCreateProjectRequestsByUserId/{UserId}")]
+        public async Task<IActionResult> GetAllCreateProjectRequestsByUserId(string UserId, string? status, int currentPage = IntConstant.PageNumberDefault)
         {
-            List<CampaignInformation> data = null;
+            List<CreateProjectRequestInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
+            StringBuilder stringBuilder = new StringBuilder();
             try
             {
-                data = await _campaignService.GetAllCampaignsByProjectIdAsync(ProjectId);
+                data = (await _createProjectRequestService.GetAllCreateProjectRequestsByUserIdAsync(UserId, stringBuilder)).ToList();
                 if (data == null || data.Count == 0)
                 {
                     return Ok(new ApiResponse()
@@ -75,21 +96,21 @@ namespace FALOFinancialProofing.Controllers
                 }
                 if (!string.IsNullOrEmpty(status))
                 {
-                    data = data.FindAll(x => x.Status == status);
+                    data = data.FindAll(x => x.Status.Equals(status));
                 }
                 filterPagingData.DataCount = data.Count;
                 filterPagingData.CurrentPage = currentPage;
-                data = PaginationHelper.Paginate<CampaignInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                data = PaginationHelper.Paginate<CreateProjectRequestInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
                 filterPagingData.Data = data;
             }
             catch (Exception ex)
             {
-                await Console.Out.WriteLineAsync($"GetAllCampaignByProjectId: {ex.Message}");
+                await Console.Out.WriteLineAsync($"GetAllCreateProjectRequestsByUserId: {ex.Message}");
             }
             return Ok(new ApiResponse()
             {
                 Success = true,
-                Message = "Get All Campaign By ProjectId Successfully!",
+                Message = "GetAllCreateProjectRequestsByUserId Successfully!",
                 Data = filterPagingData
             });
         }

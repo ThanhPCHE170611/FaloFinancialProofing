@@ -100,7 +100,43 @@ namespace FALOFinancialProofing.Services.CreateProjectRequestServices
             try
             {
                 data = await _createProjectRequestRepository.GetAll()
-                    .Where(pr => pr.Status.Equals(RequestStatus.Pending))
+                    //.Where(pr => pr.Status.Equals(RequestStatus.Pending))
+                    .Select(s => new CreateProjectRequestInformation()
+                    {
+                        Id = s.Id,
+                        SenderId = s.SenderId,
+                        SenderName = $"{s.SenderUser.FirstName} {s.SenderUser.LastName}",
+                        ReceiverId = s.ReceiverId,
+                        ReceiverName = $"{s.ReceiverUser.FirstName} {s.ReceiverUser.LastName}",
+                        ProjectId = s.ProjectId,
+                        Title = s.Title,
+                        CreatedAt = s.CreatedAt,
+                        Feedback = s.Feedback,
+                        Status = s.Status,
+                        CreateProjectFiles = s.CreateProjectFiles.Select(f => new CreateProjectFileInformation()
+                        {
+                            Id = f.Id,
+                            RequestId = f.RequestId,
+                            FilePath = f.FilePath
+                        }).ToList()
+                    }).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"GetAllCreateProjectRequestsByPMBAsync: {ex.Message}");
+            }
+
+            return data;
+        }
+
+        public async Task<IEnumerable<CreateProjectRequestInformation>> GetAllCreateProjectRequestsByUserIdAsync(string userId, StringBuilder message)
+        {
+            List<CreateProjectRequestInformation> data = null!;
+            try
+            {
+                data = await _createProjectRequestRepository.GetAll()
+                    .Where(pr => pr.SenderId.Equals(userId))
                     .Select(s => new CreateProjectRequestInformation()
                     {
                         Id = s.Id,
