@@ -6,7 +6,30 @@
     var campaigns = ViewBag.Campaigns as List<FALOFinancialProofing.FALOHomePage.Models.CampaignDTO>;
 }
 
-}
+<style>
+    .item img {
+        max-width: 100%; /* Make sure image never overflows the container */
+        height: auto; /* Keep the aspect ratio of the image */
+        object-fit: contain; /* Ensures the image is contained within the boundaries without distortion */
+    }
+
+    /* Optional: Adjust the container size for better control */
+    .item {
+        width: 100%;
+        height: auto; /* Ensures height adapts based on image size */
+        text-align: center; /* Keeps text and image centered */
+        padding: 10px;
+        border-radius: 8px;
+        overflow: hidden; /* Prevents any image overflow */
+    }
+
+    /* Optional: Adjust text spacing */
+    h5 {
+        margin-top: 20px; /* Adjust as needed */
+        font-size: 16px; /* Customize font size */
+        font-weight: 600; /* Customize font weight */
+    }
+</style>
 
 <main>
     
@@ -45,8 +68,8 @@
                     </div>
                     <div class="col-lg-4 order-1 order-lg-2">
                         <div class="event-single__right-item">
-                            <div class="item shadow mb-30 text-center">
-                                <img src="/images/project/user.png" alt="image">
+                        <div class="item shadow mb-30 text-center">
+                                <img src="/images/project/user.png" alt="image" class="image-fluid">
                                 <h5 class="mt-20">@projectDetails.FirstName @projectDetails.LastName</h5>
                             </div>
                         </div>
@@ -56,6 +79,9 @@
             </div>
         </section>
         <!-- Blog single area end here -->
+        
+        @if(campaigns != null)
+        {
         <!-- Cause area start here -->
         <section class="cause-area pt-120 pb-100">
             <div class="container">
@@ -85,7 +111,7 @@
                                 <div class="cause__item">
                                     <div class="cause__image image">
                                         <img src="/images/cause/CampaignImages.jpg" alt="image">
-                                    <span class="cause-tag">@campaign.EndDate.ToString("MMMM dd, yyyy")</span>
+                                        <span class="cause-tag">@campaign.EndDate.ToString("MMMM dd, yyyy")</span>
                                     </div>
                                     <div class="cause__content">
                                         <h4 class="mb-4 mt-20">
@@ -119,4 +145,6 @@
                 </div>
             </div>
         </section>
+        }
+        
 </main>

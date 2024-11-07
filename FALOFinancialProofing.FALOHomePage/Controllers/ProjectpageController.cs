@@ -33,27 +33,55 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
                     // Deserialize the JSON response into an object
                     var projectDetails = JsonConvert.DeserializeObject<ApiResponseProject>(response);
 
+                    ViewBag.projectDetails = projectDetails.Data;
+
                     string url = "https://localhost:7294/api/Campaign/GetAllCampaignByProjectId/" + id +"?currentPage=1";
                     // Get all campaigns through project id
                     var responseCampaigns = await client.GetStringAsync(url);
+                    
                     var campaigns = JsonConvert.DeserializeObject<ApiResponseCampaign>(responseCampaigns);
 
                     // Check if campaigns data is valid
-                    if (campaigns?.Data?.Data == null)
+                    if (campaigns == null || !campaigns.Success)
                     {
-                        // Handle the case where there are no campaigns or invalid data
-                        campaigns.Data = new CampaignData { Data = new List<CampaignDTO>() }; // Provide an empty list
+                        // Handle the failure case (e.g., log the message)
+                        Console.WriteLine($"API failed: {campaigns?.Message}");
+                        return View("/Error/Error404");  // Exit or handle failure logic as necessary
                     }
 
-                    ViewBag.projectDetails = projectDetails.Data;
-                    ViewBag.campaigns = campaigns.Data.Data;
+                    if (campaigns?.Data?.Data != null && campaigns.Data.Data.Any())
+                    {
+                        // Data is available, process it
+                        var campaignDataList = campaigns.Data.Data;
+                        Console.WriteLine($"Retrieved {campaignDataList.Count} campaigns.");
 
-                    // Pass the ViewModel to the view
+                        // Process the campaigns as needed
+                        // For example, displaying campaign titles
+                        foreach (var campaign in campaignDataList)
+                        {
+                            Console.WriteLine($"Campaign Title: {campaign.Title}");
+                        }
+
+                        ViewBag.campaigns = campaigns.Data.Data;
+
+                        // Pass the ViewModel to the view
+                        return View();
+                    }
+                    else
+                    {
+                        // Handle case where 'Data' is empty or null
+                        ViewBag.campaigns = new List<CampaignData>();
+                        return View();
+                    }
+                }
+                catch (JsonException jsonEx)
+                {
+                    ViewBag.campaigns = new List<CampaignData>();
                     return View();
                 }
                 catch (Exception ex)
                 {
-                    return View();
+                    return NotFound();
                 }
 
             }

@@ -468,6 +468,8 @@
 
             var creator = project.firstName+ ' ' + project.lastName;
 
+            var shortenedDescription = project.description.length > 150 ? project.description.substring(0, 150) + '...' : project.description;
+
             var cardHtml = `<div class="col-xl-6 wow fadeInUp" data-wow-delay="200ms" data-wow-duration="1500ms">
                         <div class="event__item h-100">
                             <div class="image h-100">
@@ -502,7 +504,7 @@
                                     </a>
                                 </h3>
                                 <p>
-                                    ${project.description}
+                                    ${shortenedDescription}
                                 </p>
                                 <a href="${url}" class="primary-hover fw-bold mt-4">
                                     KHÁM PHÁ <i class="fa-regular fa-arrow-right ms-2"></i>

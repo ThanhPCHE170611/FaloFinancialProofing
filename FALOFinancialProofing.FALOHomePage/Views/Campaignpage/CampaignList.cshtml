@@ -81,6 +81,8 @@
 
             var url = '/Campaignpage/Index/' + campaign.campaignId;
 
+            var shortenedDescription = campaign.description.length > 100 ? campaign.description.substring(0, 100) + '....' : campaign.description;
+
             var cardHtml = `<div class="col-lg-8 order-2 order-lg-1" >
                                 <div class="cause__item cause-list__item mb-30">
                                     <div class="cause__image image" style="width:100%; height:auto;overflow:hidden;">
@@ -94,7 +96,7 @@
                                             </a>
                                         </h4>
                                         <p class="mb-3">
-                                            ${campaign.description}
+                                            ${shortenedDescription}
                                         </p>
                                         <div class="progress-area">
                                             <div class="progress__item">
