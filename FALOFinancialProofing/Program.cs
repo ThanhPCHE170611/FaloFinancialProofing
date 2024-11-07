@@ -50,6 +50,7 @@ using FALOFinancialProofing.Services.ProjectServices;
 using FALOFinancialProofing.Services.CampaignService;
 using FALOFinancialProofing.Services.CampaignMemberService;
 using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestHistoryService;
+using FALOFinancialProofing.Services.BankAccountServices;
 
 namespace FALOFinancialProofing
 {
@@ -62,6 +63,7 @@ namespace FALOFinancialProofing
             var configuration = builder.Configuration;
             builder.Services.AddCors();
             // Add services to the container.
+            builder.Services.AddHttpClient();
             builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 
             builder.Services.AddScoped(typeof(AuthServices));
@@ -89,6 +91,7 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped<IOrganizationMemberService, OrganizationMemberService>();
             builder.Services.AddScoped<ICreateProjectRequestApproveHistoryService, CreateProjectRequestApproveHistoryService>();
             builder.Services.AddScoped<ICampaignRequestApproveHistoryService, CampaignRequestApproveHistoryService>();
+            builder.Services.AddScoped<IBankAccountService, BankAccountService>();
 
             builder.Services.AddDistributedMemoryCache(); // Sử dụng bộ nhớ trong để lưu trữ session
             builder.Services.AddSession(options =>

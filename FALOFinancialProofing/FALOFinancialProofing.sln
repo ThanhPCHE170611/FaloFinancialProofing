@@ -5,6 +5,8 @@ VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FALOFinancialProofing", "FALOFinancialProofing.csproj", "{574169E0-9A3D-4CA8-8148-4E10AFD53AE1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestFALOFinancialProofing", "..\TestFALOFinancialProofing\TestFALOFinancialProofing.csproj", "{FC2EE6BC-5314-483C-9B1B-A231F399CB16}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{574169E0-9A3D-4CA8-8148-4E10AFD53AE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{574169E0-9A3D-4CA8-8148-4E10AFD53AE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{574169E0-9A3D-4CA8-8148-4E10AFD53AE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC2EE6BC-5314-483C-9B1B-A231F399CB16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC2EE6BC-5314-483C-9B1B-A231F399CB16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC2EE6BC-5314-483C-9B1B-A231F399CB16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC2EE6BC-5314-483C-9B1B-A231F399CB16}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

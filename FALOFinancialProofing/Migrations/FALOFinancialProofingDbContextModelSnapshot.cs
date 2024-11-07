@@ -42,7 +42,7 @@ namespace FALOFinancialProofing.Migrations
                     b.HasIndex("CampaignId")
                         .IsUnique();
 
-                    b.ToTable("AccountingBooks", (string)null);
+                    b.ToTable("AccountingBooks");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.ApproveProcess", b =>
@@ -73,7 +73,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("RequestId");
 
-                    b.ToTable("ApproveProcesses", (string)null);
+                    b.ToTable("ApproveProcesses");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.AttachmentFile", b =>
@@ -95,7 +95,39 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("RequestId");
 
-                    b.ToTable("AttachmentFiles", (string)null);
+                    b.ToTable("AttachmentFiles");
+                });
+
+            modelBuilder.Entity("FALOFinancialProofing.Models.BankAccount", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AccountId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AccountName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AccountNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("Balance")
+                        .HasColumnType("float");
+
+                    b.Property<string>("BankCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BankAccounts");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.Campaign", b =>
@@ -153,7 +185,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Campaigns", (string)null);
+                    b.ToTable("Campaigns");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.CampaignMember", b =>
@@ -189,7 +221,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("CampaignMembers", (string)null);
+                    b.ToTable("CampaignMembers");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.CampaignRequestApproveHistory", b =>
@@ -219,7 +251,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("CampaignRequestId");
 
-                    b.ToTable("CampaignRequestApproveHistories", (string)null);
+                    b.ToTable("CampaignRequestApproveHistories");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.CreateCampaignFile", b =>
@@ -241,7 +273,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("RequestId");
 
-                    b.ToTable("CreateCampaignFiles", (string)null);
+                    b.ToTable("CreateCampaignFiles");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.CreateCampaignRequest", b =>
@@ -285,7 +317,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("CreateCampaignRequests", (string)null);
+                    b.ToTable("CreateCampaignRequests");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.CreateProjectFile", b =>
@@ -307,7 +339,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("RequestId");
 
-                    b.ToTable("CreateProjectFiles", (string)null);
+                    b.ToTable("CreateProjectFiles");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.CreateProjectRequest", b =>
@@ -351,7 +383,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("CreateProjectRequests", (string)null);
+                    b.ToTable("CreateProjectRequests");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.CreateProjectRequestApproveHistory", b =>
@@ -381,7 +413,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("CreateProjectRequestId");
 
-                    b.ToTable("CreateProjectRequestApproveHistories", (string)null);
+                    b.ToTable("CreateProjectRequestApproveHistories");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.MoveNextCampaignStatusRequest", b =>
@@ -430,7 +462,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("MoveNextCampaignStatusRequests", (string)null);
+                    b.ToTable("MoveNextCampaignStatusRequests");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.MoveNextCampaignStatusRequestHistory", b =>
@@ -536,7 +568,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Organizations", (string)null);
+                    b.ToTable("Organizations");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.OrganizationMember", b =>
@@ -563,7 +595,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("OrganizationMember", (string)null);
+                    b.ToTable("OrganizationMember");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.Project", b =>
@@ -605,7 +637,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("OrganizationId");
 
-                    b.ToTable("Projects", (string)null);
+                    b.ToTable("Projects");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.RequestForm", b =>
@@ -648,7 +680,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("TypeId");
 
-                    b.ToTable("RequestForms", (string)null);
+                    b.ToTable("RequestForms");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.RequestType", b =>
@@ -665,7 +697,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RequestTypes", (string)null);
+                    b.ToTable("RequestTypes");
 
                     b.HasData(
                         new
@@ -694,7 +726,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SDGs", (string)null);
+                    b.ToTable("SDGs");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.SocialNetwork", b =>
@@ -717,7 +749,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("SocialNetworks", (string)null);
+                    b.ToTable("SocialNetworks");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.TransactionLog", b =>
@@ -749,7 +781,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("CampaignId");
 
-                    b.ToTable("TransactionLogs", (string)null);
+                    b.ToTable("TransactionLogs");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.User", b =>
@@ -846,7 +878,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserSDGs", (string)null);
+                    b.ToTable("UserSDGs");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.Voucher", b =>
@@ -872,7 +904,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("ApproveId");
 
-                    b.ToTable("Vouchers", (string)null);
+                    b.ToTable("Vouchers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -1496,16 +1528,16 @@ namespace FALOFinancialProofing.Migrations
                     b.Navigation("CreateProjectRequestApproveHistories");
                 });
 
+            modelBuilder.Entity("FALOFinancialProofing.Models.MoveNextCampaignStatusRequest", b =>
+                {
+                    b.Navigation("MoveNextCampaignStatusRequestHistories");
+                });
+
             modelBuilder.Entity("FALOFinancialProofing.Models.Organization", b =>
                 {
                     b.Navigation("OrganizationMembers");
 
                     b.Navigation("Projects");
-                });
-
-            modelBuilder.Entity("FALOFinancialProofing.Models.MoveNextCampaignStatusRequest", b =>
-                {
-                    b.Navigation("MoveNextCampaignStatusRequestHistories");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.Project", b =>
@@ -1546,9 +1578,9 @@ namespace FALOFinancialProofing.Migrations
 
                     b.Navigation("CreateCampaignRequestSenders");
 
-                    b.Navigation("MoveNextCampaignStatusRequestHistories");
-
                     b.Navigation("CreateProjectRequestApproveHistories");
+
+                    b.Navigation("MoveNextCampaignStatusRequestHistories");
 
                     b.Navigation("MoveNextCampaignStatusRequestReceiverUsers");
 
