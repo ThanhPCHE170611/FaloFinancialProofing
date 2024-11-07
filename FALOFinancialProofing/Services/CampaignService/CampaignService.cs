@@ -266,7 +266,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                 {
                     throw new Exception("Date of creation cannot be in the future");
                 }
-                if (createCampaignClientRequest.DateOfCreation < createCampaignClientRequest.EndDate)
+                if (createCampaignClientRequest.DateOfCreation > createCampaignClientRequest.EndDate)
                 {
                     throw new Exception("End Date must be after");
                 }
