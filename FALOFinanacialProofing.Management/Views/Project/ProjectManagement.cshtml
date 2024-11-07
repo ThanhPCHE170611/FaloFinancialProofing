@@ -356,7 +356,7 @@
                         <button class="btn btn-danger btn-sm" onclick="handleProjectApproval(this,${request.id}, false)">Decline</button>
                         <a class="btn btn-info btn-sm" href="/Project/ProjectDetail/${request.id}">Detail</a>
                     `;
-                    if (request.status === "Approved") {
+                    if (request.status === "Accepted") {
                         actionButtons = `<span class="text-approved me-2" style="margin-left:25px">Approved</span>
                                                     <a href="/Prepay/PrepayDetail?requestId=${request.id}" class="text-blue me-2" >Detail</a>`;
                     } else if (request.status === "Rejected") {
@@ -364,7 +364,7 @@
                                                     <a href="/Prepay/PrepayDetail?requestId=${request.id}" class="text-blue me-2">Detail</a>`;
                     }
 
-                    if (checkrole === "Project Manager") {
+                    if (checkrole !== "Project Management Board") {
                         actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectDetail/${request.id}">Detail</a>
                         
                         `;
