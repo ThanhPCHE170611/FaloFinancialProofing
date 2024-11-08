@@ -643,7 +643,7 @@ $(document).ready(function () {
                                     <tr data-request-id="${request.id}">
                                         <td class="align-middle text-center text-sm">${index + 1}</td>
                                         <td><span class="text-secondary text-xs font-weight-bold">${request.createByName}</span></td>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${request.expectedMoney}</span></td>
+                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${request.expectedMoney.toLocaleString()}</span></td>
                                         <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${request.description}</span></td>
                                         <td class="align-middle text-center">${attachmentLinks}</td>
                                         <td class="align-middle text-center">${voucherLinks}</td>

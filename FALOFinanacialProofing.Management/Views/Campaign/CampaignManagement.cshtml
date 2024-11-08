@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "CampaignManagement";
 }
 <!DOCTYPE html>
@@ -73,7 +72,7 @@
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 20%;">Project</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Total Estimated Cost</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 10%;">Status</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Process</th>
+                                        @<th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Create Date</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Action</th>
                                     </tr>
                                 </thead>
@@ -98,13 +97,13 @@
                                         <td class="align-middle text-center text-sm">
                                             <span class="badge badge-sm bg-gradient-warning" id="status-1">Pending</span>
                                         </td>
-                                        <td class="align-middle text-center text-sm">
+                                        @*                                         <td class="align-middle text-center text-sm">
                                             <select class="form-select" onchange="showSaveButton(this)">
                                                 <option value="fundraising">Gây Quỹ</option>
                                                 <option value="deployment">Triển Khai</option>
                                                 <option value="disbursement">Giải Ngân</option>
                                             </select>
-                                        </td>
+                                        </td> *@
                                         <td class="align-middle text-center">
                                             <button class="btn btn-success btn-sm" onclick="approveCampaign(1)">Approve</button>
                                             <button class="btn btn-danger btn-sm" onclick="declineCampaign(1)">Decline</button>
@@ -161,42 +160,6 @@
     <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
 
     <script>
-        function approveCampaign(id) {
-            document.getElementById('status-' + id).className = 'badge badge-sm bg-gradient-success';
-            document.getElementById('status-' + id).innerText = 'Approved';
-            hideApproveDeclineButtons(id);
-        }
-
-        function declineCampaign(id) {
-            document.getElementById('status-' + id).className = 'badge badge-sm bg-gradient-danger';
-            document.getElementById('status-' + id).innerText = 'Declined';
-            hideApproveDeclineButtons(id);
-        }
-
-        function hideApproveDeclineButtons(id) {
-            var row = document.getElementById('status-' + id).closest('tr');
-            var approveButton = row.querySelector('.btn-success');
-            var declineButton = row.querySelector('.btn-danger');
-            approveButton.style.display = 'none';
-            declineButton.style.display = 'none';
-        }
-
-        function showSaveButton(selectElement) {
-            var row = selectElement.closest('tr');
-            var saveButton = row.querySelector('.save-btn');
-            var detailButton = row.querySelector('.detail-btn');
-            saveButton.style.display = 'inline-block';
-            detailButton.style.display = 'none';
-        }
-
-        function saveProcess(button, id) {
-            alert("Process status has been saved!");
-            var row = button.closest('tr');
-            var saveButton = row.querySelector('.save-btn');
-            var detailButton = row.querySelector('.detail-btn');
-            saveButton.style.display = 'none';
-            detailButton.style.display = 'inline-block';
-        }
 
         function searchCampaign() {
             var input = document.getElementById("searchInput").value.toLowerCase();
@@ -230,10 +193,176 @@
             }
         }
 
-        function changeCampaign(button, Id) {
-            localStorage.setItem('campaignId', Id);
-            window.location.href = '/Campaign/CampaignDetail';
+        function formatDateTime(dateString) {
+            if (!dateString) return 'N/A';
+
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) {
+                return 'Invalid Date';
+            }
+
+            const formattedDate = date.getDate().toString().padStart(2, '0') + '-' +
+                (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                date.getFullYear();
+
+            const formattedTime = date.getHours().toString().padStart(2, '0') + ':' +
+                date.getMinutes().toString().padStart(2, '0') + ':' +
+                date.getSeconds().toString().padStart(2, '0');
+
+            return formattedDate + ' ' + formattedTime;
         }
+
+        function handleProjectApproval(button,createProjectRequestId, isAllowed) {
+            const userId = localStorage.getItem('userId');
+
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const hours = String(today.getHours()).padStart(2, '0');
+            const minutes = String(today.getMinutes()).padStart(2, '0');
+            const seconds = String(today.getSeconds()).padStart(2, '0');
+            const dateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+
+            const payload = {
+                createProjectRequestId: createProjectRequestId,
+                approverId: userId,
+                dateOfApproval: dateTime,
+                isAllowed: isAllowed
+            };
+
+            console.log(isAllowed);
+            console.log(createProjectRequestId);
+            console.log(dateTime);
+            console.log(userId);
+
+            const jwtToken = localStorage.getItem('jwtToken');
+            $.ajax({
+                url: 'https://localhost:7294/api/CreateProjectRequestApproveHistories/CreateCreateProjectRequestApproveHistory',
+                type: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                contentType: 'application/json',
+                data: JSON.stringify(payload),
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message || 'Action completed successfully!');
+                        if (isAllowed) {
+                            updateRowToApprovedForPM(button);
+                        } else {
+                            updateRowToRejected(button);
+                        }
+                    } else {
+                        alert('Failed: ' + response.Message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error in project approval:', error);
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        }
+
+
+        $(document).ready(function () {
+            $('#fetchCampaignRequests').on('click', function () {
+                const jwtToken = localStorage.getItem('jwtToken');
+
+                if (!jwtToken) {
+                    alert('JWT token not found. Please log in.');
+                    return;
+                }
+
+                $.ajax({
+                    url: 'https://localhost:7294/api/CreateCampaignRequests/GetCreateCampaignRequestByPMB',
+                    type: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + jwtToken
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.Message);
+                            console.log('Campaign Requests:', response.data.data);
+                            displayCampaignRequests(response.data.data);
+                        } else {
+                            alert('Failed to fetch campaign requests: ' + response.Message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Error fetching campaign requests: ' + (xhr.responseText || status));
+                    }
+                });
+            });
+
+            function displayCampaignRequests(requests) {
+                const tableBody = $('#campaignTable tbody');
+                tableBody.empty();
+
+                if (requests.length === 0) {
+                    tableBody.append('<tr><td colspan="7" class="text-center">No campaign requests found</td></tr>');
+                    return;
+                }
+
+                requests.forEach((request, index) => {
+                    let actionButtons = `
+                        <button class="btn btn-success btn-sm" onclick="handleProjectApproval(this,${request.id}, true)">Approve</button>
+                        <button class="btn btn-danger btn-sm" onclick="handleProjectApproval(this,${request.id}, false)">Decline</button>
+                        <button onclick="changeCampaign(this, ${request.id})" class="text-blue me-2" >Detail</button>
+                    `;
+                    if (request.status === "Accepted") {
+                        actionButtons = `<span class="text-approved me-2" style="margin-left:25px">Approved</span>
+                                        <button onclick="changeCampaign(this, ${request.id})" class="text-blue me-2" >Detail</button>`;
+                    } else if (request.status === "Rejected") {
+                        actionButtons = `<span class="text-declined me-2" style="margin-left:25px">Rejected</span>
+                                    <button onclick="changeCampaign(this, ${request.id})" class="text-blue me-2" >Detail</button>`;
+                    }
+
+                    if (checkrole !== "Project Management Board") {
+                        actionButtons = `<button onclick="changeCampaign(this, ${request.id})" class="text-blue me-2" >Detail</button>`;
+                    }
+                    const row = `
+                        <tr>
+                            <td class="align-middle text-center text-sm">${index + 1}</td>
+                            <td class="align-middle">
+                                <span class="text-secondary text-xs font-weight-bold">${request.title}</span>
+                            </td>
+                            <td class="align-middle">
+                                <span class="text-secondary text-xs font-weight-bold">${request.projectName}</span>
+                            </td>
+                            <td class="align-middle text-center text-sm">
+                                <span class="text-secondary text-xs font-weight-bold">${request.fundTaget}</span>
+                            </td>
+                            <td class="align-middle text-center text-sm">
+                                <span class="badge badge-sm ${getStatusBadgeClass(request.Status)}">${request.status}</span>
+                            </td>
+                            <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${formatDateTime(request.createdAt)}</span></td>
+                            <td class="align-middle text-center">${actionButtons}</td>
+                        </tr>
+                    `;
+                    tableBody.append(row);
+                });
+            }
+
+            function getStatusBadgeClass(status) {
+                switch (status) {
+                    case 'Approved':
+                        return 'bg-gradient-success';
+                    case 'Pending':
+                        return 'bg-gradient-warning';
+                    case 'Declined':
+                        return 'bg-gradient-danger';
+                    default:
+                        return 'bg-gradient-secondary';
+                }
+            }
+
+            function addCampaignIdDetails(id) {
+                localStorage.setItem('campaignRequestId', id);
+                window.location.href = '/Campaign/RequestDetails';
+            }
+        });
+
     </script>
 
     <script async defer src="https://buttons.github.io/buttons.js"></script>
