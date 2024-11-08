@@ -127,7 +127,7 @@
                                             <span class="badge badge-sm bg-gradient-warning" id="status-2">Pending</span>
                                         </td>
                                         <td class="align-middle text-center">
-                                            <span id="action-2">
+                                            <span id="action-2" hidden>
                                                 <button class="btn btn-success btn-sm" onclick="approveProject(2)">Approve</button>
                                                 <button class="btn btn-danger btn-sm" onclick="declineProject(2)">Decline</button>
                                             </span>
@@ -313,26 +313,30 @@
         $(document).ready(function () {
             const jwtToken = localStorage.getItem('jwtToken');
             const checkrole = localStorage.getItem('loggingRole');
+            const userId = localStorage.getItem('userId');
             let currentPage = 1;
             const pageSize = 5;
-
-            if (checkrole === "Project Manager") {
-                $('.action-buttons').hide();
+            let apiUrl;
+            if (checkrole === "Project Management Board") {
+                $('.action-buttons').show();
+                apiUrl = 'https://localhost:7294/api/CreateProjectRequests/GetCreateProjectRequestByPMB';
+            } else {
+                apiUrl = `https://localhost:7294/api/CreateCampaignRequests/GetAllCreateProjectRequestsByUserId/${userId}`;
             }
 
             
 
             function fetchProjectRequests(page) {
                 $.ajax({
-                    url: 'https://localhost:7294/api/CreateProjectRequests/GetCreateProjectRequestByPMB',
+                    url: apiUrl,
                     type: 'GET',
                     headers: {
                         'Authorization': `Bearer ${jwtToken}`
                     },
                     success: function (response) {
-                        if (response.success) {
-                            console.log("API response data:", response.data); 
-                            populateTable(response.data);
+                        if (response.success) { 
+                            console.log("API response data:", response.data.data); 
+                            populateTable(response.data.data);
                         } else {
                             alert('Failed to retrieve project requests: ' + response.message);
                         }
@@ -365,9 +369,14 @@
                     }
 
                     if (checkrole !== "Project Management Board") {
-                        actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectDetail/${request.id}">Detail</a>
+                        if(checkrole === "Project Manager") {
+                            actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectDetail/${request.id}">Detail</a>
                                         <a class="btn btn-primary btn-sm" href="/Campaign/CampaignCreate?projectId=${request.id}">Campaign</a>
                         `;
+                        } else {
+                            actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectDetail/${request.id}">Detail</a>`;
+                        }
+                        
                     }
 
                     const row = `
