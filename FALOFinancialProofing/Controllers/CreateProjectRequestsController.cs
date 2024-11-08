@@ -40,6 +40,7 @@ namespace FALOFinancialProofing.Controllers
         {
             StringBuilder message = new StringBuilder();
             FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
             List<CreateProjectRequestInformation> data = null;
             try
             {
@@ -51,7 +52,7 @@ namespace FALOFinancialProofing.Controllers
                     {
                         Success = false,
                         Message = "Get All CreateProjectRequests Failed!",
-                        Data = data
+                        Data = filterPagingData
                     });
                 }
                 message.Append("Get All CreateProjectRequests Successfully!");
@@ -60,7 +61,6 @@ namespace FALOFinancialProofing.Controllers
                     data = data.FindAll(x => x.Status.Equals(status));
                 }
                 filterPagingData.DataCount = data.Count;
-                filterPagingData.CurrentPage = currentPage;
                 data = PaginationHelper.Paginate<CreateProjectRequestInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
                 filterPagingData.Data = data;
             }
@@ -73,7 +73,7 @@ namespace FALOFinancialProofing.Controllers
             {
                 Success = true,
                 Message = message.ToString(),
-                Data = data
+                Data = filterPagingData
             });
         }
         // sender use this
@@ -83,6 +83,7 @@ namespace FALOFinancialProofing.Controllers
         {
             List<CreateProjectRequestInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
             StringBuilder stringBuilder = new StringBuilder();
             try
             {
@@ -93,7 +94,7 @@ namespace FALOFinancialProofing.Controllers
                     {
                         Success = false,
                         Message = "Get All Campaign By ProjectId Failed!",
-                        Data = data
+                        Data = filterPagingData
                     });
                 }
                 if (!string.IsNullOrEmpty(status))
@@ -101,7 +102,6 @@ namespace FALOFinancialProofing.Controllers
                     data = data.FindAll(x => x.Status.Equals(status));
                 }
                 filterPagingData.DataCount = data.Count;
-                filterPagingData.CurrentPage = currentPage;
                 data = PaginationHelper.Paginate<CreateProjectRequestInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
                 filterPagingData.Data = data;
             }

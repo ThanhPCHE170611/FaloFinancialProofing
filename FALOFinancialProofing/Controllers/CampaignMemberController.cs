@@ -48,6 +48,7 @@ namespace FALOFinancialProofing.Controllers
         {
             List<CampaignMemberInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
             try
             {
                 data = await _campaignMemberService.GetAllCampaignMemberByUserIdAndRoleIdAsync(userId, roleId);
@@ -58,7 +59,7 @@ namespace FALOFinancialProofing.Controllers
                     {
                         Success = false,
                         Message = "GetAllCampaignMember By UserIdAndRoleId Failed!",
-                        Data = data
+                        Data = filterPagingData
                     });
                 }
                 if (isActive != null)
@@ -66,7 +67,7 @@ namespace FALOFinancialProofing.Controllers
                     data = data.FindAll(x => x.IsActive == isActive);
                 }
                 filterPagingData.DataCount = data.Count;
-                filterPagingData.CurrentPage = currentPage;
+              
                 data = PaginationHelper.Paginate<CampaignMemberInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
                 filterPagingData.Data = data;
             }
@@ -87,6 +88,7 @@ namespace FALOFinancialProofing.Controllers
         {
             List<CampaignMemberInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
             try
             {
                 data = await _campaignMemberService.GetAllCampaignMemberByCampaignIdAsync(CampaignId);
@@ -97,7 +99,7 @@ namespace FALOFinancialProofing.Controllers
                     {
                         Success = false,
                         Message = "GetAllCampaignMembers By CampaignId Failed!",
-                        Data = data
+                        Data = filterPagingData
                     });
                 }
                 if (isActive != null)
@@ -105,7 +107,6 @@ namespace FALOFinancialProofing.Controllers
                     data = data.FindAll(x => x.IsActive == isActive);
                 }
                 filterPagingData.DataCount = data.Count;
-                filterPagingData.CurrentPage = currentPage;
                 data = PaginationHelper.Paginate<CampaignMemberInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
                 filterPagingData.Data = data;
             }

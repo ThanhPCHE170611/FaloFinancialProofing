@@ -36,6 +36,7 @@ namespace FALOFinancialProofing.Controllers
         {
             StringBuilder message = new StringBuilder();
             FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
             List<CreateCampaignRequestInformation> data = null;
             try
             {
@@ -47,7 +48,7 @@ namespace FALOFinancialProofing.Controllers
                     {
                         Success = false,
                         Message = "GetCreateCampaignRequests Failed!",
-                        Data = data
+                        Data = filterPagingData
                     });
                 }
                 message.Append("GetCreateCampaignRequests Successfully!");
@@ -56,7 +57,6 @@ namespace FALOFinancialProofing.Controllers
                     data = data.FindAll(x => x.Status.Equals(status));
                 }
                 filterPagingData.DataCount = data.Count;
-                filterPagingData.CurrentPage = currentPage;
                 data = PaginationHelper.Paginate<CreateCampaignRequestInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
                 filterPagingData.Data = data;
             }
@@ -79,6 +79,7 @@ namespace FALOFinancialProofing.Controllers
         {
             List<CreateCampaignRequestInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
             StringBuilder stringBuilder = new StringBuilder();
             try
             {
@@ -89,7 +90,7 @@ namespace FALOFinancialProofing.Controllers
                     {
                         Success = false,
                         Message = "Get All CreateProjectRequests By UserId Failed!",
-                        Data = data
+                        Data = filterPagingData
                     });
                 }
                 if (!string.IsNullOrEmpty(status))
@@ -97,7 +98,6 @@ namespace FALOFinancialProofing.Controllers
                     data = data.FindAll(x => x.Status.Equals(status));
                 }
                 filterPagingData.DataCount = data.Count;
-                filterPagingData.CurrentPage = currentPage;
                 data = PaginationHelper.Paginate<CreateCampaignRequestInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
                 filterPagingData.Data = data;
             }
