@@ -33,6 +33,7 @@ namespace FALOFinancialProofing.Controllers
         //    return Ok(await _createProjectRequestService.GetAllCreateProjectRequestsAsync());
         //}
 
+        // hiển thị toàn bộ các yêu cầu tạo dự án
         [RoleAttribute(AppRole.ProjectManagementBoard)]
         [HttpGet("GetCreateProjectRequestByPMB")]
         public async Task<ActionResult<List<CreateProjectRequestInformation>>> GetCreateProjectRequests(string? status, int currentPage = IntConstant.PageNumberDefault)
@@ -76,6 +77,7 @@ namespace FALOFinancialProofing.Controllers
             });
         }
         // sender use this
+        [RoleAttribute(AppRole.ProjectManager)]
         [HttpGet("GetAllCreateProjectRequestsByUserId/{UserId}")]
         public async Task<IActionResult> GetAllCreateProjectRequestsByUserId(string UserId, string? status, int currentPage = IntConstant.PageNumberDefault)
         {

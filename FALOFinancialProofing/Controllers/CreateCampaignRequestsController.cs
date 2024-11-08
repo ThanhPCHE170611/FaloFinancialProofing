@@ -73,6 +73,7 @@ namespace FALOFinancialProofing.Controllers
             });
         }
         // sender use this
+        [RoleAttribute(AppRole.ProjectManager)]
         [HttpGet("GetAllCreateProjectRequestsByUserId/{UserId}")]
         public async Task<IActionResult> GetAllCreateProjectRequestsByUserId(string UserId, string? status, int currentPage = IntConstant.PageNumberDefault)
         {
