@@ -238,6 +238,7 @@ namespace FALOFinancialProofing.Controllers
         {
             List<UserInformation_Admin> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
             try
             {
                 data = await authServices.GetAccountList();
@@ -247,12 +248,11 @@ namespace FALOFinancialProofing.Controllers
                     {
                         Success = false,
                         Message = "Get All Account Failed!",
-                        Data = data
+                        Data = filterPagingData
                     });
                 }
 
                 filterPagingData.DataCount = data.Count;
-                filterPagingData.CurrentPage = currentPage;
                 data = PaginationHelper.Paginate<UserInformation_Admin>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
                 filterPagingData.Data = data;
             }
