@@ -73,7 +73,7 @@ namespace FALOFinancialProofing.Controllers
             {
                 Success = true,
                 Message = message.ToString(),
-                Data = data
+                Data = filterPagingData
             });
         }
         // sender use this

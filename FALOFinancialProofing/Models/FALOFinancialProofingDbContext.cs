@@ -125,6 +125,11 @@ namespace FALOFinancialProofing.Models
                     .WithMany(u => u.TransactionLogs)
                     .HasForeignKey(c => c.CampaignId)
                     .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasOne(c => c.CreateQrCode)
+                    .WithMany(u => u.TransactionLogs)
+                    .HasForeignKey(c => c.CreateQrCodeId)
+                    .OnDelete(DeleteBehavior.NoAction);
             });
 
             modelBuilder.Entity<MoveNextCampaignStatusRequest>(entity =>
