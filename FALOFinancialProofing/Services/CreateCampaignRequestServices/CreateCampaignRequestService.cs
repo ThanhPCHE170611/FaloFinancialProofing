@@ -146,6 +146,7 @@ namespace FALOFinancialProofing.Services.CreateCampaignRequestServices
                     //.Where(pr => pr.Status.Equals(RequestStatus.Pending))
                     .Select(s => new CreateCampaignRequestInformation()
                     {
+                        ProjectName = s.Campaign.Project.ProjectName,
                         Id = s.Id,
                         SenderId = s.SenderId,
                         SenderName = $"{s.SenderUser.FirstName} {s.SenderUser.LastName}",
@@ -182,6 +183,7 @@ namespace FALOFinancialProofing.Services.CreateCampaignRequestServices
                     //.Where(pr => pr.Status.Equals(RequestStatus.Pending))
                     .Select(s => new CreateCampaignRequestInformation()
                     {
+                        ProjectName = s.Campaign.Project.ProjectName,
                         Id = s.Id,
                         SenderId = s.SenderId,
                         SenderName = $"{s.SenderUser.FirstName} {s.SenderUser.LastName}",
@@ -218,6 +220,7 @@ namespace FALOFinancialProofing.Services.CreateCampaignRequestServices
                      .Where(cpr => cpr.Id == id)
                     .Select(s => new CreateCampaignRequestInformation()
                     {
+                        ProjectName = s.Campaign.Project.ProjectName,
                         Id = s.Id,
                         SenderId = s.SenderId,
                         SenderName = $"{s.SenderUser.FirstName} {s.SenderUser.LastName}",
