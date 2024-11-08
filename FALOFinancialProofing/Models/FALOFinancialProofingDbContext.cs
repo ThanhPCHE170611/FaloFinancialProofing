@@ -194,6 +194,10 @@ namespace FALOFinancialProofing.Models
                   .WithOne()
                   .HasForeignKey(c => c.UserId);
 
+                entity.HasMany(c => c.CreateQrCodes)
+               .WithOne(u => u.User)
+               .HasForeignKey(c => c.UserId)
+               .OnDelete(DeleteBehavior.NoAction);
             });
             modelBuilder.Entity<Project>(entity =>
             {
@@ -226,6 +230,7 @@ namespace FALOFinancialProofing.Models
                .WithOne(u => u.CreateCampaignRequest)
                .HasForeignKey(c => c.CampaignRequestId)
                .OnDelete(DeleteBehavior.Restrict);
+
 
             });
 
@@ -265,6 +270,14 @@ namespace FALOFinancialProofing.Models
                 .HasOne(c => c.AccountingBook)
                 .WithOne(u => u.Campaign)
                 .HasForeignKey<AccountingBook>(c => c.CampaignId);
+
+            modelBuilder.Entity<Campaign>(entity =>
+            {
+                entity.HasOne(c => c.Bank)
+                    .WithMany(u => u.Campaigns)
+                    .HasForeignKey(c => c.BankId);
+
+            });
             RoleSeedData(modelBuilder);
             DeleteIdentityPrefix(modelBuilder);
         }
