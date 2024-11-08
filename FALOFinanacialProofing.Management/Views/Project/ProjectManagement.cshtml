@@ -321,7 +321,7 @@
                 $('.action-buttons').show();
                 apiUrl = 'https://localhost:7294/api/CreateProjectRequests/GetCreateProjectRequestByPMB';
             } else {
-                apiUrl = `https://localhost:7294/api/CreateCampaignRequests/GetAllCreateProjectRequestsByUserId/${userId}`;
+                apiUrl = `https://localhost:7294/api/CreateProjectRequests/GetAllCreateProjectRequestsByUserId/${userId}`;
             }
 
             
@@ -370,20 +370,22 @@
 
                     if (checkrole !== "Project Management Board") {
                         if(checkrole === "Project Manager") {
-                            actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectDetail/${request.id}">Detail</a>
-                                        <a class="btn btn-primary btn-sm" href="/Campaign/CampaignCreate?projectId=${request.id}">Campaign</a>
-                        `;
+                            if(request.status === "Rejected" || request.status === "Pending") {
+                                actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectDetail/${request.id}">Detail</a>`;
+                            } else {
+                                actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectDetail/${request.id}">Detail</a>
+                                        <a class="btn btn-primary btn-sm" href="/Campaign/CampaignCreate?projectId=${request.id}">Campaign</a>`;
+                            }
                         } else {
                             actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectDetail/${request.id}">Detail</a>`;
                         }
                         
                     }
-
                     const row = `
                         <tr>
                             <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${index + 1}</span></td>
                             <td class="align-middle text-center text-sm"><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">${request.title}</span></div></td>
-                            <td class="align-middle text-center text-sm"><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">${request.senderName}</span></div></td>
+                            <td class="align-middle text-center text-sm"><div class="d-flex px-2 py-1"><span class="text-center text-xs font-weight-bold">${request.senderName}</span></div></td>
                             <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${formatDateTime(request.createdAt)}</span></td>
                             <td class="align-middle text-center text-sm">
                                 <span class="badge badge-sm ${statusClass}">${request.status}</span>

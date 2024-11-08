@@ -220,11 +220,8 @@
                     processData: false,
                     contentType: false,
                     success: function (response) {
-                        alert(response.message);
-                        if (response.success) {
-                            alert(response.Message || 'Project created successfully!');
-                            window.location.href = '/Campaign/CampaignManagement';
-                        }
+                        alert(response.Message || 'Project created successfully!');
+                        window.location.href = '/Campaign/CampaignManagement';
                     },
                     error: function (xhr, status, error) {
                         alert('Error: ' + xhr.responseText || status);
