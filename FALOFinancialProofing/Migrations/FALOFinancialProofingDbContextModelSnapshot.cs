@@ -662,6 +662,9 @@ namespace FALOFinancialProofing.Migrations
                     b.Property<double>("ExpectedMoney")
                         .HasColumnType("float");
 
+                    b.Property<string>("Feedback")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
