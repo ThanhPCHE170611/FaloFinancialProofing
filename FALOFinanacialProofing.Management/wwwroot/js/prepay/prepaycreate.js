@@ -19,8 +19,6 @@ $(document).ready(function () {
     const campaignId = localStorage.getItem('campaignId');
     const checkrole = localStorage.getItem('loggingRole');
 
-    console.log(campaignId);
-
     if (checkrole && checkrole !== 'Volunteer') {
         const newLink = document.createElement('a');
         newLink.setAttribute('asp-controller', 'Prepay');
@@ -123,6 +121,7 @@ $(document).ready(function () {
         console.log(campaignId);
         console.log(description);
         console.log(dateTime);
+        console.log(jwtToken);
 
         $.ajax({
             url: 'https://localhost:7294/api/RequestForm/creatnewprepayrequest',

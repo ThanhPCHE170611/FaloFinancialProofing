@@ -447,7 +447,6 @@ function updateRowToRejected(button, id) {
     rejectedText.textContent = 'Rejected';
 
     const detailLink = document.createElement('a');
-    const detailLink = document.createElement('a');
     detailLink.href = `/Prepay/PrepayDetail?requestId=${id}`;
     detailLink.classList.add('text-blue');
     detailLink.textContent = 'Detail';
@@ -508,6 +507,11 @@ $(document).ready(function () {
     const jwtToken = localStorage.getItem('jwtToken');
     let currentPage = 1;
     const pageSize = 5;
+
+    console.log(userId);
+    console.log(campaignId);
+    console.log(checkrole);
+    console.log(jwtToken);
 
     if (checkrole && checkrole !== 'Volunteer') {
 

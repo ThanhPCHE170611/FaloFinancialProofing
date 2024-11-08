@@ -19,31 +19,6 @@ $(document).ready(function () {
     const campaignId = localStorage.getItem('campaignId');
     const checkrole = localStorage.getItem('loggingRole');
 
-    if (checkrole && checkrole !== 'Volunteer') {
-        const newLink = document.createElement('a');
-        newLink.setAttribute('asp-controller', 'Prepay');
-        newLink.setAttribute('asp-action', 'PrepayManagement_PM');
-        newLink.textContent = 'Prepay Created Request';
-
-        const newLink2 = document.createElement('a');
-        newLink2.setAttribute('asp-controller', 'Payment');
-        newLink2.setAttribute('asp-action', 'PaymentManagement_PM');
-        newLink2.textContent = 'Payment Created Request';
-
-        const url = new URL(`/Prepay/PrepayManagement_PM`, window.location.origin);
-        if (campaignId) {
-            url.searchParams.set('campaignid', campaignId);
-        }
-
-        const url2 = new URL(`/Payment/PaymentManagement_PM`, window.location.origin);
-        if (campaignId) {
-            url.searchParams.set('campaignid', campaignId);
-        }
-        newLink.href = url.toString();
-        newLink2.href = url2.toString();
-        navTabs.appendChild(newLink);
-        navTabs.appendChild(newLink2);
-    }
 
     var today = new Date();
     var year = today.getFullYear();
@@ -138,7 +113,7 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.success) {
                     alert('Create new Payment RequestForm successfully.');
-                    window.location.href = `/Prepay/PrepayManagement?campaignid=${campaignId}`;
+                    window.location.href = `/Payment/PaymentManagement?campaignid=${campaignId}`;
                 } else {
                     alert('Error: ' + response.Message);
                 }

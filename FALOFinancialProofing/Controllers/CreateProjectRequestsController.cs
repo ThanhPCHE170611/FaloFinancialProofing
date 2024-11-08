@@ -33,7 +33,7 @@ namespace FALOFinancialProofing.Controllers
         //    return Ok(await _createProjectRequestService.GetAllCreateProjectRequestsAsync());
         //}
 
-        //[RoleAttribute(AppRole.ProjectManagementBoard)]
+        [RoleAttribute(AppRole.ProjectManagementBoard)]
         [HttpGet("GetCreateProjectRequestByPMB")]
         public async Task<ActionResult<List<CreateProjectRequestInformation>>> GetCreateProjectRequests(string? status, int currentPage = IntConstant.PageNumberDefault)
         {

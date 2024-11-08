@@ -455,7 +455,47 @@ function updateRowToRejected(button, id) {
     statusCell.appendChild(declinedText);
 }
 
+function downloadAttachment(fileName) {
+    $.ajax({
+        url: `https://localhost:7294/api/AttachmentFile/downloadprepayattachmentfile/${fileName}`,
+        method: 'GET',
+        xhrFields: {
+            responseType: 'blob'
+        },
+        success: function (response, status, xhr) {
+            const contentType = xhr.getResponseHeader('Content-Type');
+            const blob = new Blob([response], { type: contentType });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = fileName;
+            link.click();
+        },
+        error: function () {
+            alert('Failed to download attachment file. Please try again.');
+        }
+    });
+}
 
+function downloadVoucher(fileName) {
+    $.ajax({
+        url: `https://localhost:7294/api/Voucher/downloadprepayvoucherfile/${fileName}`,
+        method: 'GET',
+        xhrFields: {
+            responseType: 'blob'
+        },
+        success: function (response, status, xhr) {
+            const contentType = xhr.getResponseHeader('Content-Type');
+            const blob = new Blob([response], { type: contentType });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = fileName;
+            link.click();
+        },
+        error: function () {
+            alert('Failed to download voucher file. Please try again.');
+        }
+    });
+}
 
 $(document).ready(function () {
     const userId = localStorage.getItem('userId');
@@ -515,47 +555,7 @@ $(document).ready(function () {
         return formattedDate + ' ' + formattedTime;
     }
 
-    function downloadAttachment(fileName) {
-        $.ajax({
-            url: `https://localhost:7294/api/AttachmentFile/downloadprepayattachmentfile/${fileName}`,
-            method: 'GET',
-            xhrFields: {
-                responseType: 'blob'
-            },
-            success: function (response, status, xhr) {
-                const contentType = xhr.getResponseHeader('Content-Type');
-                const blob = new Blob([response], { type: contentType });
-                const link = document.createElement('a');
-                link.href = window.URL.createObjectURL(blob);
-                link.download = fileName;
-                link.click();
-            },
-            error: function () {
-                alert('Failed to download attachment file. Please try again.');
-            }
-        });
-    }
-
-    function downloadVoucher(fileName) {
-        $.ajax({
-            url: `https://localhost:7294/api/Voucher/downloadprepayvoucherfile/${fileName}`,
-            method: 'GET',
-            xhrFields: {
-                responseType: 'blob'
-            },
-            success: function (response, status, xhr) {
-                const contentType = xhr.getResponseHeader('Content-Type');
-                const blob = new Blob([response], { type: contentType });
-                const link = document.createElement('a');
-                link.href = window.URL.createObjectURL(blob);
-                link.download = fileName;
-                link.click();
-            },
-            error: function () {
-                alert('Failed to download voucher file. Please try again.');
-            }
-        });
-    }
+    
 
 
     function loadPrepayRequests(page) {

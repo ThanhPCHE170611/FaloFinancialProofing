@@ -13,11 +13,30 @@ document.getElementById('attachments').addEventListener('change', function (e) {
     });
 });
 
+document.getElementById('vouchers').addEventListener('change', function (e) {
+    const voucherList = document.getElementById('voucherList');
+    voucherList.innerHTML = '';
+    Array.from(e.target.files).forEach(file => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(file);
+        a.textContent = file.name;
+        a.download = file.name;
+        li.appendChild(a);
+        voucherList.appendChild(li);
+    });
+});
+
 $(document).ready(function () {
     const userId = localStorage.getItem('userId');
     const jwtToken = localStorage.getItem('jwtToken');
     const campaignId = localStorage.getItem('campaignId');
     const checkrole = localStorage.getItem('loggingRole');
+
+    console.log(checkrole);
+    if (checkrole === "Accounting") {
+        $('#voucherInput').show();
+    }
 
     var today = new Date();
     var year = today.getFullYear();
@@ -75,11 +94,14 @@ $(document).ready(function () {
         const assignFrom = $('#assignFrom').val();
         const description = $('#description').val();
         const files = $('#attachments')[0].files;
+        const vouchers = $('#vouchers')[0].files;
 
         if (!expectedMoney || !assignFrom || !description) {
             alert('Please fill in all required fields.');
             return;
         }
+
+
 
         const formData = new FormData();
         formData.append('CreatedBy', userId);
@@ -92,6 +114,12 @@ $(document).ready(function () {
         Array.from(files).forEach(file => {
             formData.append('UploadFiles', file);
         });
+        if (checkrole === "Accounting") {
+            Array.from(vouchers).forEach(voucher => {
+                console.log("abcxy" + voucher);
+                formData.append('VoucherFile', voucher);
+            });
+        }
 
         console.log(assignFrom);
         console.log(userId);
@@ -112,7 +140,7 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.success) {
                     alert('Create new Payment RequestForm successfully.');
-                    window.location.href = `/Prepay/PrepayManagement_PM?campaignid=${campaignId}`;
+                    window.location.href = `/Payment/PaymentManagement_PM?campaignid=${campaignId}`;
                 } else {
                     alert('Error: ' + response.Message);
                 }
