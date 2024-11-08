@@ -1,0 +1,266 @@
+﻿@page "/addmember"
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <style>
+        .container-fluid {
+            padding-top: 20px;
+        }
+
+        .volunteer-list, .selected-members {
+            width: 45%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+
+        .table-container {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        .table th, .table td {
+            text-align: center;
+        }
+
+        .btn-add {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .selected-members-table th, .selected-members-table td {
+            text-align: center;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+            .nav-tabs a {
+                padding: 10px 20px;
+                text-decoration: none;
+                color: #000;
+                background-color: #f1f1f1;
+                border-radius: 5px;
+            }
+
+                .nav-tabs a.active {
+                    background-color: #EC407A;
+                    color: #fff;
+                }
+
+                .nav-tabs a:hover {
+                    background-color: #007bff;
+                    color: #fff;
+                }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid py-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="pt-4 pb-3 d-flex justify-content-between align-items-center">
+                <nav class="nav-tabs">
+                    <a href="/campaigndetail">Campaign Detail</a>
+                    <a href="/prepaymanagement">Prepay Request</a>
+                    <a href="/paymentrequest">Payment Request</a>
+                    <a href="/prepayvoucher">Prepay Voucher</a>
+                    <a href="/paymentvoucher">Payment Voucher</a>
+                    <a href="/accountingbook">Accounting Book</a>
+                    <a href="/member" class="active">Member</a>
+                </nav>
+            </div>
+        </div>
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
+                <h6 class="text-white text-capitalize ps-3 mb-0">Add Member to Campaign</h6>
+            </div>
+        </div>
+        <div class="d-flex justify-content-between container-fluid py-4">
+            <div class="volunteer-list">
+                <h5>Available Volunteers</h5>
+                <input type="text" id="volunteerSearchBox" class="form-control" placeholder="Search for a volunteer..." onkeyup="filterVolunteers()" />
+                <div class="table-container">
+                    <table class="table table-hover align-items-center mb-0" id="volunteerTable">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="volunteerList">
+                            <tr>
+                                <td>1</td>
+                                <td>John Doe</td>
+                                <td>
+                                    <select class="form-select role-select" onchange="enforceSingleAccountant(this)">
+                                        <option value="Team Member">Team Member</option>
+                                        <option value="Team Leader">Team Leader</option>
+                                        <option value="Accountant">Accountant</option>
+                                    </select>
+                                </td>
+                                <td><button class="btn btn-info btn-sm" onclick="addToSelectedList(this)">Add</button></td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>John Doe</td>
+                                <td>
+                                    <select class="form-select role-select" onchange="enforceSingleAccountant(this)">
+                                        <option value="Team Member">Team Member</option>
+                                        <option value="Team Leader">Team Leader</option>
+                                        <option value="Accountant">Accountant</option>
+                                    </select>
+                                </td>
+                                <td><button class="btn btn-info btn-sm" onclick="addToSelectedList(this)">Add</button></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Hianata</td>
+                                <td>
+                                    <select class="form-select role-select" onchange="enforceSingleAccountant(this)">
+                                        <option value="Team Member">Team Member</option>
+                                        <option value="Team Leader">Team Leader</option>
+                                        <option value="Accountant">Accountant</option>
+                                    </select>
+                                </td>
+                                <td><button class="btn btn-info btn-sm" onclick="addToSelectedList(this)">Add</button></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Mie</td>
+                                <td>
+                                    <select class="form-select role-select" onchange="enforceSingleAccountant(this)">
+                                        <option value="Team Member">Team Member</option>
+                                        <option value="Team Leader">Team Leader</option>
+                                        <option value="Accountant">Accountant</option>
+                                    </select>
+                                </td>
+                                <td><button class="btn btn-info btn-sm" onclick="addToSelectedList(this)">Add</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="selected-members">
+                <h5>Selected Members</h5>
+                <table class="table table-hover align-items-center mb-0 selected-members-table">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="selectedMembersList">
+                    </tbody>
+                </table>
+                <div class="btn-add">
+                    <button class="btn btn-dark" onclick="addToCampaign()">Add to Campaign</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let accountantAssigned = false;
+
+        function enforceSingleAccountant(select) {
+            if (select.value === 'Accountant' && accountantAssigned) {
+                alert('Only one Accountant can be selected.');
+                select.value = 'Team Member';
+            }
+        }
+
+        function addToSelectedList(button) {
+            const row = button.closest('tr');
+            const name = row.cells[1].innerText;
+            const roleSelect = row.cells[2].querySelector('.role-select');
+            const role = roleSelect.value;
+
+            if (role === 'Accountant' && accountantAssigned) {
+                alert('Only one Accountant can be selected.');
+                return;
+            }
+
+            const selectedMembersList = document.getElementById('selectedMembersList');
+            const newRow = `
+                <tr>
+                    <td>${selectedMembersList.rows.length + 1}</td>
+                    <td>${name}</td>
+                    <td>${role}</td>
+                    <td><button class="btn btn-danger btn-sm" onclick="removeFromSelectedList(this, '${role}')">Remove</button></td>
+                </tr>
+            `;
+            selectedMembersList.innerHTML += newRow;
+
+            if (role === 'Accountant') accountantAssigned = true;
+        }
+
+        function removeFromSelectedList(button, role) {
+            const row = button.closest('tr');
+            row.remove();
+
+            if (role === 'Accountant') accountantAssigned = false;
+            updateSelectedListNumbers();
+        }
+
+        function updateSelectedListNumbers() {
+            const rows = document.getElementById('selectedMembersList').rows;
+            for (let i = 0; i < rows.length; i++) {
+                rows[i].cells[0].innerText = i + 1;
+            }
+        }
+
+        function checkRoles() {
+            const selectedRows = Array.from(document.getElementById('selectedMembersList').rows);
+            const roles = new Set(selectedRows.map(row => row.cells[2].innerText));
+            return roles.has('Team Member') && roles.has('Team Leader') && roles.has('Accountant');
+        }
+
+        function addToCampaign() {
+            if (!checkRoles()) {
+                alert('Each role (Team Member, Team Leader, Accountant) must be selected before adding to the campaign.');
+                return;
+            }
+
+            alert('Members successfully added to campaign!');
+        }
+
+        function filterVolunteers() {
+            const searchInput = document.getElementById('volunteerSearchBox').value.toLowerCase();
+            const rows = document.getElementById('volunteerTable').getElementsByTagName('tr');
+
+            for (let i = 1; i < rows.length; i++) {
+                const name = rows[i].cells[1].innerText.toLowerCase();
+                rows[i].style.display = name.includes(searchInput) ? '' : 'none';
+            }
+        }
+    </script>
+
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+</body>
+
+</html>

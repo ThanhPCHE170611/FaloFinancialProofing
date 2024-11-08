@@ -1,0 +1,193 @@
+﻿
+@{
+    ViewData["Title"] = "OrganizationDetail";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <style>
+        .form-control {
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+        }
+
+        #save-btn {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        #logoPreview img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+        }
+
+        #fileList {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+            #fileList li {
+                padding: 5px 10px;
+                background-color: #e0e0e0;
+                border-radius: 5px;
+                list-style: none;
+            }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid py-4">
+        <form>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card my-4">
+                        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                            <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
+                                <h6 class="text-white text-capitalize ps-3 mb-0">Edit Organization</h6>
+                            </div>
+                        </div>
+                        <div class="card-body">
+
+                            <div class="mb-3">
+                                <label for="organizationLogo" class="form-label">Logo</label>
+                                <input type="file" class="form-control" id="organizationLogo" accept="image/*" onchange="previewLogo()">
+                                <div id="logoPreview" class="mt-3">
+                                    <img src="../assets/img/sample-logo.jpg" alt="Organization Logo">
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="name" value="Tech Innovators Inc.">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="mainOffice" class="form-label">Main Office</label>
+                                <input type="text" class="form-control" id="mainOffice" value="123 Innovation Drive, Silicon Valley, CA">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="representative" class="form-label">Representative</label>
+                                <input type="text" class="form-control" id="representative" value="Jane Doe">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="phoneNumber" class="form-label">Phone Number</label>
+                                <input type="text" class="form-control" id="phoneNumber" value="(123) 456-7890">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" value="contact@techinnovators.com">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" rows="3">Leading technology solutions provider specializing in AI and IoT.</textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="vision" class="form-label">Vision</label>
+                                <textarea class="form-control" id="vision" rows="3">To innovate and create cutting-edge technology solutions for a better future.</textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="mission" class="form-label">Mission</label>
+                                <textarea class="form-control" id="mission" rows="3">Empower businesses with transformative technology to enhance productivity and efficiency.</textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="coreValue" class="form-label">Core Value</label>
+                                <textarea class="form-control" id="coreValue" rows="3">Innovation, Integrity, and Excellence.</textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="mainActivity" class="form-label">Main Activity</label>
+                                <textarea class="form-control" id="mainActivity" rows="3">Developing AI-driven software and IoT products.</textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="interests" class="form-label">Interests</label>
+                                <input type="text" class="form-control" id="interests" value="AI, IoT, Cloud Computing">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="volunteerExperience" class="form-label">Volunteer Experience</label>
+                                <textarea class="form-control" id="volunteerExperience" rows="3">Participation in tech outreach programs for underprivileged students.</textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="volunteerObjectives" class="form-label">Volunteer Objectives</label>
+                                <textarea class="form-control" id="volunteerObjectives" rows="3">To bridge the digital divide by providing technology access to communities in need.</textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="attachments" class="form-label">Attachments</label>
+                                <input type="file" class="form-control" id="attachments" multiple>
+                                <ul id="fileList">
+                                    <li><a href="../assets/docs/company-brochure.pdf" download>company-brochure.pdf</a></li>
+                                    <li><a href="../assets/docs/annual-report.pdf" download>annual-report.pdf</a></li>
+                                </ul>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="bio" class="form-label">Bio</label>
+                                <textarea class="form-control" id="bio" rows="3">A global leader in tech innovation and digital transformation.</textarea>
+                            </div>
+
+                            <div id="save-btn">
+                                <button type="submit" class="btn btn-success">Save Changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function previewLogo() {
+            const file = document.getElementById('organizationLogo').files[0];
+            const preview = document.getElementById('logoPreview');
+            preview.innerHTML = '';
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    preview.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        document.getElementById('attachments').addEventListener('change', function (e) {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+            Array.from(e.target.files).forEach(file => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(file);
+                a.textContent = file.name;
+                a.download = file.name;
+                li.appendChild(a);
+                fileList.appendChild(li);
+            });
+        });
+    </script>
+</body>
+
+</html>
+

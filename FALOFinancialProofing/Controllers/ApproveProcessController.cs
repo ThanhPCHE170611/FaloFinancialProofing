@@ -522,7 +522,7 @@ namespace FALOFinancialProofing.Controllers
                         Message = "Campaign Member not found"
                     });
                 }
-                var updateCampaignMember = requestForm.TypeId == IntConstant.PrePayRequestType ?
+                var updateCampaignMember = (requestForm.TypeId == IntConstant.PrePayRequestType ?
                     new UpdateCampaignMemberDTO
                     {
                         Id = campaignMember.Id,
@@ -534,7 +534,7 @@ namespace FALOFinancialProofing.Controllers
                         Id = campaignMember.Id,
                         Debt = campaignMember.Debt - requestForm.ExpectedMoney,
                         IsActive = campaignMember.IsActive,
-                    };
+                    });
                 var canUpdateCampaignMember = await campaignMemberService.UpdateCampaignMemberAsync(updateCampaignMember);
                 if (!canUpdateCampaignMember)
                 {
