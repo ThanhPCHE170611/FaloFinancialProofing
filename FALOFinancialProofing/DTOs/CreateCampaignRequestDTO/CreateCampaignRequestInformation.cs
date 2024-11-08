@@ -13,6 +13,7 @@ namespace FALOFinancialProofing.DTOs.CreateCampaignRequestDTO
         public string ReceiverName { get; set; }
         public int CampaignId { get; set; }
         public string? Title { get; set; }
+        public string? ProjectName { get; set; }
         public DateTime CreatedAt { get; set; }
         public string? Feedback { get; set; }
         public string Status { get; set; }

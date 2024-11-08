@@ -271,7 +271,7 @@ namespace FALOFinancialProofing.Controllers
                 {
                     SenderId = checkCampaignCreated.CreateBy,
                     CampaignId = checkCampaignCreated.Id,
-                    Title = "Create Campaign",
+                    Title = $"{checkCampaignCreated.Title}",
                     CreatedAt = DateTime.Now,
                     Status = RequestStatus.Pending
                 };
