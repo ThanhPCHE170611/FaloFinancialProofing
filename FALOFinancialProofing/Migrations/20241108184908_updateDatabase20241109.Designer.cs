@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FALOFinancialProofing.Migrations
 {
     [DbContext(typeof(FALOFinancialProofingDbContext))]
-    [Migration("20241108171251_admore")]
-    partial class admore
+    [Migration("20241108184908_updateDatabase20241109")]
+    partial class updateDatabase20241109
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -665,6 +665,9 @@ namespace FALOFinancialProofing.Migrations
                     b.Property<double>("ExpectedMoney")
                         .HasColumnType("float");
 
+                    b.Property<string>("Feedback")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1307,9 +1310,9 @@ namespace FALOFinancialProofing.Migrations
             modelBuilder.Entity("FALOFinancialProofing.Models.CreateQrCode", b =>
                 {
                     b.HasOne("FALOFinancialProofing.Models.User", "User")
-                        .WithMany()
+                        .WithMany("CreateQrCodes")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -1606,6 +1609,8 @@ namespace FALOFinancialProofing.Migrations
                     b.Navigation("CreateCampaignRequestSenders");
 
                     b.Navigation("CreateProjectRequestApproveHistories");
+
+                    b.Navigation("CreateQrCodes");
 
                     b.Navigation("MoveNextCampaignStatusRequestReceiverUsers");
 

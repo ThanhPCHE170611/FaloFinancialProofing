@@ -1,6 +1,7 @@
 ﻿using FALOFinancialProofing.Core;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.SqlTypes;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FALOFinancialProofing.Models
 {
@@ -12,6 +13,9 @@ namespace FALOFinancialProofing.Models
         public double ExpectedMoney { get; set; }
         
         public string Status { get; set; }
+
+        [AllowNull]
+        public string? Feedback { get; set; }
 
         public string CreatedBy { get; set; }
         [ForeignKey("CreatedBy")]
