@@ -495,7 +495,6 @@ namespace FALOFinancialProofing.Migrations
                     b.HasIndex("SenderId");
 
                     b.ToTable("MoveNextCampaignStatusRequests");
-                    b.ToTable("MoveNextCampaignStatusRequests");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.MoveNextCampaignStatusRequestHistory", b =>
@@ -508,6 +507,9 @@ namespace FALOFinancialProofing.Migrations
 
                     b.Property<DateTime>("DateOfApproval")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Feedback")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAllowed")
                         .HasColumnType("bit");
@@ -825,7 +827,6 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("CreateQrCodeId");
 
-                    b.ToTable("TransactionLogs");
                     b.ToTable("TransactionLogs");
                 });
 

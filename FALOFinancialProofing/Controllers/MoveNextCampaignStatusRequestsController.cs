@@ -99,7 +99,7 @@ namespace FALOFinancialProofing.Controllers
 
             try
             {
-                bool checkValidateProject = await _moveNextCampaignStatusRequestService.ValidateProjectCreateAsync(requestDto, stringBuilderMessage);
+                bool checkValidateProject = await _moveNextCampaignStatusRequestService.ValidateCampaignCreateAsync(requestDto, stringBuilderMessage);
                 if (!checkValidateProject)
                 {
                     return Ok(new

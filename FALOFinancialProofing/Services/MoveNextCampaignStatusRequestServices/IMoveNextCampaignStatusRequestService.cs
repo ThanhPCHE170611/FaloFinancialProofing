@@ -18,7 +18,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
         Task<bool> ApproveOrRejectRequestAsync(int requestId, bool isApproved);
         Task<bool> ValidateCreateMoveNextCampaignStatusRequestAsync(CreateMoveNextCampaignStatusRequestDTO requestDTO, StringBuilder message);
         Task<bool> UpdateMoveNextCampaignStatusRequestAsync(UpdateMoveNextCampaignStatusRequestDTO updateMoveNextCampaignStatusRequestDTO);
-        Task<bool> ValidateProjectCreateAsync(CreateMoveNextCampaignStatusRequestDTO createMoveNextCampaignStatusRequestDTO, StringBuilder message);
+        Task<bool> ValidateCampaignCreateAsync(CreateMoveNextCampaignStatusRequestDTO createMoveNextCampaignStatusRequestDTO, StringBuilder message);
 
 
     }

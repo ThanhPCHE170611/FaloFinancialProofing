@@ -66,23 +66,26 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                     throw new InvalidOperationException("Not Found Campaign");
                 }
                 string nextStatus = "";
-                if (campaign.Status == CampaignStatus.FundRaising)
+                if (campaign.Status == Resource.CampaignStatus_FundRaising)
                 {
-                    nextStatus = CampaignStatus.Implement;
+                    bool Ok = await CheckMoneyOfCampaignAsync(requestDto.CampaignID);
+                    if (Ok)
+                    {
+                        nextStatus = Resource.CampaignStatus_Implement;
+                    }
                 }
-                else if (campaign.Status == CampaignStatus.Implement)
+                else if (campaign.Status == Resource.CampaignStatus_Implement)
                 {
-                    nextStatus = CampaignStatus.Disbursement;
+                    nextStatus = Resource.CampaignStatus_Disbursement;
                 }
-                else if (campaign.Status == CampaignStatus.Disbursement)
+                else if (campaign.Status == Resource.CampaignStatus_Disbursement)
                 {
                     bool Ok = await HasDebtInCampaignAsync(requestDto.CampaignID);
                     if (Ok)
                     {
-                        nextStatus = CampaignStatus.Close;
+                        nextStatus = Resource.CampaignStatus_Close;
                     }
                     //throw new InvalidOperationException("debt is not over yet");
-                   
                 }
                 else
                 {
@@ -103,13 +106,13 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                     await _moveNextCampaignStatusRequestRepository.InsertAsync(request);
                     return request;
                 }
-                
+
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"CreateMoveNextCampaignStatusRequestAsync: {ex.Message}");
             }
-            return null;    
+            return null;
         }
 
         private async Task<Campaign?> GetCampaignByIdAsync(int id)
@@ -143,6 +146,48 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
         }
 
 
+        private async Task<bool> CheckMoneyOfCampaignAsync(int campaignId)
+        {
+            bool IsValid = true;
+            try
+            {
+                var data = await _campaignRepository.GetAll()
+                    .Where(p => p.Id == campaignId)
+                       .Select(p => new CampaignInformation()
+                       {
+                           FirstName = p.User.FirstName,
+                           LastName = p.User.LastName,
+                           CampaignId = p.Id,
+                           ProjectId = p.ProjectId,
+                           CreateBy = p.CreateBy,
+                           Title = p.Title,
+                           Description = p.Description,
+                           DateOfCreation = p.DateOfCreation,
+                           FundTarget = p.FundTarget,
+                           Image = p.Image,
+                           EndDate = p.EndDate,
+                           Address = p.Address,
+                           IsActive = p.IsActive,
+                           BankingNumber = p.BankingNumber,
+                           BankId = p.BankId,
+                           Status = p.Status,
+                           TotalMoneyEarned = p.TransactionLogs.Sum(x => x.Amount)
+                       }).SingleOrDefaultAsync();
+                double sumOfAmount = 0;
+                //Campaign campaign = new Campaign();
+                //campaign = await _campaignRepository.Get(campaignId);
+                sumOfAmount = data.TotalMoneyEarned;
+
+                if (sumOfAmount < data.FundTarget)
+                {
+                    IsValid = false;
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return IsValid;
+        }
 
 
         public async Task<bool> ApproveOrRejectRequestAsync(int requestId, bool isApproved)
@@ -221,7 +266,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
             throw new NotImplementedException();
         }
 
-        public async Task<bool> ValidateProjectCreateAsync(CreateMoveNextCampaignStatusRequestDTO createMoveNextCampaignStatusRequestDTO, StringBuilder message)
+        public async Task<bool> ValidateCampaignCreateAsync(CreateMoveNextCampaignStatusRequestDTO createMoveNextCampaignStatusRequestDTO, StringBuilder message)
         {
             bool IsValid = false;
             try
@@ -232,8 +277,8 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                     return IsValid;
                 }
 
-                
-                
+
+
                 var campaign = await _campaignRepository.Get(x => x.Id == createMoveNextCampaignStatusRequestDTO.CampaignID);
                 if (campaign == null)
                 {
@@ -263,7 +308,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                 {
                     throw new Exception("User is not a Project Manager for the specified campaign.");
                 }
-               
+
                 IsValid = true;
             }
             catch (Exception ex)

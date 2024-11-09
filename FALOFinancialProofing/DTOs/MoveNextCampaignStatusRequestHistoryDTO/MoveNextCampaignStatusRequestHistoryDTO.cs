@@ -7,6 +7,7 @@ namespace FALOFinancialProofing.DTOs.MoveNextCampaignStatusRequestHistoryDTO
         public int MoveNextCampaignStatusRequestId { get; set; }
         public string ReceiverId { get; set; }
         public DateTime DateOfApproval { get; set; }
+        public string? Feedback {  get; set; }
         public bool IsAllowed { get; set; }
     }
 }

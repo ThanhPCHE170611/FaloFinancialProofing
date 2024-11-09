@@ -32,6 +32,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestHistorySer
                 MoveNextCampaignStatusRequestId = historyDTO.MoveNextCampaignStatusRequestId,
                 ReceiverId = historyDTO.ReceiverId,
                 DateOfApproval = historyDTO.DateOfApproval,
+                Feedback = historyDTO.Feedback,
                 IsAllowed = historyDTO.IsAllowed
             };
             return moveNextCampaignStatusRequestHistory;
@@ -178,6 +179,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestHistorySer
                                 .Where(r => !r.IsAllowed).First();
                             moveNextCampaignStatusRequest.ReceiverId = requestHistoryRejected.ReceiverId;
                             moveNextCampaignStatusRequest.CreatedAt = requestHistoryRejected.DateOfApproval;
+                            moveNextCampaignStatusRequest.Feedback = requestHistoryRejected.Feedback;
                             moveNextCampaignStatusRequest.Status = RequestStatus.Rejected;
                             await _moveNextCampaignStatusRequestRepository.UpdateAsync(moveNextCampaignStatusRequest);
                             checkValid = true;
@@ -220,6 +222,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestHistorySer
                 }
                 moveNextCampaignStatusRequest.ReceiverId = moveNextCampaignStatusRequestHistoryDTO.ReceiverId;
                 moveNextCampaignStatusRequest.CreatedAt = moveNextCampaignStatusRequestHistoryDTO.DateOfApproval;
+                moveNextCampaignStatusRequest.Feedback = moveNextCampaignStatusRequestHistoryDTO.Feedback;
                 await _campaignRepository.UpdateAsync(campaign);
                 await _moveNextCampaignStatusRequestRepository.UpdateAsync(moveNextCampaignStatusRequest);
                 checkValid = true;
@@ -255,20 +258,41 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestHistorySer
             return result;
         }
 
+        //private string BeforeStatus(string status) 
+        //{
+        //    string beforeStatus;
+        //    if (status == CampaignStatus.Implement)
+        //    {
+        //        beforeStatus = CampaignStatus.FundRaising;
+        //    }
+        //    else if (status == CampaignStatus.Disbursement)
+        //    {
+        //        beforeStatus = CampaignStatus.Implement;
+        //    }
+        //    else if (status == CampaignStatus.Close)
+        //    {
+        //        beforeStatus = CampaignStatus.Disbursement;
+        //    }
+        //    else 
+        //    {
+        //        throw new InvalidOperationException("The campaign has just begun, no previous stage");
+        //    }
+        //    return beforeStatus;
+        //}
         private string BeforeStatus(string status) 
         {
             string beforeStatus;
-            if (status == CampaignStatus.Implement)
+            if (status == Resource.CampaignStatus_Implement)
             {
-                beforeStatus = CampaignStatus.FundRaising;
+                beforeStatus = Resource.CampaignStatus_FundRaising;
             }
-            else if (status == CampaignStatus.Disbursement)
+            else if (status == Resource.CampaignStatus_Disbursement)
             {
-                beforeStatus = CampaignStatus.Implement;
+                beforeStatus = Resource.CampaignStatus_Implement;
             }
-            else if (status == CampaignStatus.Close)
+            else if (status == Resource.CampaignStatus_Close)
             {
-                beforeStatus = CampaignStatus.Disbursement;
+                beforeStatus = Resource.CampaignStatus_Disbursement;
             }
             else 
             {
@@ -276,6 +300,8 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestHistorySer
             }
             return beforeStatus;
         }
+
+
 
     }
 }
