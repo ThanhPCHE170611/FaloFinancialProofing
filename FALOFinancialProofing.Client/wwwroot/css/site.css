@@ -1,0 +1,13 @@
+﻿.dark-theme {
+    background-color: #333;
+    color: white;
+}
+
+    .dark-theme .navbar, .dark-theme .sidebar {
+        background-color: #444;
+        color: white;
+    }
+
+    .dark-theme .nav-link {
+        color: white;
+    }

@@ -7,6 +7,7 @@ using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services.CreateProjectRequestServices;
 using FALOFinancialProofing.Services.ProjectServices;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 
@@ -55,28 +56,20 @@ namespace FALOFinancialProofing.Services.CampaignService
                 Address = createCampaignDTO.Address,
                 IsActive = createCampaignDTO.IsActive,
                 BankingNumber = createCampaignDTO.BankingNumber,
+                BankId = createCampaignDTO.BankId,
                 Status = createCampaignDTO.Status
             };
         }
-        public async Task<List<Campaign>> GetAllCampaignsAsync()
-        {
-            try
-            {
-                return await campaignRepository.GetAll().ToListAsync();
-            }
-            catch (Exception e)
-            {
-                return new List<Campaign>();
-            }
-        }
-        public async Task<List<CampaignInformation>> GetAllCampaignsByProjectIdAsync(int ProjectId)
+        public async Task<List<CampaignInformation>> GetAllCampaignsAsync()
         {
             List<CampaignInformation> data = null!;
             try
             {
-                data = await campaignRepository.GetAll().Where(p => p.ProjectId == ProjectId)
+                data = await campaignRepository.GetAll()
                     .Select(p => new CampaignInformation()
                     {
+                        FirstName = p.User.FirstName,
+                        LastName = p.User.LastName,
                         CampaignId = p.Id,
                         ProjectId = p.ProjectId,
                         CreateBy = p.CreateBy,
@@ -89,6 +82,41 @@ namespace FALOFinancialProofing.Services.CampaignService
                         Address = p.Address,
                         IsActive = p.IsActive,
                         BankingNumber = p.BankingNumber,
+                        BankId = p.BankId,
+                        Status = p.Status,
+                        TotalMoneyEarned = p.TransactionLogs.Sum(x => x.Amount)
+                    }).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAllCampaignsAsync: {ex.Message}");
+            }
+
+            return data;
+        }
+        public async Task<List<CampaignInformation>> GetAllCampaignsByProjectIdAsync(int ProjectId)
+        {
+            List<CampaignInformation> data = null!;
+            try
+            {
+                data = await campaignRepository.GetAll().Where(p => p.ProjectId == ProjectId)
+                    .Select(p => new CampaignInformation()
+                    {
+                        FirstName = p.User.FirstName,
+                        LastName = p.User.LastName,
+                        CampaignId = p.Id,
+                        ProjectId = p.ProjectId,
+                        CreateBy = p.CreateBy,
+                        Title = p.Title,
+                        Description = p.Description,
+                        DateOfCreation = p.DateOfCreation,
+                        FundTarget = p.FundTarget,
+                        Image = p.Image,
+                        EndDate = p.EndDate,
+                        Address = p.Address,
+                        IsActive = p.IsActive,
+                        BankingNumber = p.BankingNumber,
+                        BankId = p.BankId,
                         Status = p.Status,
                         TotalMoneyEarned = p.TransactionLogs.Sum(x => x.Amount)
                     }).ToListAsync();
@@ -101,6 +129,8 @@ namespace FALOFinancialProofing.Services.CampaignService
             return data;
         }
 
+
+
         public async Task<CampaignInformation> GetCampaignByCampaignIdAsync(int CampaignId)
         {
             CampaignInformation data = null!;
@@ -109,6 +139,8 @@ namespace FALOFinancialProofing.Services.CampaignService
                 data = await campaignRepository.GetAll().Where(p => p.Id == CampaignId)
                     .Select(p => new CampaignInformation()
                     {
+                        FirstName = p.User.FirstName,
+                        LastName = p.User.LastName,
                         CampaignId = p.Id,
                         ProjectId = p.ProjectId,
                         CreateBy = p.CreateBy,
@@ -121,6 +153,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                         Address = p.Address,
                         IsActive = p.IsActive,
                         BankingNumber = p.BankingNumber,
+                        BankId = p.BankId,
                         Status = p.Status,
                         TotalMoneyEarned = p.TransactionLogs.Sum(x => x.Amount)
                     }).SingleOrDefaultAsync();
@@ -199,7 +232,8 @@ namespace FALOFinancialProofing.Services.CampaignService
             campaignModels.Address = updateCampaignDTO.Address;
             campaignModels.IsActive = updateCampaignDTO.IsActive;
             campaignModels.BankingNumber = updateCampaignDTO.BankingNumber;
-            //campaignModels.Status = updateCampaignDTO.Status;
+            campaignModels.BankId = updateCampaignDTO.BankId;
+            campaignModels.Status = updateCampaignDTO.Status;
         }
 
         public async Task<bool> DeleteCampaignByIdAsync(int id)
@@ -257,7 +291,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                 {
                     throw new Exception("Date of creation cannot be in the future");
                 }
-                if (createCampaignClientRequest.DateOfCreation < createCampaignClientRequest.EndDate)
+                if (createCampaignClientRequest.DateOfCreation > createCampaignClientRequest.EndDate)
                 {
                     throw new Exception("End Date must be after");
                 }
@@ -290,6 +324,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                     Address = createCampaignClientRequest.Address,
                     IsActive = createCampaignClientRequest.IsActive,
                     BankingNumber = createCampaignClientRequest.BankingNumber,
+                    BankId = createCampaignClientRequest.BankId,
                     Status = createCampaignClientRequest.Status,
                 };
             }
@@ -328,7 +363,7 @@ namespace FALOFinancialProofing.Services.CampaignService
 
                 foreach (var campaign in allCampaigns)
                 {
-                    if(campaign.CampaignMembers.Any(cm => cm.UserId == userId 
+                    if (campaign.CampaignMembers.Any(cm => cm.UserId == userId
                         && cm.IdentityRole.Name.Equals(currentRole)
                         && cm.IsActive))
                     {

@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "FALOFinancialProofing.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "..\\FALOFinanacialProofing.Management\\FALOFinanacialProofing.Management.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

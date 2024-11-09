@@ -25,5 +25,6 @@ namespace FALOFinancialProofing.DTOs.CampaignDTO
         [Required]
         [DefaultValue(CampaignStatus.FundRaising)]
         public string Status { get; set; }
+        public int? BankId { get; set; }
     }
 }

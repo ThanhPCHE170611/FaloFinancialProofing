@@ -1,10 +1,15 @@
 ﻿using FALOFinancialProofing.Attributes.RoleAttributes;
+using FALOFinancialProofing.Constant;
+using FALOFinancialProofing.DTOs.CampaignDTO;
+using FALOFinancialProofing.DTOs.CreateProjectRequestDTO;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.CreateProjectRequestServices;
+using FALOFinancialProofing.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -28,32 +33,92 @@ namespace FALOFinancialProofing.Controllers
         //    return Ok(await _createProjectRequestService.GetAllCreateProjectRequestsAsync());
         //}
 
+        // hiển thị toàn bộ các yêu cầu tạo dự án
         [RoleAttribute(AppRole.ProjectManagementBoard)]
         [HttpGet("GetCreateProjectRequestByPMB")]
-        public async Task<ActionResult<IEnumerable<CreateProjectRequest>>> GetCreateProjectRequests()
+        public async Task<ActionResult<List<CreateProjectRequestInformation>>> GetCreateProjectRequests(string? status, int currentPage = IntConstant.PageNumberDefault)
         {
             StringBuilder message = new StringBuilder();
-            IEnumerable<CreateProjectRequest> data = null;
+            FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
+            List<CreateProjectRequestInformation> data = null;
             try
             {
-                data = await _createProjectRequestService.GetAllCreateProjectRequestsByPMBAsync(message);
-                message.Append("Get CreateProjectRequests Successfully!");
+                data = (await _createProjectRequestService.GetAllCreateProjectRequestsByPMBAsync(message))
+                    .ToList();
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "Get All CreateProjectRequests Failed!",
+                        Data = filterPagingData
+                    });
+                }
+                message.Append("Get All CreateProjectRequests Successfully!");
+                if (!string.IsNullOrEmpty(status))
+                {
+                    data = data.FindAll(x => x.Status.Equals(status));
+                }
+                filterPagingData.DataCount = data.Count;
+                data = PaginationHelper.Paginate<CreateProjectRequestInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                filterPagingData.Data = data;
             }
             catch (Exception ex)
             {
-                message.Append("Get CreateProjectRequests Failed!");
+                message.Append("Get All CreateProjectRequests Failed!");
                 await Console.Out.WriteLineAsync(ex.Message);
             }
             return Ok(new ApiResponse()
             {
                 Success = true,
                 Message = message.ToString(),
-                Data = data
+                Data = filterPagingData
+            });
+        }
+        // sender use this
+        [RoleAttribute(AppRole.ProjectManager)]
+        [HttpGet("GetAllCreateProjectRequestsByUserId/{UserId}")]
+        public async Task<IActionResult> GetAllCreateProjectRequestsByUserId(string UserId, string? status, int currentPage = IntConstant.PageNumberDefault)
+        {
+            List<CreateProjectRequestInformation> data = null;
+            FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
+            StringBuilder stringBuilder = new StringBuilder();
+            try
+            {
+                data = (await _createProjectRequestService.GetAllCreateProjectRequestsByUserIdAsync(UserId, stringBuilder)).ToList();
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "Get All Campaign By ProjectId Failed!",
+                        Data = filterPagingData
+                    });
+                }
+                if (!string.IsNullOrEmpty(status))
+                {
+                    data = data.FindAll(x => x.Status.Equals(status));
+                }
+                filterPagingData.DataCount = data.Count;
+                data = PaginationHelper.Paginate<CreateProjectRequestInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                filterPagingData.Data = data;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAllCreateProjectRequestsByUserId: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "GetAllCreateProjectRequestsByUserId Successfully!",
+                Data = filterPagingData
             });
         }
         // GET: api/CreateProjectRequests/5
         [HttpGet("GetCreateProjectRequest/{id}")]
-        public async Task<ActionResult<CreateProjectRequest>> GetCreateProjectRequest(int id)
+        public async Task<ActionResult<CreateProjectRequestInformation>> GetCreateProjectRequest(int id)
         {
 
             var createProjectRequest = await _createProjectRequestService.GetCreateProjectRequestByIdAsync(id);

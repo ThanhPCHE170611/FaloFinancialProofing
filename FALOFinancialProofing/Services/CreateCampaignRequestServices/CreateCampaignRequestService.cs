@@ -1,6 +1,11 @@
-﻿using FALOFinancialProofing.Models;
+﻿using FALOFinancialProofing.DTOs.CreateCampaignFileDTO;
+using FALOFinancialProofing.DTOs.CreateCampaignRequestDTO;
+using FALOFinancialProofing.DTOs.CreateProjectFileDTO;
+using FALOFinancialProofing.DTOs.CreateProjectRequestDTO;
+using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace FALOFinancialProofing.Services.CreateCampaignRequestServices
 {
@@ -33,25 +38,25 @@ namespace FALOFinancialProofing.Services.CreateCampaignRequestServices
             return false;
         }
 
-        public async Task<CreateCampaignRequest> GetCreateCampaignRequestByIdAsync(int id)
-        {
-            CreateCampaignRequest createCampaignRequest = null!;
-            try
-            {
-                createCampaignRequest = await _createCampaignRequestRepository.Get(id);
-                if (createCampaignRequest == null)
-                {
-                    throw new Exception("CreateCampaignRequest not found");
-                }
+        //public async Task<CreateCampaignRequest> GetCreateCampaignRequestByIdAsync(int id)
+        //{
+        //    CreateCampaignRequest createCampaignRequest = null!;
+        //    try
+        //    {
+        //        createCampaignRequest = await _createCampaignRequestRepository.Get(id);
+        //        if (createCampaignRequest == null)
+        //        {
+        //            throw new Exception("CreateCampaignRequest not found");
+        //        }
 
-            }
-            catch (Exception ex)
-            {
-                await Console.Out.WriteLineAsync($"GetCreateCampaignRequestById: {ex.Message}");
-            }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await Console.Out.WriteLineAsync($"GetCreateCampaignRequestById: {ex.Message}");
+        //    }
 
-            return createCampaignRequest;
-        }
+        //    return createCampaignRequest;
+        //}
 
         public async Task<IEnumerable<CreateCampaignRequest>> GetAllCreateCampaignRequestsAsync()
         {
@@ -132,5 +137,115 @@ namespace FALOFinancialProofing.Services.CreateCampaignRequestServices
 
             return createCampaignRequest;
         }
+        public async Task<IEnumerable<CreateCampaignRequestInformation>> GetAllCreateCampaignRequestsByPMBAsync(StringBuilder message)
+        {
+            List<CreateCampaignRequestInformation> data = null!;
+            try
+            {
+                data = await _createCampaignRequestRepository.GetAll()
+                    //.Where(pr => pr.Status.Equals(RequestStatus.Pending))
+                    .Select(s => new CreateCampaignRequestInformation()
+                    {
+                        ProjectName = s.Campaign.Project.ProjectName,
+                        Id = s.Id,
+                        SenderId = s.SenderId,
+                        SenderName = $"{s.SenderUser.FirstName} {s.SenderUser.LastName}",
+                        ReceiverId = s.ReceiverId,
+                        ReceiverName = $"{s.ReceiverUser.FirstName} {s.ReceiverUser.LastName}",
+                        CampaignId = s.CampaignId,
+                        Title = s.Title,
+                        CreatedAt = s.CreatedAt,
+                        Feedback = s.Feedback,
+                        Status = s.Status,
+                        CreateCampaignFiles = s.CreateCampaignFiles.Select(f => new CreateCampaignFileInformation()
+                        {
+                            Id = f.Id,
+                            RequestId = f.RequestId,
+                            FilePath = f.FilePath
+                        }).ToList()
+                    }).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"GetAllCreateCampaignRequestsByPMBAsync: {ex.Message}");
+            }
+
+            return data;
+        }
+
+        public async Task<IEnumerable<CreateCampaignRequestInformation>> GetAllCreateCampaignRequestsByUserIdAsync(string userId, StringBuilder message)
+        {
+            List<CreateCampaignRequestInformation> data = null!;
+            try
+            {
+                data = await _createCampaignRequestRepository.GetAll()
+                    //.Where(pr => pr.Status.Equals(RequestStatus.Pending))
+                    .Select(s => new CreateCampaignRequestInformation()
+                    {
+                        ProjectName = s.Campaign.Project.ProjectName,
+                        Id = s.Id,
+                        SenderId = s.SenderId,
+                        SenderName = $"{s.SenderUser.FirstName} {s.SenderUser.LastName}",
+                        ReceiverId = s.ReceiverId,
+                        ReceiverName = $"{s.ReceiverUser.FirstName} {s.ReceiverUser.LastName}",
+                        CampaignId = s.CampaignId,
+                        Title = s.Title,
+                        CreatedAt = s.CreatedAt,
+                        Feedback = s.Feedback,
+                        Status = s.Status,
+                        CreateCampaignFiles = s.CreateCampaignFiles.Select(f => new CreateCampaignFileInformation()
+                        {
+                            Id = f.Id,
+                            RequestId = f.RequestId,
+                            FilePath = f.FilePath
+                        }).ToList()
+                    }).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"GetAllCreateCampaignRequestsByPMBAsync: {ex.Message}");
+            }
+
+            return data;
+        }
+
+        public async Task<CreateCampaignRequestInformation> GetCreateCampaignRequestByIdAsync(int id)
+        {
+            CreateCampaignRequestInformation data = null!;
+            try
+            {
+                data = await _createCampaignRequestRepository.GetAll()
+                     .Where(cpr => cpr.Id == id)
+                    .Select(s => new CreateCampaignRequestInformation()
+                    {
+                        ProjectName = s.Campaign.Project.ProjectName,
+                        Id = s.Id,
+                        SenderId = s.SenderId,
+                        SenderName = $"{s.SenderUser.FirstName} {s.SenderUser.LastName}",
+                        ReceiverId = s.ReceiverId,
+                        ReceiverName = $"{s.ReceiverUser.FirstName} {s.ReceiverUser.LastName}",
+                        CampaignId = s.CampaignId,
+                        Title = s.Title,
+                        CreatedAt = s.CreatedAt,
+                        Feedback = s.Feedback,
+                        Status = s.Status,
+                        CreateCampaignFiles = s.CreateCampaignFiles.Select(f => new CreateCampaignFileInformation()
+                        {
+                            Id = f.Id,
+                            RequestId = f.RequestId,
+                            FilePath = f.FilePath
+                        }).ToList()
+                    }).SingleOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAllCreateCampaignRequestsByPMBAsync: {ex.Message}");
+            }
+
+            return data;
+        }
+
     }
 }

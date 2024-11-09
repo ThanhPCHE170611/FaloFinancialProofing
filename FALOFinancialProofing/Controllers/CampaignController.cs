@@ -5,10 +5,14 @@ using FALOFinancialProofing.DTOs.CreateProjectRequestDTO;
 using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
+using FALOFinancialProofing.Repository;
+using FALOFinancialProofing.Services;
+using FALOFinancialProofing.Services.CampaignMemberService;
 using FALOFinancialProofing.Services.CampaignService;
 using FALOFinancialProofing.Services.CreateCampaignFileServices;
 using FALOFinancialProofing.Services.CreateCampaignRequestServices;
 using FALOFinancialProofing.Utilities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 
@@ -22,12 +26,16 @@ namespace FALOFinancialProofing.Controllers
         private readonly ICampaignService _campaignService;
         private readonly ICreateCampaignRequestService _createCampaignRequestService;
         private readonly ICreateCampaignFileService _createCampaignFileService;
+        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly ICampaignMemberService _campaignMemberService;
 
-        public CampaignController(ICampaignService campaignService, ICreateCampaignRequestService createCampaignRequestService, ICreateCampaignFileService createCampaignFileService)
+        public CampaignController(ICampaignService campaignService, ICreateCampaignRequestService createCampaignRequestService, ICreateCampaignFileService createCampaignFileService, RoleManager<IdentityRole> roleManager, ICampaignMemberService campaignMemberService)
         {
             _campaignService = campaignService;
             _createCampaignRequestService = createCampaignRequestService;
             _createCampaignFileService = createCampaignFileService;
+            this.roleManager = roleManager;
+            _campaignMemberService = campaignMemberService;
         }
 
         //[HttpGet("GetAllCampaign")]
@@ -50,7 +58,49 @@ namespace FALOFinancialProofing.Controllers
         //        Data = campaigns
         //    });
         //}
-        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
+
+        [HttpGet("GetAllCampaignInSystem")]
+        public async Task<IActionResult> GetAllCampaignInSystem(string? status, bool? IsActive, int currentPage = IntConstant.PageNumberDefault)
+        {
+            List<CampaignInformation> data = null;
+            FilterPagingData filterPagingData = new FilterPagingData();
+            try
+            {
+                data = await _campaignService.GetAllCampaignsAsync();
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "Get All Project By In System Failed!",
+                        Data = data
+                    });
+                }
+                if (!string.IsNullOrEmpty(status))
+                {
+                    data = data.FindAll(x => x.Status == status);
+                }
+                if (IsActive != null)
+                {
+                    data = data.FindAll(x => x.IsActive == IsActive);
+                }
+                filterPagingData.DataCount = data.Count;
+                filterPagingData.CurrentPage = currentPage;
+                data = PaginationHelper.Paginate<CampaignInformation>(data.AsQueryable(), currentPage, IntConstant.PageSizeCustom).ToList();
+                filterPagingData.Data = data;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAllProjectInSystem: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "Get All Project In System Successfully!",
+                Data = filterPagingData
+            });
+        }
+        //[RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
         [HttpGet("GetAllCampaignByProjectId/{ProjectId}")]
         public async Task<IActionResult> GetAllCampaignByProjectId(int ProjectId, string? status, int currentPage = IntConstant.PageNumberDefault)
         {
@@ -88,7 +138,52 @@ namespace FALOFinancialProofing.Controllers
                 Data = filterPagingData
             });
         }
-        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
+
+
+
+        [HttpGet("GetFourCampaignByFilter")]
+        public async Task<IActionResult> GetFourCampaignByFilter(bool IsActive, bool OrderByAscending, int numOfElements)
+        {
+            List<CampaignInformation> data = null;
+            try
+            {
+                data = await _campaignService.GetAllCampaignsAsync();
+                data = data.Take(numOfElements).ToList();
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "GetFourCampaignByFilter Failed!",
+                        Data = data
+                    });
+                }
+                if (IsActive)
+                {
+                    data = data.FindAll(x => x.IsActive);
+                }
+                if (OrderByAscending)
+                {
+                    data = data.OrderBy(o => o.DateOfCreation).ToList();
+                }
+                else
+                {
+                    data = data.OrderByDescending(o => o.DateOfCreation).ToList();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetFourCampaignByFilter: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "Get Four Campaign By ProjectId Successfully!",
+                Data = data
+            });
+        }
+        //[RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
         [HttpGet("GetCampaignDetailsById/{id}")]
         public async Task<IActionResult> GetCampaignDetailsById(int id)
         {
@@ -160,12 +255,23 @@ namespace FALOFinancialProofing.Controllers
                         Message = stringBuilderMessage.ToString()
                     });
                 }
+                // add PM Vào campaingMember
+                var Role = await roleManager.FindByNameAsync(AppRole.ProjectManager);
+                CampaignMember PMCampaignMember = new CampaignMember()
+                {
+                    CampaignId = checkCampaignCreated.Id,
+                    UserId = checkCampaignCreated.CreateBy,
+                    Debt = 0,
+                    IsActive = true,
+                    RoleId = Role.Id
+                };
+                await _campaignMemberService.CreateCampaignMemberAsync(PMCampaignMember);
                 // tạo request trước mới tạo fileAttach
                 CreateCampaignRequest createCampaignRequest = new CreateCampaignRequest()
                 {
                     SenderId = checkCampaignCreated.CreateBy,
                     CampaignId = checkCampaignCreated.Id,
-                    Title = "Create Campaign",
+                    Title = $"{checkCampaignCreated.Title}",
                     CreatedAt = DateTime.Now,
                     Status = RequestStatus.Pending
                 };

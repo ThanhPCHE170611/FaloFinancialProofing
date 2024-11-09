@@ -385,6 +385,27 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
+        [HttpGet("getrequestdetailbyrequestid/{requestId}")]
+        public async Task<IActionResult> GetPrePayRequestDetailByRequestId(int requestId)
+        {
+            var requestForm = await requestFormService.GetRequestDetailByRequestId(requestId);
+            if (requestForm == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = $"Request Form with Id = {requestId} not found."
+                });
+            }
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "Request Form retrieved successfully.",
+                Data = requestForm
+            });
+        }
+
         [HttpGet("getallpaymentrequestincampaign/{campaignId}")]
         public async Task<IActionResult> GetAllPaymentRequestInCampaign(int campaignId, string userId,
             string? status,
@@ -423,6 +444,7 @@ namespace FALOFinancialProofing.Controllers
                 Data = response
             });
         }
+
 
         [HttpPost("uploadvoucherforaccounting/{approveId}")]
         public async Task<IActionResult> UploadVoucherForAccounting(int approveId, List<IFormFile> files)

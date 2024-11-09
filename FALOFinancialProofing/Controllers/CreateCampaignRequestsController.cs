@@ -1,7 +1,14 @@
-﻿using FALOFinancialProofing.Models;
+﻿using FALOFinancialProofing.Attributes.RoleAttributes;
+using FALOFinancialProofing.Constant;
+using FALOFinancialProofing.DTOs.CreateCampaignRequestDTO;
+using FALOFinancialProofing.DTOs.CreateProjectRequestDTO;
+using FALOFinancialProofing.Helpers;
+using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.CreateCampaignRequestServices;
+using FALOFinancialProofing.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -16,16 +23,98 @@ namespace FALOFinancialProofing.Controllers
             _createCampaignRequestService = createCampaignFileService;
         }
 
-        // GET: api/CreateCampaignRequests
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<CreateCampaignRequest>>> GetCreateCampaignRequests()
-        {
-            return Ok(await _createCampaignRequestService.GetAllCreateCampaignRequestsAsync());
-        }
+        //// GET: api/CreateCampaignRequests
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<CreateCampaignRequest>>> GetCreateCampaignRequests()
+        //{
+        //    return Ok(await _createCampaignRequestService.GetAllCreateCampaignRequestsAsync());
+        //}
 
+        [RoleAttribute(AppRole.ProjectManagementBoard)]
+        [HttpGet("GetCreateCampaignRequestByPMB")]
+        public async Task<ActionResult<List<CreateCampaignRequestInformation>>> GetCreateCampaignRequests(string? status, int currentPage = IntConstant.PageNumberDefault)
+        {
+            StringBuilder message = new StringBuilder();
+            FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
+            List<CreateCampaignRequestInformation> data = null;
+            try
+            {
+                data = (await _createCampaignRequestService.GetAllCreateCampaignRequestsByPMBAsync(message))
+                    .ToList();
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "GetCreateCampaignRequests Failed!",
+                        Data = filterPagingData
+                    });
+                }
+                message.Append("GetCreateCampaignRequests Successfully!");
+                if (!string.IsNullOrEmpty(status))
+                {
+                    data = data.FindAll(x => x.Status.Equals(status));
+                }
+                filterPagingData.DataCount = data.Count;
+                data = PaginationHelper.Paginate<CreateCampaignRequestInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                filterPagingData.Data = data;
+            }
+            catch (Exception ex)
+            {
+                message.Append("GetCreateCampaignRequests Failed!");
+                await Console.Out.WriteLineAsync(ex.Message);
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = message.ToString(),
+                Data = filterPagingData
+            });
+        }
+        // sender use this
+        [RoleAttribute(AppRole.ProjectManager)]
+        [HttpGet("GetAllCreateProjectRequestsByUserId/{UserId}")]
+        public async Task<IActionResult> GetAllCreateProjectRequestsByUserId(string UserId, string? status, int currentPage = IntConstant.PageNumberDefault)
+        {
+            List<CreateCampaignRequestInformation> data = null;
+            FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
+            StringBuilder stringBuilder = new StringBuilder();
+            try
+            {
+                data = (await _createCampaignRequestService.GetAllCreateCampaignRequestsByUserIdAsync(UserId, stringBuilder)).ToList();
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "Get All CreateProjectRequests By UserId Failed!",
+                        Data = filterPagingData
+                    });
+                }
+                if (!string.IsNullOrEmpty(status))
+                {
+                    data = data.FindAll(x => x.Status.Equals(status));
+                }
+                filterPagingData.DataCount = data.Count;
+                data = PaginationHelper.Paginate<CreateCampaignRequestInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                filterPagingData.Data = data;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAllCreateProjectRequestsByUserId: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "GetAllCreateProjectRequestsByUserId Successfully!",
+                Data = filterPagingData
+            });
+        }
         // GET: api/CreateCampaignRequests/5
         [HttpGet("GetCreateCampaignRequest/{id}")]
-        public async Task<ActionResult<CreateCampaignRequest>> GetCreateCampaignRequest(int id)
+        public async Task<ActionResult<CreateCampaignRequestInformation>> GetCreateCampaignRequest(int id)
         {
 
             var createCampaignRequest = await _createCampaignRequestService.GetCreateCampaignRequestByIdAsync(id);

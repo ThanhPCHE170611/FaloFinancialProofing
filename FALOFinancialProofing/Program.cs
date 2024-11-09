@@ -1,5 +1,4 @@
-﻿using Example;
-using FALOFinancialProofing.Attributes;
+﻿using FALOFinancialProofing.Attributes;
 using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
@@ -90,7 +89,11 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped<IOrganizationMemberService, OrganizationMemberService>();
             builder.Services.AddScoped<ICreateProjectRequestApproveHistoryService, CreateProjectRequestApproveHistoryService>();
             builder.Services.AddScoped<ICampaignRequestApproveHistoryService, CampaignRequestApproveHistoryService>();
-
+            builder.Services.AddHttpClient("MyHttpClient", client =>
+            {
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+            });
+            builder.Services.AddScoped(typeof(BankService));
             builder.Services.AddDistributedMemoryCache(); // Sử dụng bộ nhớ trong để lưu trữ session
             builder.Services.AddSession(options =>
             {
@@ -209,6 +212,7 @@ namespace FALOFinancialProofing
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseStaticFiles();
             app.UseSession();
             app.UseHttpsRedirection();
             app.UseAuthentication();

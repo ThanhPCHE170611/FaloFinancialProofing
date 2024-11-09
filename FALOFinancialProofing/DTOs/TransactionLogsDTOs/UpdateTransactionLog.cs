@@ -9,7 +9,7 @@ namespace FALOFinancialProofing.DTOs.TransactionLogsDTOs
         public string SenderID { get; set; }
         [Required(ErrorMessage = "Amount is require!")]
         public double Amount { get; set; }
-        public string BankId { get; set; } = null!;
+        //public string BankId { get; set; } = null!;
         public string Description { get; set; } = null!;
         [Required(ErrorMessage = "ReceiverId is require!")]
         public int CampaignId { get; set; }
