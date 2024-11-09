@@ -244,6 +244,53 @@ namespace FALOFinancialProofing.Services.AttachmentFIleServices
                 return (null, null, null);
             }
         }
+        public async Task<(byte[] fileBytes, string contentType, string fileName)> DownloadAttachmentFileWithNoTypeByFileName(string fileName)
+        {
+            try
+            {
+                var attachmentWithRequest = await repository.GetAll(x => x.FilePath == fileName)
+                    .Include(x => x.RequestForm).FirstOrDefaultAsync();
+                if (attachmentWithRequest == null)
+                {
+                    return (null, null, null);
+                }
+                var folderName = attachmentWithRequest.RequestForm.TypeId == 1 ? "PrePayUploads" : "PaymentUploads";
+
+                // Đường dẫn đầy đủ đến file trong server
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), folderName, fileName);
+
+                // Kiểm tra xem file có tồn tại không
+                if (!System.IO.File.Exists(filePath))
+                {
+                    return (null, null, null);
+                }
+
+                // Đọc file vào stream
+                var fileBytes = await System.IO.File.ReadAllBytesAsync(filePath);
+
+                // Kiểm tra định dạng file và đặt Content-Type tương ứng
+                string contentType;
+                if (fileName.EndsWith(".rar"))
+                {
+                    contentType = "application/x-rar-compressed";  // MIME type cho file .rar
+                }
+                else if (fileName.EndsWith(".zip"))
+                {
+                    contentType = "application/zip";  // MIME type cho file .zip
+                }
+                else
+                {
+                    contentType = "application/octet-stream";  // Định dạng mặc định
+                }
+
+                // Trả về thông tin file
+                return (fileBytes, contentType, fileName);
+            }
+            catch (Exception ex)
+            {
+                return (null, null, null);
+            }
+        }
 
         public async Task<List<AttachmentFile>> GetAllCurrentAttachmentInCampaign(int campaignId)
         {

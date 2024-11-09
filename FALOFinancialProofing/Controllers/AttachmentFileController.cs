@@ -46,6 +46,22 @@ namespace FALOFinancialProofing.Controllers
             }
 
             return File(fileBytes, contentType, downloadFileName);
+        } 
+        [HttpGet("downloadattachmentfilewithnotypebyfilename/{fileName}")]
+        public async Task<IActionResult> DownloadAttachmentFileWithNoTypeByFileName(string fileName)
+        {
+            var (fileBytes, contentType, downloadFileName) = await attachmentFileServices.DownloadAttachmentFileWithNoTypeByFileName(fileName);
+
+            if (fileBytes == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "File not found",
+                });
+            }
+
+            return File(fileBytes, contentType, downloadFileName);
         }
 
         [HttpGet("getallcurrentattachmentincampaign/{campaignId}")]
@@ -64,7 +80,15 @@ namespace FALOFinancialProofing.Controllers
             var filteredAttachmentFiles = attachmentFiles.AsEnumerable();
             if (type != null)
             {
-                var typeInt = (type.Equals("Pre-Pay") ? 1 : 2);
+                var typeInt = 0;
+                if(type == "prepay")
+                {
+                    typeInt = IntConstant.PrePayRequestType;
+                }
+                else if(type == "payment")
+                {
+                    typeInt = IntConstant.PaymentRequestType;
+                }
                 filteredAttachmentFiles = filteredAttachmentFiles.Where(x => x.RequestForm.TypeId == typeInt).ToList();
             }
             var totalRecords = filteredAttachmentFiles.Count();

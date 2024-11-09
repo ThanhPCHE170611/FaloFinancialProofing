@@ -129,6 +129,18 @@
   <data name="CancelStatus" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="CampaignStatus.Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="CampaignStatus.Disbursement" xml:space="preserve">
+    <value>Disbursement</value>
+  </data>
+  <data name="CampaignStatus.FundRaising" xml:space="preserve">
+    <value>Fund Raising</value>
+  </data>
+  <data name="CampaignStatus.Implement" xml:space="preserve">
+    <value>Implement</value>
+  </data>
   <data name="ProcessStatus" xml:space="preserve">
     <value>Process</value>
   </data>

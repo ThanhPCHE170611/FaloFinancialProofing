@@ -7,8 +7,9 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace FALOFinancialProofing.Migrations
 {
+
     /// <inheritdoc />
-    public partial class addUpdateLogForCampaign : Migration
+    public partial class updateMoveNextCampaignStatusRequestHistory : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -531,11 +532,12 @@ namespace FALOFinancialProofing.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     SenderId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ReceiverId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ReceiverId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CampaignID = table.Column<int>(type: "int", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Feedback = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    Feedback = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
+                    StatusOfCampaign = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false)
                 },
                 constraints: table =>
@@ -551,14 +553,12 @@ namespace FALOFinancialProofing.Migrations
                         name: "FK_MoveNextCampaignStatusRequests_Users_ReceiverId",
                         column: x => x.ReceiverId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_MoveNextCampaignStatusRequests_Users_SenderId",
                         column: x => x.SenderId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -717,6 +717,35 @@ namespace FALOFinancialProofing.Migrations
                         name: "FK_CreateCampaignFiles_CreateCampaignRequests_RequestId",
                         column: x => x.RequestId,
                         principalTable: "CreateCampaignRequests",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MoveNextCampaignStatusRequestHistories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MoveNextCampaignStatusRequestId = table.Column<int>(type: "int", nullable: false),
+                    ReceiverId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    DateOfApproval = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Feedback = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsAllowed = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MoveNextCampaignStatusRequestHistories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MoveNextCampaignStatusRequestHistories_MoveNextCampaignStatusRequests_MoveNextCampaignStatusRequestId",
+                        column: x => x.MoveNextCampaignStatusRequestId,
+                        principalTable: "MoveNextCampaignStatusRequests",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MoveNextCampaignStatusRequestHistories_Users_ReceiverId",
+                        column: x => x.ReceiverId,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -930,6 +959,16 @@ namespace FALOFinancialProofing.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MoveNextCampaignStatusRequestHistories_MoveNextCampaignStatusRequestId",
+                table: "MoveNextCampaignStatusRequestHistories",
+                column: "MoveNextCampaignStatusRequestId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MoveNextCampaignStatusRequestHistories_ReceiverId",
+                table: "MoveNextCampaignStatusRequestHistories",
+                column: "ReceiverId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MoveNextCampaignStatusRequests_CampaignID",
                 table: "MoveNextCampaignStatusRequests",
                 column: "CampaignID");
@@ -1069,7 +1108,7 @@ namespace FALOFinancialProofing.Migrations
                 name: "CreateProjectRequestApproveHistories");
 
             migrationBuilder.DropTable(
-                name: "MoveNextCampaignStatusRequests");
+                name: "MoveNextCampaignStatusRequestHistories");
 
             migrationBuilder.DropTable(
                 name: "OrganizationMember");
@@ -1106,6 +1145,9 @@ namespace FALOFinancialProofing.Migrations
 
             migrationBuilder.DropTable(
                 name: "CreateProjectRequests");
+
+            migrationBuilder.DropTable(
+                name: "MoveNextCampaignStatusRequests");
 
             migrationBuilder.DropTable(
                 name: "CreateQrCode");
