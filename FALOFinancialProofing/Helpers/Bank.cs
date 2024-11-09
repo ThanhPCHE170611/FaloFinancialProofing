@@ -80,5 +80,4 @@
         public List<BankTransaction> data { get; set; }
     }
 
-
 }

@@ -15,6 +15,7 @@ namespace FALOFinancialProofing.Controllers
         public IActionResult CreateItem([FromBody] TransactionRequest item)
         {
             // Xử lý logic tạo item
+            var httpContext = HttpContext.Request.Body;
             return Ok(new { message = "Item created", item });
         }
 
