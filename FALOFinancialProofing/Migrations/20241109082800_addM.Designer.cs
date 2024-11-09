@@ -4,6 +4,7 @@ using FALOFinancialProofing.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FALOFinancialProofing.Migrations
 {
     [DbContext(typeof(FALOFinancialProofingDbContext))]
-    partial class FALOFinancialProofingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241109082800_addM")]
+    partial class addM
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -125,9 +128,6 @@ namespace FALOFinancialProofing.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CassoAccountID")
-                        .IsUnique();
 
                     b.ToTable("Banks");
                 });
@@ -251,9 +251,6 @@ namespace FALOFinancialProofing.Migrations
 
                     b.Property<DateTime>("DateOfApproval")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("FeedBack")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAllowed")
                         .HasColumnType("bit");
@@ -416,9 +413,6 @@ namespace FALOFinancialProofing.Migrations
 
                     b.Property<DateTime>("DateOfApproval")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("FeedBack")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAllowed")
                         .HasColumnType("bit");
@@ -798,10 +792,6 @@ namespace FALOFinancialProofing.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CampaignId");
-
-                    b.HasIndex("CassoTransactionId")
-                        .IsUnique()
-                        .HasFilter("[CassoTransactionId] IS NOT NULL");
 
                     b.HasIndex("CreateQrCodeId");
 

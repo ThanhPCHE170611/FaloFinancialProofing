@@ -20,8 +20,8 @@ namespace FALOFinancialProofing.Controllers
 
         private readonly ILogger<WeatherForecastController> _logger;
 
-        private readonly BankService bankService;
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, BankService bankService)
+        private readonly BankService1 bankService;
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, BankService1 bankService)
         {
             _logger = logger;
             this.bankService = bankService;

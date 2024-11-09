@@ -14,6 +14,7 @@ namespace FALOFinancialProofing.Models
         // bankBin
         public int acqId { get; set; }
         public long CassoAccountID { get; set; }
+
         //public bool IsInUsed { get; set; }
         public ICollection<Campaign> Campaigns { get; set; } = new List<Campaign>();
 

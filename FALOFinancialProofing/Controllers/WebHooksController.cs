@@ -41,5 +41,16 @@ namespace FALOFinancialProofing.Controllers
         //    // Xử lý logic xóa item
         //    return Ok(new { message = "Item deleted", id });
         //}
+
+        [HttpPost("transaction-transfer")]
+        public async Task<IActionResult> TransactionTransfer([FromBody] TransactionRequest item)
+        {
+
+
+
+            // Xử lý logic tạo item
+            var httpContext = HttpContext.Request.Body;
+            return Ok(new { message = "Item created", item });
+        }
     }
 }

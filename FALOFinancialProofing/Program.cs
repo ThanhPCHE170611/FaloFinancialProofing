@@ -7,6 +7,7 @@ using FALOFinancialProofing.Services;
 using FALOFinancialProofing.Services.AccountingBookServices;
 using FALOFinancialProofing.Services.ApproveProcessServices;
 using FALOFinancialProofing.Services.AttachmentFIleServices;
+using FALOFinancialProofing.Services.BankServices;
 using FALOFinancialProofing.Services.CampaignMemberService;
 using FALOFinancialProofing.Services.CampaignRequestApproveHistoryServices;
 using FALOFinancialProofing.Services.CampaignService;
@@ -50,7 +51,8 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped(typeof(AuthServices));
             builder.Services.AddScoped<ITransactionLogService, TransactionLogService>();
 
-            //builder.Services.AddScoped(typeof(AuthServices));
+            //builder.Services.AddHostedService<BankAccountPolling>();
+            builder.Services.AddScoped<IBankService, BankService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<ISDGServices, SDGServices>();
             builder.Services.AddScoped<IOrganizationService, OrganizationService>();
@@ -75,7 +77,7 @@ namespace FALOFinancialProofing
             {
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             });
-            builder.Services.AddScoped(typeof(BankService));
+            builder.Services.AddScoped(typeof(BankService1));
             builder.Services.AddDistributedMemoryCache(); // Sử dụng bộ nhớ trong để lưu trữ session
             builder.Services.AddSession(options =>
             {

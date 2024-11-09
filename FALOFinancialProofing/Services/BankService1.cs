@@ -5,11 +5,11 @@ using System.Text;
 
 namespace FALOFinancialProofing.Services
 {
-    public class BankService
+    public class BankService1
     {
         private readonly HttpClient _httpClient;
 
-        public BankService(IHttpClientFactory httpClientFactory)
+        public BankService1(IHttpClientFactory httpClientFactory)
         {
             _httpClient = httpClientFactory.CreateClient("MyHttpClient");
         }

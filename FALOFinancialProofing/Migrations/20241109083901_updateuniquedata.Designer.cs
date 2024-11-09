@@ -4,6 +4,7 @@ using FALOFinancialProofing.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FALOFinancialProofing.Migrations
 {
     [DbContext(typeof(FALOFinancialProofingDbContext))]
-    partial class FALOFinancialProofingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241109083901_updateuniquedata")]
+    partial class updateuniquedata
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -252,9 +255,6 @@ namespace FALOFinancialProofing.Migrations
                     b.Property<DateTime>("DateOfApproval")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("FeedBack")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsAllowed")
                         .HasColumnType("bit");
 
@@ -416,9 +416,6 @@ namespace FALOFinancialProofing.Migrations
 
                     b.Property<DateTime>("DateOfApproval")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("FeedBack")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAllowed")
                         .HasColumnType("bit");
