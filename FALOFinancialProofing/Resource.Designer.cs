@@ -88,6 +88,42 @@ namespace FALOFinancialProofing {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string CampaignStatus_Close {
+            get {
+                return ResourceManager.GetString("CampaignStatus.Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disbursement.
+        /// </summary>
+        public static string CampaignStatus_Disbursement {
+            get {
+                return ResourceManager.GetString("CampaignStatus.Disbursement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fund Raising.
+        /// </summary>
+        public static string CampaignStatus_FundRaising {
+            get {
+                return ResourceManager.GetString("CampaignStatus.FundRaising", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Implement.
+        /// </summary>
+        public static string CampaignStatus_Implement {
+            get {
+                return ResourceManager.GetString("CampaignStatus.Implement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Process.
         /// </summary>
         public static string ProcessStatus {

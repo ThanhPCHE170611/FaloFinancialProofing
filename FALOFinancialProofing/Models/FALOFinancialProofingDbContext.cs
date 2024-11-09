@@ -37,6 +37,8 @@ namespace FALOFinancialProofing.Models
         public DbSet<AttachmentFile> AttachmentFiles { get; set; }
         public DbSet<ApproveProcess> ApproveProcesses { get; set; }
         public DbSet<Voucher> Vouchers { get; set; }
+        public DbSet<MoveNextCampaignStatusRequestHistory> MoveNextCampaignStatusRequestHistories { get; set; }
+
 
         #endregion
 
@@ -82,6 +84,17 @@ namespace FALOFinancialProofing.Models
                 .WithMany(c => c.RequestForms)
                 .HasForeignKey(r => r.CampaignId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<MoveNextCampaignStatusRequestHistory>(entity =>
+            {
+                entity.HasOne(m => m.MoveNextCampaignStatusRequest)
+                    .WithMany(h => h.MoveNextCampaignStatusRequestHistories)
+                    .HasForeignKey(c => c.MoveNextCampaignStatusRequestId);
+
+                entity.HasOne(r => r.Receiver)
+                 .WithMany(h => h.MoveNextCampaignStatusRequestHistories)
+                 .HasForeignKey(c => c.ReceiverId);
+            });
 
             modelBuilder.Entity<RequestForm>()
                 .HasOne(r => r.RequestType)
@@ -185,6 +198,15 @@ namespace FALOFinancialProofing.Models
                   .WithOne(u => u.User)
                   .HasForeignKey(c => c.CreateBy)
                   .OnDelete(DeleteBehavior.NoAction);
+                //them moi
+                entity.HasMany(c => c.MoveNextCampaignStatusRequestSenderUsers)
+                    .WithOne(u => u.SenderUser)
+                    .HasForeignKey(su => su.SenderId)
+                    .OnDelete(DeleteBehavior.NoAction);
+                entity.HasMany(c => c.MoveNextCampaignStatusRequestReceiverUsers)
+                    .WithOne(u => u.ReceiverUser)
+                    .HasForeignKey(ru => ru.ReceiverId)
+                    .OnDelete(DeleteBehavior.NoAction);
 
                 entity.HasMany(c => c.CampaignRequestApproveHistories)
                   .WithOne(u => u.Approver)
