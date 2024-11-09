@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FALOFinancialProofing.Migrations
 {
     /// <inheritdoc />
-    public partial class updateDatabase20241109 : Migration
+    public partial class addUpdateLogForCampaign : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -370,6 +370,7 @@ namespace FALOFinancialProofing.Migrations
                     Image = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    UpdateLog = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     BankingNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BankId = table.Column<int>(type: "int", nullable: true),

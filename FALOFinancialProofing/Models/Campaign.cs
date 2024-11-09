@@ -1,6 +1,7 @@
 ﻿using FALOFinancialProofing.Core;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FALOFinancialProofing.Models
 {
@@ -31,6 +32,9 @@ namespace FALOFinancialProofing.Models
 
         [MaxLength(200)]
         public string? Address { get; set; }
+
+        [AllowNull]
+        public string? UpdateLog { get; set; }
 
         [Required]
         public bool IsActive { get; set; }

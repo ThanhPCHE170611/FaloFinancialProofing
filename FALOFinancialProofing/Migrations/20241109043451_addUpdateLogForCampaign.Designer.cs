@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FALOFinancialProofing.Migrations
 {
     [DbContext(typeof(FALOFinancialProofingDbContext))]
-    [Migration("20241108184908_updateDatabase20241109")]
-    partial class updateDatabase20241109
+    [Migration("20241109043451_addUpdateLogForCampaign")]
+    partial class addUpdateLogForCampaign
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -183,6 +183,9 @@ namespace FALOFinancialProofing.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("UpdateLog")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
