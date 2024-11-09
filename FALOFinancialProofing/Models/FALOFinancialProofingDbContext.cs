@@ -38,7 +38,6 @@ namespace FALOFinancialProofing.Models
         public DbSet<ApproveProcess> ApproveProcesses { get; set; }
         public DbSet<Voucher> Vouchers { get; set; }
         public DbSet<MoveNextCampaignStatusRequestHistory> MoveNextCampaignStatusRequestHistories { get; set; }
-        public DbSet<BankAccount> BankAccounts { get; set; }
 
 
         #endregion
