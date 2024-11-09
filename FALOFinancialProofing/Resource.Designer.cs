@@ -88,6 +88,15 @@ namespace FALOFinancialProofing {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string CancelStatus {
+            get {
+                return ResourceManager.GetString("CancelStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Process.
         /// </summary>
         public static string ProcessStatus {

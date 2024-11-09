@@ -5,6 +5,7 @@ using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace FALOFinancialProofing.Services.RequestFormServices
 {
@@ -739,6 +740,71 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             catch (Exception ex)
             {
                 return null;
+            }
+        }
+
+        public async Task<RequestForm?> CancelRequest(int requestId, StringBuilder msg)
+        {
+            var requestWithApprove = await repository.GetAll(x => x.Id == requestId)
+                .Include(x => x.ApproveProcesses)
+                .FirstOrDefaultAsync();
+
+            // check if request is in progress
+            var cancelRequestIsValidated = ValidateCancelRequest(requestWithApprove, msg);
+            // update cancel status
+            if (!cancelRequestIsValidated)
+            {
+                return null;
+            }
+            else
+            {
+                // update status of approve process
+                var updateApproveProcess = requestWithApprove.ApproveProcesses.FirstOrDefault();
+                updateApproveProcess.ApproveStatus = Resource.CancelStatus;
+                var canUpdateAP = await approveProcessrepository.UpdateAsync(updateApproveProcess);
+                if (!canUpdateAP)
+                {
+                    msg.Append("Approve process update fail!");
+                    return null;
+                }
+                // update status of current request
+                else
+                {
+                    requestWithApprove.Status = Resource.CancelStatus;
+                    var canUpdateRequest = await repository.UpdateAsync(requestWithApprove);
+                    if (!canUpdateRequest)
+                    {
+                        msg.Append("Request update fail!");
+                        return null;
+                    }
+                    return requestWithApprove;
+                }
+                return requestWithApprove;
+            }
+        }
+
+        private bool ValidateCancelRequest(RequestForm? requestWithApprove, StringBuilder msg)
+        {
+            try
+            {
+                if(requestWithApprove == null)
+                {
+                    msg.Append("Request is not exist");
+                    return false;
+                }
+                // check if first approve is approve
+                var firstApprove = requestWithApprove.ApproveProcesses.FirstOrDefault();
+                if (firstApprove != null && !firstApprove.ApproveStatus.Equals(Resource.ProcessStatus))
+                {
+                    msg.Append("Request is not in process status");
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                msg.Append("Error when validate request");
+                return false;
             }
         }
     }

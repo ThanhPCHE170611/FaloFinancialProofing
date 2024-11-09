@@ -5,6 +5,7 @@ using FALOFinancialProofing.Repository;
 using Humanizer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace FALOFinancialProofing.Services.ApproveProcessServices
 {
@@ -131,20 +132,24 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
             }
         }
 
-        public async Task<bool> ApproveRequestForLeader(string userid, string currentLoggingRole, int requestid)
+        public async Task<bool> ApproveRequestForLeader(string userid, string currentLoggingRole, int requestid, StringBuilder message)
         {
             try
             {
                 // validate if current logged in user is not Volunteer Leader
                 if (currentLoggingRole != Resource.VolunteerLeaderRoleName)
                 {
+                    message.Append("Current logged in user is not Volunteer Leader");
                     return false;
                 }
-                // check if user have permission
-                var approveProcess = repository.GetAll(x => x.RequestId == requestid && x.ApproverId.Equals(userid))
+                // check if user have permission and process is not approved
+                var approveProcess = repository.GetAll(x => x.RequestId == requestid 
+                    && x.ApproverId.Equals(userid)
+                    && x.ApproveStatus.Equals(Resource.ProcessStatus))
                     .FirstOrDefault();
                 if (approveProcess == null)
                 {
+                    message.Append("User does not have permission or process is already done");
                     return false;
                 }
                 approveProcess.ApproveStatus = Resource.ApprovedStatus;
@@ -161,20 +166,24 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
             }
         }
 
-        public async Task<bool> ApproveRequestForAccounting(string userid, string currentLoggingRole, int requestid)
+        public async Task<bool> ApproveRequestForAccounting(string userid, string currentLoggingRole, int requestid, StringBuilder message)
         {
             try
             {
                 // validate if current logged in user is not Accounting
                 if (currentLoggingRole != Resource.AccountingRoleName)
                 {
+                    message.Append("Current logged in user is not Accounting");
                     return false;
                 }
-                // check if user have permission
-                var approveProcess = repository.GetAll(x => x.RequestId == requestid && x.ApproverId.Equals(userid))
+                // check if user have permission and process is not approved
+                var approveProcess = repository.GetAll(x => x.RequestId == requestid 
+                    && x.ApproverId.Equals(userid)
+                    && x.ApproveStatus.Equals(Resource.ProcessStatus))
                     .FirstOrDefault();
                 if (approveProcess == null)
                 {
+                    message.Append("User does not have permission or process is already done");
                     return false;
                 }
                 approveProcess.ApproveStatus = Resource.ApprovedStatus;
@@ -191,20 +200,24 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
             }
         }
 
-        public async Task<bool> ApproveRequestForProjectManager(string userid, string currentLoggingRole, int requestid)
+        public async Task<bool> ApproveRequestForProjectManager(string userid, string currentLoggingRole, int requestid, StringBuilder message)
         {
             try
             {
                 // validate if current logged in user is not PM
                 if (currentLoggingRole != Resource.ProjectManagerRoleName)
                 {
+                    message.Append("Current logged in user is not Project Manager");
                     return false;
                 }
-                // check if user have permission
-                var approveProcess = repository.GetAll(x => x.RequestId == requestid && x.ApproverId.Equals(userid))
+                // check if user have permission and process is not approved
+                var approveProcess = repository.GetAll(x => x.RequestId == requestid 
+                    && x.ApproverId.Equals(userid)
+                    && x.ApproveStatus.Equals(Resource.ProcessStatus))
                     .FirstOrDefault();
                 if (approveProcess == null)
                 {
+                    message.Append("User does not have permission or process is already done");
                     return false;
                 }
                 approveProcess.ApproveStatus = Resource.ApprovedStatus;
@@ -221,19 +234,24 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
             }
         }
 
-        public async Task<bool> RejectPrePayRequestForLeader(string userid, string currentLoggingRole, int requestid)
+        public async Task<bool> RejectPrePayRequestForLeader(string userid, string currentLoggingRole, int requestid, StringBuilder msg)
         {
             try
             {
                 // validate if current logged in user is not Volunteer Leader
                 if (currentLoggingRole != Resource.VolunteerLeaderRoleName)
                 {
+                    msg.Append("Current logged in user is not Volunteer Leader");
                     return false;
                 }
-                var approveProcess = repository.GetAll(x => x.RequestId == requestid && x.ApproverId.Equals(userid))
+                // check if user have permission and process is not approved
+                var approveProcess = repository.GetAll(x => x.RequestId == requestid 
+                    && x.ApproverId.Equals(userid)
+                    && x.ApproveStatus.Equals(Resource.ProcessStatus))
                     .FirstOrDefault();
                 if (approveProcess == null)
                 {
+                    msg.Append("User does not have permission or process is already done");
                     return false;
                 }
                 return true;
@@ -244,19 +262,24 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
             }
         }
 
-        public async Task<bool> RejectPrePayRequestForAccounting(string userid, string currentLoggingRole, int requestid)
+        public async Task<bool> RejectPrePayRequestForAccounting(string userid, string currentLoggingRole, int requestid, StringBuilder msg)
         {
             try
             {
                 // validate if current logged in user is not Accounting
                 if (currentLoggingRole != Resource.AccountingRoleName)
                 {
+                    msg.Append("Current logged in user is not Accounting");
                     return false;
                 }
-                var approveProcess = repository.GetAll(x => x.RequestId == requestid && x.ApproverId.Equals(userid))
+                // check if user have permission and process is not approved
+                var approveProcess = repository.GetAll(x => x.RequestId == requestid 
+                    && x.ApproverId.Equals(userid)
+                    && x.ApproveStatus.Equals(Resource.ProcessStatus))
                     .FirstOrDefault();
                 if (approveProcess == null)
                 {
+                    msg.Append("User does not have permission or process is already done");
                     return false;
                 }
                 return true;
@@ -267,19 +290,24 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
             }
         }
 
-        public async Task<bool> RejectPrePayRequestForProjectManager(string userid, string currentLoggingRole, int requestid)
+        public async Task<bool> RejectPrePayRequestForProjectManager(string userid, string currentLoggingRole, int requestid, StringBuilder msg)
         {
             try
             {
                 // validate if current logged in user is not Project Manager
                 if (currentLoggingRole != Resource.ProjectManagerRoleName)
                 {
+                    msg.AppendLine("Current logged in user is not Project Manager");
                     return false;
                 }
-                var approveProcess = repository.GetAll(x => x.RequestId == requestid && x.ApproverId.Equals(userid))
+                // check if user have permission and process is not approved
+                var approveProcess = repository.GetAll(x => x.RequestId == requestid 
+                    && x.ApproverId.Equals(userid)
+                    && x.ApproveStatus.Equals(Resource.ProcessStatus))
                     .FirstOrDefault();
                 if (approveProcess == null)
                 {
+                    msg.AppendLine("User does not have permission or process is already done");
                     return false;
                 }
                 return true;

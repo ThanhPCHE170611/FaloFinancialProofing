@@ -467,5 +467,27 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
+        [HttpGet("cancelrequest/{requestId}")]
+        public async Task<IActionResult> CancelRequest(int requestId)
+        {
+            var message = new StringBuilder();
+            var requestFormIsCancel = await requestFormService.CancelRequest(requestId, message);
+            if (requestFormIsCancel == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = $"Request Form can't not be cancel " + message.ToString()
+                });
+            }
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "Request Form canceled successfully.",
+                Data = requestFormIsCancel
+            });
+        }
+
     }
 }

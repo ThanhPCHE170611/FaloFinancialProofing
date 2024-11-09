@@ -1,5 +1,6 @@
 ﻿using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Models;
+using System.Text;
 
 namespace FALOFinancialProofing.Services.RequestFormServices
 {
@@ -33,5 +34,6 @@ namespace FALOFinancialProofing.Services.RequestFormServices
         Task<bool> IsRequestFormCreateByProjectManager(RequestForm? requestForm);
         Task<List<RequestFormWithAttachmentApprovementVoucher>?> GetAllPaymentRequestInCampaign(int campaignId, string userId);
         Task<RequestFormWithAttachmentApprovementVoucher?> GetRequestDetailByRequestId(int requestId);
+        Task<RequestForm?> CancelRequest(int requestId, StringBuilder msg);
     }
 }

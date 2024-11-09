@@ -126,6 +126,9 @@
   <data name="ApprovedStatus" xml:space="preserve">
     <value>Approved</value>
   </data>
+  <data name="CancelStatus" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
   <data name="ProcessStatus" xml:space="preserve">
     <value>Process</value>
   </data>
