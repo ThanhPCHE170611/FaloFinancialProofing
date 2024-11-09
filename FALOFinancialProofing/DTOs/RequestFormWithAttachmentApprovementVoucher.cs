@@ -12,6 +12,9 @@ namespace FALOFinancialProofing.DTOs
 
         public string Status { get; set; }
         public string CreatedBy { get; set; }
+
+        public string? CreateByName { get; set; }
+
         public int CampaignId { get; set; }
         public int TypeId { get; set; }
         public List<AttachmentFile> AttachmentFiles { get; set; } = new List<AttachmentFile>();

@@ -181,6 +181,9 @@ namespace FALOFinancialProofing.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<string>("UpdateLog")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BankId");
@@ -661,6 +664,9 @@ namespace FALOFinancialProofing.Migrations
 
                     b.Property<double>("ExpectedMoney")
                         .HasColumnType("float");
+
+                    b.Property<string>("Feedback")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .IsRequired()

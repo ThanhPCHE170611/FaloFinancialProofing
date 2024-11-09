@@ -1,0 +1,188 @@
+﻿@page "/campaigncreate"
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <style>
+        .form-control {
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+        }
+
+        #save-btn {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        #imagePreview img {
+            width: 100%;
+            height: auto;
+        }
+
+        #fileList {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+            #fileList li {
+                padding: 5px 10px;
+                background-color: #e0e0e0;
+                border-radius: 5px;
+                list-style: none;
+            }
+
+        #fileList2 {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+            #fileList2 li {
+                padding: 5px 10px;
+                background-color: #e0e0e0;
+                border-radius: 5px;
+                list-style: none;
+            }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid py-4">
+        <form>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card my-4">
+                        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                            <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
+                                <h6 class="text-white text-capitalize ps-3 mb-0">Create Campaign</h6>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="campaignName" class="form-label">Campaign Name</label>
+                                <input type="text" class="form-control" id="campaignName" placeholder="Enter campaign name">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="location" class="form-label">Location</label>
+                                <textarea class="form-control" id="location" rows="2" placeholder="Enter campaign location"></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="projectSelect" class="form-label">Project</label>
+                                <select class="form-control" id="projectSelect">
+                                    <option value="">Select a project</option>
+                                    <option value="project1">Project 1</option>
+                                    <option value="project2">Project 2</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="creator" class="form-label">Creator</label>
+                                <input type="text" class="form-control" id="creator" placeholder="Enter creator name">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="totalAmount" class="form-label">Total Amount Needed</label>
+                                <input type="number" class="form-control" id="totalAmount" placeholder="Enter total amount" min="0" step="0.01">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="realtimeAmount" class="form-label">Bank Account Number</label>
+                                <input type="number" class="form-control" id="realtimeAmount" placeholder="Current raised amount" min="0" step="0.01">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="startDate" class="form-label">Start Date</label>
+                                <input type="date" class="form-control" id="startDate">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="endDate" class="form-label">Expected End Date</label>
+                                <input type="date" class="form-control" id="endDate">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="projectDescription" class="form-label">Campaign Description</label>
+                                <div id="editor-container" style="height: 200px;"></div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="attachments" class="form-label">Financial Estimate Description</label>
+                            <input type="file" class="form-control" id="attachments" multiple>
+                            <ul id="fileList"></ul>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="attachments" class="form-label">Activity Plan</label>
+                            <input type="file" class="form-control" id="attachments2" multiple>
+                            <ul id="fileList2"></ul>
+                        </div>
+
+     
+                        <div id="save-btn">
+                            <button class="btn btn-warning btn-lg" style="margin-left:10px">Create</button>
+                            <div>
+                                <a href="campaignmanagement" class="btn btn-success btn-lg" style="margin-left:10px">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script src="../assets/js/core/popper.min.js"></script>
+    <script src="../assets/js/core/bootstrap.min.js"></script>
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script>
+        var quill = new Quill('#editor-container', {
+            theme: 'snow'
+        });
+        document.getElementById('attachments').addEventListener('change', function (e) {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+            Array.from(e.target.files).forEach(file => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(file);
+                a.textContent = file.name;
+                a.download = file.name;
+                li.appendChild(a);
+                fileList.appendChild(li);
+            });
+        });
+        document.getElementById('attachments2').addEventListener('change', function (e) {
+            const fileList = document.getElementById('fileList2');
+            fileList.innerHTML = '';
+            Array.from(e.target.files).forEach(file => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(file);
+                a.textContent = file.name;
+                a.download = file.name;
+                li.appendChild(a);
+                fileList.appendChild(li);
+            });
+        });
+    </script>
+</body>
+
+</html>
+@code {
+
+}
