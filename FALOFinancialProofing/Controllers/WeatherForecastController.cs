@@ -102,6 +102,12 @@ namespace FALOFinancialProofing.Controllers
         [HttpGet("Get-Banks")]
         public async Task<IActionResult> GetBanks()
         {
+            //if (HttpContext.Request.Headers.ContainsKey("Authorization"))
+            //{
+            //    var token = HttpContext.Request.Headers["Authorization"].ToString();
+            //    var banks = await bankService.GetBanks();
+            //    return Ok(banks);
+            //}
             var b = await bankService.GetBanks();
             BankRequest bankRequest = new BankRequest()
             {
