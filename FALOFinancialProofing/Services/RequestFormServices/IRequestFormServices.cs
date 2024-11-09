@@ -35,5 +35,6 @@ namespace FALOFinancialProofing.Services.RequestFormServices
         Task<List<RequestFormWithAttachmentApprovementVoucher>?> GetAllPaymentRequestInCampaign(int campaignId, string userId);
         Task<RequestFormWithAttachmentApprovementVoucher?> GetRequestDetailByRequestId(int requestId);
         Task<RequestForm?> CancelRequest(int requestId, StringBuilder msg);
+        Task<bool> AddMissingAttachmentFileForRequestAsync(int requestId, StringBuilder message, IFormFile attachment);
     }
 }

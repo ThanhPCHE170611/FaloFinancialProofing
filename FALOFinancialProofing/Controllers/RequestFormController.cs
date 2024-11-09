@@ -101,6 +101,7 @@ namespace FALOFinancialProofing.Controllers
         [HttpPost("creatnewprepayrequest")]
         public async Task<IActionResult> CreateNewPrePayRequestForm([FromForm] CreateFormRequest requestFormRequest)
         {
+            requestFormRequest.TypeId = IntConstant.PrePayRequestType.ToString();
             StringBuilder message = new StringBuilder();
             // Validate Data from RequestForm
             var validatedRequest = await requestFormService.ValidateRequestForm(requestFormRequest, message);
@@ -185,6 +186,7 @@ namespace FALOFinancialProofing.Controllers
         [HttpPost("createnewpaymentrequest")]
         public async Task<IActionResult> CreateNewPaymentRequestForm([FromForm] CreateFormRequest requestFormRequest)
         {
+            requestFormRequest.TypeId = IntConstant.PaymentRequestType.ToString();
             StringBuilder message = new StringBuilder();
             // Validate Data from RequestForm
             var validatedRequest = await requestFormService.ValidateRequestForm(requestFormRequest, message);
@@ -489,5 +491,24 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
+        [HttpPost("addmissingattachmentforrequest/{requestId}")]
+        public async Task<IActionResult> AddMissingAttachmentFileForRequest(int requestId, IFormFile attachment)
+        {
+            var message = new StringBuilder();
+            var addMissingFileSuccess = await requestFormService.AddMissingAttachmentFileForRequestAsync(requestId, message, attachment);
+            if(!addMissingFileSuccess)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = $"Add missing attachment file failed. {message}"
+                });
+            }
+            return Ok(new
+            {
+                Success = true,
+                Message = $"Add missing attachment file success"
+            });
+        }
     }
 }
