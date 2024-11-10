@@ -1,5 +1,6 @@
 ﻿using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Models;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace FALOFinancialProofing.Services.ApproveProcessServices
@@ -19,14 +20,14 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
         Task<bool> DeleteApproveProcessAsync(ApproveProcessRequest dto);
 
         Task<bool> DeleteApproveProcessByIdAsync(int id);
-        Task<bool> ApproveRequestForLeader(string userid, string currentLoggingRole, int requestid);
+        Task<bool> ApproveRequestForLeader(string userid, string currentLoggingRole, int requestid, StringBuilder message);
 
-        Task<bool> ApproveRequestForAccounting(string userid, string currentLoggingRole, int requestid);
+        Task<bool> ApproveRequestForAccounting(string userid, string currentLoggingRole, int requestid, StringBuilder message);
 
-        Task<bool> ApproveRequestForProjectManager(string userid, string currentLoggingRole, int requestid);
-        Task<bool> RejectPrePayRequestForLeader(string userid, string currentLoggingRole, int requestid);
-        Task<bool> RejectPrePayRequestForAccounting(string userid, string currentLoggingRole, int requestid);
-        Task<bool> RejectPrePayRequestForProjectManager(string userid, string currentLoggingRole, int requestid);
+        Task<bool> ApproveRequestForProjectManager(string userid, string currentLoggingRole, int requestid, StringBuilder message);
+        Task<bool> RejectPrePayRequestForLeader(string userid, string currentLoggingRole, int requestid, StringBuilder message, string feedback, StringBuilder feedBackStringBuilder);
+        Task<bool> RejectPrePayRequestForAccounting(string userid, string currentLoggingRole, int requestid, StringBuilder message, string feedback, StringBuilder feedBackStringBuilder);
+        Task<bool> RejectPrePayRequestForProjectManager(string userid, string currentLoggingRole, int requestid, StringBuilder msg, string feedback, StringBuilder feedBackStringBuilder);
 
         Task<List<PrePayRequestFormViewRequest>?> GetAllPrepayRequestForVolunteerLeader(string userid, string currentRoleLoggedIn);
         Task<ApproveProcess?> GetApproveProcessesByRequestIdAndApproveIdAsync(int requestid, string userid);

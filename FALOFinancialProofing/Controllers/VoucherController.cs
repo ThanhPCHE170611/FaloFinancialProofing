@@ -32,5 +32,22 @@ namespace FALOFinancialProofing.Controllers
 
             return File(fileBytes, contentType, downloadFileName);
         }
+
+        [HttpGet("downloadpaymentvoucherfile/{fileName}")]
+        public async Task<IActionResult> DownloadPaymentVoucherFileByFileName(string fileName)
+        {
+            var (fileBytes, contentType, downloadFileName) = await voucherServices.DownloadPaymentAttachmentFileByFileName(fileName);
+
+            if (fileBytes == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "File not found",
+                });
+            }
+
+            return File(fileBytes, contentType, downloadFileName);
+        }
     }
 }
