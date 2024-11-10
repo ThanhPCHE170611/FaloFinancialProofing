@@ -249,11 +249,12 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
-        [HttpGet("rejectprepayrequestforvolunteerleader/{requestid}")]
-        public async Task<IActionResult> RejectPrePayRequestForVolunteerLeader(string userid, string currentLoggingRole, int requestid)
+        [HttpPost("rejectprepayrequestforvolunteerleader/{requestid}")]
+        public async Task<IActionResult> RejectPrePayRequestForVolunteerLeader(string userid, string currentLoggingRole, int requestid, string feedback)
         {
             var message = new StringBuilder();
-            var canReject = await approveProcessServices.RejectPrePayRequestForLeader(userid, currentLoggingRole, requestid, message);
+            var feedBackStringBuilder = new StringBuilder();
+            var canReject = await approveProcessServices.RejectPrePayRequestForLeader(userid, currentLoggingRole, requestid, message, feedback, feedBackStringBuilder);
             if (!canReject)
             {
                 return Ok(new
@@ -274,6 +275,7 @@ namespace FALOFinancialProofing.Controllers
                 CampaignId = requestForm.CampaignId,
                 TypeId = requestForm.TypeId,
                 Status = Resource.RejectedStatus,
+                FeedBack = feedBackStringBuilder.ToString()
             };
             var canUpdatedRequest = await requestFormServices.UpdateRequestFormAsync(requestFormDTO);
             if (canUpdatedRequest == false)
@@ -303,11 +305,12 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
-        [HttpGet("rejectprepayrequestforaccounting/{requestid}")]
-        public async Task<IActionResult> RejectPrePayRequestForAccounting(string userid, string currentLoggingRole, int requestid)
+        [HttpPost("rejectprepayrequestforaccounting/{requestid}")]
+        public async Task<IActionResult> RejectPrePayRequestForAccounting(string userid, string currentLoggingRole, int requestid, string feedback)
         {
             var message = new StringBuilder();
-            var canReject = await approveProcessServices.RejectPrePayRequestForAccounting(userid, currentLoggingRole, requestid, message);
+            var feedBackStringBuilder = new StringBuilder();
+            var canReject = await approveProcessServices.RejectPrePayRequestForAccounting(userid, currentLoggingRole, requestid, message, feedback, feedBackStringBuilder);
             if (!canReject)
             {
                 return Ok(new
@@ -328,6 +331,7 @@ namespace FALOFinancialProofing.Controllers
                 CampaignId = requestForm.CampaignId,
                 TypeId = requestForm.TypeId,
                 Status = Resource.RejectedStatus,
+                FeedBack = feedBackStringBuilder.ToString()
             };
             var canUpdatedRequest = await requestFormServices.UpdateRequestFormAsync(requestFormDTO);
             if (canUpdatedRequest == false)
@@ -357,11 +361,12 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
-        [HttpGet("rejectprepayrequestforprojectmanager/{requestid}")]
-        public async Task<IActionResult> RejectPrePayRequestForProjectManager(string userid, string currentLoggingRole, int requestid)
+        [HttpPost("rejectprepayrequestforprojectmanager/{requestid}")]
+        public async Task<IActionResult> RejectPrePayRequestForProjectManager(string userid, string currentLoggingRole, int requestid, string feedback)
         {
             var message = new StringBuilder();
-            var canReject = await approveProcessServices.RejectPrePayRequestForProjectManager(userid, currentLoggingRole, requestid, message);
+            var feedBackStringBuilder = new StringBuilder();
+            var canReject = await approveProcessServices.RejectPrePayRequestForProjectManager(userid, currentLoggingRole, requestid, message, feedback, feedBackStringBuilder);
             if (!canReject)
             {
                 return Ok(new
@@ -382,6 +387,7 @@ namespace FALOFinancialProofing.Controllers
                 CampaignId = requestForm.CampaignId,
                 TypeId = requestForm.TypeId,
                 Status = Resource.RejectedStatus,
+                FeedBack = feedBackStringBuilder.ToString()
             };
             var canUpdatedRequest = await requestFormServices.UpdateRequestFormAsync(requestFormDTO);
             if (canUpdatedRequest == false)

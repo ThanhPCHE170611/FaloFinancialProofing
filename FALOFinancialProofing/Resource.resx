@@ -156,4 +156,13 @@
   <data name="VolunteerRoleName" xml:space="preserve">
     <value>Volunteer</value>
   </data>
+  <data name="AccountingFeedBackStart" xml:space="preserve">
+    <value>Accounting Reject: </value>
+  </data>
+  <data name="ProjectManagerFeedBackStart" xml:space="preserve">
+    <value>Project Manager Reject:</value>
+  </data>
+  <data name="VolunteerLeaderFeedBackStart" xml:space="preserve">
+    <value>Volunteer Leader Reject:</value>
+  </data>
 </root>

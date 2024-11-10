@@ -25,9 +25,9 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
         Task<bool> ApproveRequestForAccounting(string userid, string currentLoggingRole, int requestid, StringBuilder message);
 
         Task<bool> ApproveRequestForProjectManager(string userid, string currentLoggingRole, int requestid, StringBuilder message);
-        Task<bool> RejectPrePayRequestForLeader(string userid, string currentLoggingRole, int requestid, StringBuilder message);
-        Task<bool> RejectPrePayRequestForAccounting(string userid, string currentLoggingRole, int requestid, StringBuilder message);
-        Task<bool> RejectPrePayRequestForProjectManager(string userid, string currentLoggingRole, int requestid, StringBuilder msg);
+        Task<bool> RejectPrePayRequestForLeader(string userid, string currentLoggingRole, int requestid, StringBuilder message, string feedback, StringBuilder feedBackStringBuilder);
+        Task<bool> RejectPrePayRequestForAccounting(string userid, string currentLoggingRole, int requestid, StringBuilder message, string feedback, StringBuilder feedBackStringBuilder);
+        Task<bool> RejectPrePayRequestForProjectManager(string userid, string currentLoggingRole, int requestid, StringBuilder msg, string feedback, StringBuilder feedBackStringBuilder);
 
         Task<List<PrePayRequestFormViewRequest>?> GetAllPrepayRequestForVolunteerLeader(string userid, string currentRoleLoggedIn);
         Task<ApproveProcess?> GetApproveProcessesByRequestIdAndApproveIdAsync(int requestid, string userid);

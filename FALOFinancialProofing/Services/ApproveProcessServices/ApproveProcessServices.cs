@@ -234,10 +234,17 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
             }
         }
 
-        public async Task<bool> RejectPrePayRequestForLeader(string userid, string currentLoggingRole, int requestid, StringBuilder msg)
+        public async Task<bool> RejectPrePayRequestForLeader(string userid, string currentLoggingRole, int requestid, StringBuilder msg, string feedback, StringBuilder feedbackStringBuilder)
         {
             try
             {
+                // vaidate if feedback is empty
+                if (String.IsNullOrEmpty(feedback))
+                {
+                    msg.Append("Feedback must not empty");
+                    return false;
+                }
+                feedbackStringBuilder.Append(Resource.VolunteerLeaderFeedBackStart + " " +feedback);
                 // validate if current logged in user is not Volunteer Leader
                 if (currentLoggingRole != Resource.VolunteerLeaderRoleName)
                 {
@@ -262,10 +269,17 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
             }
         }
 
-        public async Task<bool> RejectPrePayRequestForAccounting(string userid, string currentLoggingRole, int requestid, StringBuilder msg)
+        public async Task<bool> RejectPrePayRequestForAccounting(string userid, string currentLoggingRole, int requestid, StringBuilder msg, string feedback, StringBuilder feedbackStringBuilder)
         {
             try
             {
+                // vaidate if feedback is empty
+                if (String.IsNullOrEmpty(feedback))
+                {
+                    msg.Append("Feedback must not empty");
+                    return false;
+                }
+                feedbackStringBuilder.Append(Resource.AccountingFeedBackStart + " " + feedback);
                 // validate if current logged in user is not Accounting
                 if (currentLoggingRole != Resource.AccountingRoleName)
                 {
@@ -290,10 +304,17 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
             }
         }
 
-        public async Task<bool> RejectPrePayRequestForProjectManager(string userid, string currentLoggingRole, int requestid, StringBuilder msg)
+        public async Task<bool> RejectPrePayRequestForProjectManager(string userid, string currentLoggingRole, int requestid, StringBuilder msg, string feedback, StringBuilder feedbackStringBuilder)
         {
             try
             {
+                // vaidate if feedback is empty
+                if (String.IsNullOrEmpty(feedback))
+                {
+                    msg.Append("Feedback must not empty");
+                    return false;
+                }
+                feedbackStringBuilder.Append(Resource.ProjectManagerFeedBackStart + " " + feedback);
                 // validate if current logged in user is not Project Manager
                 if (currentLoggingRole != Resource.ProjectManagerRoleName)
                 {

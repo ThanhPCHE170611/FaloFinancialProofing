@@ -81,7 +81,8 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 CampaignId = dto.CampaignId,
                 TypeId = dto.TypeId,
                 AttachmentFiles = dto.AttachmentFiles,
-                ApproveProcesses = dto.ApproveProcesses
+                ApproveProcesses = dto.ApproveProcesses,
+                Feedback = dto.FeedBack
             };
         }
 
