@@ -18,11 +18,13 @@ namespace FALOFinancialProofing.Services.CampaignService
         private readonly IRepository<Campaign, int> campaignRepository;
         private readonly AuthServices _authServices;
         private readonly IProjectService _projectService;
-        public CampaignService(IRepository<Campaign, int> _campaignRepository, AuthServices authServices, IProjectService projectService)
+        private readonly ILogger<CampaignService> _logger;
+        public CampaignService(IRepository<Campaign, int> _campaignRepository, AuthServices authServices, IProjectService projectService, ILogger<CampaignService> logger)
         {
             campaignRepository = _campaignRepository;
             _authServices = authServices;
             _projectService = projectService;
+            _logger = logger;
         }
 
         public async Task<Campaign?> CreateCampaignAsync(CreateCampaignDTO createcampaignDTO)
@@ -43,6 +45,7 @@ namespace FALOFinancialProofing.Services.CampaignService
             return new Campaign
             {
                 //Id = createCampaignDTO.Id != null ? createCampaignDTO.Id.Value : 0,
+                //ProjectId = createCampaignDTO.ProjectId,
                 CreateBy = createCampaignDTO.CreateBy,
                 Title = createCampaignDTO.Title,
                 Description = createCampaignDTO.Description,
@@ -173,7 +176,6 @@ namespace FALOFinancialProofing.Services.CampaignService
                 return null;
             }
         }
-
         public async Task<bool> UpdateCampaignAsync(UpdateCampaignDTO updateCampaignDTO)
         {
             Campaign campaign = null!;
@@ -183,19 +185,42 @@ namespace FALOFinancialProofing.Services.CampaignService
                 campaign = await campaignRepository.Get(updateCampaignDTO.Id);
                 if (campaign == null)
                 {
-                    throw new Exception("Campaign not found!");
+                    _logger.LogError("Campaign not found!"); // Log when the campaign is not found
+                    return false;
                 }
+
                 UpdateCampaignDTOEntity(campaign, updateCampaignDTO);
                 result = await campaignRepository.UpdateAsync(campaign);
-
             }
             catch (Exception ex)
             {
-                await Console.Out.WriteLineAsync($"Update Campaign: {ex.Message}");
+                _logger.LogError($"Update Campaign: {ex.Message}"); // Log any exception that occurs
             }
 
             return result;
         }
+        //public async Task<bool> UpdateCampaignAsync(UpdateCampaignDTO updateCampaignDTO)
+        //{
+        //    Campaign campaign = null!;
+        //    bool result = false;
+        //    try
+        //    {
+        //        campaign = await campaignRepository.Get(updateCampaignDTO.Id);
+        //        if (campaign == null)
+        //        {
+        //            throw new Exception("Campaign not found!");
+        //        }
+        //        UpdateCampaignDTOEntity(campaign, updateCampaignDTO);
+        //        result = await campaignRepository.UpdateAsync(campaign);
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await Console.Out.WriteLineAsync($"Update Campaign: {ex.Message}");
+        //    }
+
+        //    return result;
+        //}
 
         private void UpdateCampaignDTOEntity(Campaign campaignModels, UpdateCampaignDTO updateCampaignDTO)
         {

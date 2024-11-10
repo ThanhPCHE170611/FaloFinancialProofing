@@ -16,5 +16,6 @@ namespace FALOFinancialProofing.Services.VoucherServices
 
         Task<bool> DeleteVoucherByIdAsync(int id);
         Task<(byte[] fileBytes, string contentType, string downloadFileName)> DownloadPrePayAttachmentFileByFileName(string fileName);
+        Task<(byte[] fileBytes, string contentType, string downloadFileName)> DownloadPaymentAttachmentFileByFileName(string fileName);
     }
 }

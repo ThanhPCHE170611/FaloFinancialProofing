@@ -357,6 +357,28 @@ namespace FALOFinancialProofing.Controllers
             }
         }
 
+        [HttpGet("getuserdebincampaign")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUserDebInCampaign(string userId,int campaignId)
+        {
+            var message = new StringBuilder();
+            var userDeb = await authServices.GetUserDebInCampaign( userId, campaignId, message);
+            if(userDeb == Double.MinValue)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = message.ToString()
+                });
+            }
+            return Ok(new
+            {
+                Message = "Get Debt Successfully!",
+                Data = userDeb,
+                Success = true
+            });
+        }
+
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using FALOFinancialProofing.Core;
+using FALOFinancialProofing.Models;
 using System.Linq.Expressions;
 
 namespace FALOFinancialProofing.Repository

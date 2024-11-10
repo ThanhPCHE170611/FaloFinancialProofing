@@ -1,6 +1,7 @@
 ﻿using FALOFinancialProofing.Core;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FALOFinancialProofing.Models
 {
@@ -32,6 +33,9 @@ namespace FALOFinancialProofing.Models
         [MaxLength(200)]
         public string? Address { get; set; }
 
+        [AllowNull]
+        public string? UpdateLog { get; set; }
+
         [Required]
         public bool IsActive { get; set; }
         public string? BankingNumber { get; set; }
@@ -49,4 +53,12 @@ namespace FALOFinancialProofing.Models
         public AccountingBook? AccountingBook { get; set; }
 
     }
+
+    //public class CampaignStatus
+    //{
+    //    public const string FundRaising = "Fund Raising";
+    //    public const string Implement = "Implement";
+    //    public const string Disbursement = "Disbursement";
+    //    public const string Close = "Close";
+    //}
 }
