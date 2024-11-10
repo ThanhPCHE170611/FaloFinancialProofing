@@ -52,7 +52,7 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
             }
         }
 
-        public async Task<IActionResult> SpendingProof(int? id)
+        public async Task<IActionResult> CampaignActivity(int? id)
         {
             if (id == null)
             {
