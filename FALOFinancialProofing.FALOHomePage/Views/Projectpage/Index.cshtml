@@ -107,6 +107,7 @@
                     <div class="swiper-wrapper py-4">
                         @foreach (var campaign in campaigns)
                         {
+                            var percentage = (campaign.TotalMoneyEarned/campaign.FundTarget) * 100;
                             <div class="swiper-slide">
                                 <div class="cause__item">
                                     <div class="cause__image image">
@@ -121,7 +122,7 @@
                                         </h4>
                                         <div class="progress-area">
                                             <div class="progress__item">
-                                                <div class="progress__content" style="width: 50%;"><span>50%</span></div>
+                                                <div class="progress__content" style="width: @percentage%;"><span>@percentage%</span></div>
                                             </div>
                                             <div class="progress__goal mt-15">
                                                 <h6>Goal : <span>@campaign.FundTarget VND</span></h6>

@@ -19,7 +19,7 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
         {
             if (id == null)
             {
-                return View();
+                return RedirectToAction("Error404", "Error");
             }
             else
             {
@@ -34,17 +34,53 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
                     // Deserialize the JSON response into an object
                     var campaignDetails = JsonConvert.DeserializeObject<ApiResponseCampaignDetails>(response);
 
+                    if(campaignDetails == null)
+                    {
+                        return RedirectToAction("Error404", "Error");
+                    }
+
                     ViewBag.campaignDetails = campaignDetails.Data;
+
                     // Pass the ViewModel to the view
                     return View();
                 }
                 catch (Exception ex)
                 {
-                    return View();
+                    return RedirectToAction("Error404", "Error");
                 }
 
             }
         }
+
+        public async Task<IActionResult> SpendingProof(int? id)
+        {
+            if (id == null)
+            {
+                return RedirectToAction("Error404", "Error");
+            }
+            else
+            {
+                try
+                {
+                    var client = _httpClientFactory.CreateClient();
+
+                    // Make a GET request to the API
+                    var response = await client.GetStringAsync($"https://localhost:7294/api/Campaign/GetCampaignDetailsById/{id}");
+
+                    var campaignDetails = JsonConvert.DeserializeObject<ApiResponseCampaignDetails>(response);
+
+                    ViewBag.campaignDetails = campaignDetails.Data;
+
+                    return View();
+                }
+                catch (Exception ex)
+                {
+                    return RedirectToAction("Error404", "Error");
+                }
+
+            }
+        }
+
 
         // GET: CampaignpageController/Details/5
         public ActionResult Details(int id)

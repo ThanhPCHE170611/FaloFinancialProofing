@@ -68,9 +68,11 @@
 	  <None Remove="Views\Authentication\Register.cshtml" />
 	  <None Remove="Views\Campaignpage\CampaignList.cshtml" />
 	  <None Remove="Views\Campaignpage\Index.cshtml" />
+	  <None Remove="Views\Campaignpage\SpendingProof.cshtml" />
 	  <None Remove="Views\Donation\Create.cshtml" />
 	  <None Remove="Views\Donation\Index.cshtml" />
 	  <None Remove="Views\Donation\ViewAccounts.cshtml" />
+	  <None Remove="Views\Error\Error404.cshtml" />
 	  <None Remove="Views\Homepage\Index.cshtml" />
 	  <None Remove="Views\Projectpage\Index.cshtml" />
 	  <None Remove="Views\Projectpage\ProjectList.cshtml" />
@@ -80,6 +82,10 @@
 	  <None Remove="Views\_ViewImports.cshtml" />
 	  <None Remove="Views\_ViewStart.cshtml" />
 	  <None Remove="wwwroot\js\CassoBankList.js" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Views\Campaignpage\SpendingProof.cshtml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -93,6 +99,7 @@
 	  <Content Include="Views\Donation\Create.cshtml" />
 	  <Content Include="Views\Donation\Index.cshtml" />
 	  <Content Include="Views\Donation\ViewAccounts.cshtml" />
+	  <Content Include="Views\Error\Error404.cshtml" />
 	  <Content Include="Views\Homepage\Index.cshtml" />
 	  <Content Include="Views\Projectpage\Index.cshtml" />
 	  <Content Include="Views\Projectpage\ProjectList.cshtml" />
@@ -663,10 +670,6 @@
     <None Update="wwwroot\webfonts\fa-v4compatibility.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Views\Errors\" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,55 @@
+﻿@page "/spendingProof"
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .table {
+        margin: 10px auto; /* Space on top and bottom */
+        width: 100%; /* Adjust width as needed */
+    }
+
+        .table th, .table td {
+            padding: 10px; /* Space inside the cells */
+        }
+</style>
+
+<div class="container">
+    <h2>Hoạt Động</h2>
+
+    <table class="table table-bordered table-hover" id="transactions-table">
+        <thead>
+            <tr>
+                <th scope="col">Thời gian</th>
+                <th scope="col">Nội Dung Hoạt Động</th>
+                <th scope="col">Số Tiền</th>
+                <th scope="col">Chứng Từ</th>
+            </tr>
+        </thead>
+        <tbody>
+            @*            @foreach (var transaction in Model)
+            {
+            <tr>
+            <td scope="col">@transaction.Reference</td>
+            <td scope="col">@transaction.TransactionDateTime</td>
+            <td scope="col">@transaction.Amount</td>
+            <td scope="col">@transaction.Description</td>
+            <td scope="col">@transaction.CounterAccountNumber</td>
+            </tr>
+            }
+            *@
+            <tr>
+                <td scope="col"></td>
+                <td scope="col"></td>
+                <td scope="col"></td>
+                <td scope="col"></td>
+                <td scope="col"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
