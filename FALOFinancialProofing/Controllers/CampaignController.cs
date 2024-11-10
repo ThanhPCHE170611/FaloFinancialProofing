@@ -375,6 +375,26 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
+        [HttpPost("updateenddateforprojectmanager")]
+        public async Task<IActionResult> UpdateEndDateForProjectManager(int campaignId, string userId, string currentRole, DateTime newDateTime)
+        {
+            var message = new StringBuilder();
+            var updateEndDateCamapaign = await _campaignService.UpdateEndDateForProjectManagerAsync(campaignId, userId, currentRole, newDateTime, message);
+            if(updateEndDateCamapaign == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = message.ToString()
+                });
+            }
 
+            return Ok(new
+            {
+                Success = true,
+                Message = "Update End Date for Project Manager successfully.",
+                Data = $"New DateTime: {newDateTime}"
+            });
+        }
     }
 }
