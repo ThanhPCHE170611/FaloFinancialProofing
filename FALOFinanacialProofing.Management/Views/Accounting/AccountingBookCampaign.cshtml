@@ -55,6 +55,10 @@
 
         .form-control {
             margin-top: 10px;
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
 
         .nav-tabs {
@@ -87,17 +91,37 @@
             border-collapse: collapse;
         }
 
+        .btn-success {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            color: #fff;
+        }
+
         th, td {
             padding: 10px;
-            text-align: left;
+            text-align: center;
         }
 
         td {
             vertical-align: middle;
+            border-bottom: 1px solid #dee2e6;
         }
 
         .btn {
-            margin: 0 5px;
+            margin: 5px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -109,14 +133,13 @@
                 <div class="card my-4">
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="pt-4 pb-3 d-flex justify-content-between align-items-center">
-                            <nav class="nav-tabs">
+                            <nav class="nav-tabs" id="navTabs">
                                 <a asp-controller="Campaign" asp-action="CampaignDetail" >Campaign Detail</a>
                                 <a asp-controller="Prepay" asp-action="PrepayManagement">Prepay Request</a>
                                 <a asp-controller="Payment" asp-action="PaymentManagement">Payment Request</a>
-                                <a asp-controller="Prepay" asp-action="PrepayVoucher">Prepay Voucher</a>
-                                <a asp-controller="Payment" asp-action="PaymentVoucher">Payment Voucher</a>
                                 <a asp-controller="Accounting" asp-action="AccountingBookCampaign" class="active">Accounting Book</a>
                                 <a asp-controller="Campaign" asp-action="Member">Member</a>
+
                             </nav>
                         </div>
                     </div>
@@ -131,28 +154,15 @@
                     <div class="card-body px-0 pb-2">
                         <div class="table-responsive p-0">
                             <table class="table align-items-center mb-0">
-                                <thead>
+                                <thead class="text-center">
                                     <tr>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Title</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Total Money</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Description</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Create Date</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STT</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">File</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Create Date</th>                                        
                                         <th class="text-secondary text-secondary text-xxs font-weight-bolder opacity-7 text-center">Action</th>
                                     </tr>
                                 </thead>
-                                <tbody id="voucherTableBody">
-                                    <tr>
-                                        <td><span class="text-secondary text-xs font-weight-bold">Sample Accounting Book</span></td>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">12.000.000</span></td>
-                                        <td><span class="text-secondary text-xs font-weight-bold">Sample description for the accounting book.</span></td>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">20/10/2021</span></td>
-                                        <td class="align-middle text-center"><a href="#" class="btn btn-link text-info" download="sample.pdf">AccountingBook.excel</a></td>
-                                        <td class="align-middle text-center">
-                                            <button class="btn btn-info btn-sm" onclick="showDetail(this)">Detail</button>
-                                            <button class="btn btn-danger btn-sm" onclick="deleteRow(this)">Delete</button>
-                                        </td>
-                                    </tr>
+                                <tbody id="voucherTableBody" class="text-center">
                                 </tbody>
                             </table>
                         </div>
@@ -165,13 +175,7 @@
         <div id="createVoucherModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('createVoucherModal')">&times;</span>
-                <h3>Create Payment Voucher</h3>
-                <label for="voucherTitle">Title:</label>
-                <input type="text" id="voucherTitle" class="form-control" placeholder="Enter title" required />
-                <label for="voucherMoney">Money:</label>
-                <input type="number" id="voucherMoney" class="form-control" placeholder="Enter money" required />
-                <label for="voucherDescription">Description:</label>
-                <textarea id="voucherDescription" class="form-control" rows="4" placeholder="Enter description" required></textarea>
+                <h3>Upload Accounting Book</h3>
                 <input type="date" id="voucherDateCreated" class="form-control" value="${new Date().toISOString().split('T')[0]}" hidden required />
                 <label for="voucherFile">File:</label>
                 <input type="file" id="voucherFile" class="form-control" />
@@ -193,79 +197,147 @@
     <script src="../assets/js/core/bootstrap.min.js"></script>
     <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
     <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        const checkrole = localStorage.getItem('loggingRole');
+        const campaignId = localStorage.getItem('campaignId');
+        const navTabs = document.getElementById('navTabs');
+        const userId = localStorage.getItem('userId');
+        const jwtToken = localStorage.getItem('jwtToken');
+        console.log(campaignId);
+
+        if (checkrole && checkrole !== 'Volunteer') {
+            const newLink = document.createElement('a');
+            newLink.setAttribute('asp-controller', 'Prepay');
+            newLink.setAttribute('asp-action', 'PrepayManagement_PM');
+            newLink.textContent = 'Prepay Created Request';
+
+            const newLink2 = document.createElement('a');
+            newLink2.setAttribute('asp-controller', 'Payment');
+            newLink2.setAttribute('asp-action', 'PaymentManagement_PM');
+            newLink2.textContent = 'Payment Created Request';
+
+            const url = new URL(`/Prepay/PrepayManagement_PM`, window.location.origin);
+
+
+            const url2 = new URL(`/Payment/PaymentManagement_PM`, window.location.origin);
+
+            newLink.href = url.toString();
+            newLink2.href = url2.toString();
+            navTabs.appendChild(newLink);
+            navTabs.appendChild(newLink2);
+        }
         function showCreateVoucherPopup() {
             document.getElementById('createVoucherModal').style.display = 'block';
         }
 
         function submitVoucher() {
-            const title = document.getElementById('voucherTitle').value;
-            const money = document.getElementById('voucherMoney').value;
-            const description = document.getElementById('voucherDescription').value;
-            const dateCreated = new Date().toLocaleDateString();
             const fileInput = document.getElementById('voucherFile');
-
             if (fileInput.files.length === 0) {
                 alert("Please upload a file before submitting.");
                 return;
             }
 
-            const fileName = fileInput.files[0].name;
+            const formData = new FormData();
+            formData.append('File', fileInput.files[0]);
+            formData.append('CurrentRole', checkrole);
+            formData.append('UserId', userId);
+            formData.append('CampaignId', campaignId);
 
-            const newRow = `
+            $.ajax({
+                url: 'https://localhost:7294/api/AccountingBook/uploadaccountingbook',
+                type: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    alert(response.message);
+                    if (response.success) {
+                        document.getElementById('voucherTableBody').insertAdjacentHTML('beforeend', createTableRow(response.Data));
+                        closeModal('createVoucherModal');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert('An error occurred while uploading the file. Please try again.');
+                    console.error('Error:', error);
+                }
+            });
+        }
+
+        function createTableRow(accountingBook) {
+            return `
                 <tr>
-                    <td><span class="text-secondary text-xs font-weight-bold">${title}</span></td>
-                    <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">$${money}</span></td>
-                    <td><span class="text-secondary text-xs font-weight-bold">${description}</span></td>
-                    <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${dateCreated}</span></td>
-                    <td class="align-middle text-center"><a href="#" class="btn btn-link text-info" download="${fileName}">${fileName}</a></td>
-                    <td class="align-middle text-center">
+                    <td>${accountingBook.id}</td>
+                    <td>${accountingBook.fileName}</td>
+                    <td>${accountingBook.createDate}</td>
+                    <td>
+                        <a href="#" class="btn btn-link text-info" onclick="downloadFile('${accountingBook.fileName}')">Download</a>
                         <button class="btn btn-info btn-sm" onclick="showDetail(this)">Detail</button>
                         <button class="btn btn-danger btn-sm" onclick="deleteRow(this)">Delete</button>
                     </td>
                 </tr>
             `;
-            document.getElementById('voucherTableBody').insertAdjacentHTML('beforeend', newRow);
-            resetForm();
-            closeModal('createVoucherModal');
         }
 
-        function resetForm() {
-            document.getElementById('voucherTitle').value = '';
-            document.getElementById('voucherMoney').value = '';
-            document.getElementById('voucherDescription').value = '';
-            document.getElementById('voucherFile').value = '';
-            document.getElementById('fileNameDisplay').textContent = '';
+        function fetchAccountingBooks() {
+            $.ajax({
+                url: `https://localhost:7294/api/AccountingBook/getaccountingbookincampaign?campaignId=${campaignId}`,
+                type: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                success: function (response) {
+                    populateTable(response.data);
+                },
+                error: function (xhr, status, error) {
+                    alert('An error occurred while fetching the accounting books.');
+                    console.error('Error:', error);
+                }
+            });
         }
 
-        document.getElementById('voucherFile').addEventListener('change', function () {
-            const fileName = this.files.length > 0 ? this.files[0].name : 'No file chosen';
-            document.getElementById('fileNameDisplay').textContent = `Selected File: ${fileName}`;
-        });
+        function populateTable(data) {
+            const tableBody = $('#voucherTableBody');
+            tableBody.empty();
 
-        function showDetail(button) {
-            const row = button.closest('tr');
-            const title = row.cells[0].innerText;
-            const money = row.cells[1].innerText;
-            const description = row.cells[2].innerText;
-            const dateCreated = row.cells[3].innerText;
-            const file = row.cells[4].innerText;
+            if (!data || data.length === 0) {
+                tableBody.append('<tr><td colspan="4" class="text-center">No accounting books found</td></tr>');
+                return;
+            }
 
-            const detailContent = `
-                <p><strong>Title:</strong> ${title}</p>
-                <p><strong>Money:</strong> ${money}</p>
-                <p><strong>Description:</strong> ${description}</p>
-                <p><strong>Date Created:</strong> ${dateCreated}</p>
-                <p><strong>File:</strong> <a href="#" download="${file}">${file}</a></p>
-            `;
-            document.getElementById('voucherDetailContent').innerHTML = detailContent;
-            document.getElementById('detailModal').style.display = 'block';
+            data.forEach((item, index) => {
+                tableBody.append(createTableRow(item));
+            });
         }
 
-        function deleteRow(button) {
-            const row = button.closest('tr');
-            row.parentNode.removeChild(row);
+        function downloadFile(fileName) {
+            $.ajax({
+                url: `https://localhost:7294/api/AccountingBook/downloadaccountingbook/${fileName}`,
+                type: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                success: function (data, status, xhr) {
+                    const downloadUrl = window.URL.createObjectURL(data);
+                    const a = document.createElement('a');
+                    a.href = downloadUrl;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(downloadUrl);
+                },
+                error: function (xhr, status, error) {
+                    alert('An error occurred while downloading the file.');
+                    console.error('Error:', error);
+                }
+            });
         }
 
         function closeModal(modalId) {
@@ -279,7 +351,9 @@
             if (event.target == document.getElementById('detailModal')) {
                 closeModal('detailModal');
             }
-        }
+        };
+
+        fetchAccountingBooks();
     </script>
 
     <script async defer src="https://buttons.github.io/buttons.js"></script>

@@ -36,6 +36,57 @@
             border-radius: 5px;
             border: 1px solid #ddd;
         }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            padding: 20px;
+            z-index: 1000;
+        }
+
+        .popup-content {
+            text-align: center;
+        }
+
+        .popup-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        .popup input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .popup .btn {
+            width: 48%;
+        }
+
+        .badge-approved {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        .badge-declined {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .badge-pending {
+            background-color: #ffc107;
+            color: #fff;
+        }
     </style>
 </head>
 
@@ -65,18 +116,24 @@
                     <div class="card-body px-0 pb-2">
                         <div class="table-responsive p-0">
                             <table class="table align-items-center mb-0" id="campaignTable">
-                                <thead>
+                                <thead class="text-center">
                                     <tr>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 5%;">STT</th>
+@*                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 5%;">STT</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="width: 20%;">Campaign Name</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 20%;">Project</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Total Estimated Cost</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 10%;">Status</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Create Date</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Action</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Action</th> *@
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STT</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Campaign Name</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Project Name</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Created Date</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody class="text-center">
                                     <tr>
                                         <td class="align-middle text-center text-sm">
                                             <span class="text-secondary text-xs font-weight-bold">1</span>
@@ -152,13 +209,26 @@
                 </div>
             </div>
         </div>
+        <!-- Popup for Banking Number Input -->
+        <div id="bankingNumberPopup" class="popup">
+            <div class="popup-content">
+                <h4>Approval Confirmation</h4>
+                <label for="bankingNumberInput">Banking Number:</label>
+                <input type="text" id="bankingNumberInput" class="form-control" placeholder="Enter banking number">
+                <div class="popup-actions">
+                    <button id="approveConfirmBtn" class="btn btn-success">Approve</button>
+                    <button id="cancelPopupBtn" class="btn btn-danger">Cancel</button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script src="../assets/js/core/popper.min.js"></script>
     <script src="../assets/js/core/bootstrap.min.js"></script>
     <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
     <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
 
         function searchCampaign() {
@@ -211,8 +281,88 @@
 
             return formattedDate + ' ' + formattedTime;
         }
+        function updateRowToApprovedForPM(button) {
+            const row = button.closest('tr');
+            const actionCell = row.querySelector('td:nth-child(6)');
+            const statusCell = row.querySelector('td:nth-child(5)');
 
-        function handleProjectApproval(button,createProjectRequestId, isAllowed) {
+            const declinedText = document.createElement('span');
+            declinedText.classList.add('badge', 'badge-sm', 'bg-gradient-success');
+            declinedText.textContent = 'Approved';
+
+            button.style.display = 'none';
+            actionCell.querySelector('.btn-info').style.display = 'none';
+            actionCell.querySelector('.btn-danger').style.display = 'none';
+
+            const approvedText = document.createElement('span');
+            approvedText.classList.add('text-approved', 'me-2');
+            approvedText.textContent = 'Approved';
+
+            const detailLink = document.createElement('a');
+            detailLink.href = '#';
+            detailLink.classList.add('text-blue');
+            detailLink.textContent = 'Detail';
+            detailLink.addEventListener('click', function (event) {
+                event.preventDefault();
+                showDetail();
+            });
+            actionCell.appendChild(approvedText);
+            actionCell.appendChild(detailLink);
+            statusCell.innerHTML = '';
+            statusCell.appendChild(declinedText);
+        }
+
+        function updateRowToRejected(button) {
+            const row = button.closest('tr');
+            const actionCell = row.querySelector('td:nth-child(6)');
+            const statusCell = row.querySelector('td:nth-child(5)');
+
+            const declinedText = document.createElement('span');
+            declinedText.classList.add('badge', 'badge-sm', 'bg-gradient-danger');
+            declinedText.textContent = 'Rejected';
+
+            button.style.display = 'none';
+            actionCell.querySelector('.btn-info').style.display = 'none';
+            actionCell.querySelector('.btn-success').style.display = 'none';
+
+            const rejectedText = document.createElement('span');
+            rejectedText.classList.add('text-declined', 'me-2');
+            rejectedText.textContent = 'Rejected';
+
+            const detailLink = document.createElement('a');
+            detailLink.href = '#';
+            detailLink.classList.add('text-blue');
+            detailLink.textContent = 'Detail';
+            detailLink.addEventListener('click', function (event) {
+                event.preventDefault();
+                showDetail();
+            });
+
+            actionCell.appendChild(rejectedText);
+            actionCell.appendChild(detailLink);
+            statusCell.innerHTML = '';
+            statusCell.appendChild(declinedText);
+        }
+
+        function formatDateTime(dateString) {
+            if (!dateString) return 'N/A';
+
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) {
+                return 'Invalid Date';
+            }
+
+            const formattedDate = date.getDate().toString().padStart(2, '0') + '-' +
+                (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                date.getFullYear();
+
+            const formattedTime = date.getHours().toString().padStart(2, '0') + ':' +
+                date.getMinutes().toString().padStart(2, '0') + ':' +
+                date.getSeconds().toString().padStart(2, '0');
+
+            return formattedDate + ' ' + formattedTime;
+        }
+        function handleCampaignReject(button,createProjectRequestId, isAllowed) {
             const userId = localStorage.getItem('userId');
 
             const today = new Date();
@@ -238,7 +388,7 @@
 
             const jwtToken = localStorage.getItem('jwtToken');
             $.ajax({
-                url: 'https://localhost:7294/api/CreateProjectRequestApproveHistories/CreateCreateProjectRequestApproveHistory',
+                url: 'https://localhost:7294/api/CreateCampaignRequests/GetCreateCampaignRequestByPMB',
                 type: 'POST',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`
@@ -264,79 +414,150 @@
             });
         }
 
-
         $(document).ready(function () {
-            $('#fetchCampaignRequests').on('click', function () {
-                const jwtToken = localStorage.getItem('jwtToken');
+            const jwtToken = localStorage.getItem('jwtToken');
+            const checkrole = localStorage.getItem('loggingRole');
+            const userId = localStorage.getItem('userId');
+            if (!jwtToken) {
+                alert('JWT token not found. Please log in.');
+                return;
+            }
+            let currentButton = null;
+            let currentRequestId = null;
 
-                if (!jwtToken) {
-                    alert('JWT token not found. Please log in.');
-                    return;
+        function showBankingNumberPopup(button, requestId) {
+            currentButton = button;
+            currentRequestId = requestId;
+            $('#bankingNumberPopup').fadeIn();
+        }
+
+        $('#approveConfirmBtn').on('click', function () {
+            const bankingNumber = $('#bankingNumberInput').val();
+            if (!bankingNumber) {
+                alert('Please enter a banking number.');
+                return;
+            }
+
+            $('#bankingNumberPopup').fadeOut();
+
+            handleProjectApproval(currentButton, currentRequestId, true, bankingNumber);
+        });
+
+        $('#cancelPopupBtn').on('click', function () {
+            $('#bankingNumberPopup').fadeOut();
+        });
+
+        function handleProjectApproval(button, createProjectRequestId, isAllowed, bankingNumber) {
+            const userId = localStorage.getItem('userId');
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const hours = String(today.getHours()).padStart(2, '0');
+            const minutes = String(today.getMinutes()).padStart(2, '0');
+            const seconds = String(today.getSeconds()).padStart(2, '0');
+            const dateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+
+            const payload = {
+                createProjectRequestId: createProjectRequestId,
+                approverId: userId,
+                dateOfApproval: dateTime,
+                isAllowed: isAllowed,
+                bankingNumber: bankingNumber
+            };
+
+            console.log('Payload:', payload);
+
+            const jwtToken = localStorage.getItem('jwtToken');
+            $.ajax({
+                url: 'https://localhost:7294/api/CampaignRequestApproveHistories/CreateCampaignRequestApproveHistory',
+                type: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                contentType: 'application/json',
+                data: JSON.stringify(payload),
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message || 'Action completed successfully!');
+                        if (isAllowed) {
+                            updateRowToApprovedForPM(button);
+                        } else {
+                            updateRowToRejected(button);
+                        }
+                    } else {
+                        alert('Failed: ' + response.Message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error in project approval:', error);
+                    alert('An error occurred. Please try again.');
                 }
+            });
+        }
+        window.showBankingNumberPopup = showBankingNumberPopup;
 
+            if (checkrole === "Project Management Board") {
+                $('.action-buttons').show();
+                apiUrl = 'https://localhost:7294/api/CreateCampaignRequests/GetCreateCampaignRequestByPMB';
+            } else {
+                apiUrl = `https://localhost:7294/api/CreateCampaignRequests/GetAllCreateProjectRequestsByUserId/${userId}`;
+            }
+            
+            function fetchCampaignRequests() {
                 $.ajax({
-                    url: 'https://localhost:7294/api/CreateCampaignRequests/GetCreateCampaignRequestByPMB',
+                    url: apiUrl,
                     type: 'GET',
                     headers: {
-                        'Authorization': 'Bearer ' + jwtToken
+                        'Authorization': `Bearer ${jwtToken}`
                     },
                     success: function (response) {
                         if (response.success) {
-                            alert(response.Message);
-                            console.log('Campaign Requests:', response.data.data);
-                            displayCampaignRequests(response.data.data);
+                            populateTable(response.data.data);
                         } else {
-                            alert('Failed to fetch campaign requests: ' + response.Message);
+                            alert('Failed to retrieve campaign requests: ' + response.message);
                         }
                     },
                     error: function (xhr, status, error) {
-                        alert('Error fetching campaign requests: ' + (xhr.responseText || status));
+                        alert('Error: ' + (xhr.responseText || status));
                     }
                 });
-            });
+            }
 
-            function displayCampaignRequests(requests) {
+            function populateTable(data) {
                 const tableBody = $('#campaignTable tbody');
                 tableBody.empty();
 
-                if (requests.length === 0) {
-                    tableBody.append('<tr><td colspan="7" class="text-center">No campaign requests found</td></tr>');
+                if (data.length === 0) {
+                    tableBody.append('<tr><td colspan="6" class="text-center">No campaign requests found</td></tr>');
                     return;
                 }
 
-                requests.forEach((request, index) => {
+                data.forEach((request, index) => {
+                    const statusClass = getStatusClass(request.Status);
                     let actionButtons = `
-                        <button class="btn btn-success btn-sm" onclick="handleProjectApproval(this,${request.id}, true)">Approve</button>
-                        <button class="btn btn-danger btn-sm" onclick="handleProjectApproval(this,${request.id}, false)">Decline</button>
-                        <button onclick="changeCampaign(this, ${request.id})" class="text-blue me-2" >Detail</button>
+                        <button class="btn btn-success btn-sm" onclick="showBankingNumberPopup(this, ${request.id})">Approve</button>
+                        <button class="btn btn-danger btn-sm" onclick="handleCampaignReject(this,${request.id}, false)">Decline</button>
+                        <button class="btn btn-info btn-sm" onclick="changeCampaign(this,${request.id})">Detail</button>
                     `;
                     if (request.status === "Accepted") {
                         actionButtons = `<span class="text-approved me-2" style="margin-left:25px">Approved</span>
-                                        <button onclick="changeCampaign(this, ${request.id})" class="text-blue me-2" >Detail</button>`;
+                                        <button onclick="changeCampaign(this,${request.id})" class="text-blue me-2" >Detail</button>`;
                     } else if (request.status === "Rejected") {
                         actionButtons = `<span class="text-declined me-2" style="margin-left:25px">Rejected</span>
-                                    <button onclick="changeCampaign(this, ${request.id})" class="text-blue me-2" >Detail</button>`;
+                                    <button onclick="changeCampaign(this,${request.id})" class="text-blue me-2">Detail</button>`;
                     }
 
                     if (checkrole !== "Project Management Board") {
-                        actionButtons = `<button onclick="changeCampaign(this, ${request.id})" class="text-blue me-2" >Detail</button>`;
+                        actionButtons = `<button class="btn btn-info btn-sm" onclick="changeCampaign(this,${request.id})">Detail</button>`;
                     }
                     const row = `
                         <tr>
-                            <td class="align-middle text-center text-sm">${index + 1}</td>
-                            <td class="align-middle">
-                                <span class="text-secondary text-xs font-weight-bold">${request.title}</span>
-                            </td>
-                            <td class="align-middle">
-                                <span class="text-secondary text-xs font-weight-bold">${request.projectName}</span>
-                            </td>
-                            <td class="align-middle text-center text-sm">
-                                <span class="text-secondary text-xs font-weight-bold">${request.fundTaget}</span>
-                            </td>
-                            <td class="align-middle text-center text-sm">
-                                <span class="badge badge-sm ${getStatusBadgeClass(request.Status)}">${request.status}</span>
-                            </td>
+                            <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${index + 1}</span></td>
+                            <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${request.title}</span></td>
+                            <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${request.projectName}</span></td>
                             <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${formatDateTime(request.createdAt)}</span></td>
+                            <td class="align-middle text-center text-sm"><span class="badge badge-sm ${statusClass}">${request.status}</span></td>
                             <td class="align-middle text-center">${actionButtons}</td>
                         </tr>
                     `;
@@ -344,25 +565,25 @@
                 });
             }
 
-            function getStatusBadgeClass(status) {
-                switch (status) {
-                    case 'Approved':
-                        return 'bg-gradient-success';
-                    case 'Pending':
-                        return 'bg-gradient-warning';
-                    case 'Declined':
-                        return 'bg-gradient-danger';
-                    default:
-                        return 'bg-gradient-secondary';
-                }
+            function getStatusClass(status) {
+                if (status === "Accepted") return "badge-approved";
+                if (status === "Rejected") return "badge-declined";
+                return "badge-pending";
             }
 
-            function addCampaignIdDetails(id) {
-                localStorage.setItem('campaignRequestId', id);
-                window.location.href = '/Campaign/RequestDetails';
-            }
+            // function formatDateTime(dateString) {
+            //     const date = new Date(dateString);
+            //     return date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+            // }
+
+            fetchCampaignRequests();
+
+
         });
-
+        function changeCampaign(button, Id) {
+            localStorage.setItem('campaignId', Id);
+            window.location.href = '/Campaign/CampaignDetail';
+        }
     </script>
 
     <script async defer src="https://buttons.github.io/buttons.js"></script>

@@ -507,7 +507,8 @@ $(document).ready(function () {
     const pageSize = 5;
 
     if (checkrole && checkrole !== 'Volunteer') {
-
+        const nametitle = document.getElementById('nametitle');
+        nametitle.textContent = 'Approve Payment Request';
         const createRequestLink = document.getElementById('create_request_page');
         createRequestLink.style.display = 'none';
 
