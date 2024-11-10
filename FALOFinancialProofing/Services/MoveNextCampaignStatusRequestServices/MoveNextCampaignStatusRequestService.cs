@@ -52,7 +52,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
             }
         }
         //tao don move next campaign status request
-        public async Task<MoveNextCampaignStatusRequest> CreateMoveNextCampaignStatusRequestAsync(CreateMoveNextCampaignStatusRequestDTO requestDto)
+        public async Task<MoveNextCampaignStatusRequest> CreateMoveNextCampaignStatusRequestAsync(CreateMoveNextCampaignStatusRequestDTO requestDto, StringBuilder message)
         {
             try
             {
@@ -63,7 +63,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                 Campaign campaign = await GetCampaignByIdAsync(requestDto.CampaignID);
                 if (campaign == null)
                 {
-                    throw new InvalidOperationException("Not Found Campaign");
+                    throw new Exception("Not Found Campaign");
                 }
                 string nextStatus = "";
                 if (campaign.Status == Resource.CampaignStatus_FundRaising)
@@ -73,6 +73,10 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                     {
                         nextStatus = Resource.CampaignStatus_Implement;
                     }
+                    else
+                    {
+                        throw new Exception("Haven't raised enough funds yet");
+                    }
                 }
                 else if (campaign.Status == Resource.CampaignStatus_Implement)
                 {
@@ -80,16 +84,20 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                 }
                 else if (campaign.Status == Resource.CampaignStatus_Disbursement)
                 {
-                    bool Ok = await HasDebtInCampaignAsync(requestDto.CampaignID);
-                    if (Ok)
+                    CampaignDebtResult campaignDebtResult = new CampaignDebtResult();
+                    campaignDebtResult = await HasDebtInCampaignAsync(requestDto.CampaignID);
+                    if (campaignDebtResult.IsValid)
                     {
                         nextStatus = Resource.CampaignStatus_Close;
                     }
-                    //throw new InvalidOperationException("debt is not over yet");
+                    else
+                    {
+                        throw new Exception($"Debt is not over yet.\nPlease contact {campaignDebtResult.NameOfAccounting} for more information");
+                    }
                 }
                 else
                 {
-                    throw new InvalidOperationException("Campaign closed, can not move next");
+                    throw new Exception("Campaign closed, can not move next");
                 }
 
                 if (nextStatus != "")
@@ -110,7 +118,8 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"CreateMoveNextCampaignStatusRequestAsync: {ex.Message}");
+                message.Append(ex.Message.ToString());
+                Console.WriteLine(ex.Message.ToString());
             }
             return null;
         }
@@ -127,24 +136,62 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
             }
         }
 
-        private async Task<bool> HasDebtInCampaignAsync(int campaignId)
+        //private async Task<bool> HasDebtInCampaignAsync(int campaignId)
+        //{
+        //    bool IsValid = true;
+        //    try
+        //    {
+        //        List<CampaignMember> campaignMembers = new List<CampaignMember>();
+        //        campaignMembers = await _campaignMemberRepository.GetAll().Where(cm => cm.CampaignId == campaignId && cm.Debt != 0).ToListAsync();
+        //        if (campaignMembers.Count > 0)
+        //        {
+        //            IsValid = false;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //    }
+        //    return IsValid;
+        //}
+
+        private async Task<CampaignDebtResult> HasDebtInCampaignAsync(int campaignId)
         {
-            bool IsValid = true;
+            var campaignDebtResult = new CampaignDebtResult
+            {
+                IsValid = true,
+                NameOfAccounting = ""
+            };
+
             try
             {
-                List<CampaignMember> campaignMembers = new List<CampaignMember>();
-                campaignMembers = await _campaignMemberRepository.GetAll().Where(cm => cm.CampaignId == campaignId && cm.Debt != 0).ToListAsync();
-                if (campaignMembers.Count > 0)
+                List<CampaignMember> listCampaignMembersDebtOtherThanZero = new List<CampaignMember>();
+                listCampaignMembersDebtOtherThanZero = await _campaignMemberRepository
+                    .GetAll().Include(x=> x.User)
+                    .Where(cm => cm.CampaignId == campaignId && cm.Debt != 0)
+                    .ToListAsync();
+                
+                //campaignDebtResult.NameOfAccounting = campaignMembers.Select(cm => cm.User.FirstName).ToList();
+
+                var Accounting = await _campaignMemberRepository
+                    .GetAll()
+                    .Include(x=> x.User)
+                    .Where(cm => cm.CampaignId == campaignId && cm.RoleId == "83292e2c-6c86-4153-bdc5-760d05ec2293")
+                    .SingleAsync();
+
+                campaignDebtResult.NameOfAccounting = Accounting.User.FirstName + " " + Accounting.User.LastName + " with gmail: " + Accounting.User.Email;
+                if (listCampaignMembersDebtOtherThanZero.Count > 0)
                 {
-                    IsValid = false;
+                    campaignDebtResult.IsValid = false;
                 }
+
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"HasDebtInCampaignAsync: {ex.Message}");
             }
-            return IsValid;
-        }
 
+            return campaignDebtResult;
+        }
 
         private async Task<bool> CheckMoneyOfCampaignAsync(int campaignId)
         {
