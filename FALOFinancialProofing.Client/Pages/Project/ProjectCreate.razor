@@ -43,39 +43,39 @@
                     </div>
                     <div class="card-body">
                         <div class="row mb-3">
-                            <div class="col-md-6">
+                            @* <div class="col-md-6">
                                 <label for="projectId" class="form-label">Project Id</label>
                                 <input type="text" class="form-control" id="projectId" value="DA032" disabled>
-                            </div>
-                            <div class="col-md-6">
+                            </div> *@
+                            <div class="col-md-12">
                                 <label for="projectName" class="form-label">Project Name</label>
                                 <input type="text" class="form-control" id="projectName" value="Nhà Hạnh Phúc 130">
                             </div>
                         </div>
 
                         <div class="row mb-3">
-                            <div class="col-md-3">
+                            <div class="col-md-6">
                                 <label for="constructionInfo" class="form-label">Organizer</label>
                                 <input type="text" class="form-control" id="constructionInfo" value="Hội Chữ Thập Đỏ">
                             </div>
-                            <div class="col-md-3">
+                            @* <div class="col-md-3">
                                 <label for="quantity" class="form-label">Budgets</label>
                                 <input type="number" class="form-control" id="quantity" value="100000">
-                            </div>
-                            <div class="col-md-3">
+                            </div> *@
+                            <div class="col-md-6">
                                 <label for="start-date" class="form-label">Start Time</label>
                                 <input type="date" class="form-control" id="unit" value="nhà">
                             </div>
-                            <div class="col-md-3">
+                            @* <div class="col-md-3">
                                 <label for="unit" class="form-label">End Time</label>
                                 <input type="date" class="form-control" id="unit" value="nhà">
-                            </div>
+                            </div> *@
                         </div>
 
-                        <div class="mb-3">
+                        @* <div class="mb-3">
                             <label for="location" class="form-label">Address</label>
                             <textarea class="form-control" id="location" rows="2">Bản Nậm Sắp - Xã Nậm Pì - Huyện Nậm Nhùn - Tỉnh Lai Châu</textarea>
-                        </div>
+                        </div> *@
 
                         <div class="mb-3">
                             <label for="context" class="form-label">Project Description</label>
@@ -127,10 +127,9 @@
           theme: 'snow'
         });
 
-        // Handle image upload preview
         document.getElementById('projectImages').addEventListener('change', function(event) {
           const imagePreview = document.getElementById('imagePreview');
-          imagePreview.innerHTML = ''; // Clear existing images
+          imagePreview.innerHTML = ''; 
           const files = event.target.files;
           Array.from(files).forEach(file => {
             const reader = new FileReader();
@@ -147,10 +146,9 @@
           });
         });
 
-        // Handle document file upload and display
         document.getElementById('relatedDocs').addEventListener('change', function(event) {
           const docList = document.getElementById('docList');
-          docList.innerHTML = ''; // Clear existing list
+          docList.innerHTML = ''; 
           const files = event.target.files;
           Array.from(files).forEach(file => {
             const listItem = document.createElement('li');

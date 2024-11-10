@@ -98,6 +98,37 @@ namespace FALOFinancialProofing.Migrations
                     b.ToTable("AttachmentFiles");
                 });
 
+            modelBuilder.Entity("FALOFinancialProofing.Models.Bank", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AccountNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BankCodeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("CassoAccountID")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("OwnerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("acqId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Bank");
+                });
+
             modelBuilder.Entity("FALOFinancialProofing.Models.Campaign", b =>
                 {
                     b.Property<int>("Id")
@@ -150,7 +181,12 @@ namespace FALOFinancialProofing.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<string>("UpdateLog")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("BankId");
 
                     b.HasIndex("CreateBy");
 
@@ -387,6 +423,31 @@ namespace FALOFinancialProofing.Migrations
                     b.ToTable("CreateProjectRequestApproveHistories");
                 });
 
+            modelBuilder.Entity("FALOFinancialProofing.Models.CreateQrCode", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CreateQrCode");
+                });
+
             modelBuilder.Entity("FALOFinancialProofing.Models.MoveNextCampaignStatusRequest", b =>
                 {
                     b.Property<int>("Id")
@@ -402,12 +463,10 @@ namespace FALOFinancialProofing.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Feedback")
-                        .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("ReceiverId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("SenderId")
@@ -418,6 +477,10 @@ namespace FALOFinancialProofing.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("StatusOfCampaign")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -432,6 +495,39 @@ namespace FALOFinancialProofing.Migrations
                     b.HasIndex("SenderId");
 
                     b.ToTable("MoveNextCampaignStatusRequests");
+                });
+
+            modelBuilder.Entity("FALOFinancialProofing.Models.MoveNextCampaignStatusRequestHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateOfApproval")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Feedback")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsAllowed")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MoveNextCampaignStatusRequestId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReceiverId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MoveNextCampaignStatusRequestId");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.ToTable("MoveNextCampaignStatusRequestHistories");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.Organization", b =>
@@ -604,6 +700,9 @@ namespace FALOFinancialProofing.Migrations
                     b.Property<double>("ExpectedMoney")
                         .HasColumnType("float");
 
+                    b.Property<string>("Feedback")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -702,11 +801,13 @@ namespace FALOFinancialProofing.Migrations
                     b.Property<double>("Amount")
                         .HasColumnType("float");
 
-                    b.Property<string>("BankId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("CampaignId")
+                        .HasColumnType("int");
+
+                    b.Property<long?>("CassoTransactionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("CreateQrCodeId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
@@ -716,9 +817,15 @@ namespace FALOFinancialProofing.Migrations
                     b.Property<DateTime>("TransactionDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("tid")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CampaignId");
+
+                    b.HasIndex("CreateQrCodeId");
 
                     b.ToTable("TransactionLogs");
                 });
@@ -1073,6 +1180,10 @@ namespace FALOFinancialProofing.Migrations
 
             modelBuilder.Entity("FALOFinancialProofing.Models.Campaign", b =>
                 {
+                    b.HasOne("FALOFinancialProofing.Models.Bank", "Bank")
+                        .WithMany("Campaigns")
+                        .HasForeignKey("BankId");
+
                     b.HasOne("FALOFinancialProofing.Models.User", "User")
                         .WithMany("Campaigns")
                         .HasForeignKey("CreateBy")
@@ -1084,6 +1195,8 @@ namespace FALOFinancialProofing.Migrations
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Bank");
 
                     b.Navigation("Project");
 
@@ -1229,6 +1342,17 @@ namespace FALOFinancialProofing.Migrations
                     b.Navigation("CreateProjectRequest");
                 });
 
+            modelBuilder.Entity("FALOFinancialProofing.Models.CreateQrCode", b =>
+                {
+                    b.HasOne("FALOFinancialProofing.Models.User", "User")
+                        .WithMany("CreateQrCodes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("FALOFinancialProofing.Models.MoveNextCampaignStatusRequest", b =>
                 {
                     b.HasOne("FALOFinancialProofing.Models.Campaign", "Campaign")
@@ -1240,13 +1364,12 @@ namespace FALOFinancialProofing.Migrations
                     b.HasOne("FALOFinancialProofing.Models.User", "ReceiverUser")
                         .WithMany("MoveNextCampaignStatusRequestReceiverUsers")
                         .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("FALOFinancialProofing.Models.User", "SenderUser")
                         .WithMany("MoveNextCampaignStatusRequestSenderUsers")
                         .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Campaign");
@@ -1254,6 +1377,25 @@ namespace FALOFinancialProofing.Migrations
                     b.Navigation("ReceiverUser");
 
                     b.Navigation("SenderUser");
+                });
+
+            modelBuilder.Entity("FALOFinancialProofing.Models.MoveNextCampaignStatusRequestHistory", b =>
+                {
+                    b.HasOne("FALOFinancialProofing.Models.MoveNextCampaignStatusRequest", "MoveNextCampaignStatusRequest")
+                        .WithMany("MoveNextCampaignStatusRequestHistories")
+                        .HasForeignKey("MoveNextCampaignStatusRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FALOFinancialProofing.Models.User", "Receiver")
+                        .WithMany("MoveNextCampaignStatusRequestHistories")
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MoveNextCampaignStatusRequest");
+
+                    b.Navigation("Receiver");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.OrganizationMember", b =>
@@ -1338,7 +1480,15 @@ namespace FALOFinancialProofing.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("FALOFinancialProofing.Models.CreateQrCode", "CreateQrCode")
+                        .WithMany("TransactionLogs")
+                        .HasForeignKey("CreateQrCodeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.Navigation("Campaign");
+
+                    b.Navigation("CreateQrCode");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.UserSDG", b =>
@@ -1427,6 +1577,11 @@ namespace FALOFinancialProofing.Migrations
                     b.Navigation("Vouchers");
                 });
 
+            modelBuilder.Entity("FALOFinancialProofing.Models.Bank", b =>
+                {
+                    b.Navigation("Campaigns");
+                });
+
             modelBuilder.Entity("FALOFinancialProofing.Models.Campaign", b =>
                 {
                     b.Navigation("AccountingBook");
@@ -1454,6 +1609,16 @@ namespace FALOFinancialProofing.Migrations
                     b.Navigation("CreateProjectFiles");
 
                     b.Navigation("CreateProjectRequestApproveHistories");
+                });
+
+            modelBuilder.Entity("FALOFinancialProofing.Models.CreateQrCode", b =>
+                {
+                    b.Navigation("TransactionLogs");
+                });
+
+            modelBuilder.Entity("FALOFinancialProofing.Models.MoveNextCampaignStatusRequest", b =>
+                {
+                    b.Navigation("MoveNextCampaignStatusRequestHistories");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.Organization", b =>
@@ -1502,6 +1667,10 @@ namespace FALOFinancialProofing.Migrations
                     b.Navigation("CreateCampaignRequestSenders");
 
                     b.Navigation("CreateProjectRequestApproveHistories");
+
+                    b.Navigation("CreateQrCodes");
+
+                    b.Navigation("MoveNextCampaignStatusRequestHistories");
 
                     b.Navigation("MoveNextCampaignStatusRequestReceiverUsers");
 

@@ -1,0 +1,181 @@
+﻿@page "/createpaymentvoucher"
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <style>
+        .form-control {
+            margin-top: 10px;
+        }
+
+        .btn-submit {
+            margin-top: 20px;
+        }
+
+        #save-btn {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .file-name-display {
+            margin-top: 10px;
+        }
+
+        #fileList {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+            #fileList li {
+                padding: 5px 10px;
+                background-color: #e0e0e0;
+                border-radius: 5px;
+                list-style: none;
+            }
+
+
+        .nav-tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+            .nav-tabs a {
+                padding: 10px 20px;
+                text-decoration: none;
+                color: #000;
+                background-color: #f1f1f1;
+                border-radius: 5px;
+            }
+
+                .nav-tabs a.active {
+                    background-color: #EC407A;
+                    color: #fff;
+                }
+
+                .nav-tabs a:hover {
+                    background-color: #007bff;
+                    color: #fff;
+                }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <nav class="nav-tabs">
+                                <a href="/campaigndetail">Campaign Detail</a>
+                                <a href="/prepaymanagement">Prepay Request</a>
+                                <a href="/paymentmanagement" class="active">Payment Request</a>
+                                <a href="/prepayvoucher">Prepay Voucher</a>
+                                <a href="/paymentvoucher">Payment Voucher</a>
+                                <a href="/accountingbook">Accounting Book</a>
+                                <a href="/member">Member</a>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Create Payment Voucher</h6>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <label for="voucherTitle">Title:</label>
+                        <input type="text" id="voucherTitle" class="form-control" placeholder="Enter title" required />
+
+                        <label for="voucherMoney">Money:</label>
+                        <input type="number" id="voucherMoney" class="form-control" placeholder="Enter money" required />
+
+                        <label for="voucherDescription">Description:</label>
+                        <textarea id="voucherDescription" class="form-control" rows="4" placeholder="Enter description" required></textarea>
+                        <input type="date" id="voucherDateCreated" class="form-control" value="${new Date().toISOString().split('T')[0]}" hidden required />
+
+                        <div class="mb-3">
+                            <label for="attachments" class="form-label">Attachments Voucher File</label>
+                            <input type="file" class="form-control" id="attachments" multiple>
+                            <ul id="fileList">
+                            </ul>
+                        </div>
+                        <div id="save-btn">
+                            <button class="btn btn-warning btn-lg" id="createBtn">Create</button>
+                            <div>
+                                <a href="paymentmanagement" class="btn btn-success btn-lg" style="margin-left:10px">Cancel</a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('attachments').addEventListener('change', function (e) {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+            Array.from(e.target.files).forEach(file => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(file);
+                a.textContent = file.name;
+                a.download = file.name;
+                li.appendChild(a);
+                fileList.appendChild(li);
+            });
+        });
+
+        document.getElementById('createBtn').addEventListener('click', function() {
+            const title = document.getElementById('voucherTitle').value;
+            const money = document.getElementById('voucherMoney').value;
+            const description = document.getElementById('voucherDescription').value;
+            const dateCreated = new Date().toLocaleDateString();
+            const attachments = document.getElementById('attachments').files;
+
+
+            if (attachments.length === 0) {
+                alert('Please upload a file before submitting.');
+                return;
+            }
+
+
+            console.log({
+                title,
+                money,
+                assignFrom,
+                dateCreated,
+                description
+            });
+
+            alert('Payment voucher saved!');
+        });
+
+        function resetForm() {
+            document.getElementById('voucherTitle').value = '';
+            document.getElementById('voucherMoney').value = '';
+            document.getElementById('voucherDescription').value = '';
+            document.getElementById('voucherFile').value = '';
+            document.getElementById('fileNameDisplay').textContent = '';
+        }
+    </script>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+</body>
+
+</html>

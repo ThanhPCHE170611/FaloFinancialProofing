@@ -30,7 +30,7 @@ namespace FALOFinancialProofing.Services
         private readonly RoleManager<IdentityRole> roleManager;
         public readonly UserManager<User> userManager;
         private readonly SignInManager<User> signInManager;
-
+        private readonly IRepository<CampaignMember, int> campaignMemberRepository;
         //moi
         private readonly LinkGenerator _linkGenerator;
 
@@ -38,7 +38,7 @@ namespace FALOFinancialProofing.Services
         public AuthServices(UserManager<User> userManager, SignInManager<User> signInManager,
             IOptionsMonitor<AppSetting> optionsMonitor, RoleManager<IdentityRole> roleManager,
             IEmailService emailService,
-            LinkGenerator linkGenerator)
+            LinkGenerator linkGenerator, IRepository<CampaignMember, int> campaignMemberRepository)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
@@ -46,7 +46,7 @@ namespace FALOFinancialProofing.Services
             this.roleManager = roleManager;
             this.emailService = emailService;
             _linkGenerator = linkGenerator;
-
+            this.campaignMemberRepository = campaignMemberRepository;
         }
         public async Task<bool> CheckUserInRole(string userId, string userRole, StringBuilder message)
         {
@@ -600,8 +600,18 @@ namespace FALOFinancialProofing.Services
             return result;
         }
 
+        public async Task<double> GetUserDebInCampaign(string userId, int campaignId, StringBuilder message)
+        {
+            var userinCampaign = await campaignMemberRepository.GetAll(x => x.UserId.Equals(userId)
+                                    && x.CampaignId == campaignId).FirstOrDefaultAsync();
+            if(userinCampaign == null)
+            {
+                message.Append("Can't not find debt of this user with specify campaign");
+                return Double.MinValue;
+            }
+            return userinCampaign.Debt;
 
-
+        }
     }
 
 

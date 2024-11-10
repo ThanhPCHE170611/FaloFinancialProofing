@@ -238,6 +238,7 @@ namespace FALOFinancialProofing.Controllers
         {
             List<UserInformation_Admin> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
             try
             {
                 data = await authServices.GetAccountList();
@@ -247,12 +248,11 @@ namespace FALOFinancialProofing.Controllers
                     {
                         Success = false,
                         Message = "Get All Account Failed!",
-                        Data = data
+                        Data = filterPagingData
                     });
                 }
 
                 filterPagingData.DataCount = data.Count;
-                filterPagingData.CurrentPage = currentPage;
                 data = PaginationHelper.Paginate<UserInformation_Admin>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
                 filterPagingData.Data = data;
             }
@@ -355,6 +355,28 @@ namespace FALOFinancialProofing.Controllers
                     Message = "Password has been changed.",
                 });
             }
+        }
+
+        [HttpGet("getuserdebincampaign")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUserDebInCampaign(string userId,int campaignId)
+        {
+            var message = new StringBuilder();
+            var userDeb = await authServices.GetUserDebInCampaign( userId, campaignId, message);
+            if(userDeb == Double.MinValue)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = message.ToString()
+                });
+            }
+            return Ok(new
+            {
+                Message = "Get Debt Successfully!",
+                Data = userDeb,
+                Success = true
+            });
         }
 
 

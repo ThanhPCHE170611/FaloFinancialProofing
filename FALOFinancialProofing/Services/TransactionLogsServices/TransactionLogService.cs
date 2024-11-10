@@ -23,7 +23,7 @@ namespace FALOFinancialProofing.Services.TransactionLogsServices
                 TransactionDate = createTransactionLog.TransactionDate,
                 Amount = createTransactionLog.Amount,
                 Description = createTransactionLog.Description,
-                BankId = createTransactionLog.BankId
+                //BankId = createTransactionLog.BankId
             };
             return transactionLog;
         }
@@ -52,7 +52,7 @@ namespace FALOFinancialProofing.Services.TransactionLogsServices
         {
             //SourceTransactionLog.SenderID = DesTransactionLog.SenderID;
             SourceTransactionLog.Amount = DesTransactionLog.Amount;
-            SourceTransactionLog.BankId = DesTransactionLog.BankId;
+            //SourceTransactionLog.BankId = DesTransactionLog.BankId;
             SourceTransactionLog.Description = DesTransactionLog.Description;
             SourceTransactionLog.CampaignId = DesTransactionLog.CampaignId;
         }

@@ -3,8 +3,10 @@ using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Extensions;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
+using FALOFinancialProofing.Services.AttachmentFIleServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace FALOFinancialProofing.Services.RequestFormServices
 {
@@ -14,14 +16,16 @@ namespace FALOFinancialProofing.Services.RequestFormServices
         private readonly IRepository<Campaign, int> campaignRepository;
         private readonly IRepository<CampaignMember, int> campaignMemberRepository;
         private readonly IRepository<ApproveProcess, int> approveProcessrepository;
+        private readonly IAttachmentFileServices attachmentFileService;
 
-        public RequestFormServices(IRepository<RequestForm, int> repository, IRepository<Campaign, int> campaignRepository, 
-            IRepository<CampaignMember, int> campaignMemberRepository, IRepository<ApproveProcess, int> approveProcessrepository)
+        public RequestFormServices(IRepository<RequestForm, int> repository, IRepository<Campaign, int> campaignRepository,
+            IRepository<CampaignMember, int> campaignMemberRepository, IRepository<ApproveProcess, int> approveProcessrepository, IAttachmentFileServices attachmentFileService)
         {
             this.repository = repository;
             this.campaignRepository = campaignRepository;
             this.campaignMemberRepository = campaignMemberRepository;
             this.approveProcessrepository = approveProcessrepository;
+            this.attachmentFileService = attachmentFileService;
         }
 
         public async Task<RequestForm?> CreateRequestFormAsync(RequestFormDTO dto)
@@ -77,7 +81,8 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 CampaignId = dto.CampaignId,
                 TypeId = dto.TypeId,
                 AttachmentFiles = dto.AttachmentFiles,
-                ApproveProcesses = dto.ApproveProcesses
+                ApproveProcesses = dto.ApproveProcesses,
+                Feedback = dto.FeedBack
             };
         }
 
@@ -296,6 +301,25 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 message.Append("ApproverId is not exist or maybe in wrong campaign or disable");
                 return false;
             }
+
+            var debtOfUserInCampaign = campainInDb.CampaignMembers.FirstOrDefault(cm => cm.UserId == requestForm.CreatedBy
+                            && cm.IsActive).Debt;
+            if (requestForm.TypeId.Equals(IntConstant.PrePayRequestType.ToString()))
+            {
+                if(debtOfUserInCampaign > 20000000) {
+
+                    message.Append("Debt of user is greater than 20,000,000");
+                    return false;
+                }
+            } else
+            {
+                if(debtOfUserInCampaign < 20000000)
+                {
+                    message.Append("Debt of user is smaller than 20,000,000");
+                    return false;
+                }
+            }
+
             // Compare role of ApproverID and CreatedBy (voluntear, leader, accounting)
             var haveEnoughPermission = CheckPermission(requestForm.CreatedBy, requestForm.ApproverId);
             if (!haveEnoughPermission)
@@ -368,7 +392,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
         public async Task<List<AttachmentFileRequest>> SaveAttachmentFilesAsync(List<IFormFile> uploadFiles, int requestId, int typeId)
         {
             var attachmentFiles = new List<AttachmentFileRequest>();
-            var folderName = typeId == IntConstant.PrePayRequestType ? "PrePayUploads" : "VoucherUploads";
+            var folderName = typeId == IntConstant.PrePayRequestType ? "PrePayUploads" : "PaymentUploads";
             try
             {
                 
@@ -562,6 +586,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 requestForms = await repository.GetAll(r => r.CampaignId == campaignId
                                             && r.CreatedBy.Equals(userId)
                                             && r.TypeId == IntConstant.PrePayRequestType)
+                                            .Include(rf => rf.User)
                                             .Include(r => r.AttachmentFiles)
                                             .Include(r => r.ApproveProcesses)
                                             .ThenInclude(ap => ap.Vouchers)
@@ -577,6 +602,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                                                 ExpectedMoney = r.ExpectedMoney,
                                                 Status = r.Status,
                                                 CreatedBy = r.CreatedBy,
+                                                CreateByName = r.User.FirstName + " " + r.User.LastName,
                                                 CampaignId = r.CampaignId,
                                                 TypeId = r.TypeId,
                                                 AttachmentFiles = r.AttachmentFiles.ToList(),
@@ -617,6 +643,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 requestForms = await repository.GetAll(r => r.CampaignId == campaignId
                                             && r.CreatedBy.Equals(userId)
                                             && r.TypeId == IntConstant.PaymentRequestType)
+                                            .Include(rf => rf.User)
                                             .Include(r => r.AttachmentFiles)
                                             .Include(r => r.ApproveProcesses)
                                             .ThenInclude(ap => ap.Vouchers)
@@ -632,6 +659,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                                                 ExpectedMoney = r.ExpectedMoney,
                                                 Status = r.Status,
                                                 CreatedBy = r.CreatedBy,
+                                                CreateByName = r.User.FirstName + " " + r.User.LastName,
                                                 CampaignId = r.CampaignId,
                                                 TypeId = r.TypeId,
                                                 AttachmentFiles = r.AttachmentFiles.ToList(),
@@ -681,6 +709,186 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 return false;
             }
             
+        }
+
+        public async Task<RequestFormWithAttachmentApprovementVoucher?> GetRequestDetailByRequestId(int requestId)
+        {
+            try
+            {
+               var requestForm =  await repository.GetAll(r => r.Id == requestId)
+                                            .Include(rf => rf.User)
+                                            .Include(r => r.AttachmentFiles)
+                                            .Include(r => r.ApproveProcesses)
+                                            .ThenInclude(ap => ap.Vouchers)
+                                            .Include(r => r.ApproveProcesses)
+                                            .ThenInclude(ap => ap.User)
+                                            .Include(r => r.Campaign)
+                                            .ThenInclude(c => c.CampaignMembers)
+                                            .Select(r => new RequestFormWithAttachmentApprovementVoucher
+                                            {
+                                                Id = r.Id,
+                                                CreateAt = r.CreateAt,
+                                                Description = r.Description,
+                                                ExpectedMoney = r.ExpectedMoney,
+                                                Status = r.Status,
+                                                CreatedBy = r.CreatedBy,
+                                                CreateByName = r.User.FirstName + " " + r.User.LastName,
+                                                CampaignId = r.CampaignId,
+                                                TypeId = r.TypeId,
+                                                AttachmentFiles = r.AttachmentFiles.ToList(),
+                                                ApproveProcesses = r.ApproveProcesses.Select(ap => new ApproveProcessWithUser
+                                                {
+                                                    Id = ap.Id,
+                                                    ApproveNumber = ap.ApproveNumber,
+                                                    ApproveStatus = ap.ApproveStatus,
+                                                    RequestId = ap.RequestId,
+                                                    ApproverId = ap.ApproverId,
+                                                    UserWithRole = new UserWithRole
+                                                    {
+                                                        UserId = ap.ApproverId,
+                                                        FullName = $"{ap.User.FirstName} {ap.User.LastName}",
+                                                        RoleId = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).IdentityRole.Id,
+                                                        RoleName = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).IdentityRole.Name
+                                                    }
+                                                }).ToList(),
+                                                VoucherFiles = r.ApproveProcesses.Select(ap => new VoucherRequest
+                                                {
+                                                    Id = ap.Vouchers.FirstOrDefault().Id,
+                                                    FilePath = ap.Vouchers.FirstOrDefault().FilePath,
+                                                }).ToList()
+                                            }).FirstOrDefaultAsync();
+
+                return requestForm;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<RequestForm?> CancelRequest(int requestId, StringBuilder msg)
+        {
+            var requestWithApprove = await repository.GetAll(x => x.Id == requestId)
+                .Include(x => x.ApproveProcesses)
+                .FirstOrDefaultAsync();
+
+            // check if request is in progress
+            var cancelRequestIsValidated = ValidateCancelRequest(requestWithApprove, msg);
+            // update cancel status
+            if (!cancelRequestIsValidated)
+            {
+                return null;
+            }
+            else
+            {
+                // update status of approve process
+                var updateApproveProcess = requestWithApprove.ApproveProcesses.FirstOrDefault();
+                updateApproveProcess.ApproveStatus = Resource.CancelStatus;
+                var canUpdateAP = await approveProcessrepository.UpdateAsync(updateApproveProcess);
+                if (!canUpdateAP)
+                {
+                    msg.Append("Approve process update fail!");
+                    return null;
+                }
+                // update status of current request
+                else
+                {
+                    requestWithApprove.Status = Resource.CancelStatus;
+                    var canUpdateRequest = await repository.UpdateAsync(requestWithApprove);
+                    if (!canUpdateRequest)
+                    {
+                        msg.Append("Request update fail!");
+                        return null;
+                    }
+                    return requestWithApprove;
+                }
+                return requestWithApprove;
+            }
+        }
+
+        private bool ValidateCancelRequest(RequestForm? requestWithApprove, StringBuilder msg)
+        {
+            try
+            {
+                if(requestWithApprove == null)
+                {
+                    msg.Append("Request is not exist");
+                    return false;
+                }
+                // check if first approve is approve
+                var firstApprove = requestWithApprove.ApproveProcesses.FirstOrDefault();
+                if (firstApprove != null && !firstApprove.ApproveStatus.Equals(Resource.ProcessStatus))
+                {
+                    msg.Append("Request is not in process status");
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                msg.Append("Error when validate request");
+                return false;
+            }
+        }
+
+        public async Task<bool> AddMissingAttachmentFileForRequestAsync(int requestId, StringBuilder message, IFormFile attachment)
+        {
+            if(attachment == null)
+            {
+                message.Append("Attachment is null");
+                return false;
+            }
+            
+            var requestWithAttachment = await repository.GetAll(x => x.Id == requestId)
+                .Include(x => x.AttachmentFiles)
+                .FirstOrDefaultAsync();
+            var campaignIsActiveAndNotClose = await campaignRepository.GetAll(x => x.Id == requestWithAttachment.CampaignId 
+                            && x.IsActive
+                            && !x.Status.Equals(Resource.CampaignStatus_Close))
+                .Include(x => x.RequestForms)
+                .FirstOrDefaultAsync();
+            if(campaignIsActiveAndNotClose == null)
+            {
+                message.Append("Campaign is not active or is close");
+                return false;
+            }
+            if (requestWithAttachment == null)
+            {
+                message.Append("Request is not exist");
+                return false;
+            }
+            if(requestWithAttachment.AttachmentFiles != null && requestWithAttachment.AttachmentFiles.Any())
+            {
+                message.Append("Request already have attachment file");
+                return false;
+            }
+            var canCreateNewAttachment = await CreateNewAttachmentForRequest(requestWithAttachment, attachment, message);
+            if (!canCreateNewAttachment)
+            {
+                return false;
+            }
+            return true;
+
+        }
+
+        private async Task<bool> CreateNewAttachmentForRequest(RequestForm requestWithAttachment, IFormFile attachment, StringBuilder message)
+        {
+            try
+            {
+                var attachmentFiles = await SaveAttachmentFilesAsync(new List<IFormFile> { attachment }, requestWithAttachment.Id, requestWithAttachment.TypeId);
+                var canCreateAttachmentFiles = await attachmentFileService.CreateManyAttachmentFileAsync(attachmentFiles);
+                if (!canCreateAttachmentFiles)
+                {
+                    message.Append("Create new Attachment fail");
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                message.Append("Create new Attachment fail");
+                return false;
+            }
         }
     }
 }

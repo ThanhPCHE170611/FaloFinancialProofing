@@ -38,7 +38,7 @@
                 list-style: none;
             }
 
-        /* Style for the tab navigation */
+
         .nav-tabs {
             display: flex;
             justify-content: space-around;
@@ -64,7 +64,7 @@
                     color: #fff;
                 }
 
-        /* Searchable select box */
+
         .searchable-select {
             width: 100%;
             padding: 10px;
@@ -101,12 +101,12 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label for="sender" class="form-label">Sender</label>
-                            <input type="text" class="form-control" id="sender" placeholder="Enter sender name">
+                            <input type="text" class="form-control" id="sender" placeholder="Enter sender name" readonly>
                         </div>
 
                         <div class="mb-3">
-                            <label for="title" class="form-label">Title</label>
-                            <input type="text" class="form-control" id="title" placeholder="Enter title">
+                            <label for="title" class="form-label">Created Date</label>
+                            <p class="form-control" id="todaytime" readonly></p>
                         </div>
 
                         <div class="mb-3">
@@ -182,13 +182,13 @@
             const description = document.getElementById('description').value;
             const attachments = document.getElementById('attachments').files;
 
-            // Ensure that a file is selected
+
             if (attachments.length === 0) {
                 alert('Please attach at least one file before creating.');
-                return; // Prevent submission
+                return; 
             }
 
-            // If file is selected, proceed with the creation
+
             console.log({
                 sender,
                 title,
@@ -199,6 +199,11 @@
 
             alert('Payment request saved!');
         });
+        var today = new Date();
+        var date = today.getDate()+'-'+(today.getMonth()+1)+'-'+today.getFullYear();
+        var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        var dateTime = date+' '+time;
+        document.getElementById("todaytime").innerHTML = dateTime;
     </script>
 </body>
 

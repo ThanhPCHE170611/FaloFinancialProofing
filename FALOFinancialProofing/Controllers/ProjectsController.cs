@@ -36,6 +36,7 @@ namespace FALOFinancialProofing.Controllers
         {
             List<ProjectInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
             try
             {
                 data = await _projectService.GetAllProjectInSystemAsync();
@@ -45,7 +46,7 @@ namespace FALOFinancialProofing.Controllers
                     {
                         Success = false,
                         Message = "Get All Project By In System Failed!",
-                        Data = data
+                        Data = filterPagingData
                     });
                 }
                 if (!string.IsNullOrEmpty(status))
@@ -57,8 +58,7 @@ namespace FALOFinancialProofing.Controllers
                     data = data.FindAll(x => x.IsActive == IsActive);
                 }
                 filterPagingData.DataCount = data.Count;
-                filterPagingData.CurrentPage = currentPage;
-                data = PaginationHelper.Paginate<ProjectInformation>(data.AsQueryable(), currentPage, 6).ToList();
+                data = PaginationHelper.Paginate<ProjectInformation>(data.AsQueryable(), currentPage, IntConstant.PageSizeCustom).ToList();
                 filterPagingData.Data = data;
             }
             catch (Exception ex)
@@ -78,6 +78,7 @@ namespace FALOFinancialProofing.Controllers
         {
             List<ProjectInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
             try
             {
                 data = await _projectService.GetAllProjectsByUserIdAsync(UserId);
@@ -87,7 +88,7 @@ namespace FALOFinancialProofing.Controllers
                     {
                         Success = false,
                         Message = "Get All Project By UserId Failed!",
-                        Data = data
+                        Data = filterPagingData
                     });
                 }
                 if (!string.IsNullOrEmpty(status))
@@ -95,7 +96,6 @@ namespace FALOFinancialProofing.Controllers
                     data = data.FindAll(x => x.Status == status);
                 }
                 filterPagingData.DataCount = data.Count;
-                filterPagingData.CurrentPage = currentPage;
                 data = PaginationHelper.Paginate<ProjectInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
                 filterPagingData.Data = data;
             }

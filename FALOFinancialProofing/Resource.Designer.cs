@@ -70,6 +70,15 @@ namespace FALOFinancialProofing {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Accounting Reject: .
+        /// </summary>
+        public static string AccountingFeedBackStart {
+            get {
+                return ResourceManager.GetString("AccountingFeedBackStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Accounting.
         /// </summary>
         public static string AccountingRoleName {
@@ -88,6 +97,51 @@ namespace FALOFinancialProofing {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string CampaignStatus_Close {
+            get {
+                return ResourceManager.GetString("CampaignStatus.Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disbursement.
+        /// </summary>
+        public static string CampaignStatus_Disbursement {
+            get {
+                return ResourceManager.GetString("CampaignStatus.Disbursement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fund Raising.
+        /// </summary>
+        public static string CampaignStatus_FundRaising {
+            get {
+                return ResourceManager.GetString("CampaignStatus.FundRaising", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Implement.
+        /// </summary>
+        public static string CampaignStatus_Implement {
+            get {
+                return ResourceManager.GetString("CampaignStatus.Implement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string CancelStatus {
+            get {
+                return ResourceManager.GetString("CancelStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Process.
         /// </summary>
         public static string ProcessStatus {
@@ -97,7 +151,16 @@ namespace FALOFinancialProofing {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ProjectManager.
+        ///   Looks up a localized string similar to Project Manager Reject:.
+        /// </summary>
+        public static string ProjectManagerFeedBackStart {
+            get {
+                return ResourceManager.GetString("ProjectManagerFeedBackStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Project Manager.
         /// </summary>
         public static string ProjectManagerRoleName {
             get {
@@ -111,6 +174,15 @@ namespace FALOFinancialProofing {
         public static string RejectedStatus {
             get {
                 return ResourceManager.GetString("RejectedStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Volunteer Leader Reject:.
+        /// </summary>
+        public static string VolunteerLeaderFeedBackStart {
+            get {
+                return ResourceManager.GetString("VolunteerLeaderFeedBackStart", resourceCulture);
             }
         }
         

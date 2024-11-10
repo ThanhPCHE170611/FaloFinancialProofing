@@ -10,6 +10,7 @@ using Humanizer.Localisation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Drawing.Printing;
+using System.Text;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -248,16 +249,18 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
-        [HttpGet("rejectprepayrequestforvolunteerleader/{requestid}")]
-        public async Task<IActionResult> RejectPrePayRequestForVolunteerLeader(string userid, string currentLoggingRole, int requestid)
+        [HttpPost("rejectprepayrequestforvolunteerleader/{requestid}")]
+        public async Task<IActionResult> RejectPrePayRequestForVolunteerLeader(string userid, string currentLoggingRole, int requestid, string feedback)
         {
-            var canReject = await approveProcessServices.RejectPrePayRequestForLeader(userid, currentLoggingRole, requestid);
+            var message = new StringBuilder();
+            var feedBackStringBuilder = new StringBuilder();
+            var canReject = await approveProcessServices.RejectPrePayRequestForLeader(userid, currentLoggingRole, requestid, message, feedback, feedBackStringBuilder);
             if (!canReject)
             {
                 return Ok(new
                 {
                     Success = false,
-                    Message = "Reject action cannot be done"
+                    Message = "Reject action cannot be done " + message.ToString()
                 });
             }
             // update request form status to reject
@@ -272,6 +275,7 @@ namespace FALOFinancialProofing.Controllers
                 CampaignId = requestForm.CampaignId,
                 TypeId = requestForm.TypeId,
                 Status = Resource.RejectedStatus,
+                FeedBack = feedBackStringBuilder.ToString()
             };
             var canUpdatedRequest = await requestFormServices.UpdateRequestFormAsync(requestFormDTO);
             if (canUpdatedRequest == false)
@@ -301,16 +305,18 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
-        [HttpGet("rejectprepayrequestforaccounting/{requestid}")]
-        public async Task<IActionResult> RejectPrePayRequestForAccounting(string userid, string currentLoggingRole, int requestid)
+        [HttpPost("rejectprepayrequestforaccounting/{requestid}")]
+        public async Task<IActionResult> RejectPrePayRequestForAccounting(string userid, string currentLoggingRole, int requestid, string feedback)
         {
-            var canReject = await approveProcessServices.RejectPrePayRequestForAccounting(userid, currentLoggingRole, requestid);
+            var message = new StringBuilder();
+            var feedBackStringBuilder = new StringBuilder();
+            var canReject = await approveProcessServices.RejectPrePayRequestForAccounting(userid, currentLoggingRole, requestid, message, feedback, feedBackStringBuilder);
             if (!canReject)
             {
                 return Ok(new
                 {
                     Success = false,
-                    Message = "Reject action cannot be done"
+                    Message = "Reject action cannot be done " + message.ToString()
                 });
             }
             // update request form status to reject
@@ -325,6 +331,7 @@ namespace FALOFinancialProofing.Controllers
                 CampaignId = requestForm.CampaignId,
                 TypeId = requestForm.TypeId,
                 Status = Resource.RejectedStatus,
+                FeedBack = feedBackStringBuilder.ToString()
             };
             var canUpdatedRequest = await requestFormServices.UpdateRequestFormAsync(requestFormDTO);
             if (canUpdatedRequest == false)
@@ -354,16 +361,18 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
-        [HttpGet("rejectprepayrequestforprojectmanager/{requestid}")]
-        public async Task<IActionResult> RejectPrePayRequestForProjectManager(string userid, string currentLoggingRole, int requestid)
+        [HttpPost("rejectprepayrequestforprojectmanager/{requestid}")]
+        public async Task<IActionResult> RejectPrePayRequestForProjectManager(string userid, string currentLoggingRole, int requestid, string feedback)
         {
-            var canReject = await approveProcessServices.RejectPrePayRequestForProjectManager(userid, currentLoggingRole, requestid);
+            var message = new StringBuilder();
+            var feedBackStringBuilder = new StringBuilder();
+            var canReject = await approveProcessServices.RejectPrePayRequestForProjectManager(userid, currentLoggingRole, requestid, message, feedback, feedBackStringBuilder);
             if (!canReject)
             {
                 return Ok(new
                 {
                     Success = false,
-                    Message = "Reject action cannot be done"
+                    Message = "Reject action cannot be done " + message.ToString()
                 });
             }
             // update request form status to reject
@@ -378,6 +387,7 @@ namespace FALOFinancialProofing.Controllers
                 CampaignId = requestForm.CampaignId,
                 TypeId = requestForm.TypeId,
                 Status = Resource.RejectedStatus,
+                FeedBack = feedBackStringBuilder.ToString()
             };
             var canUpdatedRequest = await requestFormServices.UpdateRequestFormAsync(requestFormDTO);
             if (canUpdatedRequest == false)
@@ -426,6 +436,7 @@ namespace FALOFinancialProofing.Controllers
         [HttpPost("approverequestforaccounting")]
         public async Task<IActionResult> ApproveRequestAndSubmitVoucherForAccounting(string userid, string currentLoggingRole, int requestid, List<IFormFile> voucherFiles)
         {
+            var message = new StringBuilder();
             var requestForm = await requestFormServices.GetRequestFormByIdAsync(requestid);
             var isRequestFormCreateByProjectManager = await requestFormServices.IsRequestFormCreateByProjectManager(requestForm);
             if(!isRequestFormCreateByProjectManager)
@@ -439,13 +450,13 @@ namespace FALOFinancialProofing.Controllers
                         Message = "Project Manager not found"
                     });
                 }
-                var canApprove = await approveProcessServices.ApproveRequestForAccounting(userid, currentLoggingRole, requestid);
+                var canApprove = await approveProcessServices.ApproveRequestForAccounting(userid, currentLoggingRole, requestid, message);
                 if (canApprove == false)
                 {
                     return Ok(new
                     {
                         Success = false,
-                        Message = "Approve action cannot be done"
+                        Message = "Approve action cannot be done " + message.ToString()
                     });
                 }
                 // create next new approve process for accounting
@@ -481,13 +492,13 @@ namespace FALOFinancialProofing.Controllers
             } 
             else
             {
-                var canApprove = await approveProcessServices.ApproveRequestForAccounting(userid, currentLoggingRole, requestid);
+                var canApprove = await approveProcessServices.ApproveRequestForAccounting(userid, currentLoggingRole, requestid, message);
                 if (canApprove == false)
                 {
                     return Ok(new
                     {
                         Success = false,
-                        Message = "Approve action cannot be done"
+                        Message = "Approve action cannot be done " + message.ToString()
                     });
                 }
                 var aproveProcess = await approveProcessServices.GetApproveProcessesByRequestIdAndApproveIdAsync(requestid, userid);
@@ -522,7 +533,7 @@ namespace FALOFinancialProofing.Controllers
                         Message = "Campaign Member not found"
                     });
                 }
-                var updateCampaignMember = requestForm.TypeId == IntConstant.PrePayRequestType ?
+                var updateCampaignMember = (requestForm.TypeId == IntConstant.PrePayRequestType ?
                     new UpdateCampaignMemberDTO
                     {
                         Id = campaignMember.Id,
@@ -534,7 +545,7 @@ namespace FALOFinancialProofing.Controllers
                         Id = campaignMember.Id,
                         Debt = campaignMember.Debt - requestForm.ExpectedMoney,
                         IsActive = campaignMember.IsActive,
-                    };
+                    });
                 var canUpdateCampaignMember = await campaignMemberService.UpdateCampaignMemberAsync(updateCampaignMember);
                 if (!canUpdateCampaignMember)
                 {
@@ -567,6 +578,7 @@ namespace FALOFinancialProofing.Controllers
         [HttpGet("approverequestforvolunteerleader/{requestid}")]
         public async Task<IActionResult> ApproveRequestForVolunteerLeader(string userid, string currentLoggingRole, int requestid)
         {
+            var message = new StringBuilder();
             var requestForm = await requestFormServices.GetRequestFormByIdAsync(requestid);
             var accountingInCampaign = await requestFormServices.GetApproverForVolunteerLeader(requestForm.CampaignId);
             if (accountingInCampaign == null)
@@ -577,13 +589,13 @@ namespace FALOFinancialProofing.Controllers
                     Message = "Accounting not found"
                 });
             }
-            var canApprove = await approveProcessServices.ApproveRequestForLeader(userid, currentLoggingRole, requestid);
+            var canApprove = await approveProcessServices.ApproveRequestForLeader(userid, currentLoggingRole, requestid, message);
             if (canApprove == false)
             {
                 return Ok(new
                 {
                     Success = false,
-                    Message = "Approve action cannot be done"
+                    Message = "Approve action cannot be done " + message.ToString()
                 });
             }
             // create next new approve process for accounting
@@ -614,14 +626,14 @@ namespace FALOFinancialProofing.Controllers
         [HttpGet("approverequestforprojectmanager/{requestid}")]
         public async Task<IActionResult> ApproveRequestForProjectManager(string userid, string currentLoggingRole, int requestid)
         {
-            
-            var canApprove = await approveProcessServices.ApproveRequestForProjectManager(userid, currentLoggingRole, requestid);
+            var message = new StringBuilder();
+            var canApprove = await approveProcessServices.ApproveRequestForProjectManager(userid, currentLoggingRole, requestid, message);
             if (canApprove == false)
             {
                 return Ok(new
                 {
                     Success = false,
-                    Message = "Approve action cannot be done"
+                    Message = "Approve action cannot be done " + message.ToString()
                 });
             }
             // update status for request form

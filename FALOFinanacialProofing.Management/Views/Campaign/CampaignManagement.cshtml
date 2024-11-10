@@ -1,0 +1,372 @@
+﻿@{
+    ViewData["Title"] = "CampaignManagement";
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
+    <style>
+        .search-filter-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .search-box {
+            width: 70%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .filter-box {
+            width: 25%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Campaign Management</h6>
+                            @* <a class="btn btn-dark mb-0 me-3" asp-controller="Campaign" asp-action="CampaignCreate">
+                                Add Campaign
+                            </a> *@
+                        </div>
+                    </div>
+                    <div class="search-filter-container px-3">
+                        <input type="text" id="searchInput" placeholder="Search by Campaign Name" class="search-box" onkeyup="searchCampaign()" />
+                        <select id="statusFilter" class="filter-box" onchange="filterByStatus()">
+                            <option value="">All Statuses</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Declined">Declined</option>
+                        </select>
+                    </div>
+
+                    <div class="card-body px-0 pb-2">
+                        <div class="table-responsive p-0">
+                            <table class="table align-items-center mb-0" id="campaignTable">
+                                <thead>
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 5%;">STT</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="width: 20%;">Campaign Name</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 20%;">Project</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Total Estimated Cost</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 10%;">Status</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Create Date</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="text-secondary text-xs font-weight-bold">1</span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-2 py-1">
+                                                <span class="text-secondary text-xs font-weight-bold">Campaign 1</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-2 py-1">
+                                                <span class="text-secondary text-xs font-weight-bold">Project A</span>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="text-secondary text-xs font-weight-bold">$10,000</span>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="badge badge-sm bg-gradient-warning" id="status-1">Pending</span>
+                                        </td>
+                                        @*                                         <td class="align-middle text-center text-sm">
+                                            <select class="form-select" onchange="showSaveButton(this)">
+                                                <option value="fundraising">Gây Quỹ</option>
+                                                <option value="deployment">Triển Khai</option>
+                                                <option value="disbursement">Giải Ngân</option>
+                                            </select>
+                                        </td> *@
+                                        <td class="align-middle text-center">
+                                            <button class="btn btn-success btn-sm" onclick="approveCampaign(1)">Approve</button>
+                                            <button class="btn btn-danger btn-sm" onclick="declineCampaign(1)">Decline</button>
+                                            <button onclick="changeCampaign(this, 1)" class="btn btn-info btn-sm detail-btn">Detail</button>
+                                            <button class="btn btn-primary btn-sm save-btn" style="display:none;" onclick="saveProcess(this, 1)">Save</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="text-secondary text-xs font-weight-bold">2</span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-2 py-1">
+                                                <span class="text-secondary text-xs font-weight-bold">Campaign 2</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-2 py-1">
+                                                <span class="text-secondary text-xs font-weight-bold">Project B</span>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="text-secondary text-xs font-weight-bold">$20,000</span>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="badge badge-sm bg-gradient-warning" id="status-2">Pending</span>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <select class="form-select" onchange="showSaveButton(this)">
+                                                <option value="fundraising">Gây Quỹ</option>
+                                                <option value="deployment">Triển Khai</option>
+                                                <option value="disbursement">Giải Ngân</option>
+                                            </select>
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <button class="btn btn-success btn-sm" onclick="approveCampaign(2)">Approve</button>
+                                            <button class="btn btn-danger btn-sm" onclick="declineCampaign(2)">Decline</button>
+                                            <button onclick="changeCampaign(this, 2)" class="btn btn-info btn-sm detail-btn">Detail</button>
+                                            <button class="btn btn-primary btn-sm save-btn" style="display:none;" onclick="saveProcess(this, 2)">Save</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/core/popper.min.js"></script>
+    <script src="../assets/js/core/bootstrap.min.js"></script>
+    <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+    <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+
+    <script>
+
+        function searchCampaign() {
+            var input = document.getElementById("searchInput").value.toLowerCase();
+            var table = document.getElementById("campaignTable");
+            var tr = table.getElementsByTagName("tr");
+
+            for (var i = 1; i < tr.length; i++) {
+                var td = tr[i].getElementsByTagName("td")[1];
+                if (td) {
+                    var txtValue = td.textContent || td.innerText;
+                    tr[i].style.display = txtValue.toLowerCase().indexOf(input) > -1 ? "" : "none";
+                }
+            }
+        }
+
+        function filterByStatus() {
+            var filter = document.getElementById("statusFilter").value;
+            var table = document.getElementById("campaignTable");
+            var tr = table.getElementsByTagName("tr");
+
+            for (var i = 1; i < tr.length; i++) {
+                var td = tr[i].getElementsByTagName("td")[4];
+                if (td) {
+                    var statusText = td.textContent || td.innerText;
+                    if (filter === "" || statusText === filter) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        function formatDateTime(dateString) {
+            if (!dateString) return 'N/A';
+
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) {
+                return 'Invalid Date';
+            }
+
+            const formattedDate = date.getDate().toString().padStart(2, '0') + '-' +
+                (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                date.getFullYear();
+
+            const formattedTime = date.getHours().toString().padStart(2, '0') + ':' +
+                date.getMinutes().toString().padStart(2, '0') + ':' +
+                date.getSeconds().toString().padStart(2, '0');
+
+            return formattedDate + ' ' + formattedTime;
+        }
+
+        function handleProjectApproval(button,createProjectRequestId, isAllowed) {
+            const userId = localStorage.getItem('userId');
+
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const hours = String(today.getHours()).padStart(2, '0');
+            const minutes = String(today.getMinutes()).padStart(2, '0');
+            const seconds = String(today.getSeconds()).padStart(2, '0');
+            const dateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+
+            const payload = {
+                createProjectRequestId: createProjectRequestId,
+                approverId: userId,
+                dateOfApproval: dateTime,
+                isAllowed: isAllowed
+            };
+
+            console.log(isAllowed);
+            console.log(createProjectRequestId);
+            console.log(dateTime);
+            console.log(userId);
+
+            const jwtToken = localStorage.getItem('jwtToken');
+            $.ajax({
+                url: 'https://localhost:7294/api/CreateProjectRequestApproveHistories/CreateCreateProjectRequestApproveHistory',
+                type: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                contentType: 'application/json',
+                data: JSON.stringify(payload),
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message || 'Action completed successfully!');
+                        if (isAllowed) {
+                            updateRowToApprovedForPM(button);
+                        } else {
+                            updateRowToRejected(button);
+                        }
+                    } else {
+                        alert('Failed: ' + response.Message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error in project approval:', error);
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        }
+
+
+        $(document).ready(function () {
+            $('#fetchCampaignRequests').on('click', function () {
+                const jwtToken = localStorage.getItem('jwtToken');
+
+                if (!jwtToken) {
+                    alert('JWT token not found. Please log in.');
+                    return;
+                }
+
+                $.ajax({
+                    url: 'https://localhost:7294/api/CreateCampaignRequests/GetCreateCampaignRequestByPMB',
+                    type: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + jwtToken
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.Message);
+                            console.log('Campaign Requests:', response.data.data);
+                            displayCampaignRequests(response.data.data);
+                        } else {
+                            alert('Failed to fetch campaign requests: ' + response.Message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Error fetching campaign requests: ' + (xhr.responseText || status));
+                    }
+                });
+            });
+
+            function displayCampaignRequests(requests) {
+                const tableBody = $('#campaignTable tbody');
+                tableBody.empty();
+
+                if (requests.length === 0) {
+                    tableBody.append('<tr><td colspan="7" class="text-center">No campaign requests found</td></tr>');
+                    return;
+                }
+
+                requests.forEach((request, index) => {
+                    let actionButtons = `
+                        <button class="btn btn-success btn-sm" onclick="handleProjectApproval(this,${request.id}, true)">Approve</button>
+                        <button class="btn btn-danger btn-sm" onclick="handleProjectApproval(this,${request.id}, false)">Decline</button>
+                        <button onclick="changeCampaign(this, ${request.id})" class="text-blue me-2" >Detail</button>
+                    `;
+                    if (request.status === "Accepted") {
+                        actionButtons = `<span class="text-approved me-2" style="margin-left:25px">Approved</span>
+                                        <button onclick="changeCampaign(this, ${request.id})" class="text-blue me-2" >Detail</button>`;
+                    } else if (request.status === "Rejected") {
+                        actionButtons = `<span class="text-declined me-2" style="margin-left:25px">Rejected</span>
+                                    <button onclick="changeCampaign(this, ${request.id})" class="text-blue me-2" >Detail</button>`;
+                    }
+
+                    if (checkrole !== "Project Management Board") {
+                        actionButtons = `<button onclick="changeCampaign(this, ${request.id})" class="text-blue me-2" >Detail</button>`;
+                    }
+                    const row = `
+                        <tr>
+                            <td class="align-middle text-center text-sm">${index + 1}</td>
+                            <td class="align-middle">
+                                <span class="text-secondary text-xs font-weight-bold">${request.title}</span>
+                            </td>
+                            <td class="align-middle">
+                                <span class="text-secondary text-xs font-weight-bold">${request.projectName}</span>
+                            </td>
+                            <td class="align-middle text-center text-sm">
+                                <span class="text-secondary text-xs font-weight-bold">${request.fundTaget}</span>
+                            </td>
+                            <td class="align-middle text-center text-sm">
+                                <span class="badge badge-sm ${getStatusBadgeClass(request.Status)}">${request.status}</span>
+                            </td>
+                            <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${formatDateTime(request.createdAt)}</span></td>
+                            <td class="align-middle text-center">${actionButtons}</td>
+                        </tr>
+                    `;
+                    tableBody.append(row);
+                });
+            }
+
+            function getStatusBadgeClass(status) {
+                switch (status) {
+                    case 'Approved':
+                        return 'bg-gradient-success';
+                    case 'Pending':
+                        return 'bg-gradient-warning';
+                    case 'Declined':
+                        return 'bg-gradient-danger';
+                    default:
+                        return 'bg-gradient-secondary';
+                }
+            }
+
+            function addCampaignIdDetails(id) {
+                localStorage.setItem('campaignRequestId', id);
+                window.location.href = '/Campaign/RequestDetails';
+            }
+        });
+
+    </script>
+
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+</body>
+</html>
+

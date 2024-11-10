@@ -181,7 +181,7 @@ namespace FALOFinancialProofing.Services.CreateProjectRequestServices
             catch (Exception ex)
             {
                 message.Append(ex.Message);
-                await Console.Out.WriteLineAsync($"GetAllCreateProjectRequestsByPMBAsync: {ex.Message}");
+                await Console.Out.WriteLineAsync($"GetAllCreateProjectRequestsByUserIdAsync: {ex.Message}");
             }
 
             return data;

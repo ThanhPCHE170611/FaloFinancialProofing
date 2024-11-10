@@ -1,0 +1,237 @@
+﻿
+@{
+    ViewData["Title"] = "PrepayDetail";
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+
+    <style>
+        .container-fluid {
+            padding: 20px;
+        }
+
+        .left-section, .right-section {
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+        }
+
+        .left-section {
+            width: 60%;
+        }
+
+        .right-section {
+            width: 35%;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .back-button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .approval-timeline {
+            font-family: 'Roboto', sans-serif;
+            margin: 20px 0;
+            position: relative;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+            .approval-timeline ul {
+                padding: 0;
+                list-style: none;
+            }
+
+                .approval-timeline ul li {
+                    padding: 0 0 20px 30px;
+                    position: relative;
+                    border-left: 2px solid #007bff;
+                    color: #333;
+                }
+
+                    .approval-timeline ul li:last-child {
+                        border-left: 0;
+                    }
+
+                    .approval-timeline ul li::before {
+                        content: "";
+                        position: absolute;
+                        left: -12px;
+                        top: 0;
+                        height: 24px;
+                        width: 24px;
+                        background: gray;
+                        border-radius: 50%;
+                        border: 3px solid #f8f9fa;
+                    }
+
+                    .approval-timeline ul li.step-created::before {
+                        background: #007bff;
+                    }
+
+                    .approval-timeline ul li.step-approved::before {
+                        background: green;
+                    }
+
+                    .approval-timeline ul li.step-pending::before {
+                        background: gray;
+                    }
+
+                    .approval-timeline ul li.step-rejected::before {
+                        background: red;
+                    }
+
+                    .approval-timeline ul li.step-completed::before {
+                        background: darkblue;
+                    }
+
+                    .approval-timeline ul li.current-step::before {
+                        border: 3px solid orange;
+                    }
+
+            .approval-timeline .timestamp {
+                font-size: 12px;
+            }
+
+            .approval-timeline .step-title {
+                font-size: 16px;
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+
+            .approval-timeline .step-name {
+                font-size: 14px;
+                color: #555;
+                margin-top: 3px;
+            }
+
+        .step-created .timestamp {
+            color: #007bff;
+        }
+
+        .step-approved .timestamp {
+            color: green;
+        }
+
+        .step-pending .timestamp {
+            color: gray;
+        }
+
+        .step-rejected .timestamp {
+            color: red;
+        }
+
+        .step-completed .timestamp {
+            color: darkblue;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+            .nav-tabs a {
+                padding: 10px 20px;
+                text-decoration: none;
+                color: #000;
+                background-color: #f1f1f1;
+                border-radius: 5px;
+            }
+
+                .nav-tabs a.active {
+                    background-color: #EC407A;
+                    color: #fff;
+                }
+
+                .nav-tabs a:hover {
+                    background-color: #007bff;
+                    color: #fff;
+                }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <nav class="nav-tabs" id="navTabs">
+                                <a asp-controller="Campaign" asp-action="CampaignDetail" >Campaign Detail</a>
+                                <a asp-controller="Prepay" asp-action="PrepayManagement" class="active">Prepay Request</a>
+                                <a asp-controller="Payment" asp-action="PaymentManagement">Payment Request</a>
+                                @* <a asp-controller="Prepay" asp-action="PrepayVoucher">Prepay Voucher</a> *@
+                                @* <a asp-controller="Payment" asp-action="PaymentVoucher">Payment Voucher</a> *@
+                                <a asp-controller="Accounting" asp-action="AccountingBookCampaign">Accounting Book</a>
+                                <a asp-controller="Campaign" asp-action="Member">Member</a>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Prepay Detail</h6>
+                        </div>
+                    </div>
+                    <div class="card-body px-4 pb-4">
+                        <div class="row">
+                            <div class="left-section">
+                                <h5 class="mb-3">Prepay Request Information</h5>
+                                <p><strong>Sender:</strong> <span id="requestSender"></span></p>
+                                <p><strong>Create Date:</strong> <span id="createAt"></span></p>
+                                <p><strong>Expected Money:</strong> <span id="expectedMoney"></span></p>
+                                <p><strong>Assign From:</strong> <span id="assignFrom"></span></p>
+                                <p><strong>Description:</strong> <span id="description"></span></p>
+                                <p><strong>File:</strong> <a id="fileLink" href="#" download></a></p>
+                                <p><strong>Reason for Decline:</strong> <span id="reasonDecline"></span></p>
+                            </div>
+
+                            <div class="right-section">
+                                <h5 class="mb-3">Approval Process Timeline</h5>
+                                <div class="approval-timeline">
+                                    <ul>
+                                        
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="back-button-container">
+                    <a asp-controller ="Prepay" asp-action="PrepayManagement" class="btn btn-secondary">Back</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="../assets/js/core/popper.min.js"></script>
+    <script src="../assets/js/core/bootstrap.min.js"></script>
+    <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+    <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+    <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="~/js/prepay/prepaydetail.js"></script>
+</body>
+
+</html>
+

@@ -29,7 +29,6 @@
             color: #fff;
         }
 
-        /* Search and filter styles */
         .search-filter-container {
             display: flex;
             justify-content: space-between;
@@ -59,11 +58,14 @@
                 <div class="card my-4">
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
-                            <h6 class="text-white text-capitalize ps-3 mb-0">Project table</h6>
-                            <NavLink class="btn btn-dark mb-0 me-3" href="projectcreate">Add Project</NavLink>
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Project Management</h6>
+                            <div>
+                                <NavLink class="btn btn-dark mb-0 me-3" href="projectcreate">Create Project (Individual)</NavLink>
+                                <NavLink class="btn btn-dark mb-0 me-3" href="projectcreate">Create Project (Organization)</NavLink>
+                            </div>   
                         </div>
                     </div>
-
+                    
                     <div class="search-filter-container px-3">
                         <input type="text" id="searchBox" class="search-box" placeholder="Search by Project or Address" onkeyup="filterTable()">
                         <select id="statusFilter" class="filter-box" onchange="filterTable()">
@@ -81,8 +83,8 @@
                                     <tr>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 5%;">STT</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="width: 25%;">Project</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 25%;">Address</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Budget</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 25%;">Organizer</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Start Date</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Status</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Action</th>
                                     </tr>
@@ -91,29 +93,33 @@
                                     <tr>
                                         <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">1</span></td>
                                         <td><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">Project A</span></div></td>
-                                        <td><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">Address A</span></div></td>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">10,000.00</span></td>
-                                        <td class="align-middle text-center"><span class="badge badge-sm badge-pending" id="status-1">Pending</span></td>
+                                        <td><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">Hoi Chu Thap Do</span></div></td>
+                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">20/10/2024</span></td>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="badge badge-sm bg-gradient-warning" id="status-1">Pending</span>
+                                        </td>
                                         <td class="align-middle text-center">
                                             <span id="action-1">
                                                 <button class="btn btn-success btn-sm" onclick="approveProject(1)">Approve</button>
                                                 <button class="btn btn-danger btn-sm" onclick="declineProject(1)">Decline</button>
                                             </span>
-                                            <a href="projectdetail" class="btn btn-primary btn-sm">Detail</a>
+                                            <a href="projectdetail" class="btn btn-info btn-sm">Detail</a>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">2</span></td>
                                         <td><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">Project B</span></div></td>
-                                        <td><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">Address B</span></div></td>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">20,000.00</span></td>
-                                        <td class="align-middle text-center"><span class="badge badge-sm badge-pending" id="status-2">Pending</span></td>
+                                        <td><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">Hoi Chu Thap Do</span></div></td>
+                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">20/11/2024</span></td>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="badge badge-sm bg-gradient-warning" id="status-2">Pending</span>
+                                        </td>
                                         <td class="align-middle text-center">
                                             <span id="action-2">
                                                 <button class="btn btn-success btn-sm" onclick="approveProject(2)">Approve</button>
                                                 <button class="btn btn-danger btn-sm" onclick="declineProject(2)">Decline</button>
                                             </span>
-                                            <a href="projectdetail" class="btn btn-primary btn-sm">Detail</a>
+                                            <a href="projectdetail" class="btn btn-info btn-sm">Detail</a>
                                         </td>
                                     </tr>
                                 </tbody>

@@ -1,0 +1,142 @@
+﻿@{
+    ViewData["Title"] = "PrepayManagement";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <link href="~/css/prepaymanagement.css" rel="stylesheet" />
+    <style>
+        .modalFile {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            padding-top: 100px;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modalFile-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            margin: auto;
+            border: 1px solid #888;
+            width: 50%;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <nav class="nav-tabs" id="navTabs">
+                                <a asp-controller="Campaign" asp-action="CampaignDetail">Campaign Detail</a>
+                                <a asp-controller="Prepay" asp-action="PrepayManagement" class="active">Prepay Request</a>
+                                <a asp-controller="Payment" asp-action="PaymentManagement">Payment Request</a>
+                                @* <a asp-controller="Prepay" asp-action="PrepayVoucher">Prepay Voucher</a> *@
+                                @* <a asp-controller="Payment" asp-action="PaymentVoucher">Payment Voucher</a> *@
+                                <a asp-controller="Accounting" asp-action="AccountingBookCampaign">Accounting Book</a>
+                                <a asp-controller="Campaign" asp-action="Member">Member</a>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Prepay Request List</h6>
+                            <a id="create_request_page" class="btn btn-dark mb-0 me-3" asp-controller="Prepay" asp-action="PrepayCreate">Create Prepay Request</a>
+                        </div>
+                    </div>
+
+                    <div class="search-filter-container px-3">
+                        <input type="text" id="searchBox" class="search-box" placeholder="Search by Sender" onkeyup="filterTable()">
+                        <select id="statusFilter" class="filter-box" onchange="filterTable()">
+                            <option value="">Filter by Status</option>
+                            <option value="Process">Process</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    </div>
+
+                    <div class="card-body px-0 pb-2">
+                        <div class="table-responsive p-0">
+                            <table class="table align-items-center mb-0" id="prepayTable">
+                                <thead>
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 5%;">STT</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Sender</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 15%;">Expected Money</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 15%;">Assign From</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 10%;">File</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 10%;">Voucher</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 10%;">Status</th>
+
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 15%;">Created Date</th>
+                                        <th class="text-secondary opacity-7 text-center" style="width: 10%;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="pagination-container text-center mt-4">
+                    <div id="pagination"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="declineModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3>Decline Request</h3>
+            <label for="declineReason">Reason for Decline:</label>
+            <textarea id="declineReason" class="form-control" rows="4" placeholder="Enter reason"></textarea>
+            <button class="btn btn-danger mt-3" onclick="submitDecline()">Submit</button>
+        </div>
+    </div>
+
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="voucherDetailContent"></div>
+        </div>
+    </div>
+    </div>
+    <script src="../assets/js/core/popper.min.js"></script>
+    <script src="../assets/js/core/bootstrap.min.js"></script>
+    <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+    <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+    <script src="~/js/prepay/prepaymanagement.js"></script>
+
+</body>
+
+</html>
+
