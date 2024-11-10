@@ -1,16 +1,16 @@
 ﻿
 namespace FALOFinancialProofing.Services.BankServices
 {
-    //public class BankAccountPolling : BackgroundService
-    //{
+    public class BankAccountPolling : BackgroundService
+    {
 
-    //    public BankAccountPolling()
-    //    {
+        public BankAccountPolling()
+        {
 
-    //    }
-    //    protected override Task ExecuteAsync(CancellationToken stoppingToken)
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-    //}
+        }
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

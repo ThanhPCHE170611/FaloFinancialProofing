@@ -93,7 +93,7 @@ namespace FALOFinancialProofing.Controllers
                     return Ok(new ApiResponse()
                     {
                         Success = false,
-                        Message = "Get All Campaign By ProjectId Failed!",
+                        Message = "Get All CreateProjectRequests By UserId Failed!",
                         Data = filterPagingData
                     });
                 }
@@ -107,12 +107,12 @@ namespace FALOFinancialProofing.Controllers
             }
             catch (Exception ex)
             {
-                await Console.Out.WriteLineAsync($"GetAllCreateProjectRequestsByUserId: {ex.Message}");
+                await Console.Out.WriteLineAsync($"Get All CreateProjectRequests By UserId: {ex.Message}");
             }
             return Ok(new ApiResponse()
             {
                 Success = true,
-                Message = "GetAllCreateProjectRequestsByUserId Successfully!",
+                Message = "Get All CreateProjectRequests ByUserId Successfully!",
                 Data = filterPagingData
             });
         }

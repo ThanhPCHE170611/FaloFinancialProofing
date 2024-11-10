@@ -1,6 +1,8 @@
 ﻿using FALOFinancialProofing.Helpers;
+using FALOFinancialProofing.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 using System.Transactions;
 
 namespace FALOFinancialProofing.Controllers
@@ -11,6 +13,11 @@ namespace FALOFinancialProofing.Controllers
     {
         //private const string APIKey =";
         private const string SecureToken = "EE965E354266AE15B5BFC92DC3416";
+        private readonly WebHookService _webHookService;
+        public WebHooksController(WebHookService webHookService)
+        {
+            _webHookService = webHookService;
+        }
         [HttpPost("create-webhook")]
         public IActionResult CreateItem([FromBody] TransactionRequest item)
         {
@@ -51,6 +58,44 @@ namespace FALOFinancialProofing.Controllers
             // Xử lý logic tạo item
             var httpContext = HttpContext.Request.Body;
             return Ok(new { message = "Item created", item });
+        }
+
+        // call when user confirm payment
+        [HttpPost("SyncTransaction/{accountNumber}")]
+        public async Task<IActionResult> SyncTransaction(string accountNumber)
+        {
+            bool checkSuccess = false;
+            StringBuilder message = new StringBuilder();
+            try
+            {
+                if (accountNumber == null)
+                {
+                    message.Append("Account number is required");
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = message.ToString(),
+                    });
+                }
+                checkSuccess = await _webHookService.TransactionSync(accountNumber);
+                if (checkSuccess)
+                {
+                    message.Append("Sync transaction success");
+                }
+                else
+                {
+                    message.Append("Sync transaction failed");
+                }
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"SyncTransaction: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = checkSuccess,
+                Message = message.ToString(),
+            });
         }
     }
 }

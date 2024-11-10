@@ -72,7 +72,7 @@ namespace FALOFinancialProofing.Controllers
                     return Ok(new ApiResponse()
                     {
                         Success = false,
-                        Message = "Get All Project By In System Failed!",
+                        Message = "Get All Campaign By In System Failed!",
                         Data = data
                     });
                 }
@@ -91,12 +91,12 @@ namespace FALOFinancialProofing.Controllers
             }
             catch (Exception ex)
             {
-                await Console.Out.WriteLineAsync($"GetAllProjectInSystem: {ex.Message}");
+                await Console.Out.WriteLineAsync($"GetAllCampaignInSystem: {ex.Message}");
             }
             return Ok(new ApiResponse()
             {
                 Success = true,
-                Message = "Get All Project In System Successfully!",
+                Message = "Get All Campaign In System Successfully!",
                 Data = filterPagingData
             });
         }

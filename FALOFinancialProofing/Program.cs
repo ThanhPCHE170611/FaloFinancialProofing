@@ -51,7 +51,7 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped(typeof(AuthServices));
             builder.Services.AddScoped<ITransactionLogService, TransactionLogService>();
 
-            //builder.Services.AddHostedService<BankAccountPolling>();
+            builder.Services.AddHostedService<BankAccountPolling>();
             builder.Services.AddScoped<IBankService, BankService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<ISDGServices, SDGServices>();
@@ -78,6 +78,7 @@ namespace FALOFinancialProofing
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             });
             builder.Services.AddScoped(typeof(BankService1));
+            builder.Services.AddScoped(typeof(WebHookService));
             builder.Services.AddDistributedMemoryCache(); // Sử dụng bộ nhớ trong để lưu trữ session
             builder.Services.AddSession(options =>
             {
