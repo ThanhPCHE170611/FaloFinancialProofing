@@ -13,7 +13,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
         //Task<bool> UpdateCampaignAsync(UpdateCampaignDTO updateCampaignDTO);
         //Task<bool> DeleteCampaignByIdAsync(int id);
 
-        Task<MoveNextCampaignStatusRequest> CreateMoveNextCampaignStatusRequestAsync(CreateMoveNextCampaignStatusRequestDTO requestDto);
+        Task<MoveNextCampaignStatusRequest> CreateMoveNextCampaignStatusRequestAsync(CreateMoveNextCampaignStatusRequestDTO requestDto, StringBuilder message);
         Task<CreateMoveNextCampaignStatusRequestDTO?> MapToDto(MoveNextCampaignStatusRequest request);
         Task<bool> ApproveOrRejectRequestAsync(int requestId, bool isApproved);
         Task<bool> ValidateCreateMoveNextCampaignStatusRequestAsync(CreateMoveNextCampaignStatusRequestDTO requestDTO, StringBuilder message);

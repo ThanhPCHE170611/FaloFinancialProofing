@@ -68,7 +68,8 @@ namespace FALOFinancialProofing.Controllers
         [HttpPost("APIBASICCreateMoveNextCampaignStatusRequest")]
         public async Task<IActionResult> CreateMoveNextCampaignStatusRequest([FromBody] CreateMoveNextCampaignStatusRequestDTO createMoveNextCampaignStatusRequestDTO)
         {
-            var createMoveNextCampaignStatusRequest = await _moveNextCampaignStatusRequestService.CreateMoveNextCampaignStatusRequestAsync(createMoveNextCampaignStatusRequestDTO);
+            StringBuilder stringBuilderMessage = new StringBuilder();
+            var createMoveNextCampaignStatusRequest = await _moveNextCampaignStatusRequestService.CreateMoveNextCampaignStatusRequestAsync(createMoveNextCampaignStatusRequestDTO, stringBuilderMessage);
             if (createMoveNextCampaignStatusRequest == null)
             {
                 return Ok(new
@@ -107,7 +108,7 @@ namespace FALOFinancialProofing.Controllers
                         Message = stringBuilderMessage.ToString()
                     });
                 }
-                var request = await _moveNextCampaignStatusRequestService.CreateMoveNextCampaignStatusRequestAsync(requestDto);
+                var request = await _moveNextCampaignStatusRequestService.CreateMoveNextCampaignStatusRequestAsync(requestDto, stringBuilderMessage);
                 //return CreatedAtAction(nameof(CreateMoveNextCampaignStatusRequestAsync), new { id = request.Id }, request); // Trả về kết quả
                 if(request != null)
                 {
@@ -116,13 +117,14 @@ namespace FALOFinancialProofing.Controllers
                 }
                 else
                 {
-                    return BadRequest("can not create MoveNextCampaignStatusRequest");
+                    //return BadRequest("can not create MoveNextCampaignStatusRequest");
+                    return BadRequest(new
+                    {
+                        Message = stringBuilderMessage.ToString()
+                    });
                 }
             }
-            catch (InvalidOperationException ex)
-            {
-                return NotFound(ex.Message);
-            }
+            
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
