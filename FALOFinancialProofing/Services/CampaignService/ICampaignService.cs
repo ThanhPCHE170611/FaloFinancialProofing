@@ -20,6 +20,7 @@ namespace FALOFinancialProofing.Services.CampaignService
 
         Task<List<CampaignInformation>> GetAllCampaignsByProjectIdAsync(int ProjectId);
         Task<CampaignInformation> GetCampaignByCampaignIdAsync(int CampaignId);
+        Task<Campaign?> UpdateEndDateForProjectManagerAsync(int campaignId, string userId, string currentRole, DateTime newDateTime, StringBuilder message);
         //Task<Campaign> CreateCampaignAsync(Campaign campaign);
         //Task<Campaign> GetCampaignByIdAsync(int campaignId);
         //Task<IEnumerable<Campaign>> GetAllCampaignsAsync();

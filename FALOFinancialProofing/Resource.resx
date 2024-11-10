@@ -126,6 +126,9 @@
   <data name="ApprovedStatus" xml:space="preserve">
     <value>Approved</value>
   </data>
+  <data name="CancelStatus" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
   <data name="CampaignStatus.Close" xml:space="preserve">
     <value>Close</value>
   </data>
@@ -152,5 +155,14 @@
   </data>
   <data name="VolunteerRoleName" xml:space="preserve">
     <value>Volunteer</value>
+  </data>
+  <data name="AccountingFeedBackStart" xml:space="preserve">
+    <value>Accounting Reject: </value>
+  </data>
+  <data name="ProjectManagerFeedBackStart" xml:space="preserve">
+    <value>Project Manager Reject:</value>
+  </data>
+  <data name="VolunteerLeaderFeedBackStart" xml:space="preserve">
+    <value>Volunteer Leader Reject:</value>
   </data>
 </root>
