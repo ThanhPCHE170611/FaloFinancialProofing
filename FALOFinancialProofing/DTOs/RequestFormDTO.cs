@@ -19,6 +19,7 @@ namespace FALOFinancialProofing.DTOs
         public int CampaignId { get; set; }
         [Required]
         public int TypeId { get; set; }
+        public string? FeedBack { get; set; }   
         public List<AttachmentFile> AttachmentFiles { get; set; } = new List<AttachmentFile>();
         public List<ApproveProcess> ApproveProcesses { get; set; } = new List<ApproveProcess>();
     }

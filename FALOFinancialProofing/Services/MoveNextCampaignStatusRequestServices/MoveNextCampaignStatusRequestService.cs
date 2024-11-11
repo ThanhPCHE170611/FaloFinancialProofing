@@ -1,118 +1,370 @@
-﻿using FALOFinancialProofing.Models;
+﻿using System.Text;
+using FALOFinancialProofing.DTOs;
+using FALOFinancialProofing.DTOs.CampaignDTO;
+using FALOFinancialProofing.DTOs.MoveNextCampaignStatusRequestDTO;
+using FALOFinancialProofing.Helpers;
+using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
 {
     public class MoveNextCampaignStatusRequestService : IMoveNextCampaignStatusRequestService
     {
+        private readonly IRepository<Campaign, int> _campaignRepository;
+        private readonly AuthServices _authServices;
         private readonly IRepository<MoveNextCampaignStatusRequest, int> _moveNextCampaignStatusRequestRepository;
-
-        public MoveNextCampaignStatusRequestService(IRepository<MoveNextCampaignStatusRequest, int> moveNextCampaignStatusRequestRepository)
+        private readonly IRepository<CampaignMember, int> _campaignMemberRepository;
+        public MoveNextCampaignStatusRequestService(IRepository<MoveNextCampaignStatusRequest, int> moveNextCampaignStatusRequestRepository,
+            IRepository<Campaign, int> campaignRepository,
+            AuthServices authServices,
+            IRepository<CampaignMember, int> campaignMemberRepository)
         {
             _moveNextCampaignStatusRequestRepository = moveNextCampaignStatusRequestRepository;
+            _campaignRepository = campaignRepository;
+            _authServices = authServices;
+            _campaignMemberRepository = campaignMemberRepository;
         }
-        public async Task<bool> CreateMoveNextCampaignStatusRequestAsync(MoveNextCampaignStatusRequest createMoveNextCampaignStatusRequest)
+
+        // Manh moi them vao
+        public async Task<List<MoveNextCampaignStatusRequest>> GetAllMoveNextCampaignStatusRequestAsync()
         {
             try
             {
-                if (createMoveNextCampaignStatusRequest == null)
+                return await _moveNextCampaignStatusRequestRepository.GetAll().ToListAsync();
+            }
+            catch (Exception e)
+            {
+                return new List<MoveNextCampaignStatusRequest>();
+            }
+        }
+
+        public async Task<MoveNextCampaignStatusRequest?> GetMoveNextCampaignStatusRequestByIdAsync(int id)
+        {
+            try
+            {
+                return await _moveNextCampaignStatusRequestRepository.Get(x => x.Id == id);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+        //tao don move next campaign status request
+        public async Task<MoveNextCampaignStatusRequest> CreateMoveNextCampaignStatusRequestAsync(CreateMoveNextCampaignStatusRequestDTO requestDto, StringBuilder message)
+        {
+            try
+            {
+                if (requestDto == null)
                 {
-                    throw new Exception("MoveNextCampaignStatusRequest is null");
+                    throw new ArgumentNullException(nameof(requestDto), "DTO not null.");
                 }
-                //var organization = ConvertToBaseEntity(createMoveNextCampaignStatusRequest);
-                await _moveNextCampaignStatusRequestRepository.InsertAsync(createMoveNextCampaignStatusRequest);
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                await Console.Out.WriteLineAsync($"MoveNextCampaignStatusRequest: {ex.Message}!");
-            }
-
-            return false;
-        }
-
-        public async Task<MoveNextCampaignStatusRequest> GetMoveNextCampaignStatusRequestByIdAsync(int id)
-        {
-            MoveNextCampaignStatusRequest organization = null!;
-            try
-            {
-                organization = await _moveNextCampaignStatusRequestRepository.Get(id);
-                if (organization == null)
+                Campaign campaign = await GetCampaignByIdAsync(requestDto.CampaignID);
+                if (campaign == null)
                 {
-                    throw new Exception("MoveNextCampaignStatusRequest not found");
+                    throw new Exception("Not Found Campaign");
                 }
-
-            }
-            catch (Exception ex)
-            {
-                await Console.Out.WriteLineAsync($"GetMoveNextCampaignStatusRequestById: {ex.Message}");
-            }
-
-            return organization;
-        }
-
-        public async Task<IEnumerable<MoveNextCampaignStatusRequest>> GetAllMoveNextCampaignStatusRequestsAsync()
-        {
-            List<MoveNextCampaignStatusRequest> data = null!;
-            try
-            {
-                data = await _moveNextCampaignStatusRequestRepository.GetAll().ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                await Console.Out.WriteLineAsync($"GetAllMoveNextCampaignStatusRequests: {ex.Message}");
-            }
-
-            return data;
-        }
-
-
-        // admin can update transaction logs
-        public async Task<bool> UpdateMoveNextCampaignStatusRequestAsync(MoveNextCampaignStatusRequest updateMoveNextCampaignStatusRequest)
-        {
-            MoveNextCampaignStatusRequest organization = null!;
-            bool result = false;
-            try
-            {
-                organization = await _moveNextCampaignStatusRequestRepository.Get(updateMoveNextCampaignStatusRequest.Id);
-                if (organization == null)
+                string nextStatus = "";
+                if (campaign.Status == Resource.CampaignStatus_FundRaising)
                 {
-                    throw new Exception("MoveNextCampaignStatusRequest not found!");
+                    bool Ok = await CheckMoneyOfCampaignAsync(requestDto.CampaignID);
+                    if (Ok)
+                    {
+                        nextStatus = Resource.CampaignStatus_Implement;
+                    }
+                    else
+                    {
+                        throw new Exception("Haven't raised enough funds yet");
+                    }
                 }
-                //ConvertToBaseEntity(organization, updateMoveNextCampaignStatusRequest);
-                result = await _moveNextCampaignStatusRequestRepository.UpdateAsync(updateMoveNextCampaignStatusRequest);
+                else if (campaign.Status == Resource.CampaignStatus_Implement)
+                {
+                    nextStatus = Resource.CampaignStatus_Disbursement;
+                }
+                else if (campaign.Status == Resource.CampaignStatus_Disbursement)
+                {
+                    CampaignDebtResult campaignDebtResult = new CampaignDebtResult();
+                    campaignDebtResult = await HasDebtInCampaignAsync(requestDto.CampaignID);
+                    if (campaignDebtResult.IsValid)
+                    {
+                        nextStatus = Resource.CampaignStatus_Close;
+                    }
+                    else
+                    {
+                        throw new Exception($"Debt is not over yet.\nPlease contact {campaignDebtResult.NameOfAccounting} for more information");
+                    }
+                }
+                else
+                {
+                    throw new Exception("Campaign closed, can not move next");
+                }
+
+                if (nextStatus != "")
+                {
+                    var request = new MoveNextCampaignStatusRequest
+                    {
+                        CampaignID = requestDto.CampaignID,
+                        StatusOfCampaign = nextStatus,
+                        Status = requestDto.Status,
+                        Title = requestDto.Title,
+                        SenderId = requestDto.SenderId,
+                        CreatedAt = requestDto.CreatedAt
+                    };
+                    await _moveNextCampaignStatusRequestRepository.InsertAsync(request);
+                    return request;
+                }
 
             }
             catch (Exception ex)
             {
-                await Console.Out.WriteLineAsync($"UpdateMoveNextCampaignStatusRequest: {ex.Message}");
+                message.Append(ex.Message.ToString());
+                Console.WriteLine(ex.Message.ToString());
             }
-
-            return result;
+            return null;
         }
-        // admin can delete transaction logs
-        public async Task<bool> DeleteMoveNextCampaignStatusRequestAsync(int id)
+
+        private async Task<Campaign?> GetCampaignByIdAsync(int id)
         {
-            MoveNextCampaignStatusRequest organization = null!;
-            bool result = false;
             try
             {
-                organization = await _moveNextCampaignStatusRequestRepository.Get(id);
-                if (organization == null)
+                return await _campaignRepository.Get(x => x.Id == id);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        //private async Task<bool> HasDebtInCampaignAsync(int campaignId)
+        //{
+        //    bool IsValid = true;
+        //    try
+        //    {
+        //        List<CampaignMember> campaignMembers = new List<CampaignMember>();
+        //        campaignMembers = await _campaignMemberRepository.GetAll().Where(cm => cm.CampaignId == campaignId && cm.Debt != 0).ToListAsync();
+        //        if (campaignMembers.Count > 0)
+        //        {
+        //            IsValid = false;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //    }
+        //    return IsValid;
+        //}
+
+        private async Task<CampaignDebtResult> HasDebtInCampaignAsync(int campaignId)
+        {
+            var campaignDebtResult = new CampaignDebtResult
+            {
+                IsValid = true,
+                NameOfAccounting = ""
+            };
+
+            try
+            {
+                List<CampaignMember> listCampaignMembersDebtOtherThanZero = new List<CampaignMember>();
+                listCampaignMembersDebtOtherThanZero = await _campaignMemberRepository
+                    .GetAll().Include(x=> x.User)
+                    .Where(cm => cm.CampaignId == campaignId && cm.Debt != 0)
+                    .ToListAsync();
+                
+                //campaignDebtResult.NameOfAccounting = campaignMembers.Select(cm => cm.User.FirstName).ToList();
+
+                var Accounting = await _campaignMemberRepository
+                    .GetAll()
+                    .Include(x=> x.User)
+                    .Where(cm => cm.CampaignId == campaignId && cm.RoleId == "83292e2c-6c86-4153-bdc5-760d05ec2293")
+                    .SingleAsync();
+
+                campaignDebtResult.NameOfAccounting = Accounting.User.FirstName + " " + Accounting.User.LastName + " with gmail: " + Accounting.User.Email;
+                if (listCampaignMembersDebtOtherThanZero.Count > 0)
                 {
-                    throw new Exception("MoveNextCampaignStatusRequest not found!");
+                    campaignDebtResult.IsValid = false;
                 }
-                result = await _moveNextCampaignStatusRequestRepository.DeleteAsync(organization);
 
             }
             catch (Exception ex)
             {
-                await Console.Out.WriteLineAsync($"DeleteMoveNextCampaignStatusRequest: {ex.Message}");
+                Console.WriteLine($"HasDebtInCampaignAsync: {ex.Message}");
             }
 
-            return result;
+            return campaignDebtResult;
+        }
+
+        private async Task<bool> CheckMoneyOfCampaignAsync(int campaignId)
+        {
+            bool IsValid = true;
+            try
+            {
+                var data = await _campaignRepository.GetAll()
+                    .Where(p => p.Id == campaignId)
+                       .Select(p => new CampaignInformation()
+                       {
+                           FirstName = p.User.FirstName,
+                           LastName = p.User.LastName,
+                           CampaignId = p.Id,
+                           ProjectId = p.ProjectId,
+                           CreateBy = p.CreateBy,
+                           Title = p.Title,
+                           Description = p.Description,
+                           DateOfCreation = p.DateOfCreation,
+                           FundTarget = p.FundTarget,
+                           Image = p.Image,
+                           EndDate = p.EndDate,
+                           Address = p.Address,
+                           IsActive = p.IsActive,
+                           BankingNumber = p.BankingNumber,
+                           BankId = p.BankId,
+                           Status = p.Status,
+                           TotalMoneyEarned = p.TransactionLogs.Sum(x => x.Amount)
+                       }).SingleOrDefaultAsync();
+                double sumOfAmount = 0;
+                //Campaign campaign = new Campaign();
+                //campaign = await _campaignRepository.Get(campaignId);
+                sumOfAmount = data.TotalMoneyEarned;
+
+                if (sumOfAmount < data.FundTarget)
+                {
+                    IsValid = false;
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return IsValid;
+        }
+
+
+        public async Task<bool> ApproveOrRejectRequestAsync(int requestId, bool isApproved)
+        {
+            var request = await GetMoveNextCampaignStatusRequestByIdAsync(requestId);
+            if (request == null || request.Status != "Pending")
+                throw new InvalidOperationException("Request not found or already processed.");
+
+            if (isApproved)
+            {
+                request.Status = "Approve";
+                await _moveNextCampaignStatusRequestRepository.UpdateAsync(request);
+                // Cập nhật trạng thái Campaign
+                var campaign = await GetCampaignByIdAsync(request.CampaignID);
+                if (campaign == null) throw new InvalidOperationException("Campaign not found.");
+
+                campaign.Status = request.StatusOfCampaign;
+                await _campaignRepository.UpdateAsync(campaign);
+            }
+            else
+            {
+                request.Status = "Reject";
+                await _moveNextCampaignStatusRequestRepository.UpdateAsync(request);
+            }
+
+            return isApproved;
+        }
+
+        public async Task<bool> ValidateCreateMoveNextCampaignStatusRequestAsync(CreateMoveNextCampaignStatusRequestDTO creatRequestDTO, StringBuilder message)
+        {
+            bool IsValid = false;
+            try
+            {
+                bool checkValidUser = await _authServices.CheckUserInRole(creatRequestDTO.SenderId, AppRole.ProjectManager, message);
+                if (!checkValidUser)
+                {
+                    return IsValid;
+                }
+
+                //trạng thái dự án chưa được phép true
+                if (creatRequestDTO.Status == "Pending")
+                {
+                    throw new Exception("Status must be Approve");
+                }
+                // ngày tạo không được lớn hơn ngày hiện tại
+                if (creatRequestDTO.CreatedAt > DateTime.Now)
+                {
+                    throw new Exception("Date of creation cannot be in the future");
+                }
+                IsValid = true;
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"ValidateProjectCreate: {ex.Message}");
+            }
+
+            return IsValid;
+        }
+        public async Task<CreateMoveNextCampaignStatusRequestDTO?> MapToDto(MoveNextCampaignStatusRequest request)
+        {
+            return new CreateMoveNextCampaignStatusRequestDTO
+            {
+                Id = request.Id,
+                CampaignID = request.CampaignID,
+                StatusOfCampaign = request.StatusOfCampaign,
+                Status = request.Status,
+                Title = request.Title,
+                SenderId = request.SenderId,
+                CreatedAt = request.CreatedAt
+            };
+        }
+
+        public Task<bool> UpdateMoveNextCampaignStatusRequestAsync(UpdateMoveNextCampaignStatusRequestDTO updateMoveNextCampaignStatusRequestDTO)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<bool> ValidateCampaignCreateAsync(CreateMoveNextCampaignStatusRequestDTO createMoveNextCampaignStatusRequestDTO, StringBuilder message)
+        {
+            bool IsValid = false;
+            try
+            {
+                bool checkValidUser = await _authServices.CheckUserInRole(createMoveNextCampaignStatusRequestDTO.SenderId, AppRole.ProjectManager, message);
+                if (!checkValidUser)
+                {
+                    return IsValid;
+                }
+
+
+
+                var campaign = await _campaignRepository.Get(x => x.Id == createMoveNextCampaignStatusRequestDTO.CampaignID);
+                if (campaign == null)
+                {
+                    throw new Exception($"CampaignID ={createMoveNextCampaignStatusRequestDTO.CampaignID} does not exist!");
+                }
+                else
+                {
+                    var campaignIsActive = campaign.IsActive;
+                    if (!campaignIsActive)
+                    {
+                        throw new Exception($"CampaignID ={createMoveNextCampaignStatusRequestDTO.CampaignID} inactive!");
+                    }
+                }
+                if (createMoveNextCampaignStatusRequestDTO.CreatedAt > DateTime.Now)
+                {
+                    throw new Exception("Date of creation cannot be in the future");
+                }
+
+                // check xem có phải PM của campaign đấy không
+                var campaignMember = await _campaignMemberRepository.Get(x => x.UserId == createMoveNextCampaignStatusRequestDTO.SenderId && x.CampaignId == createMoveNextCampaignStatusRequestDTO.CampaignID);
+                if (campaignMember == null)
+                {
+                    throw new Exception($"User with ID = {createMoveNextCampaignStatusRequestDTO.SenderId} is not associated with Campaign ID = {createMoveNextCampaignStatusRequestDTO.CampaignID}.");
+                }
+                var projectManagerRoleId = "205d4496-4ac8-40d9-84b9-e09e1ada7a49"; // ID của Project Manager
+                if (campaignMember.RoleId != projectManagerRoleId)
+                {
+                    throw new Exception("User is not a Project Manager for the specified campaign.");
+                }
+
+                IsValid = true;
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"ValidateProjectCreate: {ex.Message}");
+            }
+
+            return IsValid;
         }
     }
 }

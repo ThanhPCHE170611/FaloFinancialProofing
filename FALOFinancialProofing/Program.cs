@@ -35,6 +35,22 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using FALOFinancialProofing.Services.RequestFormServices;
+using FALOFinancialProofing.Services.AttachmentFIleServices;
+using FALOFinancialProofing.Services.ApproveProcessServices;
+using FALOFinancialProofing.Services.VoucherServices;
+using Example;
+using Microsoft.AspNetCore.Http.Features;
+using FALOFinancialProofing.Services.OrganizationServices;
+using FALOFinancialProofing.Services.CreateProjectRequestServices;
+using FALOFinancialProofing.Services.CreateProjectFileServices;
+using FALOFinancialProofing.Services.CreateCampaignFileServices;
+using FALOFinancialProofing.Services.CreateCampaignRequestServices;
+using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices;
+using FALOFinancialProofing.Services.ProjectServices;
+using FALOFinancialProofing.Services.CampaignService;
+using FALOFinancialProofing.Services.CampaignMemberService;
+using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestHistoryService;
 
 namespace FALOFinancialProofing
 {
@@ -47,6 +63,7 @@ namespace FALOFinancialProofing
             var configuration = builder.Configuration;
             builder.Services.AddCors();
             // Add services to the container.
+            builder.Services.AddHttpClient();
             builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 
             builder.Services.AddScoped(typeof(AuthServices));
@@ -69,6 +86,7 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped<ICreateCampaignFileService, CreateCampaignFileService>();
             builder.Services.AddScoped<ICreateCampaignRequestService, CreateCampaignRequestService>();
             builder.Services.AddScoped<IMoveNextCampaignStatusRequestService, MoveNextCampaignStatusRequestService>();
+            builder.Services.AddScoped<IMoveNextCampaignStatusRequestHistoryService, MoveNextCampaignStatusRequestHistoryService>();
             builder.Services.AddScoped<IProjectService, ProjectService>();
             builder.Services.AddScoped<ICampaignService, CampaignService>();
             builder.Services.AddScoped<ICampaignMemberService, CampaignMemberService>();

@@ -53,4 +53,12 @@ namespace FALOFinancialProofing.Models
         public AccountingBook? AccountingBook { get; set; }
 
     }
+
+    //public class CampaignStatus
+    //{
+    //    public const string FundRaising = "Fund Raising";
+    //    public const string Implement = "Implement";
+    //    public const string Disbursement = "Disbursement";
+    //    public const string Close = "Close";
+    //}
 }

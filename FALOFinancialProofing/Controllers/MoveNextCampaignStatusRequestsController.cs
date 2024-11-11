@@ -1,4 +1,8 @@
-﻿using FALOFinancialProofing.Models;
+﻿using System.Text;
+using FALOFinancialProofing.Attributes.RoleAttributes;
+using FALOFinancialProofing.DTOs.MoveNextCampaignStatusRequestDTO;
+using FALOFinancialProofing.Helpers;
+using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,94 +20,145 @@ namespace FALOFinancialProofing.Controllers
             _moveNextCampaignStatusRequestService = moveNextCampaignStatusRequestService;
         }
 
-        // GET: api/MoveNextCampaignStatusRequests
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<MoveNextCampaignStatusRequest>>> GetMoveNextCampaignStatusRequests()
+
+        //Manh moi them
+        [HttpGet("APIBASICGetAllMoveNextCampaignStatusRequests")]
+        public async Task<IActionResult> GetAllMoveNextCampaignStatusRequests()
         {
-            return Ok(await _moveNextCampaignStatusRequestService.GetAllMoveNextCampaignStatusRequestsAsync());
-        }
-
-        // GET: api/MoveNextCampaignStatusRequests/5
-        [HttpGet("GetMoveNextCampaignStatusRequest/{id}")]
-        public async Task<ActionResult<MoveNextCampaignStatusRequest>> GetMoveNextCampaignStatusRequest(int id)
-        {
-
-            var createCampaignRequest = await _moveNextCampaignStatusRequestService.GetMoveNextCampaignStatusRequestByIdAsync(id);
-
-            if (createCampaignRequest == null)
+            var moveNextCampaignStatusRequests = await _moveNextCampaignStatusRequestService.GetAllMoveNextCampaignStatusRequestAsync();
+            if (moveNextCampaignStatusRequests == null || moveNextCampaignStatusRequests.Count == 0)
             {
-                return NotFound();
-            }
-
-            return createCampaignRequest;
-        }
-
-        // PUT: api/MoveNextCampaignStatusRequests/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("UpdateMoveNextCampaignStatusRequest")]
-        public async Task<IActionResult> PutMoveNextCampaignStatusRequest([FromBody] MoveNextCampaignStatusRequest UpdateMoveNextCampaignStatusRequest)
-        {
-            var statusMessage = "";
-            try
-            {
-                if (!ModelState.IsValid)
+                return Ok(new
                 {
-                    return BadRequest(ModelState);
-                }
-                statusMessage = await _moveNextCampaignStatusRequestService.UpdateMoveNextCampaignStatusRequestAsync(UpdateMoveNextCampaignStatusRequest) != false ? "Update MoveNextCampaignStatusRequest Successfully!" : throw new Exception();
-            }
-            catch (Exception ex)
-            {
-                statusMessage = "Update MoveNextCampaignStatusRequest Failed!";
-                await Console.Out.WriteLineAsync("PutMoveNextCampaignStatusRequest: Error");
+                    Success = false,
+                    Message = "No MoveNextCampaignStatusRequest found."
+                });
             }
 
-            return Content(statusMessage);
+            return Ok(new
+            {
+                Success = true,
+                Message = "MoveNextCampaignStatusRequests retrieved successfully.",
+                Data = moveNextCampaignStatusRequests
+            });
         }
 
-        // POST: api/MoveNextCampaignStatusRequests
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("CreateMoveNextCampaignStatusRequest", Name = "CreateMoveNextCampaignStatusRequest")]
-        public async Task<ActionResult<MoveNextCampaignStatusRequest>> PostMoveNextCampaignStatusRequest([FromBody] MoveNextCampaignStatusRequest createMoveNextCampaignStatusRequest)
+
+        [HttpGet("APIBASICGetMoveNextCampaignStatusRequestById/{id}")]
+        public async Task<IActionResult> GetMoveNextCampaignStatusRequestById(int id)
         {
-            var statusMessage = "";
-            try
+            var moveNextCampaignStatusRequest = await _moveNextCampaignStatusRequestService.GetMoveNextCampaignStatusRequestByIdAsync(id);
+            if (moveNextCampaignStatusRequest == null)
             {
-                //var url = Url.RouteUrl("CreateMoveNextCampaignStatusRequest");
-                if (!ModelState.IsValid)
+                return Ok(new
                 {
-                    return BadRequest(ModelState);
-                }
-                statusMessage = await _moveNextCampaignStatusRequestService.CreateMoveNextCampaignStatusRequestAsync(createMoveNextCampaignStatusRequest)
-                    != false ? "Create MoveNextCampaignStatusRequest Successfully!" : throw new Exception();
-
+                    Success = false,
+                    Message = $"MoveNextCampaignStatusRequest with Id = {id} not found."
+                });
             }
-            catch (Exception ex)
+
+            return Ok(new
             {
-                statusMessage = "Create MoveNextCampaignStatusRequest Failed!";
-                await Console.Out.WriteLineAsync($"PostMoveNextCampaignStatusRequest: {ex.Message}");
-            }
-
-            return Content(statusMessage);
+                Success = true,
+                Message = "MoveNextCampaignStatusRequest retrieved successfully.",
+                Data = moveNextCampaignStatusRequest
+            });
         }
 
-        // DELETE: api/MoveNextCampaignStatusRequests/5
-        [HttpDelete("DeleteMoveNextCampaignStatusRequest/{id}")]
-        public async Task<IActionResult> DeleteMoveNextCampaignStatusRequest(int id)
+        [HttpPost("APIBASICCreateMoveNextCampaignStatusRequest")]
+        public async Task<IActionResult> CreateMoveNextCampaignStatusRequest([FromBody] CreateMoveNextCampaignStatusRequestDTO createMoveNextCampaignStatusRequestDTO)
         {
-            var statusMessage = "";
+            StringBuilder stringBuilderMessage = new StringBuilder();
+            var createMoveNextCampaignStatusRequest = await _moveNextCampaignStatusRequestService.CreateMoveNextCampaignStatusRequestAsync(createMoveNextCampaignStatusRequestDTO, stringBuilderMessage);
+            if (createMoveNextCampaignStatusRequest == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "Unable to create MoveNextCampaignStatusRequest."
+                });
+            }
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "MoveNextCampaignStatusRequest created successfully.",
+                Data = createMoveNextCampaignStatusRequest
+            });
+        }
+        [RoleAttribute(AppRole.ProjectManager)]
+        [HttpPost("CreateMoveNextCampaignStatusRequest")]
+        public async Task<ActionResult<MoveNextCampaignStatusRequest>> CreateMoveNextCampaignStatusRequestAsync([FromBody] CreateMoveNextCampaignStatusRequestDTO requestDto)
+        {
+
+            StringBuilder stringBuilderMessage = new StringBuilder();
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState); // Trả về lỗi nếu DTO không hợp lệ
+            }
+
             try
             {
-                statusMessage = await _moveNextCampaignStatusRequestService.DeleteMoveNextCampaignStatusRequestAsync(id)
-                    != false ? "DELETE MoveNextCampaignStatusRequest Successfully!" : throw new Exception();
+                bool checkValidateProject = await _moveNextCampaignStatusRequestService.ValidateCampaignCreateAsync(requestDto, stringBuilderMessage);
+                if (!checkValidateProject)
+                {
+                    return Ok(new
+                    {
+                        Message = stringBuilderMessage.ToString()
+                    });
+                }
+                var request = await _moveNextCampaignStatusRequestService.CreateMoveNextCampaignStatusRequestAsync(requestDto, stringBuilderMessage);
+                //return CreatedAtAction(nameof(CreateMoveNextCampaignStatusRequestAsync), new { id = request.Id }, request); // Trả về kết quả
+                if(request != null)
+                {
+                    var responseDto = _moveNextCampaignStatusRequestService.MapToDto(request);
+                    return Ok(responseDto);
+                }
+                else
+                {
+                    //return BadRequest("can not create MoveNextCampaignStatusRequest");
+                    return BadRequest(new
+                    {
+                        Message = stringBuilderMessage.ToString()
+                    });
+                }
             }
+            
             catch (Exception ex)
             {
-                statusMessage = "DELETE MoveNextCampaignStatusRequest Failed!";
-                await Console.Out.WriteLineAsync("PostMoveNextCampaignStatusRequest: Error");
+                return StatusCode(500, ex.Message);
             }
-
-            return Content(statusMessage);
         }
+
+
+
+
+
+
+
+        // tat tam thoi de lam theo Duc
+
+
+        //[HttpPut("ApproveOrRejectRequest/{requestId}")]
+        ////[Role(AppRole.ProjectManagementBoard)] // Chỉ người có vai trò ProjectManagementBoard mới truy cập được
+        //public async Task<IActionResult> ApproveOrRejectRequestAsync(int requestId, [FromBody] bool isApproved)
+        //{
+        //    try
+        //    {
+        //        // Gọi service để phê duyệt hoặc từ chối
+        //        bool result = await _moveNextCampaignStatusRequestService.ApproveOrRejectRequestAsync(requestId, isApproved);
+        //        return result ? Ok("Request approved.") : Ok("Request rejected.");
+        //    }
+        //    catch (InvalidOperationException ex)
+        //    {
+        //        return NotFound(ex.Message); // Trả về lỗi nếu không tìm thấy yêu cầu
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, ex.Message); // Xử lý lỗi hệ thống
+        //    }
+        //}
+
     }
 }

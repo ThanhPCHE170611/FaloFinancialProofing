@@ -56,5 +56,7 @@ bin
 obj
 .vs
 PrePayUploads
-Pre-PayVoucher
+Pre-PayVouchers
+PaymentVouchers
+PaymentUploads
 AccountingBook
