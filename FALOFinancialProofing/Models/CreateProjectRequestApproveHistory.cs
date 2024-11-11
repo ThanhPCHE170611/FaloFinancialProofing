@@ -13,5 +13,6 @@ namespace FALOFinancialProofing.Models
         public User Approver { get; set; }
         public DateTime DateOfApproval { get; set; }
         public bool IsAllowed { get; set; }
+        public string? FeedBack { get; set; }
     }
 }

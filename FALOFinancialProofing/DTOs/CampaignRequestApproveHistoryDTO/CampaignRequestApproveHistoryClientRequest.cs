@@ -12,5 +12,6 @@ namespace FALOFinancialProofing.DTOs.CampaignRequestApproveHistoryDTO
         public bool IsAllowed { get; set; }
         public string? BankingNumber { get; set; }
         public int? BankId { get; set; }
+        public string? FeedBack { get; set; }
     }
 }

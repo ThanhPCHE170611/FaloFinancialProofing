@@ -7,15 +7,14 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace FALOFinancialProofing.Migrations
 {
-
     /// <inheritdoc />
-    public partial class updateMoveNextCampaignStatusRequestHistory : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Bank",
+                name: "Banks",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -28,7 +27,7 @@ namespace FALOFinancialProofing.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Bank", x => x.Id);
+                    table.PrimaryKey("PK_Banks", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -150,7 +149,7 @@ namespace FALOFinancialProofing.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CreateQrCode",
+                name: "CreateQrCodes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -161,9 +160,9 @@ namespace FALOFinancialProofing.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CreateQrCode", x => x.Id);
+                    table.PrimaryKey("PK_CreateQrCodes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CreateQrCode_Users_UserId",
+                        name: "FK_CreateQrCodes_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id");
@@ -381,9 +380,9 @@ namespace FALOFinancialProofing.Migrations
                 {
                     table.PrimaryKey("PK_Campaigns", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Campaigns_Bank_BankId",
+                        name: "FK_Campaigns_Banks_BankId",
                         column: x => x.BankId,
-                        principalTable: "Bank",
+                        principalTable: "Banks",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Campaigns_Projects_ProjectId",
@@ -603,7 +602,7 @@ namespace FALOFinancialProofing.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CreateQrCodeId = table.Column<int>(type: "int", nullable: false),
-                    Amount = table.Column<double>(type: "float", nullable: false),
+                    Amount = table.Column<int>(type: "int", nullable: false),
                     CampaignId = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TransactionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -619,9 +618,9 @@ namespace FALOFinancialProofing.Migrations
                         principalTable: "Campaigns",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_TransactionLogs_CreateQrCode_CreateQrCodeId",
+                        name: "FK_TransactionLogs_CreateQrCodes_CreateQrCodeId",
                         column: x => x.CreateQrCodeId,
-                        principalTable: "CreateQrCode",
+                        principalTable: "CreateQrCodes",
                         principalColumn: "Id");
                 });
 
@@ -654,7 +653,8 @@ namespace FALOFinancialProofing.Migrations
                     CreateProjectRequestId = table.Column<int>(type: "int", nullable: false),
                     ApproverId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     DateOfApproval = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsAllowed = table.Column<bool>(type: "bit", nullable: false)
+                    IsAllowed = table.Column<bool>(type: "bit", nullable: false),
+                    FeedBack = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -682,7 +682,8 @@ namespace FALOFinancialProofing.Migrations
                     CampaignRequestId = table.Column<int>(type: "int", nullable: false),
                     ApproverId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     DateOfApproval = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsAllowed = table.Column<bool>(type: "bit", nullable: false)
+                    IsAllowed = table.Column<bool>(type: "bit", nullable: false),
+                    FeedBack = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -864,6 +865,12 @@ namespace FALOFinancialProofing.Migrations
                 column: "RequestId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Banks_CassoAccountID",
+                table: "Banks",
+                column: "CassoAccountID",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CampaignMembers_CampaignId",
                 table: "CampaignMembers",
                 column: "CampaignId");
@@ -954,8 +961,8 @@ namespace FALOFinancialProofing.Migrations
                 column: "SenderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreateQrCode_UserId",
-                table: "CreateQrCode",
+                name: "IX_CreateQrCodes_UserId",
+                table: "CreateQrCodes",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -1039,6 +1046,13 @@ namespace FALOFinancialProofing.Migrations
                 name: "IX_TransactionLogs_CampaignId",
                 table: "TransactionLogs",
                 column: "CampaignId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TransactionLogs_CassoTransactionId",
+                table: "TransactionLogs",
+                column: "CassoTransactionId",
+                unique: true,
+                filter: "[CassoTransactionId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TransactionLogs_CreateQrCodeId",
@@ -1150,7 +1164,7 @@ namespace FALOFinancialProofing.Migrations
                 name: "MoveNextCampaignStatusRequests");
 
             migrationBuilder.DropTable(
-                name: "CreateQrCode");
+                name: "CreateQrCodes");
 
             migrationBuilder.DropTable(
                 name: "Roles");
@@ -1171,7 +1185,7 @@ namespace FALOFinancialProofing.Migrations
                 name: "RequestTypes");
 
             migrationBuilder.DropTable(
-                name: "Bank");
+                name: "Banks");
 
             migrationBuilder.DropTable(
                 name: "Projects");

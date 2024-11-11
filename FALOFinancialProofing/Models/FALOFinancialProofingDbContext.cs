@@ -38,6 +38,8 @@ namespace FALOFinancialProofing.Models
         public DbSet<ApproveProcess> ApproveProcesses { get; set; }
         public DbSet<Voucher> Vouchers { get; set; }
         public DbSet<MoveNextCampaignStatusRequestHistory> MoveNextCampaignStatusRequestHistories { get; set; }
+        public DbSet<Bank> Banks { get; set; }
+        public DbSet<CreateQrCode> CreateQrCodes { get; set; }
 
 
         #endregion
@@ -143,6 +145,8 @@ namespace FALOFinancialProofing.Models
                     .WithMany(u => u.TransactionLogs)
                     .HasForeignKey(c => c.CreateQrCodeId)
                     .OnDelete(DeleteBehavior.NoAction);
+                entity.HasIndex(u => u.CassoTransactionId)
+                      .IsUnique();
             });
 
             modelBuilder.Entity<MoveNextCampaignStatusRequest>(entity =>
@@ -300,6 +304,12 @@ namespace FALOFinancialProofing.Models
                     .HasForeignKey(c => c.BankId);
 
             });
+
+            modelBuilder.Entity<Bank>(entity =>
+            {
+                entity.HasIndex(u => u.CassoAccountID).IsUnique();
+            });
+
             RoleSeedData(modelBuilder);
             DeleteIdentityPrefix(modelBuilder);
         }

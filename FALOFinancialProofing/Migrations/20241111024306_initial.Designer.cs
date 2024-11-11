@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FALOFinancialProofing.Migrations
 {
     [DbContext(typeof(FALOFinancialProofingDbContext))]
-    [Migration("20241109093905_updateMoveNextCampaignStatusRequestHistory")]
-    partial class updateMoveNextCampaignStatusRequestHistory
+    [Migration("20241111024306_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -129,7 +129,10 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Bank");
+                    b.HasIndex("CassoAccountID")
+                        .IsUnique();
+
+                    b.ToTable("Banks");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.Campaign", b =>
@@ -251,6 +254,9 @@ namespace FALOFinancialProofing.Migrations
 
                     b.Property<DateTime>("DateOfApproval")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("FeedBack")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAllowed")
                         .HasColumnType("bit");
@@ -414,6 +420,9 @@ namespace FALOFinancialProofing.Migrations
                     b.Property<DateTime>("DateOfApproval")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("FeedBack")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsAllowed")
                         .HasColumnType("bit");
 
@@ -448,7 +457,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("CreateQrCode");
+                    b.ToTable("CreateQrCodes");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.MoveNextCampaignStatusRequest", b =>
@@ -801,8 +810,8 @@ namespace FALOFinancialProofing.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<double>("Amount")
-                        .HasColumnType("float");
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
 
                     b.Property<int>("CampaignId")
                         .HasColumnType("int");
@@ -827,6 +836,10 @@ namespace FALOFinancialProofing.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CampaignId");
+
+                    b.HasIndex("CassoTransactionId")
+                        .IsUnique()
+                        .HasFilter("[CassoTransactionId] IS NOT NULL");
 
                     b.HasIndex("CreateQrCodeId");
 

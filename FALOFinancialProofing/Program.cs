@@ -7,6 +7,7 @@ using FALOFinancialProofing.Services;
 using FALOFinancialProofing.Services.AccountingBookServices;
 using FALOFinancialProofing.Services.ApproveProcessServices;
 using FALOFinancialProofing.Services.AttachmentFIleServices;
+using FALOFinancialProofing.Services.BankServices;
 using FALOFinancialProofing.Services.CampaignMemberService;
 using FALOFinancialProofing.Services.CampaignRequestApproveHistoryServices;
 using FALOFinancialProofing.Services.CampaignService;
@@ -15,6 +16,7 @@ using FALOFinancialProofing.Services.CreateCampaignRequestServices;
 using FALOFinancialProofing.Services.CreateProjectFileServices;
 using FALOFinancialProofing.Services.CreateProjectRequestApproveHistoryServices;
 using FALOFinancialProofing.Services.CreateProjectRequestServices;
+using FALOFinancialProofing.Services.CreateQrCodeServices;
 using FALOFinancialProofing.Services.EmailService;
 using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices;
 using FALOFinancialProofing.Services.OrganizationMemberServices;
@@ -67,7 +69,9 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped(typeof(AuthServices));
             builder.Services.AddScoped<ITransactionLogService, TransactionLogService>();
 
-            //builder.Services.AddScoped(typeof(AuthServices));
+            //builder.Services.AddHostedService<BankAccountPolling>();
+            builder.Services.AddScoped<ICreateQrCodeService, CreateQrCodeService>();
+            builder.Services.AddScoped<IBankService, BankService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<ISDGServices, SDGServices>();
             builder.Services.AddScoped<IOrganizationService, OrganizationService>();
@@ -91,9 +95,10 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped<ICampaignRequestApproveHistoryService, CampaignRequestApproveHistoryService>();
             builder.Services.AddHttpClient("MyHttpClient", client =>
             {
-                client.DefaultRequestHeaders.Add("Accept", "application/json");
+                //client.DefaultRequestHeaders.Add("Accept", "application/json");
             });
-            builder.Services.AddScoped(typeof(BankService));
+            builder.Services.AddScoped(typeof(BankService1));
+            builder.Services.AddScoped(typeof(WebHookService));
             builder.Services.AddDistributedMemoryCache(); // Sử dụng bộ nhớ trong để lưu trữ session
             builder.Services.AddSession(options =>
             {

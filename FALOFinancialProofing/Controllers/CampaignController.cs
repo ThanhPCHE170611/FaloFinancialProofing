@@ -72,7 +72,7 @@ namespace FALOFinancialProofing.Controllers
                     return Ok(new ApiResponse()
                     {
                         Success = false,
-                        Message = "Get All Project By In System Failed!",
+                        Message = "Get All Campaign By In System Failed!",
                         Data = data
                     });
                 }
@@ -91,12 +91,12 @@ namespace FALOFinancialProofing.Controllers
             }
             catch (Exception ex)
             {
-                await Console.Out.WriteLineAsync($"GetAllProjectInSystem: {ex.Message}");
+                await Console.Out.WriteLineAsync($"GetAllCampaignInSystem: {ex.Message}");
             }
             return Ok(new ApiResponse()
             {
                 Success = true,
-                Message = "Get All Project In System Successfully!",
+                Message = "Get All Campaign In System Successfully!",
                 Data = filterPagingData
             });
         }
@@ -375,6 +375,26 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
+        [HttpPost("updateenddateforprojectmanager")]
+        public async Task<IActionResult> UpdateEndDateForProjectManager(int campaignId, string userId, string currentRole, DateTime newDateTime)
+        {
+            var message = new StringBuilder();
+            var updateEndDateCamapaign = await _campaignService.UpdateEndDateForProjectManagerAsync(campaignId, userId, currentRole, newDateTime, message);
+            if(updateEndDateCamapaign == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = message.ToString()
+                });
+            }
 
+            return Ok(new
+            {
+                Success = true,
+                Message = "Update End Date for Project Manager successfully.",
+                Data = $"New DateTime: {newDateTime}"
+            });
+        }
     }
 }

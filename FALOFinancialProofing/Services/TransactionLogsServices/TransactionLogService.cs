@@ -48,6 +48,24 @@ namespace FALOFinancialProofing.Services.TransactionLogsServices
             return false;
         }
 
+        public async Task<bool> CreateTransactionLogAsync(TransactionLog createTransactionLog)
+        {
+            try
+            {
+                if (createTransactionLog == null)
+                {
+                    throw new Exception("CreateTransactionLog is null");
+                }
+                await _transactionLogRepository.InsertAsync(createTransactionLog);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"CreateTransactionLog: {ex.Message}!");
+            }
+
+            return false;
+        }
         private void ConvertToBaseEntity(TransactionLog SourceTransactionLog, UpdateTransactionLog DesTransactionLog)
         {
             //SourceTransactionLog.SenderID = DesTransactionLog.SenderID;
@@ -57,6 +75,25 @@ namespace FALOFinancialProofing.Services.TransactionLogsServices
             SourceTransactionLog.CampaignId = DesTransactionLog.CampaignId;
         }
 
+        public async Task<TransactionLog> GetTransactionLogByCassoTransactionIdAsync(int id)
+        {
+            TransactionLog transactionLog = null!;
+            try
+            {
+                transactionLog = await _transactionLogRepository.Get(x => x.CassoTransactionId == id);
+                if (transactionLog == null)
+                {
+                    throw new Exception("TransactionLog not found");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetTransactionLogById: {ex.Message}");
+            }
+
+            return transactionLog;
+        }
         public async Task<TransactionLog> GetTransactionLogByIdAsync(int id)
         {
             TransactionLog transactionLog = null!;
