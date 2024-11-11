@@ -1,9 +1,12 @@
 ﻿using System.Text;
 using FALOFinancialProofing.Attributes.RoleAttributes;
+using FALOFinancialProofing.Constant;
+using FALOFinancialProofing.DTOs.CreateCampaignRequestDTO;
 using FALOFinancialProofing.DTOs.MoveNextCampaignStatusRequestDTO;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices;
+using FALOFinancialProofing.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -131,34 +134,88 @@ namespace FALOFinancialProofing.Controllers
             }
         }
 
+        [RoleAttribute(AppRole.ProjectManagementBoard)]
+        [HttpGet("GetAllMoveNextCampaignStatusRequestsByPMB")]
+        public async Task<ActionResult<List<MoveNextCampaignStatusRequestInformation>>> GetAllMoveNextCampaignStatusRequestsByPMB(string? status, int currentPage = IntConstant.PageNumberDefault)
+        {
+            StringBuilder message = new StringBuilder();
+            FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
+            List<MoveNextCampaignStatusRequestInformation> data = null;
+            try
+            {
+                data = (await _moveNextCampaignStatusRequestService.GetAllMoveNextCampaignStatusRequestsByPMBAsync(message))
+                    .ToList();
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "GetAllMoveNextCampaignStatusRequestsByPMB Failed!",
+                        Data = filterPagingData
+                    });
+                }
+                message.Append("GetAllMoveNextCampaignStatusRequestsByPMB Successfully!");
+                if (!string.IsNullOrEmpty(status))
+                {
+                    data = data.FindAll(x => x.Status.Equals(status));
+                }
+                filterPagingData.DataCount = data.Count;
+                data = PaginationHelper.Paginate<MoveNextCampaignStatusRequestInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                filterPagingData.Data = data;
+            }
+            catch (Exception ex)
+            {
+                message.Append("GetAllMoveNextCampaignStatusRequestsByPMB Failed!");
+                await Console.Out.WriteLineAsync(ex.Message);
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = message.ToString(),
+                Data = filterPagingData
+            });
+        }
 
-
-
-
-
-
-        // tat tam thoi de lam theo Duc
-
-
-        //[HttpPut("ApproveOrRejectRequest/{requestId}")]
-        ////[Role(AppRole.ProjectManagementBoard)] // Chỉ người có vai trò ProjectManagementBoard mới truy cập được
-        //public async Task<IActionResult> ApproveOrRejectRequestAsync(int requestId, [FromBody] bool isApproved)
-        //{
-        //    try
-        //    {
-        //        // Gọi service để phê duyệt hoặc từ chối
-        //        bool result = await _moveNextCampaignStatusRequestService.ApproveOrRejectRequestAsync(requestId, isApproved);
-        //        return result ? Ok("Request approved.") : Ok("Request rejected.");
-        //    }
-        //    catch (InvalidOperationException ex)
-        //    {
-        //        return NotFound(ex.Message); // Trả về lỗi nếu không tìm thấy yêu cầu
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, ex.Message); // Xử lý lỗi hệ thống
-        //    }
-        //}
+        [RoleAttribute(AppRole.ProjectManager)]
+        [HttpGet("GetAllMoveNextCampaignStatusRequestsByUserId/{UserId}")]
+        public async Task<IActionResult> GetAllMoveNextCampaignStatusRequestsByUserId(string UserId, string? status, int currentPage = IntConstant.PageNumberDefault)
+        {
+            List<MoveNextCampaignStatusRequestInformation> data = null;
+            FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
+            StringBuilder stringBuilder = new StringBuilder();
+            try
+            {
+                data = (await _moveNextCampaignStatusRequestService.GetAllMoveNextCampaignStatusRequestsByUserIdAsync(UserId, stringBuilder)).ToList();
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "GetAllMoveNextCampaignStatusRequestsByUserId Failed!",
+                        Data = filterPagingData
+                    });
+                }
+                if (!string.IsNullOrEmpty(status))
+                {
+                    data = data.FindAll(x => x.Status.Equals(status));
+                }
+                filterPagingData.DataCount = data.Count;
+                data = PaginationHelper.Paginate<MoveNextCampaignStatusRequestInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                filterPagingData.Data = data;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAllMoveNextCampaignStatusRequestsByUserId: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "GetAllMoveNextCampaignStatusRequestsByUserId Successfully!",
+                Data = filterPagingData
+            });
+        }
 
     }
 }

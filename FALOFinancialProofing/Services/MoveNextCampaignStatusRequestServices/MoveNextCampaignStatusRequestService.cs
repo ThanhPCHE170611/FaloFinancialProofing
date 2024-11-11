@@ -1,6 +1,8 @@
 ﻿using System.Text;
 using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.DTOs.CampaignDTO;
+using FALOFinancialProofing.DTOs.CreateCampaignFileDTO;
+using FALOFinancialProofing.DTOs.CreateCampaignRequestDTO;
 using FALOFinancialProofing.DTOs.MoveNextCampaignStatusRequestDTO;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
@@ -106,7 +108,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                     {
                         CampaignID = requestDto.CampaignID,
                         StatusOfCampaign = nextStatus,
-                        Status = requestDto.Status,
+                        Status = "Pending",
                         Title = requestDto.Title,
                         SenderId = requestDto.SenderId,
                         CreatedAt = requestDto.CreatedAt
@@ -365,6 +367,68 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
             }
 
             return IsValid;
+        }
+
+        public async Task<IEnumerable<MoveNextCampaignStatusRequestInformation>> GetAllMoveNextCampaignStatusRequestsByPMBAsync(StringBuilder message)
+        {
+            List<MoveNextCampaignStatusRequestInformation> data = null!;
+            try
+            {
+                data = await _moveNextCampaignStatusRequestRepository.GetAll()
+                    .Select(m => new MoveNextCampaignStatusRequestInformation()
+                    {
+                        Id = m.Id,
+                        SenderId = m.SenderId,
+                        SenderName = $"{m.SenderUser.FirstName} {m.SenderUser.LastName}",
+                        ReceiverId = m.ReceiverId,
+                        ReceiverName = $"{m.ReceiverUser.FirstName} {m.ReceiverUser.LastName}",
+                        CampaignID = m.CampaignID,
+                        CampaignName = m.Campaign.Title,
+                        Title = m.Title,
+                        CreatedAt = m.CreatedAt,
+                        Feedback = m.Feedback,
+                        Status = m.Status,
+                        StatusOfCampaign = m.StatusOfCampaign,
+                    }).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"GetAllMoveNextCampaignStatusRequestsByPMBAsync: {ex.Message}");
+            }
+
+            return data;
+        }
+
+        public async Task<IEnumerable<MoveNextCampaignStatusRequestInformation>> GetAllMoveNextCampaignStatusRequestsByUserIdAsync(string userId, StringBuilder message)
+        {
+            List<MoveNextCampaignStatusRequestInformation> data = null!;
+            try
+            {
+                data = await _moveNextCampaignStatusRequestRepository.GetAll()
+                    .Select(m => new MoveNextCampaignStatusRequestInformation()
+                    {
+                        Id = m.Id,
+                        SenderId = m.SenderId,
+                        SenderName = $"{m.SenderUser.FirstName} {m.SenderUser.LastName}",
+                        ReceiverId = m.ReceiverId,
+                        ReceiverName = $"{m.ReceiverUser.FirstName} {m.ReceiverUser.LastName}",
+                        CampaignID = m.CampaignID,
+                        CampaignName = m.Campaign.Title,
+                        Title = m.Title,
+                        CreatedAt = m.CreatedAt,
+                        Feedback = m.Feedback,
+                        Status = m.Status,
+                        StatusOfCampaign = m.StatusOfCampaign,
+                    }).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"GetAllMoveNextCampaignStatusRequestsByUserIdAsync: {ex.Message}");
+            }
+
+            return data;
         }
     }
 }
