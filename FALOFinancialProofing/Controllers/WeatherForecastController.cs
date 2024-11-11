@@ -1,4 +1,4 @@
-using FALOFinancialProofing.Attributes;
+﻿using FALOFinancialProofing.Attributes;
 using FALOFinancialProofing.Attributes.RoleAttributes;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Services;
@@ -111,15 +111,16 @@ namespace FALOFinancialProofing.Controllers
             var b = await bankService.GetBanks();
             BankRequest bankRequest = new BankRequest()
             {
-                accountNo = 1016161976,
+                accountNo = "1016161976",
                 accountName = "Nguyen Van Duc",
                 acqId = 970436,
-                amount = 100000,
+                amount = 1041321,
                 addInfo = "Test chuyen tien",
                 format = "text",
                 template = "print"
             };
             var response = await bankService.GetQRCode(bankRequest);
+            // lấy ra qrDataURL trong response.data
             var image = bankService.ConvertBase64ToImage(response.data.qrDataURL);
 
             return File(image, "image/png");

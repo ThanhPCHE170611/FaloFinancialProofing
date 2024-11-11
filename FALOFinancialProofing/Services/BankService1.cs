@@ -27,7 +27,7 @@ namespace FALOFinancialProofing.Services
 
         public async Task<BankResponse> GetQRCode(BankRequest bankRequest)
         {
-            var dataResponse = new BankResponse();
+            BankResponse dataResponse = null!;
             string jsonData = JsonConvert.SerializeObject(bankRequest);
             HttpContent httpContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync("https://api.vietqr.io/v2/generate", httpContent);

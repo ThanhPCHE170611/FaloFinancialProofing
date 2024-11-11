@@ -26,7 +26,7 @@
     // Root myDeserializedClass = JsonConvert.DeserializeObject<RequestBank>(myJsonResponse);
     public class BankRequest
     {
-        public long accountNo { get; set; }
+        public string accountNo { get; set; }
         public string accountName { get; set; }
         public int acqId { get; set; }
         public int amount { get; set; }

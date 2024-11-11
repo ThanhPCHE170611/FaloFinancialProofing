@@ -16,6 +16,7 @@ using FALOFinancialProofing.Services.CreateCampaignRequestServices;
 using FALOFinancialProofing.Services.CreateProjectFileServices;
 using FALOFinancialProofing.Services.CreateProjectRequestApproveHistoryServices;
 using FALOFinancialProofing.Services.CreateProjectRequestServices;
+using FALOFinancialProofing.Services.CreateQrCodeServices;
 using FALOFinancialProofing.Services.EmailService;
 using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices;
 using FALOFinancialProofing.Services.OrganizationMemberServices;
@@ -51,7 +52,8 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped(typeof(AuthServices));
             builder.Services.AddScoped<ITransactionLogService, TransactionLogService>();
 
-            builder.Services.AddHostedService<BankAccountPolling>();
+            //builder.Services.AddHostedService<BankAccountPolling>();
+            builder.Services.AddScoped<ICreateQrCodeService, CreateQrCodeService>();
             builder.Services.AddScoped<IBankService, BankService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<ISDGServices, SDGServices>();
@@ -75,7 +77,7 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped<ICampaignRequestApproveHistoryService, CampaignRequestApproveHistoryService>();
             builder.Services.AddHttpClient("MyHttpClient", client =>
             {
-                client.DefaultRequestHeaders.Add("Accept", "application/json");
+                //client.DefaultRequestHeaders.Add("Accept", "application/json");
             });
             builder.Services.AddScoped(typeof(BankService1));
             builder.Services.AddScoped(typeof(WebHookService));
