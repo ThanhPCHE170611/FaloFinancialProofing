@@ -134,5 +134,18 @@ namespace FALOFinancialProofing.Services.SocialNetworkService
                 return false;
             }
         }
+
+        public async Task<bool> UpdateSocialNetworkAsync(SocialNetwork socialNetwork)
+        {
+            try
+            {
+                return await socialNetworksRepository.UpdateAsync(socialNetwork);
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"UpdateSocialNetworkAsync: {ex.Message}");
+                return false;
+            }
+        }
     }
 }

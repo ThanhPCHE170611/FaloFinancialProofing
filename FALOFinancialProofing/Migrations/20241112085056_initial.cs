@@ -20,7 +20,7 @@ namespace FALOFinancialProofing.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OwnerName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AccountNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AccountNumber = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     BankCodeName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     acqId = table.Column<int>(type: "int", nullable: false),
                     CassoAccountID = table.Column<long>(type: "bigint", nullable: false)
@@ -107,6 +107,16 @@ namespace FALOFinancialProofing.Migrations
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BirthDate = table.Column<DateOnly>(type: "date", nullable: true),
                     Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Gender = table.Column<bool>(type: "bit", nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    WorkPlace = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Bio = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Education = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Skill = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Hobby = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Strength = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    VolunteerExperience = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    VolunteerGoal = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -314,13 +324,14 @@ namespace FALOFinancialProofing.Migrations
                 name: "UserSDGs",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    SDGId = table.Column<int>(type: "int", nullable: false),
                     Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    SDGId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserSDGs", x => new { x.SDGId, x.UserId });
+                    table.PrimaryKey("PK_UserSDGs", x => x.Id);
                     table.ForeignKey(
                         name: "FK_UserSDGs_SDGs_SDGId",
                         column: x => x.SDGId,
@@ -372,7 +383,6 @@ namespace FALOFinancialProofing.Migrations
                     Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     UpdateLog = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    BankingNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BankId = table.Column<int>(type: "int", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -821,6 +831,15 @@ namespace FALOFinancialProofing.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Banks",
+                columns: new[] { "Id", "AccountNumber", "BankCodeName", "CassoAccountID", "OwnerName", "acqId" },
+                values: new object[,]
+                {
+                    { 1, "1016161976", "VietComBank", 123L, "Nguyen Van Duc", 970436 },
+                    { 2, "4270774590", "BIDV", 222L, "Bui Minh Manh", 970418 }
+                });
+
+            migrationBuilder.InsertData(
                 table: "RequestTypes",
                 columns: new[] { "Id", "TypeName" },
                 values: new object[,]
@@ -843,6 +862,19 @@ namespace FALOFinancialProofing.Migrations
                     { "83292e2c-6c86-4153-bdc5-760d05ec2299", "606fea67-ae89-4b3f-ac93-ccceda6fc85h", "Project Management Board", "PROJECT MANAGEMENT BOARD" }
                 });
 
+            migrationBuilder.InsertData(
+                table: "SDGs",
+                columns: new[] { "Id", "SDGName" },
+                values: new object[,]
+                {
+                    { 1, "No Poverty" },
+                    { 2, "Zero Hunger" },
+                    { 3, "Good Health And Well-Being" },
+                    { 4, "Quality Education" },
+                    { 5, "Gender Equality" },
+                    { 6, "Clean Water And Sanitation" }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AccountingBooks_CampaignId",
                 table: "AccountingBooks",
@@ -863,6 +895,12 @@ namespace FALOFinancialProofing.Migrations
                 name: "IX_AttachmentFiles_RequestId",
                 table: "AttachmentFiles",
                 column: "RequestId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Banks_AccountNumber",
+                table: "Banks",
+                column: "AccountNumber",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Banks_CassoAccountID",
@@ -1085,6 +1123,11 @@ namespace FALOFinancialProofing.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserSDGs_SDGId",
+                table: "UserSDGs",
+                column: "SDGId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserSDGs_UserId",

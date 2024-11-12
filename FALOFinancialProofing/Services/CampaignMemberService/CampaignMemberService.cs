@@ -97,7 +97,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             }
             catch (Exception ex)
             {
-                await Console.Out.WriteLineAsync($"GetAllCampaignMemberByUserIdAndRoleIdAsync: {ex.Message}");
+                await Console.Out.WriteLineAsync($"GetAllCampaignMembersAsync: {ex.Message}");
             }
             return campaignMembers;
         }
@@ -108,6 +108,37 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             try
             {
                 campaignMembers = await cmRepository.GetAll().Where(cm => cm.UserId.Equals(userId) && roleId.Equals(roleId)).Select(cm => new CampaignMemberInformation()
+                {
+                    id = cm.Id,
+                    UserId = cm.UserId,
+                    UserName = cm.User.UserName,
+                    FirstName = cm.User.FirstName,
+                    LastName = cm.User.LastName,
+                    CampaignId = cm.CampaignId,
+                    CampaignTitle = cm.Campaign.Title,
+                    Debt = cm.Debt,
+                    IsActive = cm.IsActive,
+                    roleInformation = new RoleInformation()
+                    {
+                        RoleId = cm.RoleId,
+                        RoleName = cm.IdentityRole.Name
+                    }
+                }).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAllCampaignMemberByUserIdAndRoleIdAsync: {ex.Message}");
+            }
+            return campaignMembers;
+        }
+
+
+        public async Task<List<CampaignMemberInformation>> GetAllCampaignMemberByUserIdAsync(string userId)
+        {
+            var campaignMembers = new List<CampaignMemberInformation>();
+            try
+            {
+                campaignMembers = await cmRepository.GetAll().Where(cm => cm.UserId.Equals(userId)).Select(cm => new CampaignMemberInformation()
                 {
                     id = cm.Id,
                     UserId = cm.UserId,
