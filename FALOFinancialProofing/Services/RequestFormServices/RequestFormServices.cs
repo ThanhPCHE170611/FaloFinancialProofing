@@ -447,7 +447,8 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                         UserId = x.UserId,
                         FullName = $"{x.User.FirstName} {x.User.LastName}",
                         RoleId = x.RoleId,
-                        RoleName = x.IdentityRole.Name
+                        RoleName = x.IdentityRole.Name,
+                        Email = x.User.Email
                     })
                     .ToListAsync();
                 return approverList;
@@ -471,7 +472,8 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                         UserId = x.UserId,
                         FullName = $"{x.User.FirstName} {x.User.LastName}",
                         RoleId = x.RoleId,
-                        RoleName = x.IdentityRole.Name
+                        RoleName = x.IdentityRole.Name,
+                        Email = x.User.Email
                     })
                     .FirstOrDefaultAsync();
                 return approverForLeader;
@@ -495,7 +497,8 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                         UserId = x.UserId,
                         FullName = $"{x.User.FirstName} {x.User.LastName}",
                         RoleId = x.RoleId,
-                        RoleName = x.IdentityRole.Name
+                        RoleName = x.IdentityRole.Name,
+                        Email = x.User.Email
                     })
                     .FirstOrDefaultAsync();
                 return approverForLeader;
@@ -520,7 +523,8 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                         UserId = x.UserId,
                         FullName = $"{x.User.FirstName} {x.User.LastName}",
                         RoleId = x.RoleId,
-                        RoleName = x.IdentityRole.Name
+                        RoleName = x.IdentityRole.Name,
+                        Email = x.User.Email
                     })
                     .ToListAsync();
                 return approverList;
@@ -618,7 +622,8 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                                                         UserId = ap.ApproverId,
                                                         FullName = $"{ap.User.FirstName} {ap.User.LastName}",
                                                         RoleId = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).IdentityRole.Id,
-                                                        RoleName = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).IdentityRole.Name
+                                                        RoleName = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).IdentityRole.Name,
+                                                        Email = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).User.Email
                                                     }
                                                 }).ToList(),
                                                 VoucherFiles = r.ApproveProcesses.Select(ap => new VoucherRequest
@@ -675,7 +680,8 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                                                         UserId = ap.ApproverId,
                                                         FullName = $"{ap.User.FirstName} {ap.User.LastName}",
                                                         RoleId = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).IdentityRole.Id,
-                                                        RoleName = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).IdentityRole.Name
+                                                        RoleName = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).IdentityRole.Name,
+                                                        Email = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).User.Email
                                                     }
                                                 }).ToList(),
                                                 VoucherFiles = r.ApproveProcesses.Select(ap => new VoucherRequest
@@ -748,7 +754,8 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                                                         UserId = ap.ApproverId,
                                                         FullName = $"{ap.User.FirstName} {ap.User.LastName}",
                                                         RoleId = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).IdentityRole.Id,
-                                                        RoleName = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).IdentityRole.Name
+                                                        RoleName = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).IdentityRole.Name,
+                                                        Email = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).User.Email
                                                     }
                                                 }).ToList(),
                                                 VoucherFiles = r.ApproveProcesses.Select(ap => new VoucherRequest

@@ -391,6 +391,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                             Status = rf.Status,
                             CreatedBy = rf.CreatedBy,
                             CreateByName = rf.User.FirstName + " " + rf.User.LastName,
+                            CreateByEmail = rf.User.Email,
                             CampaignId = rf.CampaignId,
                             AttachmentFiles = rf.AttachmentFiles.Select(af => new AttachmentFileRequest
                             {
@@ -450,6 +451,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                             Status = rf.Status,
                             CreatedBy = rf.CreatedBy,
                             CreateByName = rf.User.FirstName + " " + rf.User.LastName,
+                            CreateByEmail = rf.User.Email,
                             CampaignId = rf.CampaignId,
                             AttachmentFiles = rf.AttachmentFiles.Select(af => new AttachmentFileRequest
                             {
@@ -509,6 +511,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                             Status = rf.Status,
                             CreatedBy = rf.CreatedBy,
                             CreateByName = rf.User.FirstName + " " + rf.User.LastName,
+                            CreateByEmail = rf.User.Email,
                             CampaignId = rf.CampaignId,
                             AttachmentFiles = rf.AttachmentFiles.Select(af => new AttachmentFileRequest
                             {
@@ -567,6 +570,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                             Status = rf.Status,
                             CreatedBy = rf.CreatedBy,
                             CreateByName = rf.User.FirstName + " " + rf.User.LastName,
+                            CreateByEmail = rf.User.Email,
                             CampaignId = rf.CampaignId,
                             AttachmentFiles = rf.AttachmentFiles.Select(af => new AttachmentFileRequest
                             {
@@ -627,6 +631,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                             Status = rf.Status,
                             CreatedBy = rf.CreatedBy,
                             CreateByName = rf.User.FirstName + " " + rf.User.LastName,
+                            CreateByEmail = rf.User.Email,
                             CampaignId = rf.CampaignId,
                             AttachmentFiles = rf.AttachmentFiles.Select(af => new AttachmentFileRequest
                             {
@@ -687,6 +692,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                             Status = rf.Status,
                             CreatedBy = rf.CreatedBy,
                             CreateByName = rf.User.FirstName + " " + rf.User.LastName,
+                            CreateByEmail = rf.User.Email,
                             CampaignId = rf.CampaignId,
                             AttachmentFiles = rf.AttachmentFiles.Select(af => new AttachmentFileRequest
                             {
