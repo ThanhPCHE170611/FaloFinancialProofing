@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Security.Claims;
+using System.Text;
 using FALOFinancialProofing.Attributes.RoleAttributes;
 using FALOFinancialProofing.Constant;
 using FALOFinancialProofing.DTOs.CreateCampaignRequestDTO;
@@ -215,6 +216,50 @@ namespace FALOFinancialProofing.Controllers
                 Message = "GetAllMoveNextCampaignStatusRequestsByUserId Successfully!",
                 Data = filterPagingData
             });
+        }
+        [RoleAttribute(AppRole.ProjectManager)]
+        [HttpPut("UpdateMoveNextCampaignStatusRequest")]
+        public async Task<IActionResult> UpdateMoveNextCampaignStatusRequest([FromBody] MoveNextCampaignStatusRequest updateMoveNextCampaignStatusRequest)
+        {
+            var statusMessage = "";
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                statusMessage = await _moveNextCampaignStatusRequestService.UpdateMoveNextCampaignStatusRequestAsync(updateMoveNextCampaignStatusRequest) != false ? "Update MoveNextCampaignStatusRequest Successfully!" : throw new Exception();
+            }
+            catch (Exception ex)
+            {
+                statusMessage = "Update MoveNextCampaignStatusRequest Failed!";
+                await Console.Out.WriteLineAsync("UpdateMoveNextCampaignStatusRequest: Error");
+            }
+
+            return Content(statusMessage);
+        }
+
+        [RoleAttribute(AppRole.ProjectManager)]
+        [HttpPost("CancelMoveNextCampaignStatusRequest")]
+        public async Task<IActionResult> CancelMoveNextCampaignStatusRequest(int requestId, string senderId)
+        {
+            StringBuilder message = new StringBuilder();
+
+            if (senderId == null)
+            {
+                return Unauthorized("User not authorized.");
+            }
+
+            bool result = await _moveNextCampaignStatusRequestService.CancelMoveNextCampaignStatusRequestAsync(requestId, senderId, message);
+
+            if (result)
+            {
+                return Ok(new { Message = message.ToString() });
+            }
+            else
+            {
+                return BadRequest(new { Message = message.ToString() });
+            }
         }
 
     }

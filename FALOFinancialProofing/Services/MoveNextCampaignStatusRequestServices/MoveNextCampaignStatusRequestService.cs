@@ -310,10 +310,12 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
             };
         }
 
-        public Task<bool> UpdateMoveNextCampaignStatusRequestAsync(UpdateMoveNextCampaignStatusRequestDTO updateMoveNextCampaignStatusRequestDTO)
-        {
-            throw new NotImplementedException();
-        }
+        //public Task<bool> UpdateMoveNextCampaignStatusRequestAsync(UpdateMoveNextCampaignStatusRequestDTO updateMoveNextCampaignStatusRequestDTO)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+
 
         public async Task<bool> ValidateCampaignCreateAsync(CreateMoveNextCampaignStatusRequestDTO createMoveNextCampaignStatusRequestDTO, StringBuilder message)
         {
@@ -430,5 +432,71 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
 
             return data;
         }
+
+        public async Task<bool> UpdateMoveNextCampaignStatusRequestAsync(MoveNextCampaignStatusRequest updateMoveNextCampaignStatusRequest)
+        {
+            MoveNextCampaignStatusRequest moveNextCampaignStatusRequest = null!;
+            bool result = false;
+            try
+            {
+                moveNextCampaignStatusRequest = await _moveNextCampaignStatusRequestRepository.Get(updateMoveNextCampaignStatusRequest.Id);
+                if (moveNextCampaignStatusRequest == null)
+                {
+                    throw new Exception("MoveNextCampaignStatusRequest not found!");
+                }
+                //ConvertToBaseEntity(createCampaignRequest, updateCreateCampaignRequest);
+                result = await _moveNextCampaignStatusRequestRepository.UpdateAsync(updateMoveNextCampaignStatusRequest);
+
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"UpdateMoveNextCampaignStatusRequestAsync: {ex.Message}");
+            }
+
+            return result;
+        }
+        public async Task<bool> CancelMoveNextCampaignStatusRequestAsync(int requestId, string senderId, StringBuilder message)
+        {
+            try
+            {
+                // Tìm yêu cầu MoveNextCampaignStatusRequest theo ID
+                var request = await _moveNextCampaignStatusRequestRepository.Get(requestId);
+
+                // Kiểm tra nếu yêu cầu không tồn tại
+                if (request == null)
+                {
+                    message.Append($"MoveNextCampaignStatusRequest with ID = {requestId} not found.");
+                    return false;
+                }
+
+                // Kiểm tra nếu người gọi không phải là người tạo yêu cầu (SenderId)
+                if (request.SenderId != senderId)
+                {
+                    message.Append("You are not authorized to cancel this request.");
+                    return false;
+                }
+
+                // Kiểm tra nếu trạng thái của yêu cầu không phải là "pending"
+                if (request.Status != "Pending")
+                {
+                    message.Append("Only requests with status 'pending' can be cancelled.");
+                    return false;
+                }
+
+                // Chuyển trạng thái sang "cancel"
+                request.Status = "Cancel";
+                await _moveNextCampaignStatusRequestRepository.UpdateAsync(request);
+
+                message.Append("Request cancelled successfully.");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                Console.WriteLine($"CancelMoveNextCampaignStatusRequestAsync: {ex.Message}");
+                return false;
+            }
+        }
+
     }
 }
