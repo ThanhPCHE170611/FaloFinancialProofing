@@ -20,5 +20,11 @@ namespace FALOFinancialProofing.Controllers
         {
             return Ok(await _bankService.GetAllBanksAsync());
         }
+
+        [HttpGet("GetBankById/{BankId}")]
+        public async Task<ActionResult<IEnumerable<Bank>>> GetBankById(int BankId)
+        {
+            return Ok(await _bankService.GetBankByIdAsync(BankId));
+        }
     }
 }
