@@ -137,7 +137,7 @@ namespace FALOFinancialProofing.Controllers
 
         [RoleAttribute(AppRole.ProjectManagementBoard)]
         [HttpGet("GetAllMoveNextCampaignStatusRequestsByPMB")]
-        public async Task<ActionResult<List<MoveNextCampaignStatusRequestInformation>>> GetAllMoveNextCampaignStatusRequestsByPMB(string? status, int currentPage = IntConstant.PageNumberDefault)
+        public async Task<ActionResult<List<MoveNextCampaignStatusRequestInformation>>> GetAllMoveNextCampaignStatusRequestsByPMB(string? status, string? search, int currentPage = IntConstant.PageNumberDefault)
         {
             StringBuilder message = new StringBuilder();
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -161,6 +161,16 @@ namespace FALOFinancialProofing.Controllers
                 {
                     data = data.FindAll(x => x.Status.Equals(status));
                 }
+                if (!string.IsNullOrEmpty(search))
+                {
+                    search = search.ToLower();
+                    data = data.FindAll(x =>
+                        (x.SenderName != null && x.SenderName.ToLower().Contains(search)) ||
+                        (x.ReceiverName != null && x.ReceiverName.ToLower().Contains(search)) ||
+                        (x.CampaignName != null && x.CampaignName.ToLower().Contains(search)) ||
+                        (x.Title != null && x.Title.ToLower().Contains(search))
+                    );
+                }
                 filterPagingData.DataCount = data.Count;
                 data = PaginationHelper.Paginate<MoveNextCampaignStatusRequestInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
                 filterPagingData.Data = data;
@@ -180,7 +190,7 @@ namespace FALOFinancialProofing.Controllers
 
         [RoleAttribute(AppRole.ProjectManager)]
         [HttpGet("GetAllMoveNextCampaignStatusRequestsByUserId/{UserId}")]
-        public async Task<IActionResult> GetAllMoveNextCampaignStatusRequestsByUserId(string UserId, string? status, int currentPage = IntConstant.PageNumberDefault)
+        public async Task<IActionResult> GetAllMoveNextCampaignStatusRequestsByUserId(string UserId, string? status, string? search, int currentPage = IntConstant.PageNumberDefault)
         {
             List<MoveNextCampaignStatusRequestInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -201,6 +211,16 @@ namespace FALOFinancialProofing.Controllers
                 if (!string.IsNullOrEmpty(status))
                 {
                     data = data.FindAll(x => x.Status.Equals(status));
+                }
+                if (!string.IsNullOrEmpty(search))
+                {
+                    search = search.ToLower();
+                    data = data.FindAll(x =>
+                        (x.SenderName != null && x.SenderName.ToLower().Contains(search)) ||
+                        (x.ReceiverName != null && x.ReceiverName.ToLower().Contains(search)) ||
+                        (x.CampaignName != null && x.CampaignName.ToLower().Contains(search)) ||
+                        (x.Title != null && x.Title.ToLower().Contains(search))
+                    );
                 }
                 filterPagingData.DataCount = data.Count;
                 data = PaginationHelper.Paginate<MoveNextCampaignStatusRequestInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
