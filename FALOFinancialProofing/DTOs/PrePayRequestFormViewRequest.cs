@@ -14,6 +14,8 @@ namespace FALOFinancialProofing.DTOs
         public string CreatedBy { get; set; }
 
         public string? CreateByName { get; set; }
+
+        public string? CreateByEmail { get; set;}
         public int CampaignId { get; set; }
 
         public string? ApproveProcessStatus { get; set; }
