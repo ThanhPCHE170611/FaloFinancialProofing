@@ -18,7 +18,7 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
         {
             if (id == null)
             {
-                return View();
+                return RedirectToAction("Error404", "Error");
             }
             else
             {
@@ -81,7 +81,7 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return NotFound();
+                    return RedirectToAction("Error404", "Error");
                 }
 
             }
