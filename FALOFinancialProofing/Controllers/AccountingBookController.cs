@@ -1,4 +1,5 @@
-﻿using FALOFinancialProofing.DTOs;
+﻿using FALOFinancialProofing.Constant;
+using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Services.AccountingBookServices;
 using FALOFinancialProofing.Services.AttachmentFIleServices;
 using Microsoft.AspNetCore.Http;
@@ -60,7 +61,8 @@ namespace FALOFinancialProofing.Controllers
         }
 
         [HttpGet("getallaccountingbookinproject")]
-        public async Task<IActionResult> GetAllAccountingBookInProject(int projectId)
+        public async Task<IActionResult> GetAllAccountingBookInProject(int projectId, string? name,
+            int page = IntConstant.PageNumberDefault)
         {
             var accountingBooks = await accountingBookServices.GetAllAccountingBookInProject(projectId);
             if (!accountingBooks.Any())
@@ -72,11 +74,30 @@ namespace FALOFinancialProofing.Controllers
                 });
             }
 
+            var filteredAttachmentFiles = accountingBooks.AsQueryable();
+
+            if (String.IsNullOrEmpty(name))
+            {
+                filteredAttachmentFiles = filteredAttachmentFiles
+                    .Where(x => x.FilePath.ToLower().Contains(name.ToLower()));
+            }
+            var totalRecords = filteredAttachmentFiles.Count();
+            var pagedResult = filteredAttachmentFiles
+            .Skip((page - 1) * IntConstant.PageSize)
+                .Take(IntConstant.PageSize)
+                .ToList();
+
+            var response = new
+            {
+                TotalRecords = totalRecords,
+                Page = page,
+                Data = pagedResult
+            };
             return Ok(new
             {
                 Success = true,
                 Message = "Accounting books found",
-                Data = accountingBooks,
+                Data = response
             });
         }
 
