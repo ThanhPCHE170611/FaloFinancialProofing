@@ -8,6 +8,7 @@ using FALOFinancialProofing.Services.RequestFormServices;
 using FALOFinancialProofing.Services.VoucherServices;
 using Humanizer.Localisation;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Drawing.Printing;
 using System.Text;
@@ -36,18 +37,36 @@ namespace FALOFinancialProofing.Controllers
         public async Task<IActionResult> GetAllPrePayRequestForVolunteerLeader(string userid, string currentLoggingRole, 
             int campaignId,
             string? status = null,          
-            string? createdBy = null,  
+            string? createdByEmail = null,  
             int page = IntConstant.PageNumberDefault)
         {
             var result = await approveProcessServices.GetAllPrepayRequestForVolunteerLeader(userid, currentLoggingRole);
             var filteredResult = result.Where(x => x.CampaignId == campaignId);
+            if (!string.IsNullOrEmpty(createdByEmail))
+            {
+                filteredResult = filteredResult.Where(x => x.CreateByEmail.ToLower().Equals(createdByEmail.ToLower()));
+                var totalRecord = filteredResult.Count();
+                var pagedResults = filteredResult
+                .Skip((page - 1) * IntConstant.PageSize)
+                    .Take(IntConstant.PageSize)
+                    .ToList();
+
+                var responses = new
+                {
+                    TotalRecords = totalRecord,
+                    Page = page,
+                    Data = pagedResults
+                };
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Get all prepay request for volunteer leader successfully",
+                    Data = responses
+                });
+            }
             if (!string.IsNullOrEmpty(status))
             {
                 filteredResult = filteredResult.Where(x => x.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
-            }
-            if (!string.IsNullOrEmpty(createdBy))
-            {
-                filteredResult = filteredResult.Where(x => x.CreatedBy == createdBy);
             }
             var totalRecords = filteredResult.Count();
             var pagedResult = filteredResult
@@ -72,18 +91,36 @@ namespace FALOFinancialProofing.Controllers
         [HttpGet("getallpaymentrequestforvolunteerleaderincampaign/{userid}")]
         public async Task<IActionResult> GetAllPaymentRequestForVolunteerLeader(string userid, string currentLoggingRole, int campaignId,
             string? status = null,
-            string? createdBy = null,
+            string? createdByEmail = null,
             int page = IntConstant.PageNumberDefault)
         {
             var result = await approveProcessServices.GetAllPaymentRequestForVolunteerLeader(userid, currentLoggingRole);
             var filteredResult = result.Where(x => x.CampaignId == campaignId);
+            if (!string.IsNullOrEmpty(createdByEmail))
+            {
+                filteredResult = filteredResult.Where(x => x.CreateByEmail.ToLower().Equals(createdByEmail.ToLower()));
+                var totalRecord = filteredResult.Count();
+                var pagedResults = filteredResult
+                .Skip((page - 1) * IntConstant.PageSize)
+                    .Take(IntConstant.PageSize)
+                    .ToList();
+
+                var responses = new
+                {
+                    TotalRecords = totalRecord,
+                    Page = page,
+                    Data = pagedResults
+                };
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Get all prepay request for volunteer leader successfully",
+                    Data = responses
+                });
+            }
             if (!string.IsNullOrEmpty(status))
             {
                 filteredResult = filteredResult.Where(x => x.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
-            }
-            if (!string.IsNullOrEmpty(createdBy))
-            {
-                filteredResult = filteredResult.Where(x => x.CreatedBy == createdBy);
             }
             var totalRecords = filteredResult.Count();
             var pagedResult = filteredResult
@@ -108,18 +145,36 @@ namespace FALOFinancialProofing.Controllers
         [HttpGet("getallprepayrequestforaccountingincampaign/{userid}")]
         public async Task<IActionResult> GetAllPrePayRequestForAccounting(string userid, string currentLoggingRole, int campaignId,
              string? status = null,
-            string? createdBy = null,
+            string? createdByEmail = null,
             int page = IntConstant.PageNumberDefault)
         {
             var result = await approveProcessServices.GetAllPrepayRequestForAccounting(userid, currentLoggingRole);
             var filteredResult = result.Where(x => x.CampaignId == campaignId);
+            if (!string.IsNullOrEmpty(createdByEmail))
+            {
+                filteredResult = filteredResult.Where(x => x.CreateByEmail.ToLower().Equals(createdByEmail.ToLower()));
+                var totalRecord = filteredResult.Count();
+                var pagedResults = filteredResult
+                .Skip((page - 1) * IntConstant.PageSize)
+                    .Take(IntConstant.PageSize)
+                    .ToList();
+
+                var responses = new
+                {
+                    TotalRecords = totalRecord,
+                    Page = page,
+                    Data = pagedResults
+                };
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Get all prepay request for accounting successfully",
+                    Data = responses
+                });
+            }
             if (!string.IsNullOrEmpty(status))
             {
                 filteredResult = filteredResult.Where(x => x.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
-            }
-            if (!string.IsNullOrEmpty(createdBy))
-            {
-                filteredResult = filteredResult.Where(x => x.CreatedBy == createdBy);
             }
             var totalRecords = filteredResult.Count();
             var pagedResult = filteredResult
@@ -144,18 +199,36 @@ namespace FALOFinancialProofing.Controllers
         [HttpGet("getallpaymentrequestforaccountingincampaign/{userid}")]
         public async Task<IActionResult> GetAllPaymentRequestForAccounting(string userid, string currentLoggingRole, int campaignId,
              string? status = null,
-            string? createdBy = null,
+            string? createdByEmail = null,
             int page = IntConstant.PageNumberDefault)
         {
             var result = await approveProcessServices.GetAllPaymentRequestForAccounting(userid, currentLoggingRole);
             var filteredResult = result.Where(x => x.CampaignId == campaignId);
+            if (!string.IsNullOrEmpty(createdByEmail))
+            {
+                filteredResult = filteredResult.Where(x => x.CreateByEmail.ToLower().Equals(createdByEmail.ToLower()));
+                var totalRecord = filteredResult.Count();
+                var pagedResults = filteredResult
+                .Skip((page - 1) * IntConstant.PageSize)
+                    .Take(IntConstant.PageSize)
+                    .ToList();
+
+                var responses = new
+                {
+                    TotalRecords = totalRecord,
+                    Page = page,
+                    Data = pagedResults
+                };
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Get all prepay request for accounting successfully",
+                    Data = responses
+                });
+            }
             if (!string.IsNullOrEmpty(status))
             {
                 filteredResult = filteredResult.Where(x => x.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
-            }
-            if (!string.IsNullOrEmpty(createdBy))
-            {
-                filteredResult = filteredResult.Where(x => x.CreatedBy == createdBy);
             }
             var totalRecords = filteredResult.Count();
             var pagedResult = filteredResult
@@ -180,19 +253,37 @@ namespace FALOFinancialProofing.Controllers
         [HttpGet("getallprepayrequestforprojectmanagerincampaign/{userid}")]
         public async Task<IActionResult> GetAllPrePayRequestForProjectManager(string userid, string currentLoggingRole, int campaignId,
              string? status = null,
-            string? createdBy = null,
+            string? createdByEmail = null,
             int page = IntConstant.PageNumberDefault)
         {
             var result = await approveProcessServices.GetAllPrepayRequestForProjectManager(userid, currentLoggingRole);
             var filteredResult = result.Where(x => x.CampaignId == campaignId);
+            if (!string.IsNullOrEmpty(createdByEmail))
+            {
+                filteredResult = filteredResult.Where(x => x.CreateByEmail.ToLower().Equals(createdByEmail.ToLower()));
+                var totalRecord = filteredResult.Count();
+                var pagedResults = filteredResult
+                .Skip((page - 1) * IntConstant.PageSize)
+                    .Take(IntConstant.PageSize)
+                    .ToList();
+
+                var responses = new
+                {
+                    TotalRecords = totalRecord,
+                    Page = page,
+                    Data = pagedResults
+                };
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Get all prepay request for project manager successfully",
+                    Data = responses
+                });
+            }
             if (!string.IsNullOrEmpty(status))
             {
                 filteredResult = filteredResult.Where(x => x.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
-            }
-            if (!string.IsNullOrEmpty(createdBy))
-            {
-                filteredResult = filteredResult.Where(x => x.CreatedBy == createdBy);
-            }
+            }          
             var totalRecords = filteredResult.Count();
             var pagedResult = filteredResult
             .Skip((page - 1) * IntConstant.PageSize)
@@ -216,18 +307,36 @@ namespace FALOFinancialProofing.Controllers
         [HttpGet("getallpaymentrequestforprojectmanagerincampaign/{userid}")]
         public async Task<IActionResult> GetAllPaymentRequestForProjectManager(string userid, string currentLoggingRole, int campaignId,
              string? status = null,
-            string? createdBy = null,
+            string? createdByEmail = null,
             int page = IntConstant.PageNumberDefault)
         {
             var result = await approveProcessServices.GetAllPaymentRequestForProjectManager(userid, currentLoggingRole);
             var filteredResult = result.Where(x => x.CampaignId == campaignId);
+            if (!string.IsNullOrEmpty(createdByEmail))
+            {
+                filteredResult = filteredResult.Where(x => x.CreateByEmail.ToLower().Equals(createdByEmail.ToLower()));
+                var totalRecord = filteredResult.Count();
+                var pagedResults = filteredResult
+                .Skip((page - 1) * IntConstant.PageSize)
+                    .Take(IntConstant.PageSize)
+                    .ToList();
+
+                var responses = new
+                {
+                    TotalRecords = totalRecord,
+                    Page = page,
+                    Data = pagedResults
+                };
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Get all prepay request for project manager successfully",
+                    Data = responses
+                });
+            }
             if (!string.IsNullOrEmpty(status))
             {
                 filteredResult = filteredResult.Where(x => x.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
-            }
-            if (!string.IsNullOrEmpty(createdBy))
-            {
-                filteredResult = filteredResult.Where(x => x.CreatedBy == createdBy);
             }
             var totalRecords = filteredResult.Count();
             var pagedResult = filteredResult
