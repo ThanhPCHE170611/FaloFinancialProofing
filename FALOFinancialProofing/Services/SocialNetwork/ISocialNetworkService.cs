@@ -20,7 +20,7 @@ namespace FALOFinancialProofing.Services.SocialNetworkService
         Task<bool> DeleteSocialNetworkAsync(SocialNetworkRequest socialNetworkRequest);
 
         Task<bool> DeleteSocialNetworkByIdAsync(int id);
-
+        Task<SocialNetwork> CreateSocialNetworkAsync(SocialNetwork socialNetwork);
 
     }
 }

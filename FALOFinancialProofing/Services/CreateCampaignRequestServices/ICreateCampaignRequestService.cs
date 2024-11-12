@@ -15,5 +15,7 @@ namespace FALOFinancialProofing.Services.CreateCampaignRequestServices
         Task<CreateCampaignRequest> CreateCreateCampaignRequestReturnEntityAsync(CreateCampaignRequest createCampaignRequest);
         Task<IEnumerable<CreateCampaignRequestInformation>> GetAllCreateCampaignRequestsByPMBAsync(StringBuilder message);
         Task<IEnumerable<CreateCampaignRequestInformation>> GetAllCreateCampaignRequestsByUserIdAsync(string userId, StringBuilder message);
+        Task<bool> ValidateCreateCampaignRequestByUserIdAndRequestIdAsync(string userId, int CreateCampaignRequestId, StringBuilder message);
+        Task<bool> CancelCreateCampaignRequestAsync(string userId, int CreateCampaignRequestId);
     }
 }

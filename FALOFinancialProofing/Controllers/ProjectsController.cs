@@ -32,7 +32,7 @@ namespace FALOFinancialProofing.Controllers
         }
         //[RoleAttribute(AppRole.ProjectManagementBoard, AppRole.Admin)]
         [HttpGet("GetAllProjectInSystem")]
-        public async Task<IActionResult> GetAllProjectInSystem(string? status, bool? IsActive, int currentPage = IntConstant.PageNumberDefault)
+        public async Task<IActionResult> GetAllProjectInSystem(string? searchInput, string? status, bool? IsActive, int currentPage = IntConstant.PageNumberDefault)
         {
             List<ProjectInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -48,6 +48,11 @@ namespace FALOFinancialProofing.Controllers
                         Message = "Get All Project By In System Failed!",
                         Data = filterPagingData
                     });
+                }
+                if (!string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = searchInput.Trim();
+                    data = data.FindAll(x => ($"{x.FirstName} {x.LastName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.ProjectName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
                 }
                 if (!string.IsNullOrEmpty(status))
                 {
@@ -74,7 +79,7 @@ namespace FALOFinancialProofing.Controllers
         }
         //[RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
         [HttpGet("GetAllProjectByUserId/{UserId}")]
-        public async Task<IActionResult> GetProjectsByUserIdAsync(string UserId, string? status, int currentPage = IntConstant.PageNumberDefault)
+        public async Task<IActionResult> GetProjectsByUserIdAsync(string? searchInput, string UserId, string? status, int currentPage = IntConstant.PageNumberDefault)
         {
             List<ProjectInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -90,6 +95,11 @@ namespace FALOFinancialProofing.Controllers
                         Message = "Get All Project By UserId Failed!",
                         Data = filterPagingData
                     });
+                }
+                if (!string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = searchInput.Trim();
+                    data = data.FindAll(x => ($"{x.FirstName} {x.LastName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.ProjectName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
                 }
                 if (!string.IsNullOrEmpty(status))
                 {

@@ -30,22 +30,17 @@ namespace FALOFinancialProofing.Services.SocialNetworkService
                 return null;
             }
         }
-        //public async Task<SocialNetworkDto?> CreateSocialNetworkAsync(SocialNetworkRequest socialNetworkRequest)
-        //{
-        //    var createdSocialNetwork = await socialNetworksRepository.InsertAsync(new SocialNetwork
-        //    {
-        //        SocialNetworksLink = socialNetworkRequest.SocialNetworksLink,
-        //        UserId = socialNetworkRequest.UserId
-        //    });
-
-        //    if (createdSocialNetwork == null) return null;
-
-        //    // Map to DTO
-        //    return new SocialNetworkDto
-        //    {
-        //        SocialNetworksLink = createdSocialNetwork.SocialNetworksLink,
-        //    };
-        //}
+        public async Task<SocialNetwork?> CreateSocialNetworkAsync(SocialNetwork socialNetwork)
+        {
+            try
+            {
+                return await socialNetworksRepository.InsertAsync(socialNetwork);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
 
         private async Task<SocialNetwork> SocialNetworkDTOToEntity(SocialNetworkRequest socialNetworkRequest)
         {

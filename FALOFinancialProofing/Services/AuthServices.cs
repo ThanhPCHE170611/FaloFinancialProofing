@@ -778,13 +778,27 @@ namespace FALOFinancialProofing.Services
                 user.Strength = updateUserProfileRequest.Strength;
                 user.VolunteerExperience = updateUserProfileRequest.VolunteerExperience;
                 user.VolunteerGoal = updateUserProfileRequest.VolunteerGoal;
-                user.VolunteerGoal = updateUserProfileRequest.VolunteerGoal;
-                //foreach (var item in updateUserProfileRequest.SocialNetworkRequests)
-                //{
-                //var socialNetwork = await socialNetworkService.GetSocialNetworkByIdAsync(item.Id.Value);
-                //socialNetwork.SocialNetworksLink = item.SocialNetworksLink;
-                //await socialNetworkService.UpdateSocialNetworkAsync(socialNetwork);
-                //}
+                updateUserProfileRequest.SocialNetworkRequests = JsonConvert.DeserializeObject<List<SocialNetworkRequest>>(updateUserProfileRequest.SocialNetworkRequestJsons);
+                foreach (var item in updateUserProfileRequest.SocialNetworkRequests)
+                {
+
+                    var socialNetwork = await socialNetworkService.GetSocialNetworkByIdAsync(item.Id.Value);
+
+                    if (socialNetwork != null)
+                    {
+                        socialNetwork.SocialNetworksLink = item.SocialNetworksLink;
+                        await socialNetworkService.UpdateSocialNetworkAsync(socialNetwork);
+                    }
+                    else
+                    {
+                        socialNetwork = new SocialNetwork()
+                        {
+                            UserId = updateUserProfileRequest.Id,
+                            SocialNetworksLink = item.SocialNetworksLink
+                        };
+                        await socialNetworkService.CreateSocialNetworkAsync(socialNetwork);
+                    }
+                }
                 var UpdateResult = await userManager.UpdateAsync(user);
                 if (UpdateResult.Succeeded)
                 {

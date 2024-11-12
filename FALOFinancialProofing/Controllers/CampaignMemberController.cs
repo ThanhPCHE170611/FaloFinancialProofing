@@ -62,6 +62,7 @@ namespace FALOFinancialProofing.Controllers
                         Data = filterPagingData
                     });
                 }
+
                 if (isActive != null)
                 {
                     data = data.FindAll(x => x.IsActive == isActive);
@@ -84,7 +85,7 @@ namespace FALOFinancialProofing.Controllers
         }
 
         [HttpGet("GetAllCampaignMembersByUserId")]
-        public async Task<IActionResult> GetAllCampaignMembersByUserId(string userId, bool? isActive, int currentPage = IntConstant.PageNumberDefault)
+        public async Task<IActionResult> GetAllCampaignMembersByUserId(string? searchInput, string userId, bool? isActive, int currentPage = IntConstant.PageNumberDefault)
         {
             List<CampaignMemberInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -101,6 +102,11 @@ namespace FALOFinancialProofing.Controllers
                         Message = "GetAllCampaignMember By UserId Failed!",
                         Data = filterPagingData
                     });
+                }
+                if (!string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = searchInput.Trim();
+                    data = data.FindAll(x => ($"{x.CampaignTitle}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
                 }
                 if (isActive != null)
                 {
@@ -124,7 +130,7 @@ namespace FALOFinancialProofing.Controllers
         }
 
         [HttpGet("GetAllCampaignMembersByCampaignId")]
-        public async Task<IActionResult> GetAllCampaignMembersByCampaignId(int CampaignId, bool? isActive, int currentPage = IntConstant.PageNumberDefault)
+        public async Task<IActionResult> GetAllCampaignMembersByCampaignId(string? searchInput, int CampaignId, bool? isActive, int currentPage = IntConstant.PageNumberDefault)
         {
             List<CampaignMemberInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -141,6 +147,11 @@ namespace FALOFinancialProofing.Controllers
                         Message = "GetAllCampaignMembers By CampaignId Failed!",
                         Data = filterPagingData
                     });
+                }
+                if (!string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = searchInput.Trim();
+                    data = data.FindAll(x => ($"{x.FirstName} {x.LastName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.CampaignTitle}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
                 }
                 if (isActive != null)
                 {

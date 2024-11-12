@@ -10,6 +10,7 @@ using FALOFinancialProofing.Services.TransactionLogsServices;
 using FALOFinancialProofing.DTOs.TransactionLogsDTOs;
 using Microsoft.VisualBasic;
 using FALOFinancialProofing.Helpers;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -66,7 +67,7 @@ namespace FALOFinancialProofing.Controllers
         }
 
         [HttpGet("GetCampaignTransactionLogs/{campaignId}")]
-        public async Task<ActionResult> GetCampaignTransactionLogs(int campaignId)
+        public async Task<ActionResult> GetCampaignTransactionLogs(string? searchInput, int campaignId)
         {
 
             var transactionLog = await _transactionLogService.GetUserTransactionsByCampaignIdAsync(campaignId);
@@ -75,7 +76,11 @@ namespace FALOFinancialProofing.Controllers
             {
                 return NotFound();
             }
-
+            if (!string.IsNullOrEmpty(searchInput))
+            {
+                searchInput = searchInput.Trim();
+                transactionLog = transactionLog.FindAll(x => ($"{x.CampaignName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.TransactionDate.ToShortDateString()}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
+            }
             return Ok(new ApiResponse()
             {
                 Data = transactionLog,
