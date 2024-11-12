@@ -1,6 +1,8 @@
 ﻿using FALOFinancialProofing.DTOs.TransactionLogsDTOs;
+using FALOFinancialProofing.DTOs.UserDTOs;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace FALOFinancialProofing.Services.TransactionLogsServices
@@ -8,10 +10,11 @@ namespace FALOFinancialProofing.Services.TransactionLogsServices
     public class TransactionLogService : ITransactionLogService
     {
         private readonly IRepository<TransactionLog, int> _transactionLogRepository;
-
-        public TransactionLogService(IRepository<TransactionLog, int> transactionLogRepository)
+        private readonly UserManager<User> userManager;
+        public TransactionLogService(IRepository<TransactionLog, int> transactionLogRepository, UserManager<User> userManager)
         {
             _transactionLogRepository = transactionLogRepository;
+            this.userManager = userManager;
         }
 
         private TransactionLog ConvertToBaseEntity(CreateTransactionLog createTransactionLog)
@@ -113,7 +116,72 @@ namespace FALOFinancialProofing.Services.TransactionLogsServices
 
             return transactionLog;
         }
+        // lịch sử chuyển tiền vào chiến dịch
+        public async Task<List<UserTransactionHistory>> GetUserTransactionsByCampaignIdAsync(int campaignId)
+        {
+            List<UserTransactionHistory> userTransaction = null!;
+            try
+            {
+                userTransaction = await _transactionLogRepository.GetAll()
+                   .Where(u => u.CampaignId == campaignId)
+                   .Select(u => new UserTransactionHistory()
+                   {
+                       UserId = u.CreateQrCode.UserId,
+                       CreateQrCodeId = u.CreateQrCode.Id,
+                       IsPaid = u.CreateQrCode.IsPaid,
+                       Amount = u.Amount,
+                       CampaignId = u.CampaignId,
+                       CampaignName = u.Campaign.Title,
+                       Description = u.Description,
+                       TransactionDate = u.TransactionDate,
+                       tid = u.tid,
+                   }).ToListAsync();
+                if (userTransaction == null)
+                {
+                    throw new Exception("userTransaction not found");
+                }
 
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetUserTransactionsByCampaignIdAsync: {ex.Message}");
+            }
+
+            return userTransaction;
+        }
+
+        public async Task<List<UserTransactionHistory>> GetUserTransactionsByUserIdAsync(string userId)
+        {
+            List<UserTransactionHistory> userTransaction = null!;
+            try
+            {
+                userTransaction = await _transactionLogRepository.GetAll()
+                   .Where(u => u.CreateQrCode.UserId.Equals(userId))
+                   .Select(u => new UserTransactionHistory()
+                   {
+                       UserId = u.CreateQrCode.UserId,
+                       CreateQrCodeId = u.CreateQrCode.Id,
+                       IsPaid = u.CreateQrCode.IsPaid,
+                       Amount = u.Amount,
+                       CampaignId = u.CampaignId,
+                       CampaignName = u.Campaign.Title,
+                       Description = u.Description,
+                       TransactionDate = u.TransactionDate,
+                       tid = u.tid,
+                   }).ToListAsync();
+                if (userTransaction == null)
+                {
+                    throw new Exception("userTransaction not found");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetUserTransactionsByUserIdAsync: {ex.Message}");
+            }
+
+            return userTransaction;
+        }
         public async Task<IEnumerable<TransactionLog>> GetAllTransactionLogsAsync()
         {
             List<TransactionLog> data = null!;

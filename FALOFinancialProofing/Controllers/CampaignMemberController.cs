@@ -67,7 +67,7 @@ namespace FALOFinancialProofing.Controllers
                     data = data.FindAll(x => x.IsActive == isActive);
                 }
                 filterPagingData.DataCount = data.Count;
-              
+
                 data = PaginationHelper.Paginate<CampaignMemberInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
                 filterPagingData.Data = data;
             }
@@ -79,6 +79,46 @@ namespace FALOFinancialProofing.Controllers
             {
                 Success = true,
                 Message = "GetAllCampaignMember By UserIdAndRoleId Successfully!",
+                Data = filterPagingData
+            });
+        }
+
+        [HttpGet("GetAllCampaignMembersByUserId")]
+        public async Task<IActionResult> GetAllCampaignMembersByUserId(string userId, bool? isActive, int currentPage = IntConstant.PageNumberDefault)
+        {
+            List<CampaignMemberInformation> data = null;
+            FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
+            try
+            {
+                data = await _campaignMemberService.GetAllCampaignMemberByUserIdAsync(userId);
+
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "GetAllCampaignMember By UserId Failed!",
+                        Data = filterPagingData
+                    });
+                }
+                if (isActive != null)
+                {
+                    data = data.FindAll(x => x.IsActive == isActive);
+                }
+                filterPagingData.DataCount = data.Count;
+
+                data = PaginationHelper.Paginate<CampaignMemberInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                filterPagingData.Data = data;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAllCampaignMemberByUserId: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "GetAllCampaignMember By UserId Successfully!",
                 Data = filterPagingData
             });
         }

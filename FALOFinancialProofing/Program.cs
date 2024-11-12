@@ -18,6 +18,7 @@ using FALOFinancialProofing.Services.CreateProjectRequestApproveHistoryServices;
 using FALOFinancialProofing.Services.CreateProjectRequestServices;
 using FALOFinancialProofing.Services.CreateQrCodeServices;
 using FALOFinancialProofing.Services.EmailService;
+using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestHistoryService;
 using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices;
 using FALOFinancialProofing.Services.OrganizationMemberServices;
 using FALOFinancialProofing.Services.OrganizationServices;
@@ -26,31 +27,17 @@ using FALOFinancialProofing.Services.RequestFormServices;
 using FALOFinancialProofing.Services.SDGServices;
 using FALOFinancialProofing.Services.SocialNetworkService;
 using FALOFinancialProofing.Services.TransactionLogsServices;
+using FALOFinancialProofing.Services.UserSDGServices;
 using FALOFinancialProofing.Services.VoucherServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using FALOFinancialProofing.Services.RequestFormServices;
-using FALOFinancialProofing.Services.AttachmentFIleServices;
-using FALOFinancialProofing.Services.ApproveProcessServices;
-using FALOFinancialProofing.Services.VoucherServices;
-using Example;
-using Microsoft.AspNetCore.Http.Features;
-using FALOFinancialProofing.Services.OrganizationServices;
-using FALOFinancialProofing.Services.CreateProjectRequestServices;
-using FALOFinancialProofing.Services.CreateProjectFileServices;
-using FALOFinancialProofing.Services.CreateCampaignFileServices;
-using FALOFinancialProofing.Services.CreateCampaignRequestServices;
-using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices;
-using FALOFinancialProofing.Services.ProjectServices;
-using FALOFinancialProofing.Services.CampaignService;
-using FALOFinancialProofing.Services.CampaignMemberService;
-using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestHistoryService;
 
 namespace FALOFinancialProofing
 {
@@ -88,6 +75,7 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped<IMoveNextCampaignStatusRequestService, MoveNextCampaignStatusRequestService>();
             builder.Services.AddScoped<IMoveNextCampaignStatusRequestHistoryService, MoveNextCampaignStatusRequestHistoryService>();
             builder.Services.AddScoped<IProjectService, ProjectService>();
+            builder.Services.AddScoped<IUserSDGService, UserSDGService>();
             builder.Services.AddScoped<ICampaignService, CampaignService>();
             builder.Services.AddScoped<ICampaignMemberService, CampaignMemberService>();
             builder.Services.AddScoped<IOrganizationMemberService, OrganizationMemberService>();
@@ -216,6 +204,29 @@ namespace FALOFinancialProofing
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+            }
+            //app.UseStaticFiles(new StaticFileOptions
+            //{
+            //    FileProvider = new PhysicalFileProvider(
+            //   Path.Combine(Directory.GetCurrentDirectory(), "UserImageUpload")),
+            //    RequestPath = "/UserImageUpload"
+            //});
+
+            var staticFileDirectories = new List<(string Directory, string RequestPath)>
+    {
+        ("UserImageUpload", "/UserImageUpload"),
+        //("AnotherStaticFolder", "/AnotherStaticFolder"),
+        //("YetAnotherFolder", "/YetAnotherFolder")
+    };
+            // Cấu hình các thư mục tĩnh
+            foreach (var (directory, requestPath) in staticFileDirectories)
+            {
+                app.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(
+                        Path.Combine(Directory.GetCurrentDirectory(), directory)),
+                    RequestPath = requestPath
+                });
             }
             app.UseStaticFiles();
             app.UseSession();

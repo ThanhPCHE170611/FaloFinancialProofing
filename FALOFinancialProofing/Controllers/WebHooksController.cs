@@ -183,5 +183,21 @@ namespace FALOFinancialProofing.Controllers
             }
             return Ok(syncResponse);
         }
+
+        [HttpGet("GetAllCassAccountNumber")]
+        public async Task<IActionResult> GetAllCassAccountNumber()
+        {
+            AccountNumberResponse response = null!;
+            StringBuilder message = new StringBuilder();
+            try
+            {
+                response = await _webHookService.GetAllBankAccountNumberAsync();
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"SyncTransaction: {ex.Message}");
+            }
+            return Ok(response);
+        }
     }
 }
