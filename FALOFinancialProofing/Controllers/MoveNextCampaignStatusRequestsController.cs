@@ -1,9 +1,13 @@
-﻿using System.Text;
+﻿using System.Security.Claims;
+using System.Text;
 using FALOFinancialProofing.Attributes.RoleAttributes;
+using FALOFinancialProofing.Constant;
+using FALOFinancialProofing.DTOs.CreateCampaignRequestDTO;
 using FALOFinancialProofing.DTOs.MoveNextCampaignStatusRequestDTO;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices;
+using FALOFinancialProofing.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -131,34 +135,152 @@ namespace FALOFinancialProofing.Controllers
             }
         }
 
+        [RoleAttribute(AppRole.ProjectManagementBoard)]
+        [HttpGet("GetAllMoveNextCampaignStatusRequestsByPMB")]
+        public async Task<ActionResult<List<MoveNextCampaignStatusRequestInformation>>> GetAllMoveNextCampaignStatusRequestsByPMB(string? status, string? search, int currentPage = IntConstant.PageNumberDefault)
+        {
+            StringBuilder message = new StringBuilder();
+            FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
+            List<MoveNextCampaignStatusRequestInformation> data = null;
+            try
+            {
+                data = (await _moveNextCampaignStatusRequestService.GetAllMoveNextCampaignStatusRequestsByPMBAsync(message))
+                    .ToList();
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "GetAllMoveNextCampaignStatusRequestsByPMB Failed!",
+                        Data = filterPagingData
+                    });
+                }
+                message.Append("GetAllMoveNextCampaignStatusRequestsByPMB Successfully!");
+                if (!string.IsNullOrEmpty(status))
+                {
+                    data = data.FindAll(x => x.Status.Equals(status));
+                }
+                if (!string.IsNullOrEmpty(search))
+                {
+                    search = search.ToLower();
+                    data = data.FindAll(x =>
+                        (x.SenderName != null && x.SenderName.ToLower().Contains(search)) ||
+                        (x.ReceiverName != null && x.ReceiverName.ToLower().Contains(search)) ||
+                        (x.CampaignName != null && x.CampaignName.ToLower().Contains(search)) ||
+                        (x.Title != null && x.Title.ToLower().Contains(search))
+                    );
+                }
+                filterPagingData.DataCount = data.Count;
+                data = PaginationHelper.Paginate<MoveNextCampaignStatusRequestInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                filterPagingData.Data = data;
+            }
+            catch (Exception ex)
+            {
+                message.Append("GetAllMoveNextCampaignStatusRequestsByPMB Failed!");
+                await Console.Out.WriteLineAsync(ex.Message);
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = message.ToString(),
+                Data = filterPagingData
+            });
+        }
 
+        [RoleAttribute(AppRole.ProjectManager)]
+        [HttpGet("GetAllMoveNextCampaignStatusRequestsByUserId/{UserId}")]
+        public async Task<IActionResult> GetAllMoveNextCampaignStatusRequestsByUserId(string UserId, string? status, string? search, int currentPage = IntConstant.PageNumberDefault)
+        {
+            List<MoveNextCampaignStatusRequestInformation> data = null;
+            FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
+            StringBuilder stringBuilder = new StringBuilder();
+            try
+            {
+                data = (await _moveNextCampaignStatusRequestService.GetAllMoveNextCampaignStatusRequestsByUserIdAsync(UserId, stringBuilder)).ToList();
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "GetAllMoveNextCampaignStatusRequestsByUserId Failed!",
+                        Data = filterPagingData
+                    });
+                }
+                if (!string.IsNullOrEmpty(status))
+                {
+                    data = data.FindAll(x => x.Status.Equals(status));
+                }
+                if (!string.IsNullOrEmpty(search))
+                {
+                    search = search.ToLower();
+                    data = data.FindAll(x =>
+                        (x.SenderName != null && x.SenderName.ToLower().Contains(search)) ||
+                        (x.ReceiverName != null && x.ReceiverName.ToLower().Contains(search)) ||
+                        (x.CampaignName != null && x.CampaignName.ToLower().Contains(search)) ||
+                        (x.Title != null && x.Title.ToLower().Contains(search))
+                    );
+                }
+                filterPagingData.DataCount = data.Count;
+                data = PaginationHelper.Paginate<MoveNextCampaignStatusRequestInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                filterPagingData.Data = data;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAllMoveNextCampaignStatusRequestsByUserId: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "GetAllMoveNextCampaignStatusRequestsByUserId Successfully!",
+                Data = filterPagingData
+            });
+        }
+        [RoleAttribute(AppRole.ProjectManager)]
+        [HttpPut("UpdateMoveNextCampaignStatusRequest")]
+        public async Task<IActionResult> UpdateMoveNextCampaignStatusRequest([FromBody] MoveNextCampaignStatusRequest updateMoveNextCampaignStatusRequest)
+        {
+            var statusMessage = "";
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                statusMessage = await _moveNextCampaignStatusRequestService.UpdateMoveNextCampaignStatusRequestAsync(updateMoveNextCampaignStatusRequest) != false ? "Update MoveNextCampaignStatusRequest Successfully!" : throw new Exception();
+            }
+            catch (Exception ex)
+            {
+                statusMessage = "Update MoveNextCampaignStatusRequest Failed!";
+                await Console.Out.WriteLineAsync("UpdateMoveNextCampaignStatusRequest: Error");
+            }
 
+            return Content(statusMessage);
+        }
 
+        [RoleAttribute(AppRole.ProjectManager)]
+        [HttpPost("CancelMoveNextCampaignStatusRequest")]
+        public async Task<IActionResult> CancelMoveNextCampaignStatusRequest(int requestId, string senderId)
+        {
+            StringBuilder message = new StringBuilder();
 
+            if (senderId == null)
+            {
+                return Unauthorized("User not authorized.");
+            }
 
+            bool result = await _moveNextCampaignStatusRequestService.CancelMoveNextCampaignStatusRequestAsync(requestId, senderId, message);
 
-        // tat tam thoi de lam theo Duc
-
-
-        //[HttpPut("ApproveOrRejectRequest/{requestId}")]
-        ////[Role(AppRole.ProjectManagementBoard)] // Chỉ người có vai trò ProjectManagementBoard mới truy cập được
-        //public async Task<IActionResult> ApproveOrRejectRequestAsync(int requestId, [FromBody] bool isApproved)
-        //{
-        //    try
-        //    {
-        //        // Gọi service để phê duyệt hoặc từ chối
-        //        bool result = await _moveNextCampaignStatusRequestService.ApproveOrRejectRequestAsync(requestId, isApproved);
-        //        return result ? Ok("Request approved.") : Ok("Request rejected.");
-        //    }
-        //    catch (InvalidOperationException ex)
-        //    {
-        //        return NotFound(ex.Message); // Trả về lỗi nếu không tìm thấy yêu cầu
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, ex.Message); // Xử lý lỗi hệ thống
-        //    }
-        //}
+            if (result)
+            {
+                return Ok(new { Message = message.ToString() });
+            }
+            else
+            {
+                return BadRequest(new { Message = message.ToString() });
+            }
+        }
 
     }
 }
