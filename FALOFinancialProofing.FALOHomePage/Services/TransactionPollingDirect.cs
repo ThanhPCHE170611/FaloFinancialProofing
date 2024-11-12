@@ -36,8 +36,6 @@ namespace FALOFinancialProofing.FALOHomePage.Services
                     throw new Exception(apiResponse.Message); // Handle the error
                 }
 
-                
-
                 List <TransactionDetails> transactionList = new List<TransactionDetails>();
 
                 foreach (TransactionDetails r in apiResponse.Data.Records)

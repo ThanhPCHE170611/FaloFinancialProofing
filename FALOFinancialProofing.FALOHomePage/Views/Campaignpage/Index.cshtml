@@ -47,74 +47,35 @@
                             </p>
                         </div>
                     </div>
-                    <div class="blog-single__review shadow p-4 mt-60">
-                        <div class="donation-amount-area">
-                            <div class="input-box pb-30 bor-bottom mb-30">
-                                <span>$</span>
-                                <input class="addAmount-value" type="text" value="$250">
-                            </div>
-                            <div class="amount-group mb-40">
-                                <button class="amount-btn">$99</button>
-                                <button class="amount-btn">$125</button>
-                                <button class="active amount-btn">$250</button>
-                                <button class="amount-btn">$350</button>
-                                <button class="amount-btn custom-amount">Custom Amount</button>
-                            </div>
-                            <h3 class="mb-30">Select payment Method</h3>
-                            <div class="payment-btns">
-                                <button class="payment-btn">Test Donation</button>
-                                <button class="payment-btn">Offline Donation</button>
-                                <button class="payment-btn">Credit Cart</button>
-                            </div>
-                        </div>
-                        <div class="contact__form">
-                            <h3 class="fw-700 mb-30 mt-40">Personal Information</h3>
-                            <form action="#">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <label for="name">First Name*</label>
-                                        <input id="name" class="bg-transparent bor" type="text"
-                                               placeholder="Fast Name">
-                                    </div>
-                                    <div class="col-6">
-                                        <label for="last-name">Last Name*</label>
-                                        <input class="bg-transparent bor" id="last-name" type="text"
-                                               placeholder="Last Name">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <label for="name">Email Address*</label>
-                                        <input id="email" class="bg-transparent bor" type="email"
-                                               placeholder="Email Address">
-                                    </div>
-                                    <div class="col-6">
-                                        <label for="amount">Donation Total*</label>
-                                        <input class="bg-transparent addAmount-value bor" id="amount" value="$250"
-                                               type="text">
-                                    </div>
-                                </div>
-                                <div class="btn-two">
-                                    <span class="btn-circle">
-                                    </span>
-                                    <a href="#" class="btn-inner">
-                                        <span class="btn-text">
-                                            Ửng Hộ
-                                        </span>
-                                    </a>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
                 </div>
                 <div class="col-lg-4 order-1 order-lg-2">
                     <div class="blog-single__right-item">
                         <div class="item shadow mb-30">
+                            <h5 class="title">Đóng Góp</h5>
+                            <div class="btn-two d-none d-lg-inline-block">
+                                <span class=" btn-circle">
+                                </span>
+                                <a asp-controller="Donation" asp-action="CreateQR" asp-route-campaignId="@campaignDetails.CampaignId" spot class="btn-inner">
+                                    <span class="btn-text">
+                                        Ủng Hộ
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="item shadow mb-30">
                             <h5 class="title">Chứng Thực</h5>
                             <ul class="category">
-                                <li><a href="@Url.Action("ViewAccounts", "Donation")">Báo Cáo Tài Chính</a></li>
+                                <li><a href="@Url.Action("DownloadAccountingBooks", "Donation", new {id=campaignDetails.CampaignId})">Báo Cáo Tài Chính</a></li>
                                 <li><a href="@Url.Action("Index", "Donation", new {id=campaignDetails.BankId})">Sao Kê</a></li>
                                 <li><a href="@Url.Action("CampaignActivity", "Campaignpage", new {id=campaignDetails.BankId})">Hoạt Động</a></li>
+                            </ul>
+                        </div>
+                        <div class="item shadow mb-30">
+                            <h5 class="title">Thông Tin Cập Nhật</h5>
+                            <ul class="category">
+                                <li>Báo Cáo Tài Chính</li>
+                                <li>Sao Kê</li>
+                                <li>Hoạt Động</li>
                             </ul>
                         </div>
                     </div>

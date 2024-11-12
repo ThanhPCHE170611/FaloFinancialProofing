@@ -85,7 +85,6 @@
 
                             const userId = decodedToken.nameid;
                             localStorage.setItem('userId', userId);
-
                             let roles = decodedToken.role || [];
                             if (!Array.isArray(roles)) {
                                 localStorage.setItem('loggingRole', roles);

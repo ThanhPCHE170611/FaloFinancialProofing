@@ -69,7 +69,7 @@
 	  <None Remove="Views\Campaignpage\CampaignActivity.cshtml" />
 	  <None Remove="Views\Campaignpage\CampaignList.cshtml" />
 	  <None Remove="Views\Campaignpage\Index.cshtml" />
-	  <None Remove="Views\Donation\Create.cshtml" />
+	  <None Remove="Views\Donation\CreateQR.cshtml" />
 	  <None Remove="Views\Donation\Index.cshtml" />
 	  <None Remove="Views\Donation\ViewAccounts.cshtml" />
 	  <None Remove="Views\Error\Error404.cshtml" />
@@ -93,7 +93,7 @@
 	  <Content Include="Views\Campaignpage\CampaignActivity.cshtml" />
 	  <Content Include="Views\Campaignpage\CampaignList.cshtml" />
 	  <Content Include="Views\Campaignpage\Index.cshtml" />
-	  <Content Include="Views\Donation\Create.cshtml" />
+	  <Content Include="Views\Donation\CreateQR.cshtml" />
 	  <Content Include="Views\Donation\Index.cshtml" />
 	  <Content Include="Views\Donation\ViewAccounts.cshtml" />
 	  <Content Include="Views\Error\Error404.cshtml" />
