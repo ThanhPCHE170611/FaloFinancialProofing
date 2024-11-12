@@ -71,7 +71,7 @@
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
                             <h6 class="text-white text-capitalize ps-3 mb-0">Project Management</h6>
-                            <div>
+                            <div id="createRequestBtn">
                                 <a class="btn btn-dark mb-0 me-3" asp-area="" asp-controller="Project" asp-action="ProjectCreate">Create Project (Individual)</a>
                                 <a class="btn btn-dark mb-0 me-3" asp-area="" asp-controller="Project" asp-action="ProjectCreate">Create Project (Organization)</a>
                             </div>
@@ -324,7 +324,9 @@
                 apiUrl = `https://localhost:7294/api/CreateProjectRequests/GetAllCreateProjectRequestsByUserId/${userId}`;
             }
 
-            
+            if(checkrole === 'Project Management Board') {
+
+            }
 
             function fetchProjectRequests(page) {
                 $.ajax({
@@ -358,26 +360,26 @@
                     let actionButtons = `
                         <button class="btn btn-success btn-sm" onclick="handleProjectApproval(this,${request.id}, true)">Approve</button>
                         <button class="btn btn-danger btn-sm" onclick="handleProjectApproval(this,${request.id}, false)">Decline</button>
-                        <a class="btn btn-info btn-sm" href="/Project/ProjectDetail/${request.id}">Detail</a>
+                        <a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail/requestId=${request.id}">Detail</a>
                     `;
                     if (request.status === "Accepted") {
                         actionButtons = `<span class="text-approved me-2" style="margin-left:25px">Approved</span>
-                                        <a href="/Prepay/PrepayDetail?requestId=${request.id}" class="text-blue me-2" >Detail</a>`;
+                                        <a href="/Project/ProjectRequestDetail?requestId=${request.id}" class="text-blue me-2" >Detail</a>`;
                     } else if (request.status === "Rejected") {
                         actionButtons = `<span class="text-declined me-2" style="margin-left:25px">Rejected</span>
-                                    <a href="/Prepay/PrepayDetail?requestId=${request.id}" class="text-blue me-2">Detail</a>`;
+                                    <a href="/Project/ProjectRequestDetail?requestId=${request.id}" class="text-blue me-2">Detail</a>`;
                     }
 
                     if (checkrole !== "Project Management Board") {
                         if(checkrole === "Project Manager") {
                             if(request.status === "Rejected" || request.status === "Pending") {
-                                actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectDetail/${request.id}">Detail</a>`;
+                                actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>`;
                             } else {
-                                actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectDetail/${request.projectId}">Detail</a>
+                                actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>
                                         <a class="btn btn-primary btn-sm" href="/Campaign/CampaignCreate?projectId=${request.projectId}">Campaign</a>`;
                             }
                         } else {
-                            actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectDetail/${request.projectId}">Detail</a>`;
+                            actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>`;
                         }
                         
                     }

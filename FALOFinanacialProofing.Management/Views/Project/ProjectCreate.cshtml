@@ -191,7 +191,7 @@
                 formData.append('OrganizationId', 0);
 
                 Array.from(files).forEach(file => {
-                    formData.append('UploadFiles', file);
+                    formData.append('FormFiles', file);
                 });
 
                 $.ajax({

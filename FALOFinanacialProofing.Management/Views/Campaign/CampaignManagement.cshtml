@@ -521,7 +521,9 @@
                         }
                     },
                     error: function (xhr, status, error) {
-                        alert('Error: ' + (xhr.responseText || status));
+                        const tableBody = $('#campaignTable tbody');
+                        tableBody.empty();
+                        tableBody.append('<tr><td colspan="6" class="text-center">No campaign requests found</td></tr>');
                     }
                 });
             }
