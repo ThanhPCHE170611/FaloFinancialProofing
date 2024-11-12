@@ -377,5 +377,65 @@ namespace FALOFinancialProofing.Services.CampaignService
                 return campaigns;
             }
         }
+
+        public async Task<Campaign?> UpdateEndDateForProjectManagerAsync(int campaignId, string userId, string currentRole, DateTime newDateTime, StringBuilder message)
+        {
+            try
+            {
+                // Check if current logging role is Project Manager
+                if (!currentRole.Equals(Resource.ProjectManagerRoleName))
+                {
+                    message.Append("You are not Project Manager");
+                    return null;
+                }
+                // check if campaign is exist
+                var campaignWithMemberAndRole = await campaignRepository.GetAll(x => x.Id == campaignId
+                                                    && !x.Status.Equals(Resource.CampaignStatus_Close)
+                                                    && x.IsActive)
+                    .Include(x => x.CampaignMembers)
+                    .ThenInclude(x => x.IdentityRole).FirstOrDefaultAsync();
+                if (campaignWithMemberAndRole == null)
+                {
+                    message.Append("Campaign not found or is close or is not active");
+                    return null;
+                }
+
+                // check if user is in campaign, is active and is Project Manager
+                var campaignMember = campaignWithMemberAndRole.CampaignMembers.FirstOrDefault(x => x.UserId == userId
+                                    && x.IsActive
+                                    && x.IdentityRole.Name.Equals(Resource.ProjectManagerRoleName));
+                if (campaignMember == null)
+                {
+                    message.Append("You are not in this campaign or is not active or is not Project Manager");
+                    return null;
+                }
+
+                // check if new date is valid
+                if (newDateTime.CompareTo(campaignWithMemberAndRole.EndDate) <= 0)
+                {
+                    message.Append("New date must be after the current end date");
+                    return null;
+                }
+
+                campaignWithMemberAndRole.EndDate = newDateTime;
+                var newUpdateLog = new StringBuilder(campaignWithMemberAndRole.UpdateLog);
+                 newUpdateLog.AppendLine($"Project Manager change end date to {newDateTime} at {DateTime.Now}");
+                campaignWithMemberAndRole.UpdateLog = newUpdateLog.ToString();
+                var canUpdate = await campaignRepository.UpdateAsync(campaignWithMemberAndRole);
+                if (!canUpdate)
+                {
+                    message.Append("Operation is not valid, update failed");
+                    return null;
+                }
+                return campaignWithMemberAndRole;
+
+            }
+            catch (Exception ex)
+            {
+                message.Append("Operation is not valid");
+                return null;
+            }
+            
+        }
     }
 }
