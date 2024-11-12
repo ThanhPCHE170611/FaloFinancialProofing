@@ -466,7 +466,7 @@ namespace FALOFinancialProofing.Services
                 new Claim(ClaimTypes.Name,User.LastName),
                 new Claim(ClaimTypes.DateOfBirth,User.BirthDate.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, User.Email),
-                new Claim(JwtRegisteredClaimNames.Sub, User.Email),
+                new Claim(JwtRegisteredClaimNames.Sub,  User.FirstName +" "+ User.LastName),
                 //tokenId
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.NameId, User.Id),

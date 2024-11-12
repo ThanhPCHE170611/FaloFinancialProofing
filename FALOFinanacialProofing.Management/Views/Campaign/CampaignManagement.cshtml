@@ -364,6 +364,7 @@
         }
         function handleCampaignReject(button,createProjectRequestId, isAllowed) {
             const userId = localStorage.getItem('userId');
+            const jwtToken = localStorage.getItem('jwtToken');
 
             const today = new Date();
             const year = today.getFullYear();
@@ -375,20 +376,20 @@
             const dateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 
             const payload = {
-                createProjectRequestId: createProjectRequestId,
-                approverId: userId,
-                dateOfApproval: dateTime,
-                isAllowed: isAllowed
+                CampaignRequestId: createProjectRequestId,
+                ApproverId: userId,
+                DateOfApproval: dateTime,
+                IsAllowed: isAllowed
             };
 
             console.log(isAllowed);
             console.log(createProjectRequestId);
             console.log(dateTime);
+            console.log("Token:" +jwtToken);
             console.log(userId);
 
-            const jwtToken = localStorage.getItem('jwtToken');
             $.ajax({
-                url: 'https://localhost:7294/api/CreateCampaignRequests/GetCreateCampaignRequestByPMB',
+                url: 'https://localhost:7294/api/CampaignRequestApproveHistories/CreateCampaignRequestApproveHistory',
                 type: 'POST',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`
@@ -449,6 +450,7 @@
 
         function handleProjectApproval(button, createProjectRequestId, isAllowed, bankingNumber) {
             const userId = localStorage.getItem('userId');
+
             const today = new Date();
             const year = today.getFullYear();
             const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -468,7 +470,7 @@
 
             console.log('Payload:', payload);
 
-            const jwtToken = localStorage.getItem('jwtToken');
+            
             $.ajax({
                 url: 'https://localhost:7294/api/CampaignRequestApproveHistories/CreateCampaignRequestApproveHistory',
                 type: 'POST',
@@ -534,11 +536,11 @@
                 }
 
                 data.forEach((request, index) => {
-                    const statusClass = getStatusClass(request.Status);
+                    const statusClass = getStatusClass(request.status);
                     let actionButtons = `
                         <button class="btn btn-success btn-sm" onclick="showBankingNumberPopup(this, ${request.id})">Approve</button>
-                        <button class="btn btn-danger btn-sm" onclick="handleCampaignReject(this,${request.id}, false)">Decline</button>
-                        <button class="btn btn-info btn-sm" onclick="changeCampaign(this,${request.id})">Detail</button>
+                        <button class="btn btn-danger btn-sm" onclick="handleCampaignReject(this, ${request.id}, false)">Decline</button>
+                        <button class="btn btn-info btn-sm" onclick="changeCampaign(this, ${request.id})">Detail</button>
                     `;
                     if (request.status === "Accepted") {
                         actionButtons = `<span class="text-approved me-2" style="margin-left:25px">Approved</span>

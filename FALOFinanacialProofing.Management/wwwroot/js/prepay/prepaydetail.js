@@ -4,6 +4,7 @@ $(document).ready(function () {
     const jwtToken = localStorage.getItem('jwtToken');
     const campaignId = localStorage.getItem('campaignid');
     const checkrole = localStorage.getItem('loggingRole');
+    const userId = localStorage.getItem('userId');
 
     if (checkrole && checkrole !== 'Volunteer') {
         const newLink = document.createElement('a');
@@ -62,6 +63,8 @@ $(document).ready(function () {
                     $(".left-section").append(`<p><strong>Voucher Files:</strong> No Attachment File</p>`);
                 }
 
+
+
                 const timelineContainer = $(".approval-timeline ul");
                 timelineContainer.empty();
 
@@ -91,6 +94,34 @@ $(document).ready(function () {
     </li>`;
                     timelineContainer.append(listItem);
                 });
+
+                if (data.approveProcesses[0] && data.approveProcesses[0].approveStatus.toLowerCase() === 'process' && data.createdBy === userId) {
+                    const cancelBtn = `<button id="cancelRequestBtn" class="btn btn-danger">Cancel</button>`;
+                    $(".back-button-container").append(cancelBtn);
+
+                    $("#cancelRequestBtn").on('click', function () {
+                        $.ajax({
+                            url: `https://localhost:7294/api/RequestForm/cancelrequest/${requestId}`,
+                            type: 'GET',
+                            headers: {
+                                'Authorization': `Bearer ${jwtToken}`
+                            },
+                            success: function (response) {
+                                if (response.success) {
+                                    alert(response.message);
+                                    location.reload(); 
+                                } else {
+                                    alert(`Failed to cancel: ${response.message}`);
+                                }
+                            },
+                            error: function () {
+                                alert("Error occurred while trying to cancel the request.");
+                            }
+                        });
+                    });
+                }
+
+
             } else {
                 alert(response.message);
             }

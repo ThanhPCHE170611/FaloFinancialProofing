@@ -1,81 +1,72 @@
 ﻿
 let currentDeclineButton = null;
-function showDeclinePopup(button) {
+let currentRequestId = null;
+function showDeclinePopup(button, requestId) {
     currentDeclineButton = button;
+    currentRequestId = requestId;
     document.getElementById('declineModal').style.display = 'block';
 }
-
 function submitDecline() {
-    if (!currentDeclineButton) return;
+    const userId = localStorage.getItem('userId');
+    const checkrole = localStorage.getItem('loggingRole');
+    const jwtToken = localStorage.getItem('jwtToken');
+    if (!currentDeclineButton || !currentRequestId) return;
 
-    const reason = document.getElementById('declineReason').value;
-    if (!reason.trim()) {
+    const reason = document.getElementById('declineReason').value.trim();
+    if (!reason) {
         alert('Please enter a reason for decline.');
         return;
     }
 
-    const row = currentDeclineButton.closest('tr');
-    const actionCell = row.querySelector('td:nth-child(9)');
-    currentDeclineButton.style.display = 'none';
-    row.querySelector('.btn-success').style.display = 'none';
+    
 
-    const detailButton = actionCell.querySelector('.btn-info');
-    const declinedText = document.createElement('span');
-    declinedText.classList.add('text-declined', 'me-2');
-    declinedText.textContent = 'Declined';
-    actionCell.insertBefore(declinedText, detailButton);
-
-    row.querySelector('td:nth-child(7)').innerHTML = '<span class="text-declined text-xs font-weight-bold">Declined</span>';
-    row.dataset.declineReason = reason;
-
-    document.getElementById('declineReason').value = '';
-    closeModal();
-}
-
-function showDetail(button) {
-    const row = button.closest('tr');
-    const stt = row.cells[0].innerText;
-    const sender = row.cells[1].innerText;
-    const money = row.cells[2].innerText;
-    const assignFrom = row.cells[3].innerText;
-    const file = row.cells[4].innerText;
-    const voucher = row.cells[5].innerText;
-    const status = row.cells[6].innerText;
-    const date = row.cells[7].innerText;
-
-    let detailContent = `
-                <p><strong>STT:</strong> ${stt}</p>
-                <p><strong>Sender:</strong> ${sender}</p>
-                <p><strong>Expected Money:</strong> ${money}</p>
-                <p><strong>Assign From:</strong> ${assignFrom}</p>
-                <p><strong>File:</strong> <a href="#" download="${file}">${file}</a></p>
-                <p><strong>Voucher:</strong> <a href="#" download="${voucher}">${voucher}</a></p>
-                <p><strong>Status:</strong> ${status}</p>
-                <p><strong>Cteated Date:</strong> ${date}</p>
-            `;
-
-    const declineReason = row.dataset.declineReason;
-    if (declineReason) {
-        detailContent += `<p><strong>Reason for Decline:</strong> ${declineReason}</p>`;
+    let apiUrl = '';
+    if (checkrole === "Volunteer Leader") {
+        apiUrl = `https://localhost:7294/api/ApproveProcess/rejectprepayrequestforvolunteerleader/${currentRequestId}?userid=${userId}&currentLoggingRole=${checkrole}&feedback=${reason}`;
+    } else if (checkrole === "Accounting") {
+        apiUrl = `https://localhost:7294/api/ApproveProcess/rejectprepayrequestforaccounting/${currentRequestId}?userid=${userId}&currentLoggingRole=${checkrole}&feedback=${reason}`;
+    } else if (checkrole === "Project Manager") {
+        apiUrl = `https://localhost:7294/api/ApproveProcess/rejectprepayrequestforprojectmanager/${currentRequestId}?userid=${userId}&currentLoggingRole=${checkrole}&feedback=${reason}`;
+    } else {
+        alert('Invalid role. Cannot decline request.');
+        closeModal();
+        return;
     }
-
-    document.getElementById('voucherDetailContent').innerHTML = detailContent;
-    document.getElementById('detailModal').style.display = 'block';
+    $.ajax({
+        url: apiUrl,
+        method: 'POST',
+        data:{
+            userid: userId,
+            currentLoggingRole: checkrole,
+            feedback: reason
+        },
+        headers: {
+            'Authorization': `Bearer ${jwtToken}`
+        },
+        success: function (response) {
+            if (response.success) {
+                updateRowToRejected(currentDeclineButton, currentRequestId);
+                alert('Request declined successfully.');
+            } else {
+                alert(response.message || 'Failed to decline the request.');
+            }
+            closeModalDeclinePrepay();
+        },
+        error: function (xhr) {
+            alert(`Error ${xhr.status}: ${xhr.responseText || 'An error occurred while declining the request.'}`);
+            closeModalDeclinePrepay();
+        }
+    });
 }
-
-function closeModal() {
+function closeModalDeclinePrepay() {
     document.getElementById('declineModal').style.display = 'none';
-    document.getElementById('detailModal').style.display = 'none';
+    document.getElementById('declineReason').value = '';
 }
 
 window.onclick = function (event) {
     const declineModal = document.getElementById('declineModal');
-    const detailModal = document.getElementById('detailModal');
     if (event.target === declineModal) {
-        declineModal.style.display = 'none';
-    }
-    if (event.target === detailModal) {
-        detailModal.style.display = 'none';
+        closeModal();
     }
 }
 function showFileUploadPopup(requestId) {
@@ -273,83 +264,33 @@ function approveRequest(button, requestId) {
     }
 }
 
-function declineRequest(button, requestId) {
-    const userId = localStorage.getItem('userId');
-    const checkrole = localStorage.getItem('loggingRole');
-    const jwtToken = localStorage.getItem('jwtToken');
 
-    if (checkrole === "Volunteer Leader") {
-        $.ajax({
-            url: `https://localhost:7294/api/ApproveProcess/rejectprepayrequestforvolunteerleader/${requestId}`,
-            method: 'GET',
-            data: {
-                userid: userId,
-                currentLoggingRole: checkrole
-            },
-            headers: {
-                'Authorization': `Bearer ${jwtToken}`
-            },
-            success: function (response) {
-                if (response.success) {
-                    updateRowToRejected(button, requestId);
-                    alert("Request declined successfully for Volunteer Leader.");
-                } else {
-                    alert(response.message || "Failed to decline the request.");
-                }
-            },
-            error: function () {
-                alert('Error occurred while declining the request. Please try again.');
-            }
-        });
-    }
-    if (checkrole === "Accounting") {
-        $.ajax({
-            url: `https://localhost:7294/api/ApproveProcess/rejectprepayrequestforaccounting/${requestId}`,
-            method: 'GET',
-            data: {
-                userid: userId,
-                currentLoggingRole: checkrole
-            },
-            headers: {
-                'Authorization': `Bearer ${jwtToken}`
-            },
-            success: function (response) {
-                if (response.success) {
-                    updateRowToRejected(button, requestId);
-                    alert("Request declined successfully for Volunteer Leader.");
-                } else {
-                    alert(response.message || "Failed to decline the request.");
-                }
-            },
-            error: function () {
-                alert('Error occurred while declining the request. Please try again.');
-            }
-        });
-    }
-    if (checkrole === "Project Manager") {
-        $.ajax({
-            url: `https://localhost:7294/api/ApproveProcess/rejectprepayrequestforprojectmanager/${requestId}`,
-            method: 'GET',
-            data: {
-                userid: userId,
-                currentLoggingRole: checkrole
-            },
-            headers: {
-                'Authorization': `Bearer ${jwtToken}`
-            },
-            success: function (response) {
-                if (response.success) {
-                    updateRowToRejected(button, requestId);
-                    alert("Request declined successfully for Volunteer Leader.");
-                } else {
-                    alert(response.message || "Failed to decline the request.");
-                }
-            },
-            error: function () {
-                alert('Error occurred while declining the request. Please try again.');
-            }
-        });
-    }
+function updateRowToRejected(button, id) {
+    const row = button.closest('tr');
+    const actionCell = row.querySelector('td:nth-child(9)');
+    const statusCell = row.querySelector('td:nth-child(7)');
+
+    const declinedText = document.createElement('span');
+    declinedText.classList.add('badge', 'badge-sm', 'bg-gradient-danger');
+    declinedText.textContent = 'Rejected';
+
+    button.style.display = 'none';
+    actionCell.querySelector('.btn-info').style.display = 'none';
+    actionCell.querySelector('.btn-success').style.display = 'none';
+
+    const rejectedText = document.createElement('span');
+    rejectedText.classList.add('text-declined', 'me-2');
+    rejectedText.textContent = 'Rejected';
+
+    const detailLink = document.createElement('a');
+    detailLink.href = `/Prepay/PrepayDetail?requestId=${id}`;
+    detailLink.classList.add('text-blue');
+    detailLink.textContent = 'Detail';
+
+    actionCell.appendChild(rejectedText);
+    actionCell.appendChild(detailLink);
+    statusCell.innerHTML = '';
+    statusCell.appendChild(declinedText);
 }
 
 function updateRowToApproved(button, id) {
@@ -429,34 +370,6 @@ function updateRowToApprovedForPM(button, id) {
     statusCell.appendChild(declinedText);
 }
 
-function updateRowToRejected(button, id) {
-    const row = button.closest('tr');
-    const actionCell = row.querySelector('td:nth-child(9)');
-    const statusCell = row.querySelector('td:nth-child(7)');
-
-    const declinedText = document.createElement('span');
-    declinedText.classList.add('badge', 'badge-sm', 'bg-gradient-danger');
-    declinedText.textContent = 'Rejected';
-
-    button.style.display = 'none';
-    actionCell.querySelector('.btn-info').style.display = 'none';
-    actionCell.querySelector('.btn-success').style.display = 'none';
-
-    const rejectedText = document.createElement('span');
-    rejectedText.classList.add('text-declined', 'me-2');
-    rejectedText.textContent = 'Rejected';
-
-    const detailLink = document.createElement('a');
-    detailLink.href = `/Prepay/PrepayDetail?requestId=${id}`;
-    detailLink.classList.add('text-blue');
-    detailLink.textContent = 'Detail';
-
-    actionCell.appendChild(rejectedText);
-    actionCell.appendChild(detailLink);
-    statusCell.innerHTML = '';
-    statusCell.appendChild(declinedText);
-}
-
 function downloadAttachment(fileName) {
     $.ajax({
         url: `https://localhost:7294/api/AttachmentFile/downloadprepayattachmentfile/${fileName}`,
@@ -499,6 +412,58 @@ function downloadVoucher(fileName) {
     });
 }
 
+function showAddMissingFilePopup(requestId) {
+    const popupHtml = `
+        <div id="addFileModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('addFileModal')">&times;</span>
+                <h3>Add Missing File</h3>
+                <input type="file" id="missingFileInput" class="form-control" />
+                <button class="btn btn-success mt-3" onclick="submitMissingFile(${requestId})">Submit</button>
+            </div>
+        </div>
+    `;
+    $('body').append(popupHtml);
+    $('#addFileModal').show();
+}
+
+function closeModal(modalId) {
+    $(`#${modalId}`).remove();
+}
+
+function submitMissingFile(requestId) {
+    const jwtToken = localStorage.getItem('jwtToken');
+    const fileInput = document.getElementById('missingFileInput');
+    if (fileInput.files.length === 0) {
+        alert('Please upload a file before submitting.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('attachment', fileInput.files[0]);
+
+    $.ajax({
+        url: `https://localhost:7294/api/RequestForm/addmissingattachmentforrequest/${requestId}`,
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: {
+            'Authorization': `Bearer ${jwtToken}`
+        },
+        success: function (response) {
+            if (response.success) {
+                alert(response.message);
+                location.reload();
+            } else {
+                alert('Failed to add missing file: ' + response.message);
+            }
+        },
+        error: function () {
+            alert('Error occurred while adding the missing file.');
+        }
+    });
+}
 $(document).ready(function () {
     const userId = localStorage.getItem('userId');
     // const campaignId = new URLSearchParams(window.location.search).get('campaignid');
@@ -515,7 +480,7 @@ $(document).ready(function () {
 
     if (checkrole && checkrole !== 'Volunteer') {
         const nametitle = document.getElementById('nametitle');
-        nametitle.textContent = 'Approve Payment Request';
+        nametitle.textContent = 'Approve Prepay Request';
 
         const createRequestLink = document.getElementById('create_request_page');
         createRequestLink.style.display = 'none';
@@ -565,6 +530,10 @@ $(document).ready(function () {
 
 
     function loadPrepayRequests(page) {
+
+        const statusFilter = document.getElementById('statusFilter').value;
+        const createdByFilter = document.getElementById('searchBox').value.trim();
+
         let apiUrl;
         switch (checkrole) {
             case "Accounting":
@@ -596,27 +565,32 @@ $(document).ready(function () {
                     prepayRequests.forEach((request, index) => {
                         const statusClass = request.status === "Approved" ? "bg-gradient-success" :
                             request.status === "Rejected" ? "bg-gradient-danger" :
+                                request.status === "Cancel" ? "bg-gradient-secondary" :
                                 "bg-gradient-warning";
                         const statusLabel = `<span class="badge badge-sm ${statusClass}">${request.status}</span>`;
 
                         let actionButtons = `<a class="btn btn-info btn-sm" href="/Prepay/PrepayDetail?requestId=${request.id}">Detail</a>`;
                         const isApproved = request.approveProcessStatus === "Approved";
                         const isRejected = request.approveProcessStatus === "Rejected";
+                        const isCancel = request.approveProcessStatus === "Cancel";
                         if (checkrole !== "Volunteer" && request.createdBy !== userId) {
-                            actionButtons = `
-                                        <button class="btn btn-success btn-sm" onclick="approveRequest(this,'${request.id}' )">Approve</button>
-                                        <button class="btn btn-danger btn-sm" onclick="declineRequest(this, '${request.id}')">Rejected</button>
-                                        ${actionButtons}
-                                    `;
                             if (isApproved) {
                                 actionButtons = `<span class="text-approved me-2" style="margin-left:25px">Approved</span>
                                                     <a href="/Prepay/PrepayDetail?requestId=${request.id}" class="text-blue me-2" >Detail</a>`;
                             } else if (isRejected) {
                                 actionButtons = `<span class="text-declined me-2" style="margin-left:25px">Rejected</span>
                                                     <a href="/Prepay/PrepayDetail?requestId=${request.id}" class="text-blue me-2">Detail</a>`;
+                            } else if (isCancel) {
+                                console.log("xx");
+                                actionButtons = `<a class="btn btn-info btn-sm" href="/Prepay/PrepayDetail?requestId=${request.id}">Detail</a>`;
+                            } else {
+                                actionButtons = `
+                                        <button class="btn btn-success btn-sm" onclick="approveRequest(this,'${request.id}' )">Approve</button>
+                                        <button class="btn btn-danger btn-sm" onclick="showDeclinePopup(this, '${request.id}')">Rejected</button>
+                                        ${actionButtons}
+                                    `;
                             }
                         }
-
                         let attachmentLinks = '';
                         if (request.attachmentFiles && request.attachmentFiles.length > 0) {
                             attachmentLinks = request.attachmentFiles.map(file => `
@@ -624,6 +598,11 @@ $(document).ready(function () {
                             `).join('<br>');
                         } else {
                             attachmentLinks = '<span class="text-muted">No Attachments</span>';
+                            if (request.status === "Approved" && request.createdBy === userId) {
+                                actionButtons += `
+                                <button class="btn btn-warning btn-sm" onclick="showAddMissingFilePopup(${request.id})">Add Missing File</button>
+                            `;
+                            }
                         }
 
                         let voucherLinks = '';

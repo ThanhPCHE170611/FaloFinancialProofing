@@ -91,20 +91,6 @@
             border-collapse: collapse;
         }
 
-        .btn-success {
-            background-color: #28a745;
-            color: #fff;
-        }
-
-        .btn-danger {
-            background-color: #dc3545;
-            color: #fff;
-        }
-
-        .btn-info {
-            background-color: #17a2b8;
-            color: #fff;
-        }
 
         th, td {
             padding: 10px;
@@ -146,7 +132,7 @@
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
                             <h6 class="text-white text-capitalize ps-3 mb-0">Accounting Book</h6>
-                            <button class="btn btn-dark mb-0 me-3" onclick="showCreateVoucherPopup()">
+                            <button id="btnupload" class="btn btn-dark mb-0 me-3" onclick="showCreateVoucherPopup()" hidden>
                                 Upload Accounting Book
                             </button>
                         </div>
@@ -157,8 +143,7 @@
                                 <thead class="text-center">
                                     <tr>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STT</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">File</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Create Date</th>                                        
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">File</th>                                    
                                         <th class="text-secondary text-secondary text-xxs font-weight-bolder opacity-7 text-center">Action</th>
                                     </tr>
                                 </thead>
@@ -205,6 +190,11 @@
         const userId = localStorage.getItem('userId');
         const jwtToken = localStorage.getItem('jwtToken');
         console.log(campaignId);
+
+        if(checkrole === "Accounting") {
+            const upload = document.getElementById('btnupload');
+            upload.style.display = 'none';
+        }
 
         if (checkrole && checkrole !== 'Volunteer') {
             const newLink = document.createElement('a');
@@ -267,14 +257,13 @@
             });
         }
 
-        function createTableRow(accountingBook) {
+                function createTableRow(accountingBook, index) {
             return `
                 <tr>
-                    <td>${accountingBook.id}</td>
-                    <td>${accountingBook.fileName}</td>
-                    <td>${accountingBook.createDate}</td>
+                    <td>${index + 1}</td>
+                    <td>${accountingBook.filePath}</td>
                     <td>
-                        <a href="#" class="btn btn-link text-info" onclick="downloadFile('${accountingBook.fileName}')">Download</a>
+                        <button class="btn btn-success btn-sm" onclick="downloadFile(this,'${accountingBook.filePath}')">Download</button>
                         <button class="btn btn-info btn-sm" onclick="showDetail(this)">Detail</button>
                         <button class="btn btn-danger btn-sm" onclick="deleteRow(this)">Delete</button>
                     </td>
@@ -290,7 +279,15 @@
                     'Authorization': `Bearer ${jwtToken}`
                 },
                 success: function (response) {
-                    populateTable(response.data);
+                    console.log('API Response:', response);
+                    if (response.success) {
+                        console.log('Data:', response.data);
+                        populateTable(response.data);
+                    } else {
+                        const tableBody = $('#voucherTableBody');
+                        tableBody.empty();
+                        tableBody.append('<tr><td colspan="3" class="text-center">No accounting books found</td></tr>');
+                    }
                 },
                 error: function (xhr, status, error) {
                     alert('An error occurred while fetching the accounting books.');
@@ -303,17 +300,14 @@
             const tableBody = $('#voucherTableBody');
             tableBody.empty();
 
-            if (!data || data.length === 0) {
-                tableBody.append('<tr><td colspan="4" class="text-center">No accounting books found</td></tr>');
-                return;
+            if (typeof data === 'object' && data !== null) {
+                tableBody.append(createTableRow(data, 0));
+            } else {
+                tableBody.append('<tr><td colspan="3" class="text-center">No accounting books found</td></tr>');
             }
-
-            data.forEach((item, index) => {
-                tableBody.append(createTableRow(item));
-            });
         }
 
-        function downloadFile(fileName) {
+        function downloadFile(button, fileName) {
             $.ajax({
                 url: `https://localhost:7294/api/AccountingBook/downloadaccountingbook/${fileName}`,
                 type: 'GET',

@@ -92,8 +92,8 @@
                     contentType: 'application/json',
                     data: JSON.stringify(registerData),
                     success: function(response) {
-                        if (response.Success) {
-                            // $('#registerMessage').html('<span class="text-success">Register Success</span>');
+                        if (response.success) {
+                            $('#registerMessage').html('<span class="text-success">Register Success</span>');
                             window.location.href = '/Authentication/Login';
                         } else {
                             $('#registerMessage').html('<span class="text-danger">' + response.message + '</span>');
