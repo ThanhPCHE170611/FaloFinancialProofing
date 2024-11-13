@@ -87,16 +87,24 @@
                         <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">table_view</i>
                         </div>
-                        <span class="nav-link-text ms-1">Project Management</span>
+                        <span class="nav-link-text ms-1">Project</span>
                     </a>
                 </li>
 
-                <li class="nav-item">
+                <li class="nav-item" id="campaignrequestTab">
+                    <a class="nav-link text-white " asp-area="" asp-controller="Campaign" asp-action="CampaignRequestManagement">
+                        <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="material-icons opacity-10">table_view</i>
+                        </div>
+                        <span class="nav-link-text ms-1">Campaign Request</span>
+                    </a>
+                </li>
+                <li class="nav-item" id="campaignlistTab">
                     <a class="nav-link text-white " asp-area="" asp-controller="Campaign" asp-action="CampaignManagement">
                         <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">table_view</i>
                         </div>
-                        <span class="nav-link-text ms-1">Campaign Management</span>
+                        <span class="nav-link-text ms-1">Campaign</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -104,7 +112,7 @@
                         <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">table_view</i>
                         </div>
-                        <span class="nav-link-text ms-1">Organization Management</span>
+                        <span class="nav-link-text ms-1">Organization</span>
                     </a>
                 </li>
 
@@ -303,6 +311,7 @@
             }
             if(checkrole !== "Project Manager" && checkrole !== "Project Management Board") {
                  document.getElementById('projectTab').style.display = 'none';
+                 document.getElementById('campaignrequestTab').style.display = 'none';
             }
          });
     </script>

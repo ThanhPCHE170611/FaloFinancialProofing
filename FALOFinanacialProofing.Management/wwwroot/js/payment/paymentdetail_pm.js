@@ -62,7 +62,7 @@ $(document).ready(function () {
     <li class="step-${statusClass} ${isLastItem ? 'current-step' : ''}" style="border-left: ${borderColor};">
         <div class="step-title">${process.userWithRole.roleName}</div>
         <div class="step-name">${process.userWithRole.fullName}</div>
-        <div class="timestamp">${new Date(data.createAt).toLocaleDateString()}</div>
+        <div class="timestamp">${process.userWithRole.email}</div>
         <div class="step-status" style="color: ${statusClass === 'approved' ? 'green' : (statusClass === 'rejected' ? 'red' : 'gray')};">
             Status: ${process.approveStatus}
         </div>
