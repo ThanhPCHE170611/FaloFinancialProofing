@@ -23,5 +23,6 @@ namespace FALOFinancialProofing.Services.AttachmentFIleServices
         Task<(byte[] fileBytes, string contentType, string fileName)> DownloadPaymentAttachmentFileByFileName(string fileName);
         Task<List<RequestForm>> GetAllAttachmentInCampaignByRequest(int campaignId);
         Task<(byte[] fileBytes, string contentType, string fileName)> DownloadAttachmentFileWithNoTypeByFileName(string fileName);
+        Task<List<RequestWithAttachmentFileResult>> GetAllPaymentAttachmentInCampaignWithRequest(int campaignId);
     }
 }
