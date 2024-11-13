@@ -138,23 +138,26 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             var campaignMembers = new List<CampaignMemberInformation>();
             try
             {
-                campaignMembers = await cmRepository.GetAll().Where(cm => cm.UserId.Equals(userId)).Select(cm => new CampaignMemberInformation()
-                {
-                    id = cm.Id,
-                    UserId = cm.UserId,
-                    UserName = cm.User.UserName,
-                    FirstName = cm.User.FirstName,
-                    LastName = cm.User.LastName,
-                    CampaignId = cm.CampaignId,
-                    CampaignTitle = cm.Campaign.Title,
-                    Debt = cm.Debt,
-                    IsActive = cm.IsActive,
-                    roleInformation = new RoleInformation()
+                campaignMembers = await cmRepository.GetAll()
+                    .Where(cm => cm.UserId.Equals(userId) && !string.IsNullOrEmpty(cm.Campaign.Status) && !cm.Campaign.Status.Equals(RequestStatus.Rejected)).Select(cm => new CampaignMemberInformation()
                     {
-                        RoleId = cm.RoleId,
-                        RoleName = cm.IdentityRole.Name
-                    }
-                }).ToListAsync();
+                        id = cm.Id,
+                        UserId = cm.UserId,
+                        UserName = cm.User.UserName,
+                        FirstName = cm.User.FirstName,
+                        LastName = cm.User.LastName,
+                        CampaignId = cm.CampaignId,
+                        CampaignTitle = cm.Campaign.Title,
+                        Debt = cm.Debt,
+                        IsActive = cm.IsActive,
+                        FundTarget = cm.Campaign.FundTarget,
+                        ProjectName = cm.Campaign.Project.ProjectName,
+                        roleInformation = new RoleInformation()
+                        {
+                            RoleId = cm.RoleId,
+                            RoleName = cm.IdentityRole.Name
+                        }
+                    }).ToListAsync();
             }
             catch (Exception ex)
             {

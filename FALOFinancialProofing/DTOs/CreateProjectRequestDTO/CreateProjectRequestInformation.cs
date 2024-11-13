@@ -17,6 +17,7 @@ namespace FALOFinancialProofing.DTOs.CreateProjectRequestDTO
         public DateTime CreatedAt { get; set; }
         public string? Feedback { get; set; }
         public string Status { get; set; }
+        public string? ProjectDescription { get; set; }
         public ICollection<CreateProjectFileInformation> CreateProjectFiles { get; set; }
         //public ICollection<CreateProjectRequestApproveHistory> CreateProjectRequestApproveHistories { get; set; }
 

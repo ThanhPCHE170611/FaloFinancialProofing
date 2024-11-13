@@ -5,6 +5,7 @@ using FALOFinancialProofing.Services;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -124,6 +125,13 @@ namespace FALOFinancialProofing.Controllers
             var image = bankService.ConvertBase64ToImage(response.data.qrDataURL);
 
             return File(image, "image/png");
+        }
+
+        [HttpPost("Test-DateOnly")]// yyyy-MM-dd
+        public async Task<IActionResult> GetBanks([FromForm] DateOnly dateOnly)
+        {
+            var date = dateOnly;
+            return Ok();
         }
     }
 }

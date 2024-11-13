@@ -223,7 +223,7 @@ namespace FALOFinancialProofing.Controllers
         }
         [RoleAttribute(AppRole.Admin)]
         [HttpGet("GetAccountList")]
-        public async Task<IActionResult> GetAllAccountInSystem(int currentPage = IntConstant.PageNumberDefault)
+        public async Task<IActionResult> GetAllAccountInSystem(string? searchInput, int currentPage = IntConstant.PageNumberDefault)
         {
             List<UserInformation_Admin> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -239,6 +239,11 @@ namespace FALOFinancialProofing.Controllers
                         Message = "Get All Account Failed!",
                         Data = filterPagingData
                     });
+                }
+                if (!string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = searchInput.Trim();
+                    data = data.FindAll(x => ($"{x.FirstName} {x.LastName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.Email}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || x.Roles.Any(rl => rl.RoleName.Contains(searchInput, StringComparison.OrdinalIgnoreCase)));
                 }
 
                 filterPagingData.DataCount = data.Count;
@@ -421,10 +426,9 @@ namespace FALOFinancialProofing.Controllers
                 });
             }
             var UserUpdated = await authServices.UpdateUserProfile(updateUserProfileRequest, message);
-            string imageUrl = $"{Request.Scheme}://{Request.Host}/{UserUpdated.Image}";
             return Ok(new ApiResponse()
             {
-                Success = checkValid,
+                Success = true,
                 Message = "Update Profile successfully"
             });
 

@@ -65,7 +65,9 @@ namespace FALOFinancialProofing.Controllers
         }
 
         [HttpGet("getallcurrentattachmentincampaign/{campaignId}")]
-        public async Task<IActionResult> GetAllCurrentAttachmentInCampaign(int campaignId, string? type,
+        public async Task<IActionResult> GetAllCurrentAttachmentInCampaign(int campaignId, 
+            string? type,
+            string? name,
             int page = IntConstant.PageNumberDefault)
         {
             var attachmentFiles = await attachmentFileServices.GetAllCurrentAttachmentInCampaign(campaignId);
@@ -90,6 +92,11 @@ namespace FALOFinancialProofing.Controllers
                     typeInt = IntConstant.PaymentRequestType;
                 }
                 filteredAttachmentFiles = filteredAttachmentFiles.Where(x => x.RequestForm.TypeId == typeInt).ToList();
+            }
+            if (String.IsNullOrEmpty(name))
+            {
+                filteredAttachmentFiles = filteredAttachmentFiles
+                    .Where(x => x.FilePath.ToLower().Contains(name.ToLower()));
             }
             var totalRecords = filteredAttachmentFiles.Count();
             var pagedResult = filteredAttachmentFiles

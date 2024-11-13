@@ -1,4 +1,5 @@
-﻿using FALOFinancialProofing.DTOs.CreateProjectFileDTO;
+﻿using FALOFinancialProofing.DTOs.CampaignDTO;
+using FALOFinancialProofing.DTOs.CreateProjectFileDTO;
 using FALOFinancialProofing.DTOs.CreateProjectRequestDTO;
 using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.Helpers;
@@ -79,6 +80,7 @@ namespace FALOFinancialProofing.Services.CreateProjectRequestServices
                         CreatedAt = s.CreatedAt,
                         Feedback = s.Feedback,
                         Status = s.Status,
+                        ProjectDescription = s.Project.Description,
                         CreateProjectFiles = s.CreateProjectFiles.Select(f => new CreateProjectFileInformation()
                         {
                             Id = f.Id,
@@ -187,7 +189,6 @@ namespace FALOFinancialProofing.Services.CreateProjectRequestServices
             return data;
         }
 
-        // admin can update transaction logs
         public async Task<bool> UpdateCreateProjectRequestAsync(CreateProjectRequest updateCreateProjectRequest)
         {
             CreateProjectRequest createProjectRequest = null!;
@@ -228,6 +229,49 @@ namespace FALOFinancialProofing.Services.CreateProjectRequestServices
             catch (Exception ex)
             {
                 await Console.Out.WriteLineAsync($"DeleteCreateProjectRequest: {ex.Message}");
+            }
+
+            return result;
+        }
+
+        public async Task<bool> ValidateCreateProjectRequestByUserIdAndRequestIdAsync(string userId, int CreateProjectRequestId, StringBuilder message)
+        {
+            bool checkValidUser = false;
+            try
+            {
+                var request = await _createProjectRequestRepository
+                      .Get(r => r.Id == CreateProjectRequestId && userId.Equals(r.SenderId));
+                if (request == null)
+                {
+                    throw new Exception("Not Valid User To Cancel Request!");
+                }
+                if (!request.Status.Equals(RequestStatus.Pending, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new Exception("Can not Cancel, request is not pending!");
+                }
+                checkValidUser = true;
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"ValidateCreateProjectRequestByUserIdAndRequestIdAsync: {ex.Message}");
+            }
+
+            return checkValidUser;
+        }
+
+        public async Task<bool> CancelCreateProjectRequestAsync(string userId, int CreateProjectRequestId)
+        {
+            bool result = false;
+            try
+            {
+                var createProjectRequest = await _createProjectRequestRepository.Get(CreateProjectRequestId);
+                createProjectRequest.Status = RequestStatus.Cancel;
+                result = await _createProjectRequestRepository.UpdateAsync(createProjectRequest);
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"CancelCreateProjectRequestAsync: {ex.Message}");
             }
 
             return result;
