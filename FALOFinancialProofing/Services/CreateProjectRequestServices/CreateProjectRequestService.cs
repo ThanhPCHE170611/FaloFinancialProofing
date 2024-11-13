@@ -80,6 +80,7 @@ namespace FALOFinancialProofing.Services.CreateProjectRequestServices
                         CreatedAt = s.CreatedAt,
                         Feedback = s.Feedback,
                         Status = s.Status,
+                        ProjectDescription = s.Project.Description,
                         CreateProjectFiles = s.CreateProjectFiles.Select(f => new CreateProjectFileInformation()
                         {
                             Id = f.Id,
