@@ -1,8 +1,8 @@
 ﻿@using FALOFinancialProofing.FALOHomePage.Services
-@model List<TransactionDetails>
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var transactionLogs = ViewBag.TransactionLogs as List<Transaction>;
 }
 
 <style>
@@ -32,14 +32,22 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var transaction in Model)
+            @if(transactionLogs != null){
+                @foreach (var transaction in Model)
+                {
+                    <tr>
+                        <td scope="col">@transaction.Reference</td>
+                        <td scope="col">@transaction.TransactionDateTime</td>
+                        <td scope="col">@transaction.Amount</td>
+                        <td scope="col">@transaction.Description</td>
+                        <td scope="col">@transaction.CounterAccountNumber</td>
+                    </tr>
+                }
+            }
+            else
             {
                 <tr>
-                    <td scope="col">@transaction.Reference</td>
-                    <td scope="col">@transaction.TransactionDateTime</td>
-                    <td scope="col">@transaction.Amount</td>
-                    <td scope="col">@transaction.Description</td> 
-                    <td scope="col">@transaction.CounterAccountNumber</td>
+                    <td scope="col"></td>
                 </tr>
             }
         </tbody>
@@ -48,36 +56,3 @@
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    // Function to fetch and update transactions
-    function fetchTransactions() {
-        $.ajax({
-            url: '@Url.Action("GetTransactionAsync", "TransactionPollingDirect")', // URL to call
-            type: 'GET',
-            success: function (data) {
-                // Clear the current table
-                $('#transactions-table tbody').empty();
-
-                // Populate the table with new data
-                data.forEach(function (transaction) {
-                    $('#transactions-table tbody').append(
-                        `<tr>
-                                <td>${transaction.id}</td>
-                                <td>${transaction.tid}</td>
-                                <td>${transaction.description}</td>
-                                <td>${transaction.amount}</td>
-                                <td>${new Date(transaction.when).toLocaleString()}</td>
-                                <td>${transaction.bankSubAccId}</td>
-                            </tr>`
-                    );
-                });
-            },
-            error: function (error) {
-                console.error("Error fetching transactions:", error);
-            }
-        });
-    }
-
-    // Set up polling every 60 seconds (60000 milliseconds)
-    setInterval(fetchTransactions, 60000);
-</script>

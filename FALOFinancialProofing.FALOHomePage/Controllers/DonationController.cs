@@ -24,8 +24,42 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
         }
         public async Task<IActionResult> Index(int id)
         {
-            var transactions = await _transactionPollingDirect.GetTransactionAsync(id);
-            return View(transactions);
+            //var transactions = await _transactionPollingDirect.GetTransactionAsync(id);
+            //return View(transactions);
+            if (id == null)
+            {
+                return RedirectToAction("Error404", "Error");
+            }
+            else
+            {
+                try
+                {
+                    // Get HttpClient from the factory
+                    var client = _httpClientFactory.CreateClient();
+
+                    // Make a GET request to the API
+                    HttpResponseMessage response = await client.GetAsync($"https://localhost:7294/api/TransactionLogs/GetCampaignTransactionLogs/{id}");
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string jsonResponse = await response.Content.ReadAsStringAsync();
+
+                        var transactionLogsResponse = JsonConvert.DeserializeObject<TransactionDTO.TransactionLogsResponse>(jsonResponse);
+
+                        ViewBag.Transactions = transactionLogsResponse.Data;
+                    }
+                    else
+                    {
+                        ViewBag.ErrorMessage = "Failed to fetch transaction logs.";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return RedirectToAction("Error404", "Error");
+                }
+
+                return View();
+             }
         }
 
         public async Task<IActionResult> ViewAccounts()
@@ -66,7 +100,7 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
 
 
                     //Create ViewBag for CampaignId, BankID and user id
-                    ViewBag.donationDetails = new QRDTO("49560d97-e252-46ab-aba5-d87d4269fa6d", 0, campaignDetails.Data.BankId, campaignId);
+                    ViewBag.donationDetails = new QRDTO("1cf471eb-03d6-40f3-ae97-85c16d42c475", 0, campaignDetails.Data.BankId, campaignId);
 
                     //Send User To Page with CampaignId, BankID and user id
                     return View();

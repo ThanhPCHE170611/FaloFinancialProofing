@@ -79,6 +79,8 @@
 	  <None Remove="Views\Shared\Error.cshtml" />
 	  <None Remove="Views\Shared\_Layout.cshtml" />
 	  <None Remove="Views\Shared\_ValidationScriptsPartial.cshtml" />
+	  <None Remove="Views\UserProfile\DonationHistory.cshtml" />
+	  <None Remove="Views\UserProfile\Profile.cshtml" />
 	  <None Remove="Views\_ViewImports.cshtml" />
 	  <None Remove="Views\_ViewStart.cshtml" />
 	  <None Remove="wwwroot\js\CassoBankList.js" />
@@ -103,6 +105,8 @@
 	  <Content Include="Views\Shared\Error.cshtml" />
 	  <Content Include="Views\Shared\_Layout.cshtml" />
 	  <Content Include="Views\Shared\_ValidationScriptsPartial.cshtml" />
+	  <Content Include="Views\UserProfile\DonationHistory.cshtml" />
+	  <Content Include="Views\UserProfile\Profile.cshtml" />
 	  <Content Include="Views\_ViewImports.cshtml" />
 	  <Content Include="Views\_ViewStart.cshtml" />
 	</ItemGroup>

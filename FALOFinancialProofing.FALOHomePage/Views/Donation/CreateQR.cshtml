@@ -46,6 +46,15 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <img id="qrCodeImage" src="" alt="QR Code" style="max-width: 50%; height: auto; margin: 0 auto; display: block;" />
+            <h10 style="font-style:italic; text-align: center">*Hãy nhấn nút dưới sau khi bạn đã chuyển tiền nhé*</h10>
+            <div class="btn-two text-center mt-4">
+                <span class="btn-circle"></span>
+                <a href="#" class="btn-inner" id="syncButton">
+                    <span class="btn-text">
+                        Đồng Bộ Giao Dịch
+                    </span>
+                </a>
+            </div> 
         </div>
     </div>
 
@@ -126,8 +135,12 @@
         const modal = document.getElementById("myModal");
         const qrCodeImage = document.getElementById("qrCodeImage");
 
-        // Set the image source to the received base64 image data
-        qrCodeImage.src = imageData;
+        if (imageData && imageData.startsWith('data:image')) {
+            qrCodeImage.src = imageData;  // Set the image source to the received base64 image data
+        } else {
+            console.error('Invalid image data:', imageData);  // Log error if the data is invalid
+            return;
+        }
 
         // Display the modal
         modal.style.display = "block";
@@ -145,6 +158,78 @@
             }
         }
     }
+
+    //Sync Transaction
+    document.addEventListener("DOMContentLoaded", function () {
+        var donateButton = document.getElementById('syncButton');
+        var QRDetails = @Html.Raw(donationDetailsJson);
+
+        console.log("QRDetails:", QRDetails);
+
+        if (!donateButton) {
+            console.error("Sync button not found!");
+        }
+
+        donateButton.addEventListener('click', function (e) {
+            e.preventDefault(); // Prevent the default link behavior
+
+            // Assuming you have QRDetails available from your previous code
+            var bankId = QRDetails.bankId;  // Assuming QRDetails is available from your previous code
+
+            if (!bankId) {
+                alert('Bank ID is missing.');
+                return;
+            }
+
+            // Step 1: Fetch bank details using the first API
+            fetch(`https://localhost:7294/api/Banks/GetBankById/${bankId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch bank details');
+                    }
+                    return response.json();  // Parse the response as JSON
+                })
+                .then(bankDetails => {
+                    console.log("Bank details:", bankDetails);
+
+                    // Extract account number from bank details
+                    var accountNumber = bankDetails.accountNumber;
+
+                    if (!accountNumber) {
+                        alert('Account number not found.');
+                        return;
+                    }
+
+                    // Step 2: Call the second API using the account number
+
+                    fetch(`https://localhost:7294/api/WebHooks/SyncTransaction/${accountNumber}`, {
+                        method: 'POST',  // POST request
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then(response => {
+                            if (response.status === 204) {
+                                // No content in response, but the request was successful
+                                console.log("Transaction successfully synced with no content in response.");
+                                alert('Transaction successfully synced!');
+                            } else {
+                                // Handle other non-204 responses (if any)
+                                throw new Error(`Unexpected response status: ${response.status}`);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Sync Transaction Error:', error);
+                            alert('An error occurred while syncing the transaction.');
+                        });
+                })
+                .catch(error => {
+                    console.error('GetBankById Error:', error);
+                    alert('An error occurred while fetching bank details.');
+                });
+        });
+    });
+
 </script>
 
 <style>
