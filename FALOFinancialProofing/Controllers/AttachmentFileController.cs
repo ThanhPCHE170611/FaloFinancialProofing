@@ -159,5 +159,47 @@ namespace FALOFinancialProofing.Controllers
                 Data = totalRecords
             });
         }
+
+        [HttpGet("getallpaymentattachmentincampaignwithrequest/{campaignId}")]
+        public async Task<IActionResult> GetAllPaymentAttachmentInCampaignWithRequest(int campaignId,
+            string? name,
+            int page = IntConstant.PageNumberDefault)
+        {
+            var attachmentFiles = await attachmentFileServices.GetAllPaymentAttachmentInCampaignWithRequest(campaignId);
+            if(!attachmentFiles.Any())
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "Attachment files not found"
+                });
+            }
+
+            var filteredAttachmentFiles = attachmentFiles.AsEnumerable();
+            if (String.IsNullOrEmpty(name))
+            {
+                filteredAttachmentFiles = filteredAttachmentFiles
+                    .Where(x => x.AttachmentFilePath != null && x.AttachmentFilePath.ToLower().Contains(name.ToLower()));
+            }
+            var totalRecords = filteredAttachmentFiles.Count();
+            var pagedResult = filteredAttachmentFiles
+            .Skip((page - 1) * IntConstant.PageSize)
+                .Take(IntConstant.PageSize)
+                .ToList();
+
+            var response = new
+            {
+                TotalRecords = totalRecords,
+                Page = page,
+                Data = pagedResult
+            };
+            return Ok(new
+            {
+                Success = true,
+                Message = "Attachment retrieved successfully.",
+                Data = response
+            });
+
+        }
     }
 }
