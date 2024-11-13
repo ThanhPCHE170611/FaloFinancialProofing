@@ -99,8 +99,6 @@
                                 <a asp-controller="Campaign" asp-action="CampaignDetail" class="active">Campaign Detail</a>
                                 <a asp-controller="Prepay" asp-action="PrepayManagement">Prepay Request</a>
                                 <a asp-controller="Payment" asp-action="PaymentManagement">Payment Request</a>
-                                @* <a asp-controller="Prepay" asp-action="PrepayVoucher">Prepay Voucher</a>
-                                <a asp-controller="Payment" asp-action="PaymentVoucher">Payment Voucher</a> *@
                                 <a asp-controller="Accounting" asp-action="AccountingBookCampaign">Accounting Book</a>
                                 <a asp-controller="Campaign" asp-action="Member">Member</a>
                             </nav>
@@ -226,34 +224,6 @@
                 fileList.appendChild(li);
             });
         });
-        document.querySelector('#save-btn .btn').addEventListener('click', function() {
-            const campaignName = document.getElementById('campaignName').value;
-            const location = document.getElementById('location').value;
-            const projectSelect = document.getElementById('projectSelect').value;
-            const creator = document.getElementById('creator').value;
-            const totalAmount = document.getElementById('totalAmount').value;
-            const bankAccountNumber = document.getElementById('realtimeAmount').value;
-            const startDate = document.getElementById('startDate').value;
-            const endDate = document.getElementById('endDate').value;
-            const campaignDescription = quill.root.innerHTML;
-            console.log({
-                campaignName,
-                location,
-                projectSelect,
-                creator,
-                totalAmount,
-                bankAccountNumber,
-                startDate,
-                endDate,
-                campaignDescription
-            });
-            alert('Campaign details saved!');
-        });
-        const checkrole = localStorage.getItem('loggingRole');
-        const campaignId = localStorage.getItem('campaignId');
-        const navTabs = document.getElementById('navTabs');
-
-        console.log(campaignId);
 
         if (checkrole && checkrole !== 'Volunteer') {
             const newLink = document.createElement('a');

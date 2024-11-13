@@ -37,56 +37,6 @@
             border: 1px solid #ddd;
         }
 
-        .popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 300px;
-            padding: 20px;
-            z-index: 1000;
-        }
-
-        .popup-content {
-            text-align: center;
-        }
-
-        .popup-actions {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-        }
-
-        .popup input {
-            width: 100%;
-            padding: 8px;
-            margin-top: 10px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-        }
-
-        .popup .btn {
-            width: 48%;
-        }
-
-        .badge-approved {
-            background-color: #28a745;
-            color: #fff;
-        }
-
-        .badge-declined {
-            background-color: #dc3545;
-            color: #fff;
-        }
-
-        .badge-pending {
-            background-color: #ffc107;
-            color: #fff;
-        }
     </style>
 </head>
 
@@ -107,9 +57,8 @@
                         <input type="text" id="searchInput" placeholder="Search by Campaign Name" class="search-box" onkeyup="searchCampaign()" />
                         <select id="statusFilter" class="filter-box" onchange="filterByStatus()">
                             <option value="">All Statuses</option>
-                            <option value="Approved">Approved</option>
-                            <option value="Pending">Pending</option>
-                            <option value="Declined">Declined</option>
+                            <option value="true">Active</option>
+                            <option value="false">Inactive</option>
                         </select>
                     </div>
 
@@ -118,19 +67,11 @@
                             <table class="table align-items-center mb-0" id="campaignTable">
                                 <thead class="text-center">
                                     <tr>
-@*                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 5%;">STT</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="width: 20%;">Campaign Name</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 20%;">Project</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Total Estimated Cost</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 10%;">Status</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Create Date</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Action</th> *@
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STT</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Campaign Name</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Project Name</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Created Date</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Actions</th>
+                                        <th class="text-uppercase text-secondary text-xs opacity-7">STT</th>
+                                        <th class="text-uppercase text-secondary text-xs opacity-7">Campaign Name</th>
+                                        <th class="text-uppercase text-secondary text-xs opacity-7">Project Name</th>
+                                        <th class="text-uppercase text-secondary text-xs opacity-7">Fund Target</th>
+                                        <th class="text-uppercase text-secondary text-xs opacity-7">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="text-center">
@@ -151,21 +92,8 @@
                                         <td class="align-middle text-center text-sm">
                                             <span class="text-secondary text-xs font-weight-bold">$10,000</span>
                                         </td>
-                                        <td class="align-middle text-center text-sm">
-                                            <span class="badge badge-sm bg-gradient-warning" id="status-1">Pending</span>
-                                        </td>
-                                        @*                                         <td class="align-middle text-center text-sm">
-                                            <select class="form-select" onchange="showSaveButton(this)">
-                                                <option value="fundraising">Gây Quỹ</option>
-                                                <option value="deployment">Triển Khai</option>
-                                                <option value="disbursement">Giải Ngân</option>
-                                            </select>
-                                        </td> *@
                                         <td class="align-middle text-center">
-                                            <button class="btn btn-success btn-sm" onclick="approveCampaign(1)">Approve</button>
-                                            <button class="btn btn-danger btn-sm" onclick="declineCampaign(1)">Decline</button>
                                             <button onclick="changeCampaign(this, 1)" class="btn btn-info btn-sm detail-btn">Detail</button>
-                                            <button class="btn btn-primary btn-sm save-btn" style="display:none;" onclick="saveProcess(this, 1)">Save</button>
                                         </td>
                                     </tr>
                                     <tr>
@@ -207,17 +135,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <!-- Popup for Banking Number Input -->
-        <div id="bankingNumberPopup" class="popup">
-            <div class="popup-content">
-                <h4>Approval Confirmation</h4>
-                <label for="bankingNumberInput">Banking Number:</label>
-                <input type="text" id="bankingNumberInput" class="form-control" placeholder="Enter banking number">
-                <div class="popup-actions">
-                    <button id="approveConfirmBtn" class="btn btn-success">Approve</button>
-                    <button id="cancelPopupBtn" class="btn btn-danger">Cancel</button>
+                <div class="pagination-container text-center mt-4">
+                    <div id="pagination"></div>
                 </div>
             </div>
         </div>
@@ -230,364 +149,97 @@
     <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-
-        function searchCampaign() {
-            var input = document.getElementById("searchInput").value.toLowerCase();
-            var table = document.getElementById("campaignTable");
-            var tr = table.getElementsByTagName("tr");
-
-            for (var i = 1; i < tr.length; i++) {
-                var td = tr[i].getElementsByTagName("td")[1];
-                if (td) {
-                    var txtValue = td.textContent || td.innerText;
-                    tr[i].style.display = txtValue.toLowerCase().indexOf(input) > -1 ? "" : "none";
-                }
-            }
+        function changeCampaign(button, Id) {
+            localStorage.setItem('campaignId', Id);
+            window.location.href = '/Campaign/CampaignDetail';
         }
-
-        function filterByStatus() {
-            var filter = document.getElementById("statusFilter").value;
-            var table = document.getElementById("campaignTable");
-            var tr = table.getElementsByTagName("tr");
-
-            for (var i = 1; i < tr.length; i++) {
-                var td = tr[i].getElementsByTagName("td")[4];
-                if (td) {
-                    var statusText = td.textContent || td.innerText;
-                    if (filter === "" || statusText === filter) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
-            }
-        }
-
-        function formatDateTime(dateString) {
-            if (!dateString) return 'N/A';
-
-            const date = new Date(dateString);
-            if (isNaN(date.getTime())) {
-                return 'Invalid Date';
-            }
-
-            const formattedDate = date.getDate().toString().padStart(2, '0') + '-' +
-                (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
-                date.getFullYear();
-
-            const formattedTime = date.getHours().toString().padStart(2, '0') + ':' +
-                date.getMinutes().toString().padStart(2, '0') + ':' +
-                date.getSeconds().toString().padStart(2, '0');
-
-            return formattedDate + ' ' + formattedTime;
-        }
-        function updateRowToApprovedForPM(button) {
-            const row = button.closest('tr');
-            const actionCell = row.querySelector('td:nth-child(6)');
-            const statusCell = row.querySelector('td:nth-child(5)');
-
-            const declinedText = document.createElement('span');
-            declinedText.classList.add('badge', 'badge-sm', 'bg-gradient-success');
-            declinedText.textContent = 'Approved';
-
-            button.style.display = 'none';
-            actionCell.querySelector('.btn-info').style.display = 'none';
-            actionCell.querySelector('.btn-danger').style.display = 'none';
-
-            const approvedText = document.createElement('span');
-            approvedText.classList.add('text-approved', 'me-2');
-            approvedText.textContent = 'Approved';
-
-            const detailLink = document.createElement('a');
-            detailLink.href = '#';
-            detailLink.classList.add('text-blue');
-            detailLink.textContent = 'Detail';
-            detailLink.addEventListener('click', function (event) {
-                event.preventDefault();
-                showDetail();
-            });
-            actionCell.appendChild(approvedText);
-            actionCell.appendChild(detailLink);
-            statusCell.innerHTML = '';
-            statusCell.appendChild(declinedText);
-        }
-
-        function updateRowToRejected(button) {
-            const row = button.closest('tr');
-            const actionCell = row.querySelector('td:nth-child(6)');
-            const statusCell = row.querySelector('td:nth-child(5)');
-
-            const declinedText = document.createElement('span');
-            declinedText.classList.add('badge', 'badge-sm', 'bg-gradient-danger');
-            declinedText.textContent = 'Rejected';
-
-            button.style.display = 'none';
-            actionCell.querySelector('.btn-info').style.display = 'none';
-            actionCell.querySelector('.btn-success').style.display = 'none';
-
-            const rejectedText = document.createElement('span');
-            rejectedText.classList.add('text-declined', 'me-2');
-            rejectedText.textContent = 'Rejected';
-
-            const detailLink = document.createElement('a');
-            detailLink.href = '#';
-            detailLink.classList.add('text-blue');
-            detailLink.textContent = 'Detail';
-            detailLink.addEventListener('click', function (event) {
-                event.preventDefault();
-                showDetail();
-            });
-
-            actionCell.appendChild(rejectedText);
-            actionCell.appendChild(detailLink);
-            statusCell.innerHTML = '';
-            statusCell.appendChild(declinedText);
-        }
-
-        function formatDateTime(dateString) {
-            if (!dateString) return 'N/A';
-
-            const date = new Date(dateString);
-            if (isNaN(date.getTime())) {
-                return 'Invalid Date';
-            }
-
-            const formattedDate = date.getDate().toString().padStart(2, '0') + '-' +
-                (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
-                date.getFullYear();
-
-            const formattedTime = date.getHours().toString().padStart(2, '0') + ':' +
-                date.getMinutes().toString().padStart(2, '0') + ':' +
-                date.getSeconds().toString().padStart(2, '0');
-
-            return formattedDate + ' ' + formattedTime;
-        }
-        function handleCampaignReject(button,createProjectRequestId, isAllowed) {
-            const userId = localStorage.getItem('userId');
-            const jwtToken = localStorage.getItem('jwtToken');
-
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
-            const hours = String(today.getHours()).padStart(2, '0');
-            const minutes = String(today.getMinutes()).padStart(2, '0');
-            const seconds = String(today.getSeconds()).padStart(2, '0');
-            const dateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
-
-            const payload = {
-                CampaignRequestId: createProjectRequestId,
-                ApproverId: userId,
-                DateOfApproval: dateTime,
-                IsAllowed: isAllowed
-            };
-
-            console.log(isAllowed);
-            console.log(createProjectRequestId);
-            console.log(dateTime);
-            console.log("Token:" +jwtToken);
-            console.log(userId);
-
-            $.ajax({
-                url: 'https://localhost:7294/api/CampaignRequestApproveHistories/CreateCampaignRequestApproveHistory',
-                type: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${jwtToken}`
-                },
-                contentType: 'application/json',
-                data: JSON.stringify(payload),
-                success: function (response) {
-                    if (response.success) {
-                        alert(response.message || 'Action completed successfully!');
-                        if (isAllowed) {
-                            updateRowToApprovedForPM(button);
-                        } else {
-                            updateRowToRejected(button);
-                        }
-                    } else {
-                        alert('Failed: ' + response.Message);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error in project approval:', error);
-                    alert('An error occurred. Please try again.');
-                }
-            });
-        }
-
         $(document).ready(function () {
-            const jwtToken = localStorage.getItem('jwtToken');
-            const checkrole = localStorage.getItem('loggingRole');
+            let currentPage = 1;
             const userId = localStorage.getItem('userId');
-            if (!jwtToken) {
-                alert('JWT token not found. Please log in.');
-                return;
-            }
-            let currentButton = null;
-            let currentRequestId = null;
+            const pageSize = 10; 
+            function fetchCampaignData(searchInput = '', isActive = null, page = 1) {
+                const jwtToken = localStorage.getItem('jwtToken');
 
-        function showBankingNumberPopup(button, requestId) {
-            currentButton = button;
-            currentRequestId = requestId;
-            $('#bankingNumberPopup').fadeIn();
-        }
-
-        $('#approveConfirmBtn').on('click', function () {
-            const bankingNumber = $('#bankingNumberInput').val();
-            if (!bankingNumber) {
-                alert('Please enter a banking number.');
-                return;
-            }
-
-            $('#bankingNumberPopup').fadeOut();
-
-            handleProjectApproval(currentButton, currentRequestId, true, bankingNumber);
-        });
-
-        $('#cancelPopupBtn').on('click', function () {
-            $('#bankingNumberPopup').fadeOut();
-        });
-
-        function handleProjectApproval(button, createProjectRequestId, isAllowed, bankingNumber) {
-            const userId = localStorage.getItem('userId');
-
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
-            const hours = String(today.getHours()).padStart(2, '0');
-            const minutes = String(today.getMinutes()).padStart(2, '0');
-            const seconds = String(today.getSeconds()).padStart(2, '0');
-            const dateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
-
-            const payload = {
-                createProjectRequestId: createProjectRequestId,
-                approverId: userId,
-                dateOfApproval: dateTime,
-                isAllowed: isAllowed,
-                bankingNumber: bankingNumber
-            };
-
-            console.log('Payload:', payload);
-
-            
-            $.ajax({
-                url: 'https://localhost:7294/api/CampaignRequestApproveHistories/CreateCampaignRequestApproveHistory',
-                type: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${jwtToken}`
-                },
-                contentType: 'application/json',
-                data: JSON.stringify(payload),
-                success: function (response) {
-                    if (response.success) {
-                        alert(response.message || 'Action completed successfully!');
-                        if (isAllowed) {
-                            updateRowToApprovedForPM(button);
-                        } else {
-                            updateRowToRejected(button);
-                        }
-                    } else {
-                        alert('Failed: ' + response.Message);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error in project approval:', error);
-                    alert('An error occurred. Please try again.');
-                }
-            });
-        }
-        window.showBankingNumberPopup = showBankingNumberPopup;
-
-            if (checkrole === "Project Management Board") {
-                $('.action-buttons').show();
-                apiUrl = 'https://localhost:7294/api/CreateCampaignRequests/GetCreateCampaignRequestByPMB';
-            } else {
-                apiUrl = `https://localhost:7294/api/CreateCampaignRequests/GetAllCreateProjectRequestsByUserId/${userId}`;
-            }
-            
-            function fetchCampaignRequests() {
                 $.ajax({
-                    url: apiUrl,
-                    type: 'GET',
+                    url: `https://localhost:7294/api/CampaignMember/GetAllCampaignMembersByUserId`,
+                    method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${jwtToken}`
                     },
+                    data: {
+                        searchInput: searchInput,
+                        userId: userId,
+                        isActive: isActive,
+                        currentPage: page
+                    },
                     success: function (response) {
                         if (response.success) {
-                            populateTable(response.data.data);
+                            renderTable(response.data.data);
+                            setupPagination(response.data.dataCount);
                         } else {
-                            alert('Failed to retrieve campaign requests: ' + response.message);
+                            $('#campaignTable tbody').html('<tr><td colspan="5">No data found.</td></tr>');
                         }
                     },
-                    error: function (xhr, status, error) {
-                        const tableBody = $('#campaignTable tbody');
-                        tableBody.empty();
-                        tableBody.append('<tr><td colspan="6" class="text-center">No campaign requests found</td></tr>');
+                    error: function (err) {
+                        $('#campaignTable tbody').html('<tr><td colspan="5">No data found.</td></tr>');
                     }
                 });
             }
 
-            function populateTable(data) {
+            function renderTable(data) {
                 const tableBody = $('#campaignTable tbody');
                 tableBody.empty();
-
                 if (data.length === 0) {
-                    tableBody.append('<tr><td colspan="6" class="text-center">No campaign requests found</td></tr>');
+                    tableBody.append('<tr><td colspan="5">No results found</td></tr>');
                     return;
                 }
 
-                data.forEach((request, index) => {
-                    const statusClass = getStatusClass(request.status);
-                    let actionButtons = `
-                        <button class="btn btn-success btn-sm" onclick="showBankingNumberPopup(this, ${request.id})">Approve</button>
-                        <button class="btn btn-danger btn-sm" onclick="handleCampaignReject(this, ${request.id}, false)">Decline</button>
-                        <button class="btn btn-info btn-sm" onclick="changeCampaign(this, ${request.id})">Detail</button>
-                    `;
-                    if (request.status === "Accepted") {
-                        actionButtons = `<span class="text-approved me-2" style="margin-left:25px">Approved</span>
-                                        <button onclick="changeCampaign(this,${request.id})" class="text-blue me-2" >Detail</button>`;
-                    } else if (request.status === "Rejected") {
-                        actionButtons = `<span class="text-declined me-2" style="margin-left:25px">Rejected</span>
-                                    <button onclick="changeCampaign(this,${request.id})" class="text-blue me-2">Detail</button>`;
-                    }
-
-                    if (checkrole !== "Project Management Board") {
-                        actionButtons = `<button class="btn btn-info btn-sm" onclick="changeCampaign(this,${request.id})">Detail</button>`;
-                    }
+                data.forEach((item, index) => {
                     const row = `
                         <tr>
-                            <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${index + 1}</span></td>
-                            <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${request.title}</span></td>
-                            <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${request.projectName}</span></td>
-                            <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${formatDateTime(request.createdAt)}</span></td>
-                            <td class="align-middle text-center text-sm"><span class="badge badge-sm ${statusClass}">${request.status}</span></td>
-                            <td class="align-middle text-center">${actionButtons}</td>
+                            <td class="align-middle text-center text-sm">${index + 1}</td>
+                            <td class="align-middle text-sm">${item.campaignTitle}</td>
+                            <td class="align-middle text-sm">${item.projectName}</td>
+                            <td class="align-middle text-center text-sm">$${item.fundTarget}</td>
+                            <td class="align-middle text-center">
+                                <button onclick="changeCampaign(this, ${item.campaignId})" class="btn btn-info btn-sm detail-btn">Detail</button>
+                            </td>
                         </tr>
                     `;
                     tableBody.append(row);
                 });
             }
 
-            function getStatusClass(status) {
-                if (status === "Accepted") return "badge-approved";
-                if (status === "Rejected") return "badge-declined";
-                return "badge-pending";
+            function setupPagination(totalItems) {
+                const totalPages = Math.ceil(totalItems / pageSize);
+                const paginationContainer = $('#pagination');
+                paginationContainer.empty();
+
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageButton = $(`<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}">${i}</button>`);
+                    pageButton.on('click', () => changePage(i));
+                    paginationContainer.append(pageButton);
+                }
+
+                $('.page-btn').click(function () {
+                    currentPage = $(this).data('page');
+                    fetchCampaignData($('#searchInput').val(), $('#statusFilter').val(), currentPage);
+                });
             }
 
-            // function formatDateTime(dateString) {
-            //     const date = new Date(dateString);
-            //     return date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
-            // }
+            $('#searchInput').on('keyup', function () {
+                currentPage = 1;
+                fetchCampaignData($(this).val(), $('#statusFilter').val(), currentPage);
+            });
 
-            fetchCampaignRequests();
+            $('#statusFilter').on('change', function () {
+                currentPage = 1;
+                fetchCampaignData($('#searchInput').val(), $(this).val(), currentPage);
+            });
 
-
+            fetchCampaignData();
         });
-        function changeCampaign(button, Id) {
-            localStorage.setItem('campaignId', Id);
-            window.location.href = '/Campaign/CampaignDetail';
-        }
+
     </script>
 
     <script async defer src="https://buttons.github.io/buttons.js"></script>
