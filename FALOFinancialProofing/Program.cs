@@ -54,6 +54,7 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 
             builder.Services.AddScoped(typeof(AuthServices));
+            builder.Services.AddScoped(typeof(RoleService));
             builder.Services.AddScoped<ITransactionLogService, TransactionLogService>();
 
             //builder.Services.AddHostedService<BankAccountPolling>();

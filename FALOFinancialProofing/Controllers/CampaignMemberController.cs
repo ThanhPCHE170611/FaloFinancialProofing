@@ -42,9 +42,9 @@ namespace FALOFinancialProofing.Controllers
                 Data = campaignMembers
             });
         }
-
+        // có thể là tự xem chính mình hoặc admin xem uid và rid này nằm trong những campaign nào
         [HttpGet("GetAllCampaignMembersByUserIdAndRoleId")]
-        public async Task<IActionResult> GetAllCampaignMembersByUserIdAndRoleId(string userId, string roleId, bool? isActive, int currentPage = IntConstant.PageNumberDefault)
+        public async Task<IActionResult> GetAllCampaignMembersByUserIdAndRoleId(string? searchInput, string userId, string roleId, bool? isActive, int currentPage = IntConstant.PageNumberDefault)
         {
             List<CampaignMemberInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -62,7 +62,11 @@ namespace FALOFinancialProofing.Controllers
                         Data = filterPagingData
                     });
                 }
-
+                if (!string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = searchInput.Trim();
+                    data = data.FindAll(x => ($"{x.CampaignTitle}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
+                }
                 if (isActive != null)
                 {
                     data = data.FindAll(x => x.IsActive == isActive);
@@ -83,7 +87,8 @@ namespace FALOFinancialProofing.Controllers
                 Data = filterPagingData
             });
         }
-
+        // admin xem của thằng khác
+        [RoleAttribute(AppRole.Admin)]
         [HttpGet("GetAllCampaignMembersByUserId")]
         public async Task<IActionResult> GetAllCampaignMembersByUserId(string? searchInput, string userId, bool? isActive, int currentPage = IntConstant.PageNumberDefault)
         {

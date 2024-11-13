@@ -34,6 +34,7 @@ namespace FALOFinancialProofing.Services
         private readonly SignInManager<User> signInManager;
         private readonly IRepository<CampaignMember, int> campaignMemberRepository;
         private readonly ISocialNetworkService socialNetworkService;
+        private readonly RoleService _roleService;
         //moi
         private readonly LinkGenerator _linkGenerator;
 
@@ -41,7 +42,7 @@ namespace FALOFinancialProofing.Services
         public AuthServices(UserManager<User> userManager, SignInManager<User> signInManager,
             IOptionsMonitor<AppSetting> optionsMonitor, RoleManager<IdentityRole> roleManager,
             IEmailService emailService,
-            LinkGenerator linkGenerator, IRepository<CampaignMember, int> campaignMemberRepository, ISocialNetworkService socialNetworkService)
+            LinkGenerator linkGenerator, IRepository<CampaignMember, int> campaignMemberRepository, ISocialNetworkService socialNetworkService, RoleService roleService)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
@@ -51,6 +52,7 @@ namespace FALOFinancialProofing.Services
             _linkGenerator = linkGenerator;
             this.campaignMemberRepository = campaignMemberRepository;
             this.socialNetworkService = socialNetworkService;
+            _roleService = roleService;
         }
         public async Task<bool> CheckUserExist(string userId, StringBuilder message)
         {
@@ -166,12 +168,14 @@ namespace FALOFinancialProofing.Services
                     Email = user.Email,
                     UserName = user.UserName,
                     BirthDate = user.BirthDate,
-                    RoleNames = userManager.GetRolesAsync(user).Result.ToList()
+                    RoleInformations = await _roleService.GetRoleInformationsByUserId(user.Id)
+                    //RoleNames = (await userManager.GetRolesAsync(user)).ToList()
                 };
                 return userDTO;
             }
             return null;
         }
+
 
         //public async Task<User?> RegisterUser(SignUpRequest registerRequest)
         //{
@@ -493,12 +497,14 @@ namespace FALOFinancialProofing.Services
                 //tokenId
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.NameId, User.Id),
+                //new Claim("RoleId", User.RoleNames),
                 //new Claim("TokenId", Guid.NewGuid().ToString()),
 
             };
-            foreach (var roleName in User.RoleNames)
+            foreach (var roleName in User.RoleInformations)
             {
-                authClaims.Add(new Claim(ClaimTypes.Role, roleName));
+                authClaims.Add(new Claim(ClaimTypes.Role, roleName.RoleName));
+                authClaims.Add(new Claim("RoleId", roleName.RoleId));
             }
             var tokenDescription = new SecurityTokenDescriptor
             {
