@@ -22,12 +22,13 @@ namespace FALOFinancialProofing.Controllers
         private readonly ITransactionLogService _transactionLogService;
         private readonly ICampaignService _campaignService;
         private readonly ICreateQrCodeService _createQrCodeService;
-        public WebHooksController(WebHookService webHookService, ITransactionLogService transactionLogService, ICampaignService campaignService, ICreateQrCodeService createQrCodeService)
+        public WebHooksController(WebHookService webHookService, ITransactionLogService transactionLogService, ICampaignService campaignService, ICreateQrCodeService createQrCodeService, IConfiguration configuration)
         {
             _webHookService = webHookService;
             _transactionLogService = transactionLogService;
             _campaignService = campaignService;
             _createQrCodeService = createQrCodeService;
+            secure_token = configuration.GetSection("Authentication:Casso:secure_token").Value;
         }
         // mẫu TransactionRequest
         [HttpPost("Create-Webhook")]
@@ -103,9 +104,9 @@ namespace FALOFinancialProofing.Controllers
                     string description = null;
                     if (stringSplit.Length >= 3)
                     {
-                        description = stringSplit[3].Trim();
+                        description = stringSplit.Where(x => x.StartsWith("C") && x.Contains("CC")).First();
                     }
-                    if (!description.Contains("CC") && !description.StartsWith("C"))
+                    if (description == null || !description.Contains("CC") && !description.StartsWith("C"))
                     {
                         continue;
                     }

@@ -13,10 +13,12 @@ namespace FALOFinancialProofing.Services
         private readonly string WebhookUrl = "https://oauth.casso.vn/v2/webhooks";
         private readonly string AccountNumberUrl = "https://oauth.casso.vn/v2/accounts";
 
-        public WebHookService(IHttpClientFactory httpClientFactory)
+        public WebHookService(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             _httpClient = httpClientFactory.CreateClient("MyHttpClient");
+            APIKey = configuration.GetSection("Authentication:Casso:Apikey").Value;
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Apikey", APIKey);
+
         }
         public async Task<SyncResponse> TransactionSync(SyncRequest request)
         {
@@ -25,7 +27,7 @@ namespace FALOFinancialProofing.Services
             {
 
                 var jsonData = JsonConvert.SerializeObject(request);
-                HttpContent httpContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                HttpContent httpContent = new StringContent(jsonData, Encoding.ASCII, "application/json");
                 var response = await _httpClient.PostAsync(SynUrl, httpContent);
                 string content = await response.Content.ReadAsStringAsync();
                 syncResponse = JsonConvert.DeserializeObject<SyncResponse>(content);

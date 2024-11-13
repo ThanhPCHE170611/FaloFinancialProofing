@@ -139,7 +139,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             try
             {
                 campaignMembers = await cmRepository.GetAll()
-                    .Where(cm => cm.UserId.Equals(userId) && !string.IsNullOrEmpty(cm.Campaign.Status)).Select(cm => new CampaignMemberInformation()
+                    .Where(cm => cm.UserId.Equals(userId) && !string.IsNullOrEmpty(cm.Campaign.Status) && !cm.Campaign.Status.Equals(RequestStatus.Rejected)).Select(cm => new CampaignMemberInformation()
                     {
                         id = cm.Id,
                         UserId = cm.UserId,
