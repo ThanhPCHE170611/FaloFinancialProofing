@@ -149,6 +149,8 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                     CampaignTitle = cm.Campaign.Title,
                     Debt = cm.Debt,
                     IsActive = cm.IsActive,
+                    FundTarget = cm.Campaign.FundTarget,
+                    ProjectName = cm.Campaign.Project.ProjectName,
                     roleInformation = new RoleInformation()
                     {
                         RoleId = cm.RoleId,
