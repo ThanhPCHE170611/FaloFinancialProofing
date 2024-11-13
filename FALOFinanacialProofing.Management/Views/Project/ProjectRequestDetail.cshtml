@@ -82,6 +82,10 @@
                                 <input type="text" class="form-control" id="receiverName" readonly>
                             </div>
                         </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" rows="4" readonly></textarea>
+                        </div>
                         <div class="mb-3" id="feedback-section">
                             <label for="feedback" class="form-label">Feedback</label>
                             <textarea class="form-control" id="feedback" rows="2" readonly></textarea>
@@ -143,6 +147,7 @@
                         $('#receiverName').val(data.receiverName);
                         $('#approver-section').show();
                     }
+                    $('#description').val(data.description);
                     $('#status').val(data.status);
 
                     if (data.status.toLowerCase() === 'reject') {

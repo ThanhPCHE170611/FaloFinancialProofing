@@ -35,6 +35,7 @@
         #docList li {
             margin-bottom: 5px;
         }
+
     </style>
 </head>
 
@@ -78,7 +79,10 @@
                                 <input type="text" class="form-control" id="receiverName" readonly>
                             </div>
                         </div>
-
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" rows="4" readonly></textarea>
+                        </div>
                         <div class="mb-3" id="feedback-section">
                             <label for="feedback" class="form-label">Feedback</label>
                             <textarea class="form-control" id="feedback" rows="3" readonly></textarea>
@@ -96,7 +100,7 @@
                 </div>
 
                 <div id="save-btn">
-                    <a href="projectmanagement" class="btn btn-success btn-lg" style="margin-left:10px">Back to List</a>
+                    <a href="/Campaign/CampaignRequestManagement" class="btn btn-success btn-lg" style="margin-left:10px">Back to List</a>
                 </div>
             </div>
         </div>
@@ -136,8 +140,8 @@
                     $('#senderName').val(data.senderName);
                     $('#createdAt').val(formatDateTime(data.createdAt));
                     $('#status').val(data.status);
-
-                    if (data.receiverName) {
+                    $('#description').val(data.description);
+                    if (data.receiverName !== ' ') {
                         $('#receiverName').val(data.receiverName);
                         $('#approver-section').show();
                     }

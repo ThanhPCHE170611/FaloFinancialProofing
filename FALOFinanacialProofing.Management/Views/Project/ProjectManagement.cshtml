@@ -344,8 +344,9 @@
                         }
                     },
                     error: function (xhr, status, error) {
-                        console.error('Error fetching project requests:', error);
-                        alert('An error occurred while fetching project requests.');
+                        const tableBody = $('#projectTable tbody');
+                        tableBody.empty();
+                        tableBody.append('<tr><td colspan="6" class="text-center">No campaign requests found</td></tr>');
                     }
                 });
             }
@@ -353,6 +354,11 @@
             function populateTable(data) {
                 const tableBody = $('#projectTable tbody');
                 tableBody.empty();
+
+                if (data.length === 0) {
+                    tableBody.append('<tr><td colspan="6" class="text-center">No campaign requests found</td></tr>');
+                    return;
+                }
 
                 data.forEach((request, index) => {
                     const statusClass = getStatusClass(request.status);
@@ -387,7 +393,7 @@
                         <tr>
                             <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${index + 1}</span></td>
                             <td class="align-middle text-center text-sm"><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">${request.title}</span></div></td>
-                            <td class="align-middle text-center text-sm"><div class="d-flex px-2 py-1"><span class="text-center text-xs font-weight-bold">${request.senderName}</span></div></td>
+                            <td class="align-middle text-center text-sm"><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">${request.senderName}</span></div></td>
                             <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${formatDateTime(request.createdAt)}</span></td>
                             <td class="align-middle text-center text-sm">
                                 <span class="badge badge-sm ${statusClass}">${request.status}</span>

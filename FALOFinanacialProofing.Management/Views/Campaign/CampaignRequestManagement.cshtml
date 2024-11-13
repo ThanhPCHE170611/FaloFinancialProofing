@@ -497,7 +497,7 @@
                 $('.action-buttons').show();
                 apiUrl = 'https://localhost:7294/api/CreateCampaignRequests/GetCreateCampaignRequestByPMB';
             } else {
-                apiUrl = `https://localhost:7294/api/CreateCampaignRequests/GetAllCreateProjectRequestsByUserId/${userId}`;
+                apiUrl = `https://localhost:7294/api/CreateCampaignRequests/GetAllCreateCampaignRequestsByUserId/${userId}`;
             }
 
             function fetchCampaignRequests() {
@@ -511,7 +511,9 @@
                         if (response.success) {
                             populateTable(response.data.data);
                         } else {
-                            alert('Failed to retrieve campaign requests: ' + response.message);
+                            const tableBody = $('#campaignTable tbody');
+                            tableBody.empty();
+                            tableBody.append('<tr><td colspan="6" class="text-center">No campaign requests found</td></tr>');
                         }
                     },
                     error: function (xhr, status, error) {
