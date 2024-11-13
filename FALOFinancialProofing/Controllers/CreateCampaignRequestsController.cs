@@ -32,7 +32,7 @@ namespace FALOFinancialProofing.Controllers
 
         [RoleAttribute(AppRole.ProjectManagementBoard)]
         [HttpGet("GetCreateCampaignRequestByPMB")]
-        public async Task<ActionResult<List<CreateCampaignRequestInformation>>> GetCreateCampaignRequests(string? status, int currentPage = IntConstant.PageNumberDefault)
+        public async Task<ActionResult<List<CreateCampaignRequestInformation>>> GetCreateCampaignRequests(string? searchInput, string? status, int currentPage = IntConstant.PageNumberDefault)
         {
             StringBuilder message = new StringBuilder();
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -52,6 +52,11 @@ namespace FALOFinancialProofing.Controllers
                     });
                 }
                 message.Append("GetCreateCampaignRequests Successfully!");
+                if (!string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = searchInput.Trim();
+                    data = data.FindAll(x => ($"{x.SenderName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.ReceiverName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.Title}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.ProjectName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
+                }
                 if (!string.IsNullOrEmpty(status))
                 {
                     data = data.FindAll(x => x.Status.Equals(status));
@@ -74,8 +79,8 @@ namespace FALOFinancialProofing.Controllers
         }
         // sender use this
         [RoleAttribute(AppRole.ProjectManager)]
-        [HttpGet("GetAllCreateProjectRequestsByUserId/{UserId}")]
-        public async Task<IActionResult> GetAllCreateProjectRequestsByUserId(string UserId, string? status, int currentPage = IntConstant.PageNumberDefault)
+        [HttpGet("GetAllCreateCampaignRequestsByUserId/{UserId}")]
+        public async Task<IActionResult> GetAllCreateCampaignRequestsByUserId(string? searchInput, string UserId, string? status, int currentPage = IntConstant.PageNumberDefault)
         {
             List<CreateCampaignRequestInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -89,9 +94,14 @@ namespace FALOFinancialProofing.Controllers
                     return Ok(new ApiResponse()
                     {
                         Success = false,
-                        Message = "Get All CreateProjectRequests By UserId Failed!",
+                        Message = "Get All Create Campaign Requests By UserId Failed!",
                         Data = filterPagingData
                     });
+                }
+                if (!string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = searchInput.Trim();
+                    data = data.FindAll(x => ($"{x.SenderName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.ReceiverName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.Title}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.ProjectName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
                 }
                 if (!string.IsNullOrEmpty(status))
                 {
@@ -103,12 +113,12 @@ namespace FALOFinancialProofing.Controllers
             }
             catch (Exception ex)
             {
-                await Console.Out.WriteLineAsync($"GetAllCreateProjectRequestsByUserId: {ex.Message}");
+                await Console.Out.WriteLineAsync($"Get All Create Campaign Requests By UserId: {ex.Message}");
             }
             return Ok(new ApiResponse()
             {
                 Success = true,
-                Message = "GetAllCreateProjectRequestsByUserId Successfully!",
+                Message = "Get All Create Campaign Requests By UserId Successfully!",
                 Data = filterPagingData
             });
         }
@@ -193,6 +203,41 @@ namespace FALOFinancialProofing.Controllers
             }
 
             return Content(statusMessage);
+        }
+        [HttpPut("CancelCreateCampaignRequest/{userId}/{CreateCampaignRequestId}")]
+        public async Task<IActionResult> CancelCreateCampaignRequest(string userId, int CreateCampaignRequestId)
+        {
+            StringBuilder statusMessage = new StringBuilder();
+            bool checkValid = false;
+            try
+            {
+                checkValid = await _createCampaignRequestService.ValidateCreateCampaignRequestByUserIdAndRequestIdAsync(userId, CreateCampaignRequestId, statusMessage);
+                if (!checkValid)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = checkValid,
+                        Message = statusMessage.ToString()
+                    });
+                }
+                checkValid = await _createCampaignRequestService.CancelCreateCampaignRequestAsync(userId, CreateCampaignRequestId);
+                if (!checkValid)
+                {
+                    throw new Exception("Cancel CreateCampaignRequest Failed!");
+                }
+                statusMessage.Append("Cancel CreateCampaignRequest Successfully!");
+            }
+            catch (Exception ex)
+            {
+                statusMessage.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"CancelCreateCampaignRequest: {ex.Message}");
+            }
+
+            return Ok(new ApiResponse()
+            {
+                Success = checkValid,
+                Message = statusMessage.ToString()
+            });
         }
     }
 }

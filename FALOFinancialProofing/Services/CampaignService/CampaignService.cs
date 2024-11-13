@@ -55,7 +55,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                 EndDate = createCampaignDTO.EndDate,
                 Address = createCampaignDTO.Address,
                 IsActive = createCampaignDTO.IsActive,
-                BankingNumber = createCampaignDTO.BankingNumber,
+                //BankingNumber = createCampaignDTO.BankingNumber,
                 BankId = createCampaignDTO.BankId,
                 Status = createCampaignDTO.Status
             };
@@ -81,10 +81,10 @@ namespace FALOFinancialProofing.Services.CampaignService
                         EndDate = p.EndDate,
                         Address = p.Address,
                         IsActive = p.IsActive,
-                        BankingNumber = p.BankingNumber,
+                        //BankingNumber = p.BankingNumber,
                         BankId = p.BankId,
                         Status = p.Status,
-                        TotalMoneyEarned = p.TransactionLogs.Sum(x => x.Amount)
+                        TotalMoneyEarned = p.TransactionLogs.Sum(x => (double)x.Amount)
                     }).ToListAsync();
             }
             catch (Exception ex)
@@ -115,10 +115,10 @@ namespace FALOFinancialProofing.Services.CampaignService
                         EndDate = p.EndDate,
                         Address = p.Address,
                         IsActive = p.IsActive,
-                        BankingNumber = p.BankingNumber,
+                        //BankingNumber = p.BankingNumber,
                         BankId = p.BankId,
                         Status = p.Status,
-                        TotalMoneyEarned = p.TransactionLogs.Sum(x => x.Amount)
+                        TotalMoneyEarned = p.TransactionLogs.Sum(x => (double)x.Amount)
                     }).ToListAsync();
             }
             catch (Exception ex)
@@ -152,10 +152,10 @@ namespace FALOFinancialProofing.Services.CampaignService
                         EndDate = p.EndDate,
                         Address = p.Address,
                         IsActive = p.IsActive,
-                        BankingNumber = p.BankingNumber,
+                        //BankingNumber = p.BankingNumber,
                         BankId = p.BankId,
                         Status = p.Status,
-                        TotalMoneyEarned = p.TransactionLogs.Sum(x => x.Amount)
+                        TotalMoneyEarned = p.TransactionLogs.Sum(x => (double)x.Amount)
                     }).SingleOrDefaultAsync();
             }
             catch (Exception ex)
@@ -231,7 +231,7 @@ namespace FALOFinancialProofing.Services.CampaignService
             campaignModels.EndDate = updateCampaignDTO.EndDate;
             campaignModels.Address = updateCampaignDTO.Address;
             campaignModels.IsActive = updateCampaignDTO.IsActive;
-            campaignModels.BankingNumber = updateCampaignDTO.BankingNumber;
+            //campaignModels.BankingNumber = updateCampaignDTO.BankingNumber;
             campaignModels.BankId = updateCampaignDTO.BankId;
             campaignModels.Status = updateCampaignDTO.Status;
         }
@@ -323,7 +323,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                     EndDate = createCampaignClientRequest.EndDate,
                     Address = createCampaignClientRequest.Address,
                     IsActive = createCampaignClientRequest.IsActive,
-                    BankingNumber = createCampaignClientRequest.BankingNumber,
+                    //BankingNumber = createCampaignClientRequest.BankingNumber,
                     BankId = createCampaignClientRequest.BankId,
                     Status = createCampaignClientRequest.Status,
                 };
@@ -419,7 +419,7 @@ namespace FALOFinancialProofing.Services.CampaignService
 
                 campaignWithMemberAndRole.EndDate = newDateTime;
                 var newUpdateLog = new StringBuilder(campaignWithMemberAndRole.UpdateLog);
-                 newUpdateLog.AppendLine($"Project Manager change end date to {newDateTime} at {DateTime.Now}");
+                newUpdateLog.AppendLine($"Project Manager change end date to {newDateTime} at {DateTime.Now}");
                 campaignWithMemberAndRole.UpdateLog = newUpdateLog.ToString();
                 var canUpdate = await campaignRepository.UpdateAsync(campaignWithMemberAndRole);
                 if (!canUpdate)
@@ -435,7 +435,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                 message.Append("Operation is not valid");
                 return null;
             }
-            
+
         }
     }
 }

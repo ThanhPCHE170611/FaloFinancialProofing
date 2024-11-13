@@ -1,10 +1,11 @@
-using FALOFinancialProofing.Attributes;
+﻿using FALOFinancialProofing.Attributes;
 using FALOFinancialProofing.Attributes.RoleAttributes;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Services;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -20,8 +21,8 @@ namespace FALOFinancialProofing.Controllers
 
         private readonly ILogger<WeatherForecastController> _logger;
 
-        private readonly BankService bankService;
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, BankService bankService)
+        private readonly BankService1 bankService;
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, BankService1 bankService)
         {
             _logger = logger;
             this.bankService = bankService;
@@ -102,21 +103,35 @@ namespace FALOFinancialProofing.Controllers
         [HttpGet("Get-Banks")]
         public async Task<IActionResult> GetBanks()
         {
+            //if (HttpContext.Request.Headers.ContainsKey("Authorization"))
+            //{
+            //    var token = HttpContext.Request.Headers["Authorization"].ToString();
+            //    var banks = await bankService.GetBanks();
+            //    return Ok(banks);
+            //}
             var b = await bankService.GetBanks();
             BankRequest bankRequest = new BankRequest()
             {
-                accountNo = 1016161976,
+                accountNo = "1016161976",
                 accountName = "Nguyen Van Duc",
                 acqId = 970436,
-                amount = 100000,
+                amount = 1041321,
                 addInfo = "Test chuyen tien",
                 format = "text",
                 template = "print"
             };
             var response = await bankService.GetQRCode(bankRequest);
+            // lấy ra qrDataURL trong response.data
             var image = bankService.ConvertBase64ToImage(response.data.qrDataURL);
 
             return File(image, "image/png");
+        }
+
+        [HttpPost("Test-DateOnly")]// yyyy-MM-dd
+        public async Task<IActionResult> GetBanks([FromForm] DateOnly dateOnly)
+        {
+            var date = dateOnly;
+            return Ok();
         }
     }
 }

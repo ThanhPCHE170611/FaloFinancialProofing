@@ -36,7 +36,7 @@ namespace FALOFinancialProofing.Controllers
         // hiển thị toàn bộ các yêu cầu tạo dự án
         [RoleAttribute(AppRole.ProjectManagementBoard)]
         [HttpGet("GetCreateProjectRequestByPMB")]
-        public async Task<ActionResult<List<CreateProjectRequestInformation>>> GetCreateProjectRequests(string? status, int currentPage = IntConstant.PageNumberDefault)
+        public async Task<ActionResult<List<CreateProjectRequestInformation>>> GetCreateProjectRequests(string? searchInput, string? status, int currentPage = IntConstant.PageNumberDefault)
         {
             StringBuilder message = new StringBuilder();
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -56,6 +56,11 @@ namespace FALOFinancialProofing.Controllers
                     });
                 }
                 message.Append("Get All CreateProjectRequests Successfully!");
+                if (!string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = searchInput.Trim();
+                    data = data.FindAll(x => ($"{x.SenderName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.ReceiverName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.Title}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
+                }
                 if (!string.IsNullOrEmpty(status))
                 {
                     data = data.FindAll(x => x.Status.Equals(status));
@@ -93,7 +98,7 @@ namespace FALOFinancialProofing.Controllers
                     return Ok(new ApiResponse()
                     {
                         Success = false,
-                        Message = "Get All Campaign By ProjectId Failed!",
+                        Message = "Get All CreateProjectRequests By UserId Failed!",
                         Data = filterPagingData
                     });
                 }
@@ -107,12 +112,12 @@ namespace FALOFinancialProofing.Controllers
             }
             catch (Exception ex)
             {
-                await Console.Out.WriteLineAsync($"GetAllCreateProjectRequestsByUserId: {ex.Message}");
+                await Console.Out.WriteLineAsync($"Get All CreateProjectRequests By UserId: {ex.Message}");
             }
             return Ok(new ApiResponse()
             {
                 Success = true,
-                Message = "GetAllCreateProjectRequestsByUserId Successfully!",
+                Message = "Get All CreateProjectRequests ByUserId Successfully!",
                 Data = filterPagingData
             });
         }
@@ -140,10 +145,6 @@ namespace FALOFinancialProofing.Controllers
             var statusMessage = "";
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
                 statusMessage = await _createProjectRequestService.UpdateCreateProjectRequestAsync(UpdateCreateProjectRequest) != false ? "Update CreateProjectRequest Successfully!" : throw new Exception();
             }
             catch (Exception ex)
@@ -154,7 +155,42 @@ namespace FALOFinancialProofing.Controllers
 
             return Content(statusMessage);
         }
+        // Hủy đơn mình đã tạo
+        [HttpPut("CancelCreateProjectRequest/{userId}/{CreateProjectRequestId}")]
+        public async Task<IActionResult> CancelCreateProjectRequest(string userId, int CreateProjectRequestId)
+        {
+            StringBuilder statusMessage = new StringBuilder();
+            bool checkValid = false;
+            try
+            {
+                checkValid = await _createProjectRequestService.ValidateCreateProjectRequestByUserIdAndRequestIdAsync(userId, CreateProjectRequestId, statusMessage);
+                if (!checkValid)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = checkValid,
+                        Message = statusMessage.ToString()
+                    });
+                }
+                checkValid = await _createProjectRequestService.CancelCreateProjectRequestAsync(userId, CreateProjectRequestId);
+                if (!checkValid)
+                {
+                    throw new Exception("Cancel CreateProjectRequest Failed!");
+                }
+                statusMessage.Append("Cancel CreateProjectRequest Successfully!");
+            }
+            catch (Exception ex)
+            {
+                statusMessage.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"CancelCreateProjectRequest: {ex.Message}");
+            }
 
+            return Ok(new ApiResponse()
+            {
+                Success = checkValid,
+                Message = statusMessage.ToString()
+            });
+        }
         // POST: api/CreateProjectRequests
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("CreateCreateProjectRequest", Name = "CreateCreateProjectRequest")]

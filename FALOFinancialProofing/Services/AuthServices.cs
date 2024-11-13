@@ -1,17 +1,19 @@
-﻿using Azure;
-using FALOFinancialProofing.DTOs;
+﻿using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.DTOs.CampaignMemberDTO;
-using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.DTOs.RoleDTOs;
+using FALOFinancialProofing.DTOs.SDGDTOs;
 using FALOFinancialProofing.DTOs.UserDTOs;
+using FALOFinancialProofing.DTOs.UserSDGDTO;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services.EmailService;
+using FALOFinancialProofing.Services.SocialNetworkService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -31,6 +33,7 @@ namespace FALOFinancialProofing.Services
         public readonly UserManager<User> userManager;
         private readonly SignInManager<User> signInManager;
         private readonly IRepository<CampaignMember, int> campaignMemberRepository;
+        private readonly ISocialNetworkService socialNetworkService;
         //moi
         private readonly LinkGenerator _linkGenerator;
 
@@ -38,7 +41,7 @@ namespace FALOFinancialProofing.Services
         public AuthServices(UserManager<User> userManager, SignInManager<User> signInManager,
             IOptionsMonitor<AppSetting> optionsMonitor, RoleManager<IdentityRole> roleManager,
             IEmailService emailService,
-            LinkGenerator linkGenerator, IRepository<CampaignMember, int> campaignMemberRepository)
+            LinkGenerator linkGenerator, IRepository<CampaignMember, int> campaignMemberRepository, ISocialNetworkService socialNetworkService)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
@@ -47,6 +50,26 @@ namespace FALOFinancialProofing.Services
             this.emailService = emailService;
             _linkGenerator = linkGenerator;
             this.campaignMemberRepository = campaignMemberRepository;
+            this.socialNetworkService = socialNetworkService;
+        }
+        public async Task<bool> CheckUserExist(string userId, StringBuilder message)
+        {
+            bool checkValid = false;
+            try
+            {
+                var user = await userManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    throw new Exception("User not found");
+                }
+                checkValid = true;
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"CheckUserExist: {ex.Message}");
+            }
+            return checkValid;
         }
         public async Task<bool> CheckUserInRole(string userId, string userRole, StringBuilder message)
         {
@@ -604,13 +627,195 @@ namespace FALOFinancialProofing.Services
         {
             var userinCampaign = await campaignMemberRepository.GetAll(x => x.UserId.Equals(userId)
                                     && x.CampaignId == campaignId).FirstOrDefaultAsync();
-            if(userinCampaign == null)
+            if (userinCampaign == null)
             {
                 message.Append("Can't not find debt of this user with specify campaign");
                 return Double.MinValue;
             }
             return userinCampaign.Debt;
 
+        }
+
+        public async Task<bool> CheckValidUser(UpdateUserProfileRequest updateUserProfileRequest, StringBuilder message)
+        {
+            bool checkValid = false;
+            try
+            {
+                var user = await userManager.FindByIdAsync(updateUserProfileRequest.Id);
+                if (user == null)
+                {
+                    throw new Exception("User not found");
+                }
+                long MaxFileSize = 5 * 1024 * 1024;
+                if (updateUserProfileRequest.LogoFile != null && updateUserProfileRequest.LogoFile.Length > MaxFileSize)
+                {
+                    throw new Exception("Logo is too large");
+                }
+
+                var data = JsonConvert.DeserializeObject<List<SocialNetworkRequest>>(updateUserProfileRequest.SocialNetworkRequestJsons);
+
+                checkValid = true;
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"CheckUserInRole: {ex.Message}");
+            }
+            return checkValid;
+        }
+
+        public async Task<UserProfileDetail?> GetUserProfile(string userId, StringBuilder message, HttpRequest request)
+        {
+            UserProfileDetail data = null!;
+            try
+            {
+                data = await userManager.Users.Where(u => u.Id == userId)
+                    .Select(u => new UserProfileDetail()
+                    {
+                        Id = u.Id,
+                        Email = u.Email,
+                        FirstName = u.FirstName,
+                        LastName = u.LastName,
+                        BirthDate = u.BirthDate,
+                        Gender = u.Gender,
+                        Address = u.Address,
+                        WorkPlace = u.WorkPlace,
+                        Bio = u.Bio,
+                        Image = UrlHelper.GetImageUrl(request, u.Image),
+                        Education = u.Education,
+                        Skill = u.Skill,
+                        Hobby = u.Hobby,
+                        Strength = u.Strength,
+                        VolunteerExperience = u.VolunteerExperience,
+                        VolunteerGoal = u.VolunteerGoal,
+                        SocialNetworkRequests = u.SocialNetworks.Select(snr => new SocialNetworkRequest
+                        {
+                            Id = snr.Id,
+                            UserId = snr.UserId,
+                            SocialNetworksLink = snr.SocialNetworksLink,
+                        }).ToList(),
+                        userSDGInformation = u.UserSDGs.Select(usdg => new UserSDGInformation
+                        {
+                            Id = usdg.Id,
+                            UserId = usdg.UserId,
+                            sDGInformation = new SDGInformation()
+                            {
+                                Id = usdg.SDG.Id,
+                                SDGName = usdg.SDG.SDGName
+                            }
+                        }).ToList()
+                    }).FirstOrDefaultAsync();
+                if (data == null)
+                {
+                    throw new Exception("User not found in system!");
+                }
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"GetAccount: {ex.Message}");
+            }
+
+            return data;
+        }
+        //FileHelper
+        //public async Task<bool> UpdateUserProfile(UpdateUserProfileRequest updateUserProfileRequest, StringBuilder message)
+        //{
+        //    User user = null!;
+        //    bool result = false;
+        //    try
+        //    {
+        //        user = await userManager.FindByIdAsync(updateUserProfileRequest.Id);
+        //        user.FirstName = updateUserProfileRequest.FirstName;
+        //        user.LastName = updateUserProfileRequest.LastName;
+        //        user.Email = updateUserProfileRequest.Email;
+        //        user.BirthDate = updateUserProfileRequest.BirthDate;
+        //        user.Image = await FileHelper.ConvertIFormFileToStringAsync(updateUserProfileRequest.LogoFile) != null ? await FileHelper.ConvertIFormFileToStringAsync(updateUserProfileRequest.LogoFile) : user.Image;
+        //        foreach (var item in updateUserProfileRequest.SocialNetworkRequests)
+        //        {
+        //            var socialNetwork = await socialNetworkService.GetSocialNetworkByIdAsync(item.Id.Value);
+        //            socialNetwork.SocialNetworksLink = item.SocialNetworksLink;
+        //            await socialNetworkService.UpdateSocialNetworkAsync(socialNetwork);
+        //        }
+        //        var UpdateResult = await userManager.UpdateAsync(user);
+        //        if (UpdateResult.Succeeded)
+        //        {
+        //            result = true;
+        //            message.Append("User profile updated successfully");
+        //        }
+        //        else
+        //        {
+        //            throw new Exception("User profile update failed");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        message.Append(ex.Message);
+        //        await Console.Out.WriteLineAsync($"UpdateUserProfile: {ex.Message}");
+        //    }
+
+        //    return result;
+        //}
+
+        public async Task<User?> UpdateUserProfile(UpdateUserProfileRequest updateUserProfileRequest, StringBuilder message)
+        {
+            User user = null!;
+            try
+            {
+                user = await userManager.FindByIdAsync(updateUserProfileRequest.Id);
+                user.FirstName = updateUserProfileRequest.FirstName;
+                user.LastName = updateUserProfileRequest.LastName;
+                user.Email = updateUserProfileRequest.Email;
+                user.BirthDate = updateUserProfileRequest.BirthDate;
+                user.Image = await FileHelper.SaveImageAndReturnShortPathAsync(updateUserProfileRequest.LogoFile, FolderImage.UserImageUpload, user.Image) ?? user.Image;
+                user.Gender = updateUserProfileRequest.Gender;
+                user.Address = updateUserProfileRequest.Address;
+                user.WorkPlace = updateUserProfileRequest.WorkPlace;
+                user.Bio = updateUserProfileRequest.Bio;
+                user.Education = updateUserProfileRequest.Education;
+                user.Skill = updateUserProfileRequest.Skill;
+                user.Hobby = updateUserProfileRequest.Hobby;
+                user.Strength = updateUserProfileRequest.Strength;
+                user.VolunteerExperience = updateUserProfileRequest.VolunteerExperience;
+                user.VolunteerGoal = updateUserProfileRequest.VolunteerGoal;
+                updateUserProfileRequest.SocialNetworkRequests = JsonConvert.DeserializeObject<List<SocialNetworkRequest>>(updateUserProfileRequest.SocialNetworkRequestJsons);
+                foreach (var item in updateUserProfileRequest.SocialNetworkRequests)
+                {
+
+                    var socialNetwork = await socialNetworkService.GetSocialNetworkByIdAsync(item.Id.Value);
+
+                    if (socialNetwork != null)
+                    {
+                        socialNetwork.SocialNetworksLink = item.SocialNetworksLink;
+                        await socialNetworkService.UpdateSocialNetworkAsync(socialNetwork);
+                    }
+                    else
+                    {
+                        socialNetwork = new SocialNetwork()
+                        {
+                            UserId = updateUserProfileRequest.Id,
+                            SocialNetworksLink = item.SocialNetworksLink
+                        };
+                        await socialNetworkService.CreateSocialNetworkAsync(socialNetwork);
+                    }
+                }
+                var UpdateResult = await userManager.UpdateAsync(user);
+                if (UpdateResult.Succeeded)
+                {
+                    message.Append("User profile updated successfully");
+                }
+                else
+                {
+                    throw new Exception("User profile update failed");
+                }
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"UpdateUserProfile: {ex.Message}");
+            }
+
+            return user;
         }
     }
 

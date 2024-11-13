@@ -9,6 +9,8 @@ using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.TransactionLogsServices;
 using FALOFinancialProofing.DTOs.TransactionLogsDTOs;
 using Microsoft.VisualBasic;
+using FALOFinancialProofing.Helpers;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -44,7 +46,48 @@ namespace FALOFinancialProofing.Controllers
 
             return transactionLog;
         }
+        // lịch sử chuyển tiền cua nguoi dung
+        [HttpGet("GetUserTransactionLogs/{userId}")]
+        public async Task<ActionResult> GetUserTransactionLogs(string userId)
+        {
 
+            var transactionLog = await _transactionLogService.GetUserTransactionsByUserIdAsync(userId);
+
+            if (transactionLog == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(new ApiResponse()
+            {
+                Data = transactionLog,
+                Success = true,
+                Message = "Get User Transaction Logs Successfully!"
+            });
+        }
+
+        [HttpGet("GetCampaignTransactionLogs/{campaignId}")]
+        public async Task<ActionResult> GetCampaignTransactionLogs(string? searchInput, int campaignId)
+        {
+
+            var transactionLog = await _transactionLogService.GetUserTransactionsByCampaignIdAsync(campaignId);
+
+            if (transactionLog == null)
+            {
+                return NotFound();
+            }
+            if (!string.IsNullOrEmpty(searchInput))
+            {
+                searchInput = searchInput.Trim();
+                transactionLog = transactionLog.FindAll(x => ($"{x.CampaignName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.TransactionDate.ToShortDateString()}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
+            }
+            return Ok(new ApiResponse()
+            {
+                Data = transactionLog,
+                Success = true,
+                Message = "Get Campaign Transaction Logs Successfully!"
+            });
+        }
         // PUT: api/TransactionLogs/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("UpdateTransactionLog")]

@@ -62,12 +62,13 @@ namespace FALOFinancialProofing.Controllers
                         Data = filterPagingData
                     });
                 }
+
                 if (isActive != null)
                 {
                     data = data.FindAll(x => x.IsActive == isActive);
                 }
                 filterPagingData.DataCount = data.Count;
-              
+
                 data = PaginationHelper.Paginate<CampaignMemberInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
                 filterPagingData.Data = data;
             }
@@ -83,8 +84,53 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
+        [HttpGet("GetAllCampaignMembersByUserId")]
+        public async Task<IActionResult> GetAllCampaignMembersByUserId(string? searchInput, string userId, bool? isActive, int currentPage = IntConstant.PageNumberDefault)
+        {
+            List<CampaignMemberInformation> data = null;
+            FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
+            try
+            {
+                data = await _campaignMemberService.GetAllCampaignMemberByUserIdAsync(userId);
+
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "GetAllCampaignMember By UserId Failed!",
+                        Data = filterPagingData
+                    });
+                }
+                if (!string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = searchInput.Trim();
+                    data = data.FindAll(x => ($"{x.CampaignTitle}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
+                }
+                if (isActive != null)
+                {
+                    data = data.FindAll(x => x.IsActive == isActive);
+                }
+                filterPagingData.DataCount = data.Count;
+
+                data = PaginationHelper.Paginate<CampaignMemberInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                filterPagingData.Data = data;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAllCampaignMemberByUserId: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "GetAllCampaignMember By UserId Successfully!",
+                Data = filterPagingData
+            });
+        }
+
         [HttpGet("GetAllCampaignMembersByCampaignId")]
-        public async Task<IActionResult> GetAllCampaignMembersByCampaignId(int CampaignId, bool? isActive, int currentPage = IntConstant.PageNumberDefault)
+        public async Task<IActionResult> GetAllCampaignMembersByCampaignId(string? searchInput, int CampaignId, bool? isActive, int currentPage = IntConstant.PageNumberDefault)
         {
             List<CampaignMemberInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -101,6 +147,11 @@ namespace FALOFinancialProofing.Controllers
                         Message = "GetAllCampaignMembers By CampaignId Failed!",
                         Data = filterPagingData
                     });
+                }
+                if (!string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = searchInput.Trim();
+                    data = data.FindAll(x => ($"{x.FirstName} {x.LastName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.CampaignTitle}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
                 }
                 if (isActive != null)
                 {

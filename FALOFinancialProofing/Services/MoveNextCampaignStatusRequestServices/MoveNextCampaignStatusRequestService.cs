@@ -168,15 +168,15 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
             {
                 List<CampaignMember> listCampaignMembersDebtOtherThanZero = new List<CampaignMember>();
                 listCampaignMembersDebtOtherThanZero = await _campaignMemberRepository
-                    .GetAll().Include(x=> x.User)
+                    .GetAll().Include(x => x.User)
                     .Where(cm => cm.CampaignId == campaignId && cm.Debt != 0)
                     .ToListAsync();
-                
+
                 //campaignDebtResult.NameOfAccounting = campaignMembers.Select(cm => cm.User.FirstName).ToList();
 
                 var Accounting = await _campaignMemberRepository
                     .GetAll()
-                    .Include(x=> x.User)
+                    .Include(x => x.User)
                     .Where(cm => cm.CampaignId == campaignId && cm.RoleId == "83292e2c-6c86-4153-bdc5-760d05ec2293")
                     .SingleAsync();
 
@@ -217,7 +217,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                            EndDate = p.EndDate,
                            Address = p.Address,
                            IsActive = p.IsActive,
-                           BankingNumber = p.BankingNumber,
+                           //BankingNumber = p.BankingNumber,
                            BankId = p.BankId,
                            Status = p.Status,
                            TotalMoneyEarned = p.TransactionLogs.Sum(x => x.Amount)

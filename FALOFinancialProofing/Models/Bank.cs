@@ -1,5 +1,6 @@
 ﻿using FALOFinancialProofing.Core;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace FALOFinancialProofing.Models
 {
@@ -14,7 +15,9 @@ namespace FALOFinancialProofing.Models
         // bankBin
         public int acqId { get; set; }
         public long CassoAccountID { get; set; }
+
         //public bool IsInUsed { get; set; }
+        [JsonIgnore]
         public ICollection<Campaign> Campaigns { get; set; } = new List<Campaign>();
 
     }

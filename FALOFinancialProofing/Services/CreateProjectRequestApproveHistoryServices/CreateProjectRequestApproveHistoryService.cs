@@ -29,7 +29,8 @@ namespace FALOFinancialProofing.Services.CreateProjectRequestApproveHistoryServi
                 CreateProjectRequestId = createProjectRequestApproveHistoryClientRequest.CreateProjectRequestId,
                 ApproverId = createProjectRequestApproveHistoryClientRequest.ApproverId,
                 DateOfApproval = createProjectRequestApproveHistoryClientRequest.DateOfApproval,
-                IsAllowed = createProjectRequestApproveHistoryClientRequest.IsAllowed
+                IsAllowed = createProjectRequestApproveHistoryClientRequest.IsAllowed,
+                FeedBack = createProjectRequestApproveHistoryClientRequest.FeedBack
             };
             return createProjectRequestApproveHistory;
         }
@@ -69,6 +70,7 @@ namespace FALOFinancialProofing.Services.CreateProjectRequestApproveHistoryServi
                         }
                         else
                         {
+                            CreateProjectRequest.Feedback = createProjectRequestApproveHistoryClientRequest.FeedBack;
                             CreateProjectRequest.Status = RequestStatus.Rejected;
                             project.IsActive = false;
                             project.Status = RequestStatus.Rejected;
@@ -85,6 +87,7 @@ namespace FALOFinancialProofing.Services.CreateProjectRequestApproveHistoryServi
                             CreateProjectRequest.ReceiverId = requestHistoryRejected.ApproverId;
                             CreateProjectRequest.CreatedAt = requestHistoryRejected.DateOfApproval;
                             CreateProjectRequest.Status = RequestStatus.Rejected;
+                            CreateProjectRequest.Feedback = requestHistoryRejected.FeedBack;
                             project.IsActive = false;
                             project.Status = RequestStatus.Rejected;
                             await _projectRepository.UpdateAsync(project);
@@ -118,6 +121,7 @@ namespace FALOFinancialProofing.Services.CreateProjectRequestApproveHistoryServi
                         CreateProjectRequestApproveHistory createProjectRequestApproveHistory = await ConvertToBaseClass(createProjectRequestApproveHistoryClientRequest);
                         await _createProjectRequestApproveHistoriesRepository.InsertAsync(createProjectRequestApproveHistory);
                         CreateProjectRequest.Status = RequestStatus.Rejected;
+                        CreateProjectRequest.Feedback = createProjectRequestApproveHistoryClientRequest.FeedBack;
                         project.IsActive = false;
                         project.Status = RequestStatus.Rejected;
                     }
@@ -162,10 +166,10 @@ namespace FALOFinancialProofing.Services.CreateProjectRequestApproveHistoryServi
                 {
                     throw new Exception("Date Of Approval cannot be in the future");
                 }
-
-
-                //await _createProjectRequestApproveHistoriesRepository.InsertAsync(createCreateProjectRequestApproveHistory);
-
+                if (!createProjectRequestApproveHistoryClientRequest.IsAllowed && createProjectRequestApproveHistoryClientRequest.FeedBack == null)
+                {
+                    throw new Exception("Feedback is required when rejecting a request");
+                }
                 checkValid = true;
             }
             catch (Exception ex)

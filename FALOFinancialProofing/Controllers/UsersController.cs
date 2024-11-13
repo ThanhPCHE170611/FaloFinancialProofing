@@ -1,32 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using FALOFinancialProofing.Attributes.RoleAttributes;
+using FALOFinancialProofing.Constant;
+using FALOFinancialProofing.DTOs;
+using FALOFinancialProofing.DTOs.OrganizationDTO;
+using FALOFinancialProofing.DTOs.UserDTOs;
+using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
+using FALOFinancialProofing.Services;
+using FALOFinancialProofing.Utilities;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Text;
-using System.Security.Cryptography;
-using FALOFinancialProofing.Repository;
-using FALOFinancialProofing.DTOs;
-using Microsoft.AspNetCore.Identity.Data;
-using FALOFinancialProofing.Services;
-using Microsoft.AspNetCore.Authorization;
-using System.ComponentModel.DataAnnotations;
-using FALOFinancialProofing.Helpers;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Identity;
-using FALOFinancialProofing.DTOs.UserDTOs;
-using FALOFinancialProofing.Attributes.RoleAttributes;
-using FALOFinancialProofing.Constant;
-using FALOFinancialProofing.DTOs.CampaignDTO;
-using FALOFinancialProofing.Utilities;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -234,7 +223,7 @@ namespace FALOFinancialProofing.Controllers
         }
         [RoleAttribute(AppRole.Admin)]
         [HttpGet("GetAccountList")]
-        public async Task<IActionResult> GetAllAccountInSystem(int currentPage = IntConstant.PageNumberDefault)
+        public async Task<IActionResult> GetAllAccountInSystem(string? searchInput, int currentPage = IntConstant.PageNumberDefault)
         {
             List<UserInformation_Admin> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -250,6 +239,11 @@ namespace FALOFinancialProofing.Controllers
                         Message = "Get All Account Failed!",
                         Data = filterPagingData
                     });
+                }
+                if (!string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = searchInput.Trim();
+                    data = data.FindAll(x => ($"{x.FirstName} {x.LastName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.Email}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || x.Roles.Any(rl => rl.RoleName.Contains(searchInput, StringComparison.OrdinalIgnoreCase)));
                 }
 
                 filterPagingData.DataCount = data.Count;
@@ -359,11 +353,11 @@ namespace FALOFinancialProofing.Controllers
 
         [HttpGet("getuserdebincampaign")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetUserDebInCampaign(string userId,int campaignId)
+        public async Task<IActionResult> GetUserDebInCampaign(string userId, int campaignId)
         {
             var message = new StringBuilder();
-            var userDeb = await authServices.GetUserDebInCampaign( userId, campaignId, message);
-            if(userDeb == Double.MinValue)
+            var userDeb = await authServices.GetUserDebInCampaign(userId, campaignId, message);
+            if (userDeb == Double.MinValue)
             {
                 return Ok(new
                 {
@@ -377,6 +371,67 @@ namespace FALOFinancialProofing.Controllers
                 Data = userDeb,
                 Success = true
             });
+        }
+        // ấn vào profile rồi hiển thị chi tiết
+        [HttpGet("GetUserProfile/{UserId}")]
+        public async Task<IActionResult> GetUserProfile(string UserId)
+        {
+            StringBuilder message = new StringBuilder();
+            UserProfileDetail data = null;
+            try
+            {
+                data = await authServices.GetUserProfile(UserId, message, Request);
+                if (data == null)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = message.ToString(),
+                        Data = data
+                    });
+                }
+                message.Append("Get User Profile Successfully!");
+
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"Get User Profile: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = message.ToString(),
+                Data = data
+            });
+        }
+
+        [HttpPost("UpdateUserProfile")]
+        public async Task<IActionResult> UpdateProfile([FromForm] UpdateUserProfileRequest updateUserProfileRequest)
+        {
+
+            if (updateUserProfileRequest == null)
+                return Ok(new ApiResponse()
+                {
+                    Success = false,
+                    Message = "Update Profile Failed!"
+                });
+            StringBuilder message = new StringBuilder();
+            bool checkValid = await authServices.CheckValidUser(updateUserProfileRequest, message);
+            if (!checkValid)
+            {
+                return Ok(new ApiResponse()
+                {
+                    Success = checkValid,
+                    Message = message.ToString()
+                });
+            }
+            var UserUpdated = await authServices.UpdateUserProfile(updateUserProfileRequest, message);
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "Update Profile successfully"
+            });
+
         }
 
 

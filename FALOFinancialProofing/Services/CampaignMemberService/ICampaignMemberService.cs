@@ -23,5 +23,6 @@ namespace FALOFinancialProofing.Services
         Task<bool> UpdateCampaignMemberStatusAsync(UpdateCampaignMemberStatusDTO updateCampaignMemberStatusDTO, StringBuilder message);
         Task<List<CampaignMemberInformation>> GetAllCampaignMemberByUserIdAndRoleIdAsync(string userId, string roleId);
         Task<List<CampaignMemberInformation>> GetAllCampaignMemberByCampaignIdAsync(int campaignId);
+        Task<List<CampaignMemberInformation>> GetAllCampaignMemberByUserIdAsync(string userId);
     }
 }

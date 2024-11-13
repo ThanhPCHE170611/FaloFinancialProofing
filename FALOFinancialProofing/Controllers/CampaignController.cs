@@ -1,13 +1,9 @@
 ﻿using FALOFinancialProofing.Attributes.RoleAttributes;
 using FALOFinancialProofing.Constant;
 using FALOFinancialProofing.DTOs.CampaignDTO;
-using FALOFinancialProofing.DTOs.CreateProjectRequestDTO;
-using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
-using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services;
-using FALOFinancialProofing.Services.CampaignMemberService;
 using FALOFinancialProofing.Services.CampaignService;
 using FALOFinancialProofing.Services.CreateCampaignFileServices;
 using FALOFinancialProofing.Services.CreateCampaignRequestServices;
@@ -60,7 +56,7 @@ namespace FALOFinancialProofing.Controllers
         //}
 
         [HttpGet("GetAllCampaignInSystem")]
-        public async Task<IActionResult> GetAllCampaignInSystem(string? status, bool? IsActive, int currentPage = IntConstant.PageNumberDefault)
+        public async Task<IActionResult> GetAllCampaignInSystem(string? title, string? status, bool? IsActive, int currentPage = IntConstant.PageNumberDefault)
         {
             List<CampaignInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -72,9 +68,14 @@ namespace FALOFinancialProofing.Controllers
                     return Ok(new ApiResponse()
                     {
                         Success = false,
-                        Message = "Get All Project By In System Failed!",
+                        Message = "Get All Campaign By In System Failed!",
                         Data = data
                     });
+                }
+                if (!string.IsNullOrEmpty(title))
+                {
+                    title = title.Trim();
+                    data = data.FindAll(x => x.Title.Contains(title, StringComparison.OrdinalIgnoreCase));
                 }
                 if (!string.IsNullOrEmpty(status))
                 {
@@ -91,18 +92,18 @@ namespace FALOFinancialProofing.Controllers
             }
             catch (Exception ex)
             {
-                await Console.Out.WriteLineAsync($"GetAllProjectInSystem: {ex.Message}");
+                await Console.Out.WriteLineAsync($"GetAllCampaignInSystem: {ex.Message}");
             }
             return Ok(new ApiResponse()
             {
                 Success = true,
-                Message = "Get All Project In System Successfully!",
+                Message = "Get All Campaign In System Successfully!",
                 Data = filterPagingData
             });
         }
         //[RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
         [HttpGet("GetAllCampaignByProjectId/{ProjectId}")]
-        public async Task<IActionResult> GetAllCampaignByProjectId(int ProjectId, string? status, int currentPage = IntConstant.PageNumberDefault)
+        public async Task<IActionResult> GetAllCampaignByProjectId(string? title, int ProjectId, string? status, int currentPage = IntConstant.PageNumberDefault)
         {
             List<CampaignInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -117,6 +118,11 @@ namespace FALOFinancialProofing.Controllers
                         Message = "Get All Campaign By ProjectId Failed!",
                         Data = data
                     });
+                }
+                if (!string.IsNullOrEmpty(title))
+                {
+                    title = title.Trim();
+                    data = data.FindAll(x => x.Title.Contains(title, StringComparison.OrdinalIgnoreCase));
                 }
                 if (!string.IsNullOrEmpty(status))
                 {
@@ -380,7 +386,7 @@ namespace FALOFinancialProofing.Controllers
         {
             var message = new StringBuilder();
             var updateEndDateCamapaign = await _campaignService.UpdateEndDateForProjectManagerAsync(campaignId, userId, currentRole, newDateTime, message);
-            if(updateEndDateCamapaign == null)
+            if (updateEndDateCamapaign == null)
             {
                 return Ok(new
                 {
