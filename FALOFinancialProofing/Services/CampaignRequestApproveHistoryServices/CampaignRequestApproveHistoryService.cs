@@ -3,6 +3,8 @@ using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services.BankServices;
+using FALOFinancialProofing.Services.CampaignMemberService;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 
@@ -15,14 +17,18 @@ namespace FALOFinancialProofing.Services.CampaignRequestApproveHistoryServices
         private readonly AuthServices _authServices;
         private readonly IRepository<Campaign, int> _campaignRepository;
         private readonly IBankService _bankService;
+        private readonly ICampaignMemberService _campaignMemberService;
+        private readonly RoleManager<IdentityRole> roleManager;
 
-        public CampaignRequestApproveHistoryService(IRepository<CampaignRequestApproveHistory, int> createCampaignRequestApproveHistoriesRepository, AuthServices authServices, IRepository<CreateCampaignRequest, int> createCampaignRequestRepository, IRepository<Campaign, int> campaignRepository, IBankService bankService)
+        public CampaignRequestApproveHistoryService(IRepository<CampaignRequestApproveHistory, int> createCampaignRequestApproveHistoriesRepository, AuthServices authServices, IRepository<CreateCampaignRequest, int> createCampaignRequestRepository, IRepository<Campaign, int> campaignRepository, IBankService bankService, ICampaignMemberService campaignMemberService, RoleManager<IdentityRole> roleManager)
         {
             _campaignRequestApproveHistoriesRepository = createCampaignRequestApproveHistoriesRepository;
             _authServices = authServices;
             _createCampaignRequestRepository = createCampaignRequestRepository;
             _campaignRepository = campaignRepository;
             _bankService = bankService;
+            _campaignMemberService = campaignMemberService;
+            this.roleManager = roleManager;
         }
         public async Task<CampaignRequestApproveHistory> ConvertToBaseClass(CampaignRequestApproveHistoryClientRequest createCampaignRequestApproveHistoryClientRequest)
         {
@@ -69,8 +75,18 @@ namespace FALOFinancialProofing.Services.CampaignRequestApproveHistoryServices
                             CampaignRequest.Status = RequestStatus.Accepted;
                             campaign.IsActive = true;
                             campaign.Status = RequestStatus.FundRaising;
-                            //campaign.BankingNumber = createCampaignRequestApproveHistoryClientRequest.BankingNumber;
                             campaign.BankId = createCampaignRequestApproveHistoryClientRequest.BankId;
+                            // add PM Vào campaingMember
+                            var Role = await roleManager.FindByNameAsync(AppRole.ProjectManager);
+                            CampaignMember SenderCampaignMember = new CampaignMember()
+                            {
+                                CampaignId = CampaignRequest.CampaignId,
+                                UserId = CampaignRequest.SenderId,
+                                Debt = 0,
+                                IsActive = true,
+                                RoleId = Role.Id
+                            };
+                            await _campaignMemberService.CreateCampaignMemberAsync(SenderCampaignMember);
 
                         }
                         else
@@ -78,7 +94,6 @@ namespace FALOFinancialProofing.Services.CampaignRequestApproveHistoryServices
                             CampaignRequest.Feedback = createCampaignRequestApproveHistoryClientRequest.FeedBack;
                             CampaignRequest.Status = RequestStatus.Rejected;
                             campaign.IsActive = false;
-                            //campaign.BankingNumber = null;
                             campaign.BankId = null;
                             campaign.Status = RequestStatus.Rejected;
 
@@ -97,7 +112,6 @@ namespace FALOFinancialProofing.Services.CampaignRequestApproveHistoryServices
                             CampaignRequest.Status = RequestStatus.Rejected;
                             CampaignRequest.Feedback = requestHistoryRejected.FeedBack;
                             campaign.IsActive = false;
-                            //campaign.BankingNumber = null;
                             campaign.BankId = null;
                             campaign.Status = RequestStatus.Rejected;
                             await _campaignRepository.UpdateAsync(campaign);
@@ -111,7 +125,6 @@ namespace FALOFinancialProofing.Services.CampaignRequestApproveHistoryServices
                             CampaignRequest.Status = RequestStatus.Accepted;
                             campaign.IsActive = true;
                             campaign.Status = RequestStatus.FundRaising;
-                            //campaign.BankingNumber = createCampaignRequestApproveHistoryClientRequest.BankingNumber;
                             campaign.BankId = createCampaignRequestApproveHistoryClientRequest.BankId;
                         }
                     }
@@ -135,7 +148,6 @@ namespace FALOFinancialProofing.Services.CampaignRequestApproveHistoryServices
                         CampaignRequest.Status = RequestStatus.Rejected;
                         CampaignRequest.Feedback = createCampaignRequestApproveHistoryClientRequest.FeedBack;
                         campaign.IsActive = false;
-                        //campaign.BankingNumber = null;
                         campaign.BankId = null;
                         campaign.Status = RequestStatus.Rejected;
                     }

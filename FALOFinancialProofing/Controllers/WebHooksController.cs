@@ -182,7 +182,11 @@ namespace FALOFinancialProofing.Controllers
             {
                 await Console.Out.WriteLineAsync($"SyncTransaction: {ex.Message}");
             }
-            return Ok(syncResponse);
+            return Ok(new ApiResponse()
+            {
+                Success = syncResponse != null ? true : false,
+                Message = syncResponse != null ? "Sync transaction success!" : "Sync transaction failed!",
+            });
         }
 
         [HttpGet("GetAllCassAccountNumber")]
