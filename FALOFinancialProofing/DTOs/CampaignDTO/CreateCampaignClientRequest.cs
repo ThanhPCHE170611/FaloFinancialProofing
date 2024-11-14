@@ -8,20 +8,17 @@ namespace FALOFinancialProofing.DTOs.CampaignDTO
         public string CreateBy { get; set; }
         [Required]
         public int ProjectId { get; set; }
-        public string Title { get; set; }
-        public string? Description { get; set; }
-
         [Required]
-        public DateTime DateOfCreation { get; set; }
+        [StringLength(100, MinimumLength = 8, ErrorMessage = "Title must be at least 8 and max 100 characters")]
+        public string Title { get; set; }
+        [Required]
+        [StringLength(500, MinimumLength = 8, ErrorMessage = "Title must be at least 8 and max 500 characters")]
+        public string Description { get; set; }
         [Required]
         public double FundTarget { get; set; }
         public string? Image { get; set; }
         public DateTime? EndDate { get; set; }
         public string? Address { get; set; }
-        [Required]
-        public bool IsActive { get; set; }
-        //public string? BankingNumber { get; set; }
-        public string? Status { get; set; }
         public List<IFormFile>? FormFiles { get; set; }
         public int? BankId { get; set; }
     }

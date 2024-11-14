@@ -268,7 +268,8 @@ namespace FALOFinancialProofing.Controllers
                     CampaignId = checkCampaignCreated.Id,
                     Title = $"{checkCampaignCreated.Title}",
                     CreatedAt = DateTime.Now,
-                    Status = RequestStatus.Pending
+                    Status = RequestStatus.Pending,
+                    Description = $"{createCampaignClientRequest.Description}",
                 };
                 var CreateCampaignRequestCreated = await _createCampaignRequestService.CreateCreateCampaignRequestReturnEntityAsync(createCampaignRequest);
                 if (CreateCampaignRequestCreated == null)

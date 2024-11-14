@@ -17,7 +17,7 @@ namespace FALOFinancialProofing.DTOs.CreateCampaignRequestDTO
         public DateTime CreatedAt { get; set; }
         public string? Feedback { get; set; }
         public string Status { get; set; }
-        public string? CampaignDescription { get; set; }
+        public string? Description { get; set; }
         public ICollection<CreateCampaignFileInformation> CreateCampaignFiles { get; set; }
     }
 }

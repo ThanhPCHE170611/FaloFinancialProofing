@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Transactions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -18,7 +19,7 @@ namespace FALOFinancialProofing.Controllers
     public class WebHooksController : ControllerBase
     {
         private readonly WebHookService _webHookService;
-        private readonly string secure_token = "abcdef";
+        private readonly string secure_token;
         private readonly ITransactionLogService _transactionLogService;
         private readonly ICampaignService _campaignService;
         private readonly ICreateQrCodeService _createQrCodeService;
@@ -70,15 +71,13 @@ namespace FALOFinancialProofing.Controllers
         [HttpPost("Transaction-Transfer")]
         public async Task<IActionResult> TransactionTransfer([FromBody] TransactionRequest item)
         {
-            //if (!HttpContext.Request.Headers.TryGetValue("secure-token", out var secureToken))
-            //{
-
-            //    if (!secureToken.ToString().Equals("secure_token"))
-            //    {
-            //        return Unauthorized();
-            //    }
-            //}
-
+            if (!HttpContext.Request.Headers.TryGetValue("secure-token", out var secureToken))
+            {
+                if (!secureToken.ToString().Equals("secure_token"))
+                {
+                    return Unauthorized();
+                }
+            }
             // trích nội dung giao dịch
             // thực hiện kiểm tra có orderId đấy không
             // thực hiện kiểm tra có campaignId đấy không
@@ -88,25 +87,31 @@ namespace FALOFinancialProofing.Controllers
             try
             {
                 string format = "yyyy-MM-dd HH:mm:ss";
+                string descriptionPatern = "^(C[0-9]+CC[0-9]+Q){1}$";
+                Regex regex = new Regex(descriptionPatern);
                 foreach (var transaction in item.data)
                 {
                     var transactionLogByCassoTransactionId = await _transactionLogService.GetTransactionLogByCassoTransactionIdAsync(transaction.id);
-                    if (transactionLogByCassoTransactionId != null)
+                    if (transactionLogByCassoTransactionId != null)// mã gd đã được xử lí
                     {
                         continue;
                     }
-                    if (transaction.description == null)
+                    if (string.IsNullOrEmpty(transaction.description))
                     {
                         continue;
                     }
-
-                    var stringSplit = transaction.description.Trim().Split('.');
+                    var stringSplit = transaction.description.Trim().Split('.', ' ');
                     string description = null;
-                    if (stringSplit.Length >= 3)
+                    foreach (var stringItem in stringSplit)
                     {
-                        description = stringSplit.Where(x => x.StartsWith("C") && x.Contains("CC")).First();
+                        Match match = regex.Match(stringItem);
+                        if (match.Success)
+                        {
+                            description = stringItem;
+                            break;
+                        }
                     }
-                    if (description == null || !description.Contains("CC") && !description.StartsWith("C"))
+                    if (description == null)
                     {
                         continue;
                     }
@@ -119,7 +124,6 @@ namespace FALOFinancialProofing.Controllers
                         {
                             continue;
                         }
-
                         // lưu vào transactionlog
                         TransactionLog transactionLog = new TransactionLog()
                         {

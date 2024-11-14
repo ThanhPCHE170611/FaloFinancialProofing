@@ -281,17 +281,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                 {
                     throw new Exception("Fund target must be greater than 0");
                 }
-                //trạng thái dự án chưa được phép true
-                if (createCampaignClientRequest.IsActive)
-                {
-                    throw new Exception("IsActive must be false");
-                }
-                // ngày tạo không được lớn hơn ngày hiện tại
-                if (createCampaignClientRequest.DateOfCreation > DateTime.Now)
-                {
-                    throw new Exception("Date of creation cannot be in the future");
-                }
-                if (createCampaignClientRequest.DateOfCreation > createCampaignClientRequest.EndDate)
+                if (DateTime.Now > createCampaignClientRequest.EndDate)
                 {
                     throw new Exception("End Date must be after");
                 }
@@ -316,16 +306,13 @@ namespace FALOFinancialProofing.Services.CampaignService
                     CreateBy = createCampaignClientRequest.CreateBy,
                     ProjectId = createCampaignClientRequest.ProjectId,
                     Title = createCampaignClientRequest.Title,
-                    Description = createCampaignClientRequest.Description,
-                    DateOfCreation = createCampaignClientRequest.DateOfCreation,
+                    DateOfCreation = DateTime.Now, // sửa ở đây
                     FundTarget = createCampaignClientRequest.FundTarget,
                     Image = createCampaignClientRequest.Image,
                     EndDate = createCampaignClientRequest.EndDate,
                     Address = createCampaignClientRequest.Address,
-                    IsActive = createCampaignClientRequest.IsActive,
-                    //BankingNumber = createCampaignClientRequest.BankingNumber,
+                    IsActive = false,
                     BankId = createCampaignClientRequest.BankId,
-                    Status = createCampaignClientRequest.Status,
                 };
             }
             catch (Exception ex)
