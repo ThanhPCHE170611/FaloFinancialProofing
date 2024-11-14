@@ -224,7 +224,7 @@
                 fileList.appendChild(li);
             });
         });
-
+        const checkrole = localStorage.getItem('loggingRole');
         if (checkrole && checkrole !== 'Volunteer') {
             const newLink = document.createElement('a');
             newLink.setAttribute('asp-controller', 'Prepay');

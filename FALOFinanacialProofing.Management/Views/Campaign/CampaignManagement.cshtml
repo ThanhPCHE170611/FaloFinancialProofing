@@ -47,7 +47,7 @@
                 <div class="card my-4">
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
-                            <h6 class="text-white text-capitalize ps-3 mb-0">Campaign Management</h6>
+                            <h6 class="text-white text-capitalize ps-3 mb-0">List Campaign</h6>
                             @* <a class="btn btn-dark mb-0 me-3" asp-controller="Campaign" asp-action="CampaignCreate">
                                 Add Campaign
                             </a> *@
@@ -156,7 +156,7 @@
         $(document).ready(function () {
             let currentPage = 1;
             const userId = localStorage.getItem('userId');
-            const pageSize = 10; 
+            const pageSize = 5; 
             function fetchCampaignData(searchInput = '', isActive = null, page = 1) {
                 const jwtToken = localStorage.getItem('jwtToken');
 
@@ -200,7 +200,7 @@
                             <td class="align-middle text-center text-sm">${index + 1}</td>
                             <td class="align-middle text-sm">${item.campaignTitle}</td>
                             <td class="align-middle text-sm">${item.projectName}</td>
-                            <td class="align-middle text-center text-sm">$${item.fundTarget}</td>
+                            <td class="align-middle text-center text-sm">${item.fundTarget.toLocaleString()}</td>
                             <td class="align-middle text-center">
                                 <button onclick="changeCampaign(this, ${item.campaignId})" class="btn btn-info btn-sm detail-btn">Detail</button>
                             </td>
@@ -226,6 +226,7 @@
                     fetchCampaignData($('#searchInput').val(), $('#statusFilter').val(), currentPage);
                 });
             }
+
 
             $('#searchInput').on('keyup', function () {
                 currentPage = 1;

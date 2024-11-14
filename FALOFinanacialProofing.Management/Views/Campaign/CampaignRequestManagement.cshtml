@@ -18,6 +18,7 @@
     <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
     <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
     <style>
+
         .search-filter-container {
             display: flex;
             justify-content: space-between;
@@ -88,6 +89,50 @@
             background-color: #ffc107;
             color: #fff;
         }
+
+        .text-declined {
+            color: red;
+            font-weight: bold;
+        }
+
+        .text-approved {
+            color: green;
+            font-weight: bold;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+            .close:hover, .close:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
     </style>
 </head>
 
@@ -105,26 +150,25 @@
                         </div>
                     </div>
                     <div class="search-filter-container px-3">
-                        <input type="text" id="searchInput" placeholder="Search by Campaign Name" class="search-box" onkeyup="searchCampaign()" />
-                        <select id="statusFilter" class="filter-box" onchange="filterByStatus()">
+                        <input type="text" id="searchInput" placeholder="Search by Campaign Title" class="search-box" />
+                        <select id="statusFilter" class="filter-box" >
                             <option value="">All Statuses</option>
-                            <option value="Approved">Approved</option>
+                            <option value="Accepted">Accepted</option>
                             <option value="Pending">Pending</option>
-                            <option value="Declined">Declined</option>
+                            <option value="Rejected">Rejected</option>
                         </select>
                     </div>
-
                     <div class="card-body px-0 pb-2">
                         <div class="table-responsive p-0">
                             <table class="table align-items-center mb-0" id="campaignTable">
                                 <thead class="text-center">
                                     <tr>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STT</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Campaign Name</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Project Name</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Created Date</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Actions</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">STT</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Campaign Name</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Project Name</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Created Date</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Status</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="text-center">
@@ -201,21 +245,33 @@
                         </div>
                     </div>
                 </div>
+                <div class="pagination-container text-center mt-4">
+                    <div id="pagination"></div>
+                </div>
             </div>
         </div>
-        <!-- Popup for Banking Number Input -->
         <div id="bankingNumberPopup" class="popup">
             <div class="popup-content">
                 <h4>Approval Confirmation</h4>
-                <label for="bankingNumberInput">Banking Number:</label>
-                <input type="text" id="bankingNumberInput" class="form-control" placeholder="Enter banking number">
+                <label for="bankingNumberSelect">Select Bank:</label>
+                <select id="bankingNumberSelect" class="form-control">
+                    <option value="">Select a bank</option>
+                </select>
                 <div class="popup-actions">
                     <button id="approveConfirmBtn" class="btn btn-success">Approve</button>
                     <button id="cancelPopupBtn" class="btn btn-danger">Cancel</button>
                 </div>
             </div>
         </div>
-
+        <div id="declineModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModalDeclineCampainRequest()">&times;</span>
+                <h3>Decline Request</h3>
+                <label for="declineReason">Reason for Decline:</label>
+                <textarea id="declineReason" class="form-control" rows="3" placeholder="Enter feedback..."></textarea>
+                <button class="btn btn-danger mt-3" onclick="submitDecline()">Submit</button>
+            </div>
+        </div>
     </div>
 
     <script src="../assets/js/core/popper.min.js"></script>
@@ -275,7 +331,7 @@
 
             return formattedDate + ' ' + formattedTime;
         }
-        function updateRowToApprovedForPM(button) {
+        function updateRowToApprovedForPM(button, id) {
             const row = button.closest('tr');
             const actionCell = row.querySelector('td:nth-child(6)');
             const statusCell = row.querySelector('td:nth-child(5)');
@@ -293,20 +349,17 @@
             approvedText.textContent = 'Approved';
 
             const detailLink = document.createElement('a');
-            detailLink.href = '#';
             detailLink.classList.add('text-blue');
             detailLink.textContent = 'Detail';
-            detailLink.addEventListener('click', function (event) {
-                event.preventDefault();
-                showDetail();
-            });
+            detailLink.href = `/Campaign/CampaignRequestDetail?requestId=${id}`;
+
             actionCell.appendChild(approvedText);
             actionCell.appendChild(detailLink);
             statusCell.innerHTML = '';
             statusCell.appendChild(declinedText);
         }
 
-        function updateRowToRejected(button) {
+        function updateRowToRejected(button, id) {
             const row = button.closest('tr');
             const actionCell = row.querySelector('td:nth-child(6)');
             const statusCell = row.querySelector('td:nth-child(5)');
@@ -324,13 +377,9 @@
             rejectedText.textContent = 'Rejected';
 
             const detailLink = document.createElement('a');
-            detailLink.href = '#';
             detailLink.classList.add('text-blue');
             detailLink.textContent = 'Detail';
-            detailLink.addEventListener('click', function (event) {
-                event.preventDefault();
-                showDetail();
-            });
+            detailLink.href = `/Campaign/CampaignRequestDetail?requestId=${id}`;
 
             actionCell.appendChild(rejectedText);
             actionCell.appendChild(detailLink);
@@ -356,7 +405,32 @@
 
             return formattedDate + ' ' + formattedTime;
         }
-        function handleCampaignReject(button,createProjectRequestId, isAllowed) {
+                let currentButton = null;
+        let currentRequestId = null;
+
+        function openDeclineModal(button, requestId) {
+            currentButton = button;
+            currentRequestId = requestId;
+            $('#declineModal').fadeIn();
+        }
+
+        function closeModalDeclineCampainRequest() {
+            $('#declineModal').fadeOut();
+        }
+
+        function submitDecline() {
+            const feedback = $('#declineReason').val().trim();
+
+            if (!feedback) {
+                alert('Please enter a reason for the decline.');
+                return;
+            }
+
+            closeModalDeclineCampainRequest();
+            handleCampaignReject(currentButton, currentRequestId, false, feedback);
+        }
+
+        function handleCampaignReject(button, createCampaignRequestId, isAllowed, feedback) {
             const userId = localStorage.getItem('userId');
             const jwtToken = localStorage.getItem('jwtToken');
 
@@ -370,17 +444,16 @@
             const dateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 
             const payload = {
-                CampaignRequestId: createProjectRequestId,
-                ApproverId: userId,
-                DateOfApproval: dateTime,
-                IsAllowed: isAllowed
+                campaignRequestId: createCampaignRequestId,
+                approverId: userId,
+                dateOfApproval: dateTime,
+                isAllowed: isAllowed,
+                feedBack: feedback
             };
 
-            console.log(isAllowed);
-            console.log(createProjectRequestId);
-            console.log(dateTime);
-            console.log("Token:" +jwtToken);
-            console.log(userId);
+            console.log('Payload:', payload);
+            console.log('Token:', jwtToken);
+            console.log('User ID:', userId);
 
             $.ajax({
                 url: 'https://localhost:7294/api/CampaignRequestApproveHistories/CreateCampaignRequestApproveHistory',
@@ -392,12 +465,7 @@
                 data: JSON.stringify(payload),
                 success: function (response) {
                     if (response.success) {
-                        alert(response.message || 'Action completed successfully!');
-                        if (isAllowed) {
-                            updateRowToApprovedForPM(button);
-                        } else {
-                            updateRowToRejected(button);
-                        }
+                        updateRowToRejected(button, createCampaignRequestId);
                     } else {
                         alert('Failed: ' + response.Message);
                     }
@@ -420,29 +488,51 @@
             let currentButton = null;
             let currentRequestId = null;
 
-        function showBankingNumberPopup(button, requestId) {
+            function showBankingNumberPopup(button, requestId) {
             currentButton = button;
             currentRequestId = requestId;
-            $('#bankingNumberPopup').fadeIn();
+            $.ajax({
+                url: 'https://localhost:7294/api/Banks/GetAllBanks',
+                type: 'GET',
+                success: function (response) {
+                    if (response && Array.isArray(response)) {
+                        const bankingNumberSelect = $('#bankingNumberSelect');
+                        bankingNumberSelect.empty(); 
+                        bankingNumberSelect.append('<option value="">Select a bank</option>');
+
+                        response.forEach(bank => {
+                            bankingNumberSelect.append(`<option value="${bank.id}">${bank.accountNumber}</option>`);
+                        });
+
+                        $('#bankingNumberPopup').fadeIn();
+                    } else {
+                        alert('Failed to load banks. Please try again later.');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching banks:', error);
+                    alert('An error occurred while fetching banks.');
+                }
+            });
         }
 
         $('#approveConfirmBtn').on('click', function () {
-            const bankingNumber = $('#bankingNumberInput').val();
-            if (!bankingNumber) {
-                alert('Please enter a banking number.');
+            const bankId = $('#bankingNumberSelect').val();
+            if (!bankId) {
+                alert('Please select a bank.');
                 return;
             }
 
             $('#bankingNumberPopup').fadeOut();
 
-            handleProjectApproval(currentButton, currentRequestId, true, bankingNumber);
+            handleProjectApproval(currentButton, currentRequestId, true, bankId);
         });
 
         $('#cancelPopupBtn').on('click', function () {
             $('#bankingNumberPopup').fadeOut();
         });
 
-        function handleProjectApproval(button, createProjectRequestId, isAllowed, bankingNumber) {
+        function handleProjectApproval(button, createCampaignRequestId, isAllowed, bankId) {
             const userId = localStorage.getItem('userId');
 
             const today = new Date();
@@ -455,15 +545,14 @@
             const dateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 
             const payload = {
-                createProjectRequestId: createProjectRequestId,
+                campaignRequestId: createCampaignRequestId,
                 approverId: userId,
                 dateOfApproval: dateTime,
                 isAllowed: isAllowed,
-                bankingNumber: bankingNumber
+                bankId: bankId 
             };
 
             console.log('Payload:', payload);
-
 
             $.ajax({
                 url: 'https://localhost:7294/api/CampaignRequestApproveHistories/CreateCampaignRequestApproveHistory',
@@ -475,12 +564,8 @@
                 data: JSON.stringify(payload),
                 success: function (response) {
                     if (response.success) {
-                        alert(response.message || 'Action completed successfully!');
-                        if (isAllowed) {
-                            updateRowToApprovedForPM(button);
-                        } else {
-                            updateRowToRejected(button);
-                        }
+                        updateRowToApprovedForPM(button, createCampaignRequestId);
+
                     } else {
                         alert('Failed: ' + response.Message);
                     }
@@ -499,7 +584,8 @@
             } else {
                 apiUrl = `https://localhost:7294/api/CreateCampaignRequests/GetAllCreateCampaignRequestsByUserId/${userId}`;
             }
-
+            let currentPage = 1;
+            const pageSize = 5;
             function fetchCampaignRequests() {
                 $.ajax({
                     url: apiUrl,
@@ -537,14 +623,14 @@
                     const statusClass = getStatusClass(request.status);
                     let actionButtons = `
                         <button class="btn btn-success btn-sm" onclick="showBankingNumberPopup(this, ${request.id})">Approve</button>
-                        <button class="btn btn-danger btn-sm" onclick="handleCampaignReject(this, ${request.id}, false)">Decline</button>
+                        <button class="btn btn-danger btn-sm" onclick="openDeclineModal(this, ${request.id})">Decline</button>
                         <a class="btn btn-info btn-sm" href="/Campaign/CampaignRequestDetail?requestId=${request.id}">Detail</a>
                     `;
                     if (request.status === "Accepted") {
-                        actionButtons = `<span class="text-approved me-2" style="margin-left:25px">Approved</span>
+                        actionButtons = `<span class="text-approved me-2" style="margin-left:5px">Approved</span>
                                         <a href="/Campaign/CampaignRequestDetail?requestId=${request.id}" class="text-blue me-2" >Detail</a>`;
                     } else if (request.status === "Rejected") {
-                        actionButtons = `<span class="text-declined me-2" style="margin-left:25px">Rejected</span>
+                        actionButtons = `<span class="text-declined me-2" style="margin-left:5px">Rejected</span>
                                     <a href="/Campaign/CampaignRequestDetail?requestId=${request.id}" class="text-blue me-2">Detail</a>`;
                     }
 
@@ -553,10 +639,10 @@
                     }
                     const row = `
                         <tr>
-                            <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${index + 1}</span></td>
-                            <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${request.title}</span></td>
-                            <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${request.projectName}</span></td>
-                            <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${formatDateTime(request.createdAt)}</span></td>
+                            <td class="align-middle text-center text-sm">${index + 1}</td>
+                            <td class="align-middle text-center text-sm">${request.title}</td>
+                            <td class="align-middle text-center text-sm">${request.projectName}</td>
+                            <td class="align-middle text-center text-sm">${formatDateTime(request.createdAt)}</td>
                             <td class="align-middle text-center text-sm"><span class="badge badge-sm ${statusClass}">${request.status}</span></td>
                             <td class="align-middle text-center">${actionButtons}</td>
                         </tr>
@@ -571,10 +657,7 @@
                 return "badge-pending";
             }
 
-            // function formatDateTime(dateString) {
-            //     const date = new Date(dateString);
-            //     return date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
-            // }
+
 
             fetchCampaignRequests();
 

@@ -202,7 +202,7 @@
                     contentType: false,
                     success: function (response) {
                         alert(response.Message || 'Project created successfully!');
-                        window.location.href = '/Campaign/CampaignManagement';
+                        window.location.href = '/Campaign/CampaignRequestManagement';
                     },
                     error: function (xhr, status, error) {
                         alert('Error: ' + xhr.responseText || status);

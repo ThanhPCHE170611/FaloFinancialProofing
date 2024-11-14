@@ -531,9 +531,6 @@ $(document).ready(function () {
 
     function loadPrepayRequests(page) {
 
-        const statusFilter = document.getElementById('statusFilter').value;
-        const createdByFilter = document.getElementById('searchBox').value.trim();
-
         let apiUrl;
         switch (checkrole) {
             case "Accounting":

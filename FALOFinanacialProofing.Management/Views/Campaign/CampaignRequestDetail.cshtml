@@ -81,7 +81,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control" id="description" rows="4" readonly></textarea>
+                            <textarea class="form-control" id="description" rows="8" readonly></textarea>
                         </div>
                         <div class="mb-3" id="feedback-section">
                             <label for="feedback" class="form-label">Feedback</label>
@@ -146,7 +146,7 @@
                         $('#approver-section').show();
                     }
 
-                    if (data.status.toLowerCase() === 'reject') {
+                    if (data.status.toLowerCase() === 'rejected') {
                         $('#feedback-section').show();
                         $('#feedback').val(data.feedback);
                     }

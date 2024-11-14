@@ -60,6 +60,40 @@
             color: green;
             font-weight: bold;
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+            .close:hover, .close:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
     </style>
 </head>
 
@@ -79,12 +113,12 @@
                     </div>
 
                     <div class="search-filter-container px-3">
-                        <input type="text" id="searchBox" class="search-box" placeholder="Search by Project or Address" onkeyup="filterTable()">
-                        <select id="statusFilter" class="filter-box" onchange="filterTable()">
+                        <input type="text" id="searchInput" class="search-box" placeholder="Search by Project Title" onkeyup="searchProject()">
+                        <select id="statusFilter" class="filter-box" onchange="filterByStatus()">
                             <option value="">All Status</option>
                             <option value="Pending">Pending</option>
-                            <option value="Approved">Approved</option>
-                            <option value="Declined">Declined</option>
+                            <option value="Accepted">Approved</option>
+                            <option value="Rejected">Rejected</option>
                         </select>
                     </div>
 
@@ -94,68 +128,116 @@
                                 <thead>
                                     <tr>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 5%;">STT</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="width: 25%;">Project</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 25%;">Created By</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Created Date</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Status</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Action</th>
+                                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2" style="width: 25%;">Project</th>
+                                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7" style="width: 25%;">Created By</th>
+                                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7" style="width: 15%;">Created Date</th>
+                                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7" style="width: 15%;">Status</th>
+                                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7" style="width: 15%;">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">1</span></td>
-                                        <td><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">Project A</span></div></td>
-                                        <td><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">Hoi Chu Thap Do</span></div></td>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">20/10/2024</span></td>
-                                        <td class="align-middle text-center text-sm">
-                                            <span class="badge badge-sm bg-gradient-warning" id="status-1">Pending</span>
-                                        </td>
-                                        <td class="align-middle text-center">
-                                            <span id="action-1">
-                                                <button class="btn btn-success btn-sm" onclick="approveProject(1)">Approve</button>
-                                                <button class="btn btn-danger btn-sm" onclick="declineProject(1)">Decline</button>
-                                            </span>
-                                            <a asp-controller="Project" asp-action="ProjectDetail" class="btn btn-info btn-sm">Detail</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">2</span></td>
-                                        <td><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">Project B</span></div></td>
-                                        <td><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">Hoi Chu Thap Do</span></div></td>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">20/11/2024</span></td>
-                                        <td class="align-middle text-center text-sm">
-                                            <span class="badge badge-sm bg-gradient-warning" id="status-2">Pending</span>
-                                        </td>
-                                        <td class="align-middle text-center">
-                                            <span id="action-2" hidden>
-                                                <button class="btn btn-success btn-sm" onclick="approveProject(2)">Approve</button>
-                                                <button class="btn btn-danger btn-sm" onclick="declineProject(2)">Decline</button>
-                                            </span>
-                                            <a asp-controller="Project" asp-action="ProjectDetail" class="btn btn-info btn-sm">Detail</a>
-                                        </td>
-                                    </tr>
+                                    
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
+                <div class="pagination-container text-center mt-4">
+                    <div id="pagination"></div>
+                </div>
             </div>
         </div>
     </div>
-
+    <div id="declineModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModalDeclineProjectRequest()">&times;</span>
+            <h3>Decline Request</h3>
+            <label for="declineReason">Reason for Decline:</label>
+            <textarea id="declineReason" class="form-control" rows="3" placeholder="Enter feedback..."></textarea>
+            <button class="btn btn-danger mt-3" onclick="submitDecline()">Submit</button>
+        </div>
+    </div>
     <script src="../assets/js/core/popper.min.js"></script>
     <script src="../assets/js/core/bootstrap.min.js"></script>
     <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
     <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        function approveProject(id) {
-            document.getElementById('status-' + id).className = 'badge badge-sm badge-approved';
-            document.getElementById('status-' + id).innerText = 'Approved';
-            document.getElementById('action-' + id).innerHTML = '';
+        let currentButton = null;
+        let currentRequestId = null;
+
+        function openDeclineModal(button, requestId) {
+            currentButton = button;
+            currentRequestId = requestId;
+            $('#declineModal').fadeIn();
         }
 
-        function updateRowToApprovedForPM(button) {
+        function closeModalDeclineProjectRequest() {
+            $('#declineModal').fadeOut();
+        }
+
+        function submitDecline() {
+            const feedback = $('#declineReason').val().trim();
+
+            if (!feedback) {
+                alert('Please enter a reason for the decline.');
+                return;
+            }
+
+            closeModalDeclineProjectRequest();
+            handleProjectReject(currentButton, currentRequestId, false, feedback);
+        }
+
+        function handleProjectReject(button, createProjectRequestId, isAllowed, feedback) {
+            const userId = localStorage.getItem('userId');
+            const jwtToken = localStorage.getItem('jwtToken');
+
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const hours = String(today.getHours()).padStart(2, '0');
+            const minutes = String(today.getMinutes()).padStart(2, '0');
+            const seconds = String(today.getSeconds()).padStart(2, '0');
+            const dateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+
+            const payload = {
+                createProjectRequestId: createProjectRequestId,
+                approverId: userId,
+                dateOfApproval: dateTime,
+                isAllowed: isAllowed,
+                feedBack: feedback
+            };
+
+            console.log('Payload:', payload);
+            
+
+            $.ajax({
+                url: 'https://localhost:7294/api/CreateProjectRequestApproveHistories/CreateCreateProjectRequestApproveHistory',
+                type: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                contentType: 'application/json',
+                data: JSON.stringify(payload),
+                success: function (response) {
+                    if (response.success) {
+                        console.log('User ID:', createProjectRequestId);
+                        updateRowToRejected(button, createProjectRequestId);
+                    } else {
+                        alert('Failed: ' + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error in project approval:', error);
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        }
+
+        function updateRowToApprovedForPM(button, id) {
+
+            console.log()
             const row = button.closest('tr');
             const actionCell = row.querySelector('td:nth-child(6)');
             const statusCell = row.querySelector('td:nth-child(5)');
@@ -173,20 +255,17 @@
             approvedText.textContent = 'Approved';
 
             const detailLink = document.createElement('a');
-            detailLink.href = '#';
             detailLink.classList.add('text-blue');
             detailLink.textContent = 'Detail';
-            detailLink.addEventListener('click', function (event) {
-                event.preventDefault();
-                showDetail();
-            });
+            detailLink.href = `/Project/ProjectRequestDetail?requestId=${id}`;
+
             actionCell.appendChild(approvedText);
             actionCell.appendChild(detailLink);
             statusCell.innerHTML = '';
             statusCell.appendChild(declinedText);
         }
 
-        function updateRowToRejected(button) {
+        function updateRowToRejected(button, id) {
             const row = button.closest('tr');
             const actionCell = row.querySelector('td:nth-child(6)');
             const statusCell = row.querySelector('td:nth-child(5)');
@@ -204,13 +283,9 @@
             rejectedText.textContent = 'Rejected';
 
             const detailLink = document.createElement('a');
-            detailLink.href = '#';
             detailLink.classList.add('text-blue');
             detailLink.textContent = 'Detail';
-            detailLink.addEventListener('click', function (event) {
-                event.preventDefault();
-                showDetail();
-            });
+            detailLink.href = `/Project/ProjectRequestDetail?requestId=${id}`;
 
             actionCell.appendChild(rejectedText);
             actionCell.appendChild(detailLink);
@@ -277,11 +352,6 @@
                 isAllowed: isAllowed
             };
 
-            console.log(isAllowed);
-            console.log(createProjectRequestId);
-            console.log(dateTime);
-            console.log(userId);
-
             const jwtToken = localStorage.getItem('jwtToken');
             $.ajax({
                 url: 'https://localhost:7294/api/CreateProjectRequestApproveHistories/CreateCreateProjectRequestApproveHistory',
@@ -293,14 +363,9 @@
                 data: JSON.stringify(payload),
                 success: function (response) {
                     if (response.success) {
-                        alert(response.message || 'Action completed successfully!');
-                        if (isAllowed) {
-                            updateRowToApprovedForPM(button);
-                        } else {
-                            updateRowToRejected(button);
-                        }
+                        updateRowToApprovedForPM(button);
                     } else {
-                        alert('Failed: ' + response.Message);
+                        alert('Failed: ' + response.message);
                     }
                 },
                 error: function (xhr, status, error) {
@@ -328,19 +393,26 @@
                 document.getElementById('createRequestBtn').style.display = 'none';
             }
 
-            function fetchProjectRequests(page) {
+            function fetchProjectRequests(searchInput = '', status = null, page = 1) {
                 $.ajax({
                     url: apiUrl,
                     type: 'GET',
                     headers: {
                         'Authorization': `Bearer ${jwtToken}`
                     },
+                    data: {
+                        searchInput: searchInput,
+                        userId: userId,
+                        status: status,
+                        currentPage: page
+                    },
                     success: function (response) {
                         if (response.success) { 
                             console.log("API response data:", response.data.data); 
                             populateTable(response.data.data);
+                            setupPagination(response.data.dataCount);
                         } else {
-                            alert('Failed to retrieve project requests: ' + response.message);
+                            $('#projectTable tbody').append('<tr><td colspan="6" class="text-center">No campaign requests found</td></tr>');
                         }
                     },
                     error: function (xhr, status, error) {
@@ -365,14 +437,14 @@
 
                     let actionButtons = `
                         <button class="btn btn-success btn-sm" onclick="handleProjectApproval(this,${request.id}, true)">Approve</button>
-                        <button class="btn btn-danger btn-sm" onclick="handleProjectApproval(this,${request.id}, false)">Decline</button>
+                        <button class="btn btn-danger btn-sm" onclick="openDeclineModal(this,${request.id})">Decline</button>
                         <a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail/requestId=${request.id}">Detail</a>
                     `;
                     if (request.status === "Accepted") {
-                        actionButtons = `<span class="text-approved me-2" style="margin-left:25px">Approved</span>
+                        actionButtons = `<span class="text-approved me-2" style="margin-left:5px">Approved</span>
                                         <a href="/Project/ProjectRequestDetail?requestId=${request.id}" class="text-blue me-2" >Detail</a>`;
                     } else if (request.status === "Rejected") {
-                        actionButtons = `<span class="text-declined me-2" style="margin-left:25px">Rejected</span>
+                        actionButtons = `<span class="text-declined me-2" style="margin-left:5px">Rejected</span>
                                     <a href="/Project/ProjectRequestDetail?requestId=${request.id}" class="text-blue me-2">Detail</a>`;
                     }
 
@@ -391,10 +463,10 @@
                     }
                     const row = `
                         <tr>
-                            <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${index + 1}</span></td>
-                            <td class="align-middle text-center text-sm"><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">${request.title}</span></div></td>
-                            <td class="align-middle text-center text-sm"><div class="d-flex px-2 py-1"><span class="text-secondary text-xs font-weight-bold">${request.senderName}</span></div></td>
-                            <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${formatDateTime(request.createdAt)}</span></td>
+                            <td class="align-middle text-center text-sm">${index + 1}</td>
+                            <td class="align-middle text-center text-sm">${request.title}</td>
+                            <td class="align-middle text-center text-sm">${request.senderName}</td>
+                            <td class="align-middle text-center text-sm">${formatDateTime(request.createdAt)}</span></td>
                             <td class="align-middle text-center text-sm">
                                 <span class="badge badge-sm ${statusClass}">${request.status}</span>
                             </td>
@@ -405,12 +477,37 @@
                     tableBody.append(row);
                 });
             }
-
             function getStatusClass(status) {
                 if (status === "Accepted") return "badge-approved";
                 if (status === "Rejected") return "badge-declined";
                 return "badge-pending";
             }
+            function setupPagination(totalItems) {
+                const totalPages = Math.ceil(totalItems / pageSize);
+                const paginationContainer = $('#pagination');
+                paginationContainer.empty();
+
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageButton = $(`<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}">${i}</button>`);
+                    pageButton.on('click', () => changePage(i));
+                    paginationContainer.append(pageButton);
+                }
+            }
+
+        window.changePage = function (page) {
+            currentPage = page;
+            fetchProjectRequests($('#searchInput').val(), $('#statusFilter').val(), currentPage);
+        };
+
+            $('#searchInput').on('keyup', function () {
+                currentPage = 1;
+                fetchProjectRequests($(this).val(), $('#statusFilter').val(), currentPage);
+            });
+
+            $('#statusFilter').on('change', function () {
+                currentPage = 1;
+                fetchProjectRequests($('#searchInput').val(), $(this).val(), currentPage);
+            });
 
             fetchProjectRequests();
         });
