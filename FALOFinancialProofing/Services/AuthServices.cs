@@ -610,7 +610,6 @@ namespace FALOFinancialProofing.Services
                 return Double.MinValue;
             }
             return userinCampaign.Debt;
-
         }
     }
 
