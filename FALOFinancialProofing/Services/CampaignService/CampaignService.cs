@@ -1,5 +1,6 @@
 ﻿using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.DTOs.CampaignDTO;
+using FALOFinancialProofing.DTOs.CreateCampaignFileDTO;
 using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.DTOs.TransactionLogsDTOs;
 using FALOFinancialProofing.Helpers;
@@ -158,7 +159,13 @@ namespace FALOFinancialProofing.Services.CampaignService
                         //BankingNumber = p.BankingNumber,
                         BankId = p.BankId,
                         Status = p.Status,
-                        TotalMoneyEarned = p.TransactionLogs.Sum(x => (double)x.Amount)
+                        TotalMoneyEarned = p.TransactionLogs.Sum(x => (double)x.Amount),
+                        CreateCampaignFiles = p.CreateCampaignRequests.SelectMany(ccr => ccr.CreateCampaignFiles).Select(f => new CreateCampaignFileInformation()
+                        {
+                            Id = f.Id,
+                            RequestId = f.RequestId,
+                            FilePath = f.FilePath
+                        }).ToList()
                     }).SingleOrDefaultAsync();
             }
             catch (Exception ex)
