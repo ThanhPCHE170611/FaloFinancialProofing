@@ -19,7 +19,13 @@ namespace FALOFinancialProofing.FALOHomePage
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
             });
-            builder.Services.AddMemoryCache();
+            builder.Services.AddDistributedMemoryCache();
+
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30); // Session timeout
+                options.Cookie.IsEssential = true; // Make session cookie essential for GDPR compliance
+            });
 
             builder.Services.AddHostedService<BankDataPollingService>();
             builder.Services.AddTransient<TransactionPollingDirect>();

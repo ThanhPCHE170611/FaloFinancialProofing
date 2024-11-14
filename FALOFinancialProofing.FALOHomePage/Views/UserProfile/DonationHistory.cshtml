@@ -1,5 +1,68 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using FALOFinancialProofing.FALOHomePage.Services
+
 @{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var transactions = ViewBag.Transactions as List<TransactionDTO.TransactionLog>;
+    var errorMessage = ViewBag.ErrorMessage as string;
 }
+
+<style>
+    .table {
+        margin: 10px auto; /* Space on top and bottom */
+        width: 100%; /* Adjust width as needed */
+    }
+
+        .table th, .table td {
+            padding: 10px; /* Space inside the cells */
+        }
+</style>
+
+<div class="container">
+    <h2>Lịch Sử Từ Thiện</h2>
+    <div class="blog-single__right-item">
+        <div class="item shadow mb-30">
+            <h5 class="title">Search</h5>
+            <div class="serach-bar">
+                <input type="text" placeholder="Search here">
+                <button><i class="fa-regular fa-magnifying-glass"></i></button>
+            </div>
+        </div>
+    </div>
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger">
+            @errorMessage
+        </div>
+    }
+
+    @if (transactions != null && transactions.Any())
+    {
+        <table class="table table-bordered table-hover" id="transactions-table">
+            <thead>
+                <tr>
+                    <th scope="col">Mã Giao Dịch</th>
+                    <th scope="col">Thời Điểm Giao Dịch</th>
+                    <th scope="col">Số Tiền</th>
+                    <th scope="col">Nội Dung Giao Dịch</th>
+                    <th scope="col">Tên Chiến Dịch</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var log in transactions)
+                {
+                    <tr>
+                        <td>@log.TId</td>
+                        <td>@log.TransactionDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                        <td>@log.Amount</td>
+                        <td>@log.Description</td>
+                        <td>@log.CampaignName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

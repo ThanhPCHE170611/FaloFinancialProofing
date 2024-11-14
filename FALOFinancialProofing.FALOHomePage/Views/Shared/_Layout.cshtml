@@ -1,4 +1,7 @@
-﻿
+﻿@{
+    var userId = Context.Session.GetString("UserId");
+}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,6 +31,28 @@
 
     @RenderSection("Scripts", required: false)
 </head>
+
+<style>
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        padding: 12px 16px;
+        z-index: 1;
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+</style>
+
 <body>
     <!-- Preloader area start -->
     <div id="loading">
@@ -56,18 +81,44 @@
                         </ul>
                     </nav>
                 </div>
-                <div class="btn-two d-none d-lg-inline-block">
-                    <span class=" btn-circle">
-                    </span>
-                    <a asp-controller="Authentication" asp-action="Login"spot class="btn-inner">
-                        <span class="btn-text">
-                            ĐĂNG KÝ
+                @if (userId == null) {
+                    <div class="btn-two d-none d-lg-inline-block">
+                        <span class=" btn-circle">
                         </span>
-                    </a>
-                </div>
-                <div class="bars d-block d-lg-none">
-                    <i id="openButton" class="fa-solid fa-bars"></i>
-                </div>
+                        <a asp-controller="Authentication" asp-action="Login"spot class="btn-inner">
+                            <span class="btn-text">
+                                ĐĂNG NHẬP
+                            </span>
+                        </a>
+                    </div>
+                    <div class="bars d-block d-lg-none">
+                        <i id="openButton" class="fa-solid fa-bars"></i>
+                    </div>
+                }
+                else{
+                    <div class="dropdown">
+                        <span>
+                            <img src="/images/project/user.png" alt="image" style="max-height=50px; max-width:50px; border-radius: 100%">
+                        </span>
+                        <div class="dropdown-content">
+                            <p>
+                                <a asp-controller="UserProfile" asp-action="Profile">
+                                    Trang cá nhân
+                                </a>
+                            </p>
+                            <p>
+                                <a asp-controller="UserProfile" asp-action="DonationHistory">
+                                    Lịch Sử Từ Thiện
+                                </a>
+                            </p>
+                            <p>
+                                <a asp-controller="UserProfile" asp-action="Logout">
+                                    Đăng Xuất
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     </header>
@@ -102,15 +153,14 @@
                                     ullamcorper laoreet neque, a lacinia
                                     curabitur lacinia mollis
                                 </p>
-                                <div class="btn-one mt-40">
-                                    <span class="btn-circle">
-                                    </span>
-                                    <a asp-controller="Authentication" asp-action="Login" class="btn-inner">
+                                    <div class="btn-one mt-40">
+                                        <span class="btn-circle"></span>
+                                        <a asp-controller="Authentication" asp-action="Login" class="btn-inner">
                                         <span class="btn-text">
-                                            ĐĂNG KÝ
+                                            ĐĂNG NHẬP
                                         </span>
-                                    </a>
-                                </div>
+                                        </a>
+                                    </div>
                             </div>
                         </div>
                         <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="600ms" data-wow-duration="1500ms">

@@ -22,10 +22,11 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
             bankAccountService = bankData;
             _httpClientFactory = httpClientFactory;
         }
-        public async Task<IActionResult> Index(int id)
+        public async Task<IActionResult> Index(int id, int currentPage = 1)
         {
             //var transactions = await _transactionPollingDirect.GetTransactionAsync(id);
             //return View(transactions);
+
             if (id == null)
             {
                 return RedirectToAction("Error404", "Error");
@@ -38,15 +39,20 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
                     var client = _httpClientFactory.CreateClient();
 
                     // Make a GET request to the API
-                    HttpResponseMessage response = await client.GetAsync($"https://localhost:7294/api/TransactionLogs/GetCampaignTransactionLogs/{id}");
+                    HttpResponseMessage response = await client.GetAsync($"https://localhost:7294/api/TransactionLogs/GetCampaignTransactionLogs/{id}?currentPage={currentPage}");
 
                     if (response.IsSuccessStatusCode)
                     {
                         string jsonResponse = await response.Content.ReadAsStringAsync();
 
-                        var transactionLogsResponse = JsonConvert.DeserializeObject<TransactionDTO.TransactionLogsResponse>(jsonResponse);
+                        var transactionLogsResponse = JsonConvert.DeserializeObject<TransactionDTO.TransactionLogResponse>(jsonResponse);
 
                         ViewBag.Transactions = transactionLogsResponse.Data;
+
+                        ViewBag.CurrentPage = transactionLogsResponse.Data.CurrentPage;
+                        ViewBag.TotalPages = (int)Math.Ceiling((double)transactionLogsResponse.Data.DataCount / 10);
+                        ViewBag.DataCount = transactionLogsResponse.Data.DataCount;
+                        ViewBag.PageSize = 10;
                     }
                     else
                     {
@@ -79,6 +85,13 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
             {
                 try
                 {
+                    //Validate whether user has logged in before
+                    string userId = HttpContext.Session.GetString("UserId");
+                    if (userId == null)
+                    {
+                        return RedirectToAction("Login", "Authentication");
+                    }
+
                     // Get HttpClient from the factory
                     var client = _httpClientFactory.CreateClient();
 
@@ -95,17 +108,11 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
 
                     ViewBag.campaignDetails = campaignDetails.Data;
 
-                    //Validate whether user has logged in before
-
-
 
                     //Create ViewBag for CampaignId, BankID and user id
-                    ViewBag.donationDetails = new QRDTO("1cf471eb-03d6-40f3-ae97-85c16d42c475", 0, campaignDetails.Data.BankId, campaignId);
+                    ViewBag.donationDetails = new QRDTO(userId, 0, campaignDetails.Data.BankId, campaignId);
 
-                    //Send User To Page with CampaignId, BankID and user id
                     return View();
-
-
                 }
                 catch (Exception ex)
                 {
@@ -153,7 +160,6 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
             }
             catch (Exception ex)
             {
-                // Handle exceptions
                 return Content($"Error: {ex.Message}");
             }
         }
