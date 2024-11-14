@@ -8,6 +8,7 @@ namespace FALOFinancialProofing.DTOs.CampaignDTO
     {
         public int CampaignId { get; set; }
         public int ProjectId { get; set; }
+        public string ProjectName { get; set; }
         public string CreateBy { get; set; }
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
