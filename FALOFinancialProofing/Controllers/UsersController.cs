@@ -77,6 +77,8 @@ namespace FALOFinancialProofing.Controllers
 
 
         }
+
+
         [Authorize]
         // hiển thị thông tin danh sách người dùng không ở trong một chiến dịch cụ thể
         [HttpGet("GetUserNotInCampaignById/{CampaignId}")]
@@ -90,6 +92,8 @@ namespace FALOFinancialProofing.Controllers
                 Success = true
             });
         }
+
+
         [Authorize]
         [HttpGet("SetRoleLoginAfterLogin/{userRole}")]
         public IActionResult SetRoleLogin(string userRole)
@@ -176,7 +180,7 @@ namespace FALOFinancialProofing.Controllers
                 return Ok(new
                 {
                     Success = false,
-                    Message = "Register Failed"
+                    Message = "Register Failed: Email or Username is exist"
                 });
             }
             else
@@ -378,7 +382,6 @@ namespace FALOFinancialProofing.Controllers
                 Success = true
             });
         }
-
 
     }
 }
