@@ -467,12 +467,11 @@
                     if (response.success) {
                         updateRowToRejected(button, createCampaignRequestId);
                     } else {
-                        alert('Failed: ' + response.Message);
+                        alert('Failed: ' + response.message);
                     }
                 },
                 error: function (xhr, status, error) {
                     console.error('Error in project approval:', error);
-                    alert('An error occurred. Please try again.');
                 }
             });
         }
@@ -511,7 +510,6 @@
                 },
                 error: function (xhr, status, error) {
                     console.error('Error fetching banks:', error);
-                    alert('An error occurred while fetching banks.');
                 }
             });
         }
@@ -572,7 +570,6 @@
                 },
                 error: function (xhr, status, error) {
                     console.error('Error in project approval:', error);
-                    alert('An error occurred. Please try again.');
                 }
             });
         }

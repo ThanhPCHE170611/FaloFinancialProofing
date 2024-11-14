@@ -162,11 +162,11 @@ $(document).ready(function () {
                     alert('Create new PrePay RequestForm successfully.');
                     window.location.href = `/Prepay/PrepayManagement?campaignid=${campaignId}`;
                 } else {
-                    alert('Error: ' + response.Message);
+                    alert('Error: ' + response.message);
                 }
             },
             error: function () {
-                alert('Failed to create new PrePay request. Please try again.');
+                alert(response.message);
             }
         });
     });

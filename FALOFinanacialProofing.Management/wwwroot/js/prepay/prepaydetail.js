@@ -114,8 +114,8 @@ $(document).ready(function () {
                                     alert(`Failed to cancel: ${response.message}`);
                                 }
                             },
-                            error: function () {
-                                alert("Error occurred while trying to cancel the request.");
+                            error: function (response) {
+                                alert(response.message);
                             }
                         });
                     });

@@ -222,7 +222,7 @@
                 data: JSON.stringify(payload),
                 success: function (response) {
                     if (response.success) {
-                        console.log('User ID:', createProjectRequestId);
+                        console.log(createProjectRequestId);
                         updateRowToRejected(button, createProjectRequestId);
                     } else {
                         alert('Failed: ' + response.message);
@@ -236,8 +236,6 @@
         }
 
         function updateRowToApprovedForPM(button, id) {
-
-            console.log()
             const row = button.closest('tr');
             const actionCell = row.querySelector('td:nth-child(6)');
             const statusCell = row.querySelector('td:nth-child(5)');
@@ -360,10 +358,11 @@
                     'Authorization': `Bearer ${jwtToken}`
                 },
                 contentType: 'application/json',
-                data: JSON.stringify(payload),
+                data: JSON.stringify(payload), 
                 success: function (response) {
                     if (response.success) {
-                        updateRowToApprovedForPM(button);
+                        console.log(createProjectRequestId);
+                        updateRowToApprovedForPM(button,createProjectRequestId);
                     } else {
                         alert('Failed: ' + response.message);
                     }

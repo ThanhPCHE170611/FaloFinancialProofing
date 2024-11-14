@@ -94,7 +94,7 @@
                     success: function(response) {
                         if (response.success) {
                             $('#registerMessage').html('<span class="text-success">Register Success</span>');
-                            // window.location.href = '/Authentication/Login';
+                            window.location.href = '/Authentication/Login';
                         } else {
                             $('#registerMessage').html('<span class="text-danger">' + response.message + '</span>');
                         }
