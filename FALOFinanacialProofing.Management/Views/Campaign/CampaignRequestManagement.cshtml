@@ -583,16 +583,22 @@
             }
             let currentPage = 1;
             const pageSize = 5;
-            function fetchCampaignRequests() {
+            function fetchCampaignRequests(searchInput = '', status = null, page = 1) {
                 $.ajax({
                     url: apiUrl,
                     type: 'GET',
                     headers: {
                         'Authorization': `Bearer ${jwtToken}`
                     },
+                    data: {
+                        searchInput: searchInput,
+                        status: status,
+                        currentPage: page
+                    },
                     success: function (response) {
                         if (response.success) {
                             populateTable(response.data.data);
+                            setupPagination(response.data.dataCount);
                         } else {
                             const tableBody = $('#campaignTable tbody');
                             tableBody.empty();
@@ -653,8 +659,30 @@
                 if (status === "Rejected") return "badge-declined";
                 return "badge-pending";
             }
+            function setupPagination(totalItems) {
+                const totalPages = Math.ceil(totalItems / pageSize);
+                const paginationContainer = $('#pagination');
+                paginationContainer.empty();
 
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageButton = $(`<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}">${i}</button>`);
+                    pageButton.on('click', () => changePage(i));
+                    paginationContainer.append(pageButton);
+                }
+            }
+            window.changePage = function (page) {
+                currentPage = page;
+                fetchCampaignRequests($('#searchInput').val(), $('#statusFilter').val(), currentPage);
+            };
+            $('#searchInput').on('keyup', function () {
+                currentPage = 1;
+                fetchCampaignRequests($(this).val(), $('#statusFilter').val(), currentPage);
+            });
 
+            $('#statusFilter').on('change', function () {
+                currentPage = 1;
+                fetchCampaignRequests($('#searchInput').val(), $(this).val(), currentPage);
+            });
 
             fetchCampaignRequests();
 

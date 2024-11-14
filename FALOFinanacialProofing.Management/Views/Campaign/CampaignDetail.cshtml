@@ -174,7 +174,7 @@
     <script>
         function formatDateToDisplay(dateString) {
             const date = new Date(dateString);
-            date.setMinutes(date.getMinutes() - date.getTimezoneOffset()); // Chuyển đổi từ UTC sang local
+            date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
             return date.toISOString().split('T')[0];
         }
         $(document).ready(function () {
