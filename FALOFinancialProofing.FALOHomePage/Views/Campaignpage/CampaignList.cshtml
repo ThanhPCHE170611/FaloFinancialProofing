@@ -46,12 +46,10 @@
         loadCampaigns(1);
     });
 
-
-
     // Function to load campaigns with pagination
     function loadCampaigns(pageNumber = 1) {
         $.ajax({
-            url: `https://localhost:7294/api/Campaign/GetAllCampaignInSystem?status=Fundraising&IsActive=true&currentPage=${pageNumber}`,  // Adjust URL if necessary, e.g., for a specific controller
+            url: `https://localhost:7294/api/Campaign/GetAllCampaignInSystem?IsActive=true&currentPage=${pageNumber}`,  // Adjust URL if necessary, e.g., for a specific controller
             type: 'GET',
             data: {
                 status: null,  // You can set the status filter if needed
