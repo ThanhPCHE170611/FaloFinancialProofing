@@ -3,7 +3,7 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     var campaignDetails = ViewBag.CampaignDetails as FALOFinancialProofing.FALOHomePage.Models.CampaignDetailsDTO;
-    var percentage = (campaignDetails.TotalMoneyEarned / campaignDetails.FundTarget) * 100;
+    var percentage = Math.Round((campaignDetails.TotalMoneyEarned / campaignDetails.FundTarget) * 100);
 }
 
 <main>
@@ -31,7 +31,7 @@
                         </div>
                         <div class="progress-area px-4 pb-4 pt-35 bor border-top-0">
                             <div class="progress__item">
-                                <div class="progress__content" style="width: @percentage%;"><span>@percentage</span></div>
+                                <div class="progress__content" style="width: @percentage%;"><span>@percentage%</span></div>
                             </div>
                             <div class="progress__goal mt-15">
                                 <h6>Goal : <span>@campaignDetails.FundTarget</span></h6>
