@@ -116,7 +116,7 @@
                                     </div>
                                     <div class="cause__content">
                                         <h4 class="mb-4 mt-20">
-                                            <a href="@Url.Action("Index", "Campaignpage")" class="primary-hover">
+                                            <a href="@Url.Action("Index", "Campaignpage", new {id=campaign.CampaignId})" class="primary-hover">
                                                 @campaign.Title
                                             </a>
                                         </h4>
