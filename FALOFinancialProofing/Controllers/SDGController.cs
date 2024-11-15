@@ -18,7 +18,7 @@ namespace FALOFinancialProofing.Controllers
             _sdgServices = sdgServices;
         }
 
-        [HttpGet]
+        [HttpGet("GetAllSDGs")]
         public async Task<IActionResult> GetAllSDGs()
         {
             var sdgs = await _sdgServices.GetAllSDGsAsync();
@@ -64,7 +64,7 @@ namespace FALOFinancialProofing.Controllers
         public async Task<IActionResult> GetSDGByUserId(string userId)
         {
             var sdg = await _sdgServices.GetSDGByUserIdAsync(userId);
-            if (sdg == null )
+            if (sdg == null)
             {
                 return Ok(new
                 {

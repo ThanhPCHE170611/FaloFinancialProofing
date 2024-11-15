@@ -13,5 +13,8 @@ namespace FALOFinancialProofing.Services.UserSDGServices
         Task<bool> UpdateUserSDGAsync(UserSDG updateUserSDG);
         Task<bool> DeleteUserSDGAsync(int id);
         Task<bool> ValidateCreateUserSDGAsync(CreateUserSDG createUserSDG, StringBuilder message);
+        Task<UserSDG> GetUserSDGByUserIdAndSdgIdAsync(string userId, int sdgId);
+        Task<UserSDG> CreateUserSDGAsync(UserSDG userSdg);
+        Task<bool> DeleteUserSDGAsync(UserSDG userSDG);
     }
 }
