@@ -355,7 +355,7 @@
                 if (response.success) {
                     renderCampaigns(response.data);
                 } else {
-                    alert(response.message);
+                    alert("Cannot get the campaigns!");
                 }
             },
             error: function (error) {
@@ -380,7 +380,7 @@
                     year: 'numeric'  // "2024"
                 });
 
-                var percentage = (campaign.totalMoneyEarned / campaign.fundTarget) * 100;
+            var percentage = Math.round((campaign.totalMoneyEarned / campaign.fundTarget) * 100);
 
                 var url = '/Campaignpage/Index/' + campaign.campaignId;
 
@@ -440,7 +440,7 @@
                 if (response.success) {
                     renderProjects(response.data);
                 } else {
-                    alert(response.message);
+                    alert("Cannot get the projects!");
                 }
             },
             error: function (error) {

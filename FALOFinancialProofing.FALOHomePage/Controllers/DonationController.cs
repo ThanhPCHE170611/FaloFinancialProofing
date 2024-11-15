@@ -137,7 +137,6 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
                 if (!firstApiResult.Success)
                 {
                     return RedirectToAction("Error404", "Error");
-
                 }
 
                 var filePath = firstApiResult.Data.FilePath;

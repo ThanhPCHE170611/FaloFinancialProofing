@@ -32,7 +32,7 @@
                         <span class="btn-circle"></span>
                         <a href="#" class="btn-inner" id="donateButton">
                             <span class="btn-text">
-                                Donate Now
+                                Ủng Hộ
                             </span>
                         </a>
                     </div>
@@ -85,8 +85,8 @@
             const amount = parseFloat(amountInput.value);
 
             // Validate the amount input
-            if (isNaN(amount) || amount <= 0) {
-                alert('Please enter a valid amount.');
+            if (isNaN(amount) || amount < 2000) {
+                alert('Xin hãy nhập số tiền từ 2000đ trở lên');
                 return;
             }
 
