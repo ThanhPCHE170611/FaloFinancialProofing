@@ -25,6 +25,7 @@ namespace FALOFinancialProofing.DTOs.CampaignDTO
         public string? BankingNumber { get; set; }
         public string? Status { get; set; }
         public int? BankId { get; set; }
+        public string? UpdateLog { get; set; }
         public ICollection<CreateCampaignFileInformation> CreateCampaignFiles { get; set; }
     }
 }

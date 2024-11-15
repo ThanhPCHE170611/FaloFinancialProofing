@@ -159,6 +159,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                         //BankingNumber = p.BankingNumber,
                         BankId = p.BankId,
                         Status = p.Status,
+                        UpdateLog = p.UpdateLog,
                         TotalMoneyEarned = p.TransactionLogs.Sum(x => (double)x.Amount),
                         CreateCampaignFiles = p.CreateCampaignRequests.SelectMany(ccr => ccr.CreateCampaignFiles).Select(f => new CreateCampaignFileInformation()
                         {
