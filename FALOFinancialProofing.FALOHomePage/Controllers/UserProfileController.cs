@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Net.Http;
+using static FALOFinancialProofing.FALOHomePage.Models.TransactionDTO;
 
 namespace FALOFinancialProofing.FALOHomePage.Controllers
 {
@@ -42,14 +43,20 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
                 {
                     string jsonResponse = await response.Content.ReadAsStringAsync();
 
-                    var transactionLogsResponse = JsonConvert.DeserializeObject<TransactionDTO.TransactionLogResponse>(jsonResponse);
+                    var transactionLogsResponse = JsonConvert.DeserializeObject<TransactionLogResponse>(jsonResponse);
 
-                    ViewBag.Transactions = transactionLogsResponse.Data;
-
-                    ViewBag.CurrentPage = transactionLogsResponse.Data.CurrentPage;
-                    ViewBag.TotalPages = (int)Math.Ceiling((double)transactionLogsResponse.Data.DataCount / 10);
-                    ViewBag.DataCount = transactionLogsResponse.Data.DataCount;
-                    ViewBag.PageSize = 10;
+                    if (transactionLogsResponse?.Data?.Data != null)
+                    {
+                        ViewBag.Transactions = transactionLogsResponse.Data.Data;
+                        ViewBag.CurrentPage = transactionLogsResponse.Data.CurrentPage;
+                        ViewBag.TotalPages = (int)Math.Ceiling((double)transactionLogsResponse.Data.DataCount / 10);  // Assuming page size of 10
+                        ViewBag.DataCount = transactionLogsResponse.Data.DataCount;
+                        ViewBag.PageSize = 10;
+                    }
+                    else
+                    {
+                        ViewBag.ErrorMessage = "No transaction logs available.";
+                    }
                 }
                 else
                 {

@@ -4,6 +4,9 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     var transactions = ViewBag.Transactions as List<TransactionDTO.TransactionLog>;
     var errorMessage = ViewBag.ErrorMessage as string;
+    var currentPage = ViewBag.CurrentPage;
+    var totalPages = ViewBag.TotalPages;
+    var dataCount = ViewBag.DataCount;
 }
 
 <style>
@@ -18,7 +21,7 @@
 </style>
 
 <div class="container">
-    <h2>Lịch Sử Từ Thiện</h2>
+    <h2>Lịch sử từ thiện</h2>
     <div class="blog-single__right-item">
         <div class="item shadow mb-30">
             <h5 class="title">Search</h5>
@@ -61,6 +64,15 @@
                 }
             </tbody>
         </table>
+        @if (currentPage > 1)
+        {
+            <a href="@Url.Action("Index", new { id = ViewBag.CampaignId, currentPage = currentPage - 1 })">Previous</a>
+        }
+
+        @if (currentPage < totalPages)
+        {
+            <a href="@Url.Action("Index", new { id = ViewBag.CampaignId, currentPage = currentPage + 1 })">Next</a>
+        }
     }
 </div>
 
