@@ -9,6 +9,7 @@ using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services.EmailService;
 using FALOFinancialProofing.Services.SocialNetworkService;
+using FALOFinancialProofing.Services.UserSDGServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -35,6 +36,7 @@ namespace FALOFinancialProofing.Services
         private readonly IRepository<CampaignMember, int> campaignMemberRepository;
         private readonly ISocialNetworkService socialNetworkService;
         private readonly RoleService _roleService;
+        private readonly IUserSDGService userSDGService;
         //moi
         private readonly LinkGenerator _linkGenerator;
 
@@ -42,7 +44,7 @@ namespace FALOFinancialProofing.Services
         public AuthServices(UserManager<User> userManager, SignInManager<User> signInManager,
             IOptionsMonitor<AppSetting> optionsMonitor, RoleManager<IdentityRole> roleManager,
             IEmailService emailService,
-            LinkGenerator linkGenerator, IRepository<CampaignMember, int> campaignMemberRepository, ISocialNetworkService socialNetworkService, RoleService roleService)
+            LinkGenerator linkGenerator, IRepository<CampaignMember, int> campaignMemberRepository, ISocialNetworkService socialNetworkService, RoleService roleService, IUserSDGService userSDGService)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
@@ -53,6 +55,7 @@ namespace FALOFinancialProofing.Services
             this.campaignMemberRepository = campaignMemberRepository;
             this.socialNetworkService = socialNetworkService;
             _roleService = roleService;
+            this.userSDGService = userSDGService;
         }
         public async Task<bool> CheckUserExist(string userId, StringBuilder message)
         {
@@ -660,6 +663,8 @@ namespace FALOFinancialProofing.Services
 
                 var data = JsonConvert.DeserializeObject<List<SocialNetworkRequest>>(updateUserProfileRequest.SocialNetworkRequestJsons);
 
+                var SdgData = JsonConvert.DeserializeObject<List<SDGUserRequest>>(updateUserProfileRequest.SDGUserRequestJsons);
+
                 checkValid = true;
             }
             catch (Exception ex)
@@ -692,6 +697,7 @@ namespace FALOFinancialProofing.Services
                         Skill = u.Skill,
                         Hobby = u.Hobby,
                         Strength = u.Strength,
+                        PhoneNumber = u.PhoneNumber,
                         VolunteerExperience = u.VolunteerExperience,
                         VolunteerGoal = u.VolunteerGoal,
                         SocialNetworkRequests = u.SocialNetworks.Select(snr => new SocialNetworkRequest
@@ -700,7 +706,7 @@ namespace FALOFinancialProofing.Services
                             UserId = snr.UserId,
                             SocialNetworksLink = snr.SocialNetworksLink,
                         }).ToList(),
-                        userSDGInformation = u.UserSDGs.Select(usdg => new UserSDGInformation
+                        userSDGInformations = u.UserSDGs.Select(usdg => new UserSDGInformation
                         {
                             Id = usdg.Id,
                             UserId = usdg.UserId,
@@ -724,6 +730,7 @@ namespace FALOFinancialProofing.Services
 
             return data;
         }
+        #region May use later
         //FileHelper
         //public async Task<bool> UpdateUserProfile(UpdateUserProfileRequest updateUserProfileRequest, StringBuilder message)
         //{
@@ -761,7 +768,8 @@ namespace FALOFinancialProofing.Services
         //    }
 
         //    return result;
-        //}
+        //} 
+        #endregion
 
         public async Task<User?> UpdateUserProfile(UpdateUserProfileRequest updateUserProfileRequest, StringBuilder message)
         {
@@ -771,7 +779,6 @@ namespace FALOFinancialProofing.Services
                 user = await userManager.FindByIdAsync(updateUserProfileRequest.Id);
                 user.FirstName = updateUserProfileRequest.FirstName;
                 user.LastName = updateUserProfileRequest.LastName;
-                user.Email = updateUserProfileRequest.Email;
                 user.BirthDate = updateUserProfileRequest.BirthDate;
                 user.Image = await FileHelper.SaveImageAndReturnShortPathAsync(updateUserProfileRequest.LogoFile, FolderImage.UserImageUpload, user.Image) ?? user.Image;
                 user.Gender = updateUserProfileRequest.Gender;
@@ -784,7 +791,9 @@ namespace FALOFinancialProofing.Services
                 user.Strength = updateUserProfileRequest.Strength;
                 user.VolunteerExperience = updateUserProfileRequest.VolunteerExperience;
                 user.VolunteerGoal = updateUserProfileRequest.VolunteerGoal;
+                user.PhoneNumber = updateUserProfileRequest.PhoneNumber;
                 updateUserProfileRequest.SocialNetworkRequests = JsonConvert.DeserializeObject<List<SocialNetworkRequest>>(updateUserProfileRequest.SocialNetworkRequestJsons);
+                updateUserProfileRequest.sDGUserRequests = JsonConvert.DeserializeObject<List<SDGUserRequest>>(updateUserProfileRequest.SDGUserRequestJsons);
                 foreach (var item in updateUserProfileRequest.SocialNetworkRequests)
                 {
 
@@ -803,6 +812,29 @@ namespace FALOFinancialProofing.Services
                             SocialNetworksLink = item.SocialNetworksLink
                         };
                         await socialNetworkService.CreateSocialNetworkAsync(socialNetwork);
+                    }
+                }
+                foreach (var item in updateUserProfileRequest.sDGUserRequests)
+                {
+                    var userSdg = await userSDGService.GetUserSDGByUserIdAndSdgIdAsync(item.UserId, item.SDGId);
+                    if (item.IsActive)// trạng thái add
+                    {
+                        if (userSdg == null)
+                        {
+                            userSdg = new UserSDG()
+                            {
+                                UserId = item.UserId,
+                                SDGId = item.SDGId
+                            };
+                            await userSDGService.CreateUserSDGAsync(userSdg);
+                        }
+                    }
+                    else// trạng thái xóa
+                    {
+                        if (userSdg != null)
+                        {
+                            await userSDGService.DeleteUserSDGAsync(userSdg);
+                        }
                     }
                 }
                 var UpdateResult = await userManager.UpdateAsync(user);

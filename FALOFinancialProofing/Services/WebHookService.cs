@@ -27,7 +27,7 @@ namespace FALOFinancialProofing.Services
             {
 
                 var jsonData = JsonConvert.SerializeObject(request);
-                HttpContent httpContent = new StringContent(jsonData, Encoding.ASCII, "application/json");
+                HttpContent httpContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
                 var response = await _httpClient.PostAsync(SynUrl, httpContent);
                 string content = await response.Content.ReadAsStringAsync();
                 syncResponse = JsonConvert.DeserializeObject<SyncResponse>(content);

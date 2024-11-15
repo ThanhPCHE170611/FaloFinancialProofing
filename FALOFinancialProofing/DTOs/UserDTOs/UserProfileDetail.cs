@@ -14,6 +14,7 @@ namespace FALOFinancialProofing.DTOs.UserDTOs
         public bool? Gender { get; set; }
         public string? Address { get; set; }
         public string? WorkPlace { get; set; }
+        public string? PhoneNumber { get; set; }
         public string? Bio { get; set; }
         public string? Image { get; set; }
         public string? Education { get; set; }
@@ -23,6 +24,6 @@ namespace FALOFinancialProofing.DTOs.UserDTOs
         public string? VolunteerExperience { get; set; }
         public string? VolunteerGoal { get; set; }
         public List<SocialNetworkRequest> SocialNetworkRequests { get; set; } = new List<SocialNetworkRequest>();
-        public List<UserSDGInformation> userSDGInformation { get; set; } = new List<UserSDGInformation>();
+        public List<UserSDGInformation> userSDGInformations { get; set; } = new List<UserSDGInformation>();
     }
 }

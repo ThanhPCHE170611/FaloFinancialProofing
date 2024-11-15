@@ -164,22 +164,6 @@ namespace FALOFinancialProofing.Controllers
 
             return Content(statusMessage);
         }
-        #region TestData
-        //[HttpPost("CreateProject1", Name = "CreateProject1")]
-        //public async Task CreateProject()
-        //{
-        //    Project project = new Project()
-        //    {
-        //        CreatedBy = "09360c31-c34d-430c-a354-6bc3925e206d",
-        //        ProjectName = "Nguyen Duc Project",
-        //        DateOfCreation = DateTime.Now,
-        //        Description = "This is a project",
-        //        Status = "NotRunning",
-        //        OrganizationId = 1
-        //    };
-        //    var checkCreate = await _projectService.CreateProjectReturnEntityAsync(project);
-        //} 
-        #endregion
         // POST: api/Projects
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)] // mở nếu làm thật
@@ -217,7 +201,8 @@ namespace FALOFinancialProofing.Controllers
                     SenderId = createProject.CreatedBy,
                     Title = $"{checkProjectCreated.ProjectName}",
                     CreatedAt = DateTime.Now,
-                    Status = RequestStatus.Pending
+                    Status = RequestStatus.Pending,
+                    Description = $"{createProject.Description}",
                 };
                 var CreateProjectRequestCreated = await _createProjectRequestService.CreateCreateProjectRequestReturnEntityAsync(createProjectRequest);
                 if (CreateProjectRequestCreated == null)

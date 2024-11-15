@@ -74,7 +74,7 @@ namespace FALOFinancialProofing.Controllers
                 if (!string.IsNullOrEmpty(searchInput))
                 {
                     searchInput = searchInput.Trim();
-                    data = data.FindAll(x => ($"{x.CampaignName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.TransactionDate.ToShortDateString()}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
+                    data = data.FindAll(x => ($"{x.CampaignName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
                 }
                 filterPagingData.DataCount = data.Count;
                 data = PaginationHelper.Paginate<UserTransactionHistory>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
@@ -137,7 +137,7 @@ namespace FALOFinancialProofing.Controllers
                 if (!string.IsNullOrEmpty(searchInput))
                 {
                     searchInput = searchInput.Trim();
-                    data = data.FindAll(x => ($"{x.CampaignName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.TransactionDate.ToShortDateString()}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
+                    data = data.FindAll(x => ($"{x.CampaignName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
                 }
                 filterPagingData.DataCount = data.Count;
                 data = PaginationHelper.Paginate<UserTransactionHistory>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
