@@ -26,6 +26,7 @@ namespace FALOFinancialProofing.DTOs.UserDTOs
         public string? Strength { get; set; }
         public string? VolunteerExperience { get; set; }
         public string? VolunteerGoal { get; set; }
+        public string? PhoneNumber { get; set; }
         public string SocialNetworkRequestJsons { get; set; }
         public string SDGUserRequestJsons { get; set; }
         //public List<string> socialNetworkRequests { get; set; } = new List<string>();

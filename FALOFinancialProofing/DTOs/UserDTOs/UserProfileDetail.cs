@@ -14,6 +14,7 @@ namespace FALOFinancialProofing.DTOs.UserDTOs
         public bool? Gender { get; set; }
         public string? Address { get; set; }
         public string? WorkPlace { get; set; }
+        public string? PhoneNumber { get; set; }
         public string? Bio { get; set; }
         public string? Image { get; set; }
         public string? Education { get; set; }
