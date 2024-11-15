@@ -133,10 +133,10 @@
                             <input type="text" class="form-control" id="workplace" placeholder="Nhập nơi học tập hoặc làm việc" >
                         </div>
 
-                        @* <div class="mb-3">
+                        <div class="mb-3">
                             <label for="phone" class="form-label">Phone Number</label>
                             <input type="number" class="form-control" id="phone" placeholder="Nhập số điện thoại" value="0123456789">
-                        </div> *@
+                        </div>
 
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
@@ -178,24 +178,7 @@
 
                         <div class="mb-3">
                             <label for="sdgInterests" class="form-label">SDG Interests (17 SDGs)</label>
-                            <div class="sdg-tags" id="sdg-tags">
-                                <span data-value="1" class="active">No Poverty</span>
-                                <span data-value="2" class="active">Zero Hunger</span>
-                                <span data-value="3">Good Health And Well-Being</span>
-                                <span data-value="4">Quality Education</span>
-                                <span data-value="5">Gender Equality</span>
-                                <span data-value="6">Clean Water And Sanitation</span>
-                                <span data-value="7">Không đói</span>
-                                <span data-value="8">Sức khỏe tốt</span>
-                                <span data-value="9">Giáo dục chất lượng</span>
-                                <span data-value="10">Bình đẳng giới</span>
-                                <span data-value="11">Không nghèo</span>
-                                <span data-value="12">Không đói</span>
-                                <span data-value="13">Sức khỏe tốt</span>
-                                <span data-value="14">Giáo dục chất lượng</span>
-                                <span data-value="15">Bình đẳng giới</span>
-                                <span data-value="16">Giáo dục chất lượng</span>
-                                <span data-value="17">Bình đẳng giới</span>
+                            <div class="sdg-tags" id="sdgList">
                             </div>
                         </div>
 
@@ -208,19 +191,6 @@
                             <label for="volunteerGoals" class="form-label">Volunteer Goals</label>
                             <textarea class="form-control" id="volunteerGoals" rows="3" placeholder="Nhập mục tiêu tình nguyện"></textarea>
                         </div>
-
-                       @*  <h5>Attachments File</h5>
-                        <label for="fileInput" class="form-label">Attachments</label>
-                        <div class="mb-3" id="attachments">
-                            <input class="form-control" type="file" id="fileInput" multiple>
-                            <ul id="fileList"></ul>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="attachments" class="form-label">Activity Plan</label>
-                            <input type="file" class="form-control" id="attachments2" multiple>
-                            <ul id="fileList2"></ul>
-                        </div> *@
 
                         <a class="btn btn-warning" href="changepassword">Change Password</a>
                         <div id="save-btn">
@@ -269,9 +239,36 @@
                 this.classList.toggle('active');
             });
         });
+        function loadSDGs() {
+            $.ajax({
+                url: 'https://localhost:7294/api/SDG/GetAllSDGs',
+                type: 'GET',
+                success: function (response) {
+                    if (response.success && response.data.length > 0) {
+                        const sdgList = $('#sdgList');
+                        response.data.forEach(sdg => {
+                            const sdgItem = $('<span></span>')
+                                .text(sdg.sdgName)
+                                .attr('data-id', sdg.id)
+                                .on('click', function () {
+                                    $(this).toggleClass('active');
+                                    prepareSDGData();
+                                });
+                            sdgList.append(sdgItem);
+                        });
+                    } else {
+                        alert(response.message || 'Failed to load SDGs.');
+                    }
+                },
+                error: function (err) {
+                    console.error('Error loading SDGs:', err);
+                }
+            });
+        }
         $(document).ready(function () {
             const userId = localStorage.getItem('userId');
             const jwtToken = localStorage.getItem('jwtToken');
+            loadSDGs()
             function loadUserProfile(userId) {
                 $.ajax({
                     url: `https://localhost:7294/api/Users/GetUserProfile/${userId}`,
@@ -297,7 +294,7 @@
                             $('#hobbies').val(data.hobby);
                             $('#strengths').val(data.strength);
                             $('#email').val(data.email);
-                            $('#socialMedia').val(JSON.parse(data.socialNetworkRequests)[0]?.url || '');
+                            $('#socialMedia').val(data.socialNetworkRequests);
                             $('#volunteerExperience').val(data.volunteerExperience);
                             $('#volunteerGoals').val(data.volunteerGoal);
 
