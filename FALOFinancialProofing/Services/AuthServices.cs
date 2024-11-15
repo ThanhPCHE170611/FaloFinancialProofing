@@ -697,6 +697,7 @@ namespace FALOFinancialProofing.Services
                         Skill = u.Skill,
                         Hobby = u.Hobby,
                         Strength = u.Strength,
+                        PhoneNumber = u.PhoneNumber,
                         VolunteerExperience = u.VolunteerExperience,
                         VolunteerGoal = u.VolunteerGoal,
                         SocialNetworkRequests = u.SocialNetworks.Select(snr => new SocialNetworkRequest
@@ -790,6 +791,7 @@ namespace FALOFinancialProofing.Services
                 user.Strength = updateUserProfileRequest.Strength;
                 user.VolunteerExperience = updateUserProfileRequest.VolunteerExperience;
                 user.VolunteerGoal = updateUserProfileRequest.VolunteerGoal;
+                user.PhoneNumber = updateUserProfileRequest.PhoneNumber;
                 updateUserProfileRequest.SocialNetworkRequests = JsonConvert.DeserializeObject<List<SocialNetworkRequest>>(updateUserProfileRequest.SocialNetworkRequestJsons);
                 updateUserProfileRequest.sDGUserRequests = JsonConvert.DeserializeObject<List<SDGUserRequest>>(updateUserProfileRequest.SDGUserRequestJsons);
                 foreach (var item in updateUserProfileRequest.SocialNetworkRequests)
