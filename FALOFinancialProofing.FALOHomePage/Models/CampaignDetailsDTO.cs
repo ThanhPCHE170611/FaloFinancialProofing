@@ -16,6 +16,7 @@
         public bool IsActive { get; set; }
         public string Status { get; set; }
         public int BankId { get; set; }
+        public string? UpdateLog { get; set; }
     }
     public class ApiResponseCampaignDetails
     {

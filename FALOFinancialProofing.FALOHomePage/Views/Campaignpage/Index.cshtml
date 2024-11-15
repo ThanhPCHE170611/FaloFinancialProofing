@@ -70,14 +70,15 @@
                                 <li><a href="@Url.Action("CampaignActivity", "Campaignpage", new {id=campaignDetails.BankId})">Hoạt Động</a></li>
                             </ul>
                         </div>
-                        <div class="item shadow mb-30">
-                            <h5 class="title">Thông Tin Cập Nhật</h5>
-                            <ul class="category">
-                                <li>Báo Cáo Tài Chính</li>
-                                <li>Sao Kê</li>
-                                <li>Hoạt Động</li>
-                            </ul>
-                        </div>
+                        @if (campaignDetails.UpdateLog != null && campaignDetails.UpdateLog!="")
+                        {
+                            <div class="item shadow mb-30">
+                                <h5 class="title">Thông Tin Cập Nhật</h5>
+                                <ul class="category">
+                                    <p>@campaignDetails.UpdateLog</p>
+                                </ul>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
