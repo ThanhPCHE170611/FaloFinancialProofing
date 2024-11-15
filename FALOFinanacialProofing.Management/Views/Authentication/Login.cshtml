@@ -94,7 +94,9 @@
                             const decodedToken = jwt_decode(jwtToken);
 
                             const userId = decodedToken.nameid;
+                            const roleId = decodedToken.RoleId;
                             localStorage.setItem('userId', userId);
+                            localStorage.setItem('loggingRoleId', roleId);
 
                             let roles = decodedToken.role || [];
                             if (!Array.isArray(roles)) {
