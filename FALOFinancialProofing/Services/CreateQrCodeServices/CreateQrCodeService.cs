@@ -3,6 +3,7 @@ using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
+using FALOFinancialProofing.Services.CampaignService;
 using System.Text;
 
 namespace FALOFinancialProofing.Services.CreateQrCodeServices
@@ -12,10 +13,12 @@ namespace FALOFinancialProofing.Services.CreateQrCodeServices
     {
         private readonly IRepository<CreateQrCode, int> _createQrCodeRepository;
         private readonly AuthServices _authServices;
-        public CreateQrCodeService(IRepository<CreateQrCode, int> createQrCodeRepository, AuthServices authServices)
+        private readonly ICampaignService _campaignService;
+        public CreateQrCodeService(IRepository<CreateQrCode, int> createQrCodeRepository, AuthServices authServices, ICampaignService campaignService)
         {
             _createQrCodeRepository = createQrCodeRepository;
             _authServices = authServices;
+            _campaignService = campaignService;
         }
 
         public async Task<bool> CreateQrCodeAsync(CreateQrCode createQrCode)
@@ -102,7 +105,12 @@ namespace FALOFinancialProofing.Services.CreateQrCodeServices
                 {
                     return IsValid;
                 }
-
+                var campaignCreated = await _campaignService.GetCampaignByCampaignIdAsync(createQrCodeRequest.CampaignId);
+                if (campaignCreated == null)
+                {
+                    message.Append("Campaign not found!");
+                    return IsValid;
+                }
                 IsValid = true;
             }
             catch (Exception ex)

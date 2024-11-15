@@ -80,7 +80,7 @@ namespace FALOFinancialProofing.Services.CreateProjectRequestServices
                         CreatedAt = s.CreatedAt,
                         Feedback = s.Feedback,
                         Status = s.Status,
-                        ProjectDescription = s.Project.Description,
+                        Description = s.Description,
                         CreateProjectFiles = s.CreateProjectFiles.Select(f => new CreateProjectFileInformation()
                         {
                             Id = f.Id,
@@ -136,6 +136,7 @@ namespace FALOFinancialProofing.Services.CreateProjectRequestServices
                         CreatedAt = s.CreatedAt,
                         Feedback = s.Feedback,
                         Status = s.Status,
+                        Description = s.Description,
                         CreateProjectFiles = s.CreateProjectFiles.Select(f => new CreateProjectFileInformation()
                         {
                             Id = f.Id,
@@ -172,6 +173,7 @@ namespace FALOFinancialProofing.Services.CreateProjectRequestServices
                         CreatedAt = s.CreatedAt,
                         Feedback = s.Feedback,
                         Status = s.Status,
+                        Description = s.Description,
                         CreateProjectFiles = s.CreateProjectFiles.Select(f => new CreateProjectFileInformation()
                         {
                             Id = f.Id,

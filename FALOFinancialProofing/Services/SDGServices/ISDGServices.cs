@@ -1,11 +1,12 @@
 ﻿using FALOFinancialProofing.DTOs;
+using FALOFinancialProofing.DTOs.SDGDTOs;
 using FALOFinancialProofing.Models;
 
 namespace FALOFinancialProofing.Services.SDGServices
 {
     public interface ISDGServices
     {
-        Task<List<SDG>> GetAllSDGsAsync();
+        Task<List<SDGInformation>> GetAllSDGsAsync();
 
         Task<SDG?> GetSDGByIdAsync(int id);
 

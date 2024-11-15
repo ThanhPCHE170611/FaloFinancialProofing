@@ -8,15 +8,17 @@ namespace FALOFinancialProofing.Services
     public class WebHookService
     {
         private readonly HttpClient _httpClient;
-        private readonly string APIKey = "AK_CS.4fe794109ff711ef983e076fcd8dbc01.Dyuui61M9z0yzRBDdGlWs27PGKcaJvuolv0LpNB4ydcF8Mjhm2PDDDYTmY887paeGJytJ5tL";
+        private readonly string APIKey;
         private readonly string SynUrl = "https://oauth.casso.vn/v2/sync";
         private readonly string WebhookUrl = "https://oauth.casso.vn/v2/webhooks";
         private readonly string AccountNumberUrl = "https://oauth.casso.vn/v2/accounts";
 
-        public WebHookService(IHttpClientFactory httpClientFactory)
+        public WebHookService(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             _httpClient = httpClientFactory.CreateClient("MyHttpClient");
+            APIKey = configuration.GetSection("Authentication:Casso:Apikey").Value;
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Apikey", APIKey);
+
         }
         public async Task<SyncResponse> TransactionSync(SyncRequest request)
         {

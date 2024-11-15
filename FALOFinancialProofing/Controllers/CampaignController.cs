@@ -261,25 +261,15 @@ namespace FALOFinancialProofing.Controllers
                         Message = stringBuilderMessage.ToString()
                     });
                 }
-                // add PM Vào campaingMember
-                var Role = await roleManager.FindByNameAsync(AppRole.ProjectManager);
-                CampaignMember PMCampaignMember = new CampaignMember()
-                {
-                    CampaignId = checkCampaignCreated.Id,
-                    UserId = checkCampaignCreated.CreateBy,
-                    Debt = 0,
-                    IsActive = true,
-                    RoleId = Role.Id
-                };
-                await _campaignMemberService.CreateCampaignMemberAsync(PMCampaignMember);
-                // tạo request trước mới tạo fileAttach
+                // tạo request trước mới tạo fileAttach**
                 CreateCampaignRequest createCampaignRequest = new CreateCampaignRequest()
                 {
                     SenderId = checkCampaignCreated.CreateBy,
                     CampaignId = checkCampaignCreated.Id,
                     Title = $"{checkCampaignCreated.Title}",
                     CreatedAt = DateTime.Now,
-                    Status = RequestStatus.Pending
+                    Status = RequestStatus.Pending,
+                    Description = $"{createCampaignClientRequest.Description}",
                 };
                 var CreateCampaignRequestCreated = await _createCampaignRequestService.CreateCreateCampaignRequestReturnEntityAsync(createCampaignRequest);
                 if (CreateCampaignRequestCreated == null)

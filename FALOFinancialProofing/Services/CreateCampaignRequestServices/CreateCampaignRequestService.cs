@@ -158,6 +158,7 @@ namespace FALOFinancialProofing.Services.CreateCampaignRequestServices
                         CreatedAt = s.CreatedAt,
                         Feedback = s.Feedback,
                         Status = s.Status,
+                        Description = s.Description,
                         CreateCampaignFiles = s.CreateCampaignFiles.Select(f => new CreateCampaignFileInformation()
                         {
                             Id = f.Id,
@@ -195,6 +196,7 @@ namespace FALOFinancialProofing.Services.CreateCampaignRequestServices
                         CreatedAt = s.CreatedAt,
                         Feedback = s.Feedback,
                         Status = s.Status,
+                        Description = s.Description,
                         CreateCampaignFiles = s.CreateCampaignFiles.Select(f => new CreateCampaignFileInformation()
                         {
                             Id = f.Id,
@@ -232,7 +234,9 @@ namespace FALOFinancialProofing.Services.CreateCampaignRequestServices
                         CreatedAt = s.CreatedAt,
                         Feedback = s.Feedback,
                         Status = s.Status,
-                        CampaignDescription = s.Campaign.Description,
+                        Description = s.Description,
+                        EndDate = s.Campaign.EndDate,
+                        Address = s.Campaign.Address,
                         CreateCampaignFiles = s.CreateCampaignFiles.Select(f => new CreateCampaignFileInformation()
                         {
                             Id = f.Id,

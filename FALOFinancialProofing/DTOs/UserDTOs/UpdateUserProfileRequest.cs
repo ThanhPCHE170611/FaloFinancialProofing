@@ -1,4 +1,5 @@
 ﻿using FALOFinancialProofing.DTOs.RoleDTOs;
+using FALOFinancialProofing.DTOs.SDGDTOs;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
@@ -8,8 +9,9 @@ namespace FALOFinancialProofing.DTOs.UserDTOs
     {
         public string Id { get; set; }
         //không cho đổi email
-        public string Email { get; set; }
+        [MaxLength(30)]
         public string FirstName { get; set; } = null!;
+        [MaxLength(30)]
         public string LastName { get; set; } = null!;
         public DateOnly? BirthDate { get; set; }
         // không truyền vào logoFile thì không update logo
@@ -25,9 +27,12 @@ namespace FALOFinancialProofing.DTOs.UserDTOs
         public string? VolunteerExperience { get; set; }
         public string? VolunteerGoal { get; set; }
         public string SocialNetworkRequestJsons { get; set; }
+        public string SDGUserRequestJsons { get; set; }
         //public List<string> socialNetworkRequests { get; set; } = new List<string>();
         //[Required]
         [JsonIgnore]
         public List<SocialNetworkRequest> SocialNetworkRequests { get; set; } = new List<SocialNetworkRequest>();
+        [JsonIgnore]
+        public List<SDGUserRequest> sDGUserRequests { get; set; } = new List<SDGUserRequest>();
     }
 }

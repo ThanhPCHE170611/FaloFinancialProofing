@@ -84,7 +84,7 @@ namespace FALOFinancialProofing.Controllers
         // sender use this
         [RoleAttribute(AppRole.ProjectManager)]
         [HttpGet("GetAllCreateProjectRequestsByUserId/{UserId}")]
-        public async Task<IActionResult> GetAllCreateProjectRequestsByUserId(string UserId, string? status, int currentPage = IntConstant.PageNumberDefault)
+        public async Task<IActionResult> GetAllCreateProjectRequestsByUserId(string? searchInput, string UserId, string? status, int currentPage = IntConstant.PageNumberDefault)
         {
             List<CreateProjectRequestInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -101,6 +101,11 @@ namespace FALOFinancialProofing.Controllers
                         Message = "Get All CreateProjectRequests By UserId Failed!",
                         Data = filterPagingData
                     });
+                }
+                if (!string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = searchInput.Trim();
+                    data = data.FindAll(x => ($"{x.SenderName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.ReceiverName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.Title}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
                 }
                 if (!string.IsNullOrEmpty(status))
                 {

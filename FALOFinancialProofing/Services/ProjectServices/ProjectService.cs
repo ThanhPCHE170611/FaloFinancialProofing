@@ -264,16 +264,6 @@ namespace FALOFinancialProofing.Services.ProjectServices
                         throw new Exception("Organization not exist");
                     }
                 }
-                //trạng thái dự án chưa được phép true
-                if (createProject.IsActive)
-                {
-                    throw new Exception("IsActive must be false");
-                }
-                // ngày tạo không được lớn hơn ngày hiện tại
-                if (createProject.DateOfCreation > DateTime.Now)
-                {
-                    throw new Exception("Date of creation cannot be in the future");
-                }
                 IsValid = true;
             }
             catch (Exception ex)
@@ -294,8 +284,7 @@ namespace FALOFinancialProofing.Services.ProjectServices
                     CreatedBy = createProject.CreatedBy,
                     ProjectName = createProject.ProjectName,
                     Description = createProject.Description,
-                    DateOfCreation = createProject.DateOfCreation,
-                    Status = createProject.Status,
+                    DateOfCreation = DateTime.Now,
                     OrganizationId = createProject.OrganizationId != 0 ? createProject.OrganizationId : null
                 };
             }

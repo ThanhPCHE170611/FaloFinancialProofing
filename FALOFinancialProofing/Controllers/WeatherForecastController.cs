@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -87,45 +88,6 @@ namespace FALOFinancialProofing.Controllers
             })
             .ToArray();
         }
-        //[HttpGet("ReturnImage")]
-        //public async Task<IActionResult> GetImageByAPI()
-        //{
-        //    var filePath = "E:\\PRN231\\PRNPEImage\\ACB.png";
-        //    if (!System.IO.File.Exists(filePath))
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var image = System.IO.File.OpenRead(filePath);
-        //    return File(image, "image/png");
-        //}
-
-        [HttpGet("Get-Banks")]
-        public async Task<IActionResult> GetBanks()
-        {
-            //if (HttpContext.Request.Headers.ContainsKey("Authorization"))
-            //{
-            //    var token = HttpContext.Request.Headers["Authorization"].ToString();
-            //    var banks = await bankService.GetBanks();
-            //    return Ok(banks);
-            //}
-            var b = await bankService.GetBanks();
-            BankRequest bankRequest = new BankRequest()
-            {
-                accountNo = "1016161976",
-                accountName = "Nguyen Van Duc",
-                acqId = 970436,
-                amount = 1041321,
-                addInfo = "Test chuyen tien",
-                format = "text",
-                template = "print"
-            };
-            var response = await bankService.GetQRCode(bankRequest);
-            // lấy ra qrDataURL trong response.data
-            var image = bankService.ConvertBase64ToImage(response.data.qrDataURL);
-
-            return File(image, "image/png");
-        }
 
         [HttpPost("Test-DateOnly")]// yyyy-MM-dd
         public async Task<IActionResult> GetBanks([FromForm] DateOnly dateOnly)
@@ -133,5 +95,20 @@ namespace FALOFinancialProofing.Controllers
             var date = dateOnly;
             return Ok();
         }
+
+        [HttpPost("Test-StringLeng")]// yyyy-MM-dd
+        public async Task<IActionResult> GetStringLength([FromBody] ClassA ClassA)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            return Ok("Thanh Cong");
+        }
+    }
+    public class ClassA
+    {
+        [StringLength(10, MinimumLength = 3)]
+        public string Name { get; set; }
     }
 }
