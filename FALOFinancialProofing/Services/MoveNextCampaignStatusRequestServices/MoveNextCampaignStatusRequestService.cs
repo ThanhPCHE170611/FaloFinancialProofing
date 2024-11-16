@@ -111,7 +111,8 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                         Status = "Pending",
                         Title = requestDto.Title,
                         SenderId = requestDto.SenderId,
-                        CreatedAt = requestDto.CreatedAt
+                        CreatedAt = requestDto.CreatedAt,
+                        Description = requestDto.Description
                     };
                     await _moveNextCampaignStatusRequestRepository.InsertAsync(request);
                     return request;
@@ -306,7 +307,8 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                 Status = request.Status,
                 Title = request.Title,
                 SenderId = request.SenderId,
-                CreatedAt = request.CreatedAt
+                CreatedAt = request.CreatedAt,
+                Description = request.Description
             };
         }
 
@@ -389,6 +391,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                         Title = m.Title,
                         CreatedAt = m.CreatedAt,
                         Feedback = m.Feedback,
+                        Description = m.Description,
                         Status = m.Status,
                         StatusOfCampaign = m.StatusOfCampaign,
                     }).ToListAsync();
@@ -420,6 +423,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                         Title = m.Title,
                         CreatedAt = m.CreatedAt,
                         Feedback = m.Feedback,
+                        Description = m.Description,
                         Status = m.Status,
                         StatusOfCampaign = m.StatusOfCampaign,
                     }).ToListAsync();
