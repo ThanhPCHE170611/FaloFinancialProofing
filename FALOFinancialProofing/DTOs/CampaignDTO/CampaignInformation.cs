@@ -22,7 +22,6 @@ namespace FALOFinancialProofing.DTOs.CampaignDTO
         public DateTime? EndDate { get; set; }
         public string? Address { get; set; }
         public bool IsActive { get; set; }
-        public string? BankingNumber { get; set; }
         public string? Status { get; set; }
         public int? BankId { get; set; }
         public string? UpdateLog { get; set; }

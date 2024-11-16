@@ -7,6 +7,7 @@ using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services;
 using FALOFinancialProofing.Utilities;
+using Google.Apis.Oauth2.v2.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
@@ -50,6 +51,51 @@ namespace FALOFinancialProofing.Controllers
                     Data = await authServices.GenerateToken(user)
                 });
             }
+        }
+
+        [HttpPost("Login-Google/{roleName}")]
+        public async Task<IActionResult> LoginGoogle([FromHeader(Name = "Authorization")] string accessToken, string roleName)
+        {
+            accessToken = accessToken.Replace("AccessToken ", "");
+            StringBuilder message = new StringBuilder();
+            var checkValid = await authServices.CheckValidExternalRegister(roleName, message);
+            if (!checkValid)
+            {
+                return Ok(new ApiResponse()
+                {
+                    Success = checkValid,
+                    Message = message.ToString()
+                });
+            }
+            Userinfo userInfo = await authServices.GetUserInfoAsync(accessToken);
+            if (userInfo == null)
+            {
+                return Ok(new ApiResponse()
+                {
+                    Success = false,
+                    Message = "Login with Google Fails, No access to account!"
+                });
+            }
+            var checkAccountExist = await authServices.CheckGoogleExistAccount(userInfo.Email);
+            if (!checkAccountExist)
+            {
+                var checkSuccessCreate = await authServices.ExternalRegisterUser(userInfo, roleName);
+                if (checkSuccessCreate == null || !checkSuccessCreate.Succeeded)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "Login with Google Fails, No access to account!"
+                    });
+                }
+            }
+            UserDto userDto = await authServices.GetUserDto(userInfo);
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Google Authentication Success",
+                Data = await authServices.GenerateToken(userDto)
+            });
         }
         [RoleAttribute(AppRole.Admin)]
         [HttpPut("Update-User-Role")]
