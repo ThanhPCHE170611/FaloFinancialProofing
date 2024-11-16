@@ -49,6 +49,7 @@ using FALOFinancialProofing.Services.ProjectServices;
 using FALOFinancialProofing.Services.CampaignService;
 using FALOFinancialProofing.Services.CampaignMemberService;
 using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestHistoryService;
+using FALOFinancialProofing.Services.DebManagementServices;
 
 namespace FALOFinancialProofing
 {
@@ -89,6 +90,7 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped<IOrganizationMemberService, OrganizationMemberService>();
             builder.Services.AddScoped<ICreateProjectRequestApproveHistoryService, CreateProjectRequestApproveHistoryService>();
             builder.Services.AddScoped<ICampaignRequestApproveHistoryService, CampaignRequestApproveHistoryService>();
+            builder.Services.AddScoped<IDebManagementServices, DebManagementServices>();
             builder.Services.AddHttpClient("MyHttpClient", client =>
             {
                 client.DefaultRequestHeaders.Add("Accept", "application/json");

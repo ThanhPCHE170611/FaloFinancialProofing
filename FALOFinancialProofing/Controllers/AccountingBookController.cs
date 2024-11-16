@@ -2,6 +2,7 @@
 using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Services.AccountingBookServices;
 using FALOFinancialProofing.Services.AttachmentFIleServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
@@ -10,6 +11,7 @@ namespace FALOFinancialProofing.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AccountingBookController : ControllerBase
     {
         private readonly IAcccountingBookServices accountingBookServices;
@@ -100,7 +102,6 @@ namespace FALOFinancialProofing.Controllers
                 Data = response
             });
         }
-
 
         [HttpGet("downloadaccountingbook/{fileName}")]
         public async Task<IActionResult> DownloadAccountingBookByFileName(string fileName)

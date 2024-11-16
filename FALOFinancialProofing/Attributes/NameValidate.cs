@@ -5,7 +5,9 @@ namespace FALOFinancialProofing.Attributes
 {
     public class NameValidate : ValidationAttribute
     {
-        private static readonly Regex _regex = new Regex(@"^[a-zA-Z\s]+$", RegexOptions.Compiled);
+        private static readonly Regex _regex = new Regex(@"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸửữựỳỵỷỹạảấầẩẫậắằẳẵặẹẻẽềếểễệỉịọỏốồổỗộớờởỡợụủứừửữự\s]+$", RegexOptions.Compiled);
+
+
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
