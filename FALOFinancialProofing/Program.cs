@@ -153,7 +153,7 @@ namespace FALOFinancialProofing
             builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
             {
                 //options.TokenLifespan = TimeSpan.FromHours(1);
-                options.TokenLifespan = TimeSpan.FromSeconds(30);
+                options.TokenLifespan = TimeSpan.FromMinutes(10);
             });
             builder.Services.AddDbContext<FALOFinancialProofingDbContext>(options =>
             {
