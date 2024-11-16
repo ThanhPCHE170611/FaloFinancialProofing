@@ -302,29 +302,11 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 return false;
             }
 
-            var debtOfUserInCampaign = campainInDb.CampaignMembers.FirstOrDefault(cm => cm.UserId == requestForm.CreatedBy
-                            && cm.IsActive).Debt;
-            if (requestForm.TypeId.Equals(IntConstant.PrePayRequestType.ToString()))
-            {
-                if(debtOfUserInCampaign > 20000000) {
-
-                    message.Append("Debt of user is greater than 20,000,000");
-                    return false;
-                }
-            } else
-            {
-                if(debtOfUserInCampaign < 20000000)
-                {
-                    message.Append("Debt of user is smaller than 20,000,000");
-                    return false;
-                }
-            }
-
             // Compare role of ApproverID and CreatedBy (voluntear, leader, accounting)
             var haveEnoughPermission = CheckPermission(requestForm.CreatedBy, requestForm.ApproverId);
             if (!haveEnoughPermission)
             {
-                message.Append("The selected Approver don have enough permission");
+                message.Append("The selected Approver dont have enough permission");
                 return false;
             }
 
@@ -607,6 +589,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                                                 Status = r.Status,
                                                 CreatedBy = r.CreatedBy,
                                                 CreateByName = r.User.FirstName + " " + r.User.LastName,
+                                                CreateByEmail = r.User.Email,
                                                 CampaignId = r.CampaignId,
                                                 TypeId = r.TypeId,
                                                 AttachmentFiles = r.AttachmentFiles.ToList(),
@@ -626,6 +609,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                                                         Email = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).User.Email
                                                     }
                                                 }).ToList(),
+                                                FeedBack = r.Feedback,
                                                 VoucherFiles = r.ApproveProcesses.Select(ap => new VoucherRequest
                                                 {
                                                     Id = ap.Vouchers.FirstOrDefault().Id,
@@ -665,6 +649,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                                                 Status = r.Status,
                                                 CreatedBy = r.CreatedBy,
                                                 CreateByName = r.User.FirstName + " " + r.User.LastName,
+                                                CreateByEmail = r.User.Email,
                                                 CampaignId = r.CampaignId,
                                                 TypeId = r.TypeId,
                                                 AttachmentFiles = r.AttachmentFiles.ToList(),
@@ -684,6 +669,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                                                         Email = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).User.Email
                                                     }
                                                 }).ToList(),
+                                                FeedBack = r.Feedback,
                                                 VoucherFiles = r.ApproveProcesses.Select(ap => new VoucherRequest
                                                 {
                                                     Id = ap.Vouchers.FirstOrDefault().Id,
@@ -758,6 +744,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                                                         Email = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).User.Email
                                                     }
                                                 }).ToList(),
+                                                FeedBack = r.Feedback,
                                                 VoucherFiles = r.ApproveProcesses.Select(ap => new VoucherRequest
                                                 {
                                                     Id = ap.Vouchers.FirstOrDefault().Id,

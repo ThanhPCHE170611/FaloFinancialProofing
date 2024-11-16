@@ -358,12 +358,12 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
-        [HttpPost("rejectprepayrequestforvolunteerleader/{requestid}")]
-        public async Task<IActionResult> RejectPrePayRequestForVolunteerLeader(string userid, string currentLoggingRole, int requestid, string feedback)
+        [HttpPost("rejectprepayrequestforvolunteerleader")]
+        public async Task<IActionResult> RejectPrePayRequestForVolunteerLeader([FromBody] RejectRequest rejectRequest)
         {
             var message = new StringBuilder();
             var feedBackStringBuilder = new StringBuilder();
-            var canReject = await approveProcessServices.RejectPrePayRequestForLeader(userid, currentLoggingRole, requestid, message, feedback, feedBackStringBuilder);
+            var canReject = await approveProcessServices.RejectPrePayRequestForLeader(rejectRequest.UserId, rejectRequest.CurrentLoggingRole, rejectRequest.RequestId, message, rejectRequest.Feedback, feedBackStringBuilder);
             if (!canReject)
             {
                 return Ok(new
@@ -373,7 +373,7 @@ namespace FALOFinancialProofing.Controllers
                 });
             }
             // update request form status to reject
-            var requestForm = await requestFormServices.GetRequestFormByIdAsync(requestid);
+            var requestForm = await requestFormServices.GetRequestFormByIdAsync(rejectRequest.RequestId);
             var requestFormDTO = new RequestFormDTO
             {
                 Id = requestForm.Id,
@@ -397,7 +397,7 @@ namespace FALOFinancialProofing.Controllers
             }
 
             // update approve process status to reject
-            var approveProcess = await approveProcessServices.GetApproveProcessesByRequestIdAndApproveIdAsync(requestid, userid);
+            var approveProcess = await approveProcessServices.GetApproveProcessesByRequestIdAndApproveIdAsync(rejectRequest.RequestId, rejectRequest.UserId);
             var updateApproveProcessDTO = new ApproveProcessRequest
             {
                 Id = approveProcess.Id,
@@ -414,12 +414,12 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
-        [HttpPost("rejectprepayrequestforaccounting/{requestid}")]
-        public async Task<IActionResult> RejectPrePayRequestForAccounting(string userid, string currentLoggingRole, int requestid, string feedback)
+        [HttpPost("rejectprepayrequestforaccounting")]
+        public async Task<IActionResult> RejectPrePayRequestForAccounting([FromBody] RejectRequest rejectRequest)
         {
             var message = new StringBuilder();
             var feedBackStringBuilder = new StringBuilder();
-            var canReject = await approveProcessServices.RejectPrePayRequestForAccounting(userid, currentLoggingRole, requestid, message, feedback, feedBackStringBuilder);
+            var canReject = await approveProcessServices.RejectPrePayRequestForAccounting(rejectRequest.UserId, rejectRequest.CurrentLoggingRole, rejectRequest.RequestId, message, rejectRequest.Feedback, feedBackStringBuilder);
             if (!canReject)
             {
                 return Ok(new
@@ -429,7 +429,7 @@ namespace FALOFinancialProofing.Controllers
                 });
             }
             // update request form status to reject
-            var requestForm = await requestFormServices.GetRequestFormByIdAsync(requestid);
+            var requestForm = await requestFormServices.GetRequestFormByIdAsync(rejectRequest.RequestId);
             var requestFormDTO = new RequestFormDTO
             {
                 Id = requestForm.Id,
@@ -453,7 +453,7 @@ namespace FALOFinancialProofing.Controllers
             }
 
             // update approve process status to reject
-            var approveProcess = await approveProcessServices.GetApproveProcessesByRequestIdAndApproveIdAsync(requestid, userid);
+            var approveProcess = await approveProcessServices.GetApproveProcessesByRequestIdAndApproveIdAsync(rejectRequest.RequestId, rejectRequest.UserId);
             var updateApproveProcessDTO = new ApproveProcessRequest
             {
                 Id = approveProcess.Id,
@@ -470,12 +470,12 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
-        [HttpPost("rejectprepayrequestforprojectmanager/{requestid}")]
-        public async Task<IActionResult> RejectPrePayRequestForProjectManager(string userid, string currentLoggingRole, int requestid, string feedback)
+        [HttpPost("rejectprepayrequestforprojectmanager")]
+        public async Task<IActionResult> RejectPrePayRequestForProjectManager([FromBody] RejectRequest rejectRequest)
         {
             var message = new StringBuilder();
             var feedBackStringBuilder = new StringBuilder();
-            var canReject = await approveProcessServices.RejectPrePayRequestForProjectManager(userid, currentLoggingRole, requestid, message, feedback, feedBackStringBuilder);
+            var canReject = await approveProcessServices.RejectPrePayRequestForProjectManager(rejectRequest.UserId, rejectRequest.CurrentLoggingRole, rejectRequest.RequestId, message, rejectRequest.Feedback, feedBackStringBuilder);
             if (!canReject)
             {
                 return Ok(new
@@ -485,7 +485,7 @@ namespace FALOFinancialProofing.Controllers
                 });
             }
             // update request form status to reject
-            var requestForm = await requestFormServices.GetRequestFormByIdAsync(requestid);
+            var requestForm = await requestFormServices.GetRequestFormByIdAsync(rejectRequest.RequestId);
             var requestFormDTO = new RequestFormDTO
             {
                 Id = requestForm.Id,
@@ -509,7 +509,7 @@ namespace FALOFinancialProofing.Controllers
             }
 
             // update approve process status to reject
-            var approveProcess = await approveProcessServices.GetApproveProcessesByRequestIdAndApproveIdAsync(requestid, userid);
+            var approveProcess = await approveProcessServices.GetApproveProcessesByRequestIdAndApproveIdAsync(rejectRequest.RequestId, rejectRequest.UserId);
             var updateApproveProcessDTO = new ApproveProcessRequest
             {
                 Id = approveProcess.Id,
