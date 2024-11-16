@@ -642,7 +642,6 @@ namespace FALOFinancialProofing.Services
                 return Double.MinValue;
             }
             return userinCampaign.Debt;
-
         }
 
         public async Task<bool> CheckValidUser(UpdateUserProfileRequest updateUserProfileRequest, StringBuilder message)

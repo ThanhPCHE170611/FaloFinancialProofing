@@ -1,4 +1,5 @@
-﻿using FALOFinancialProofing.DTOs;
+﻿using FALOFinancialProofing.Constant;
+using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using Humanizer;
@@ -337,6 +338,35 @@ namespace FALOFinancialProofing.Services.AttachmentFIleServices
             catch (Exception ex)
             {
                 return requestInCampaignsWithAttachment;
+            }
+        }
+
+        public async Task<List<RequestWithAttachmentFileResult>> GetAllPaymentAttachmentInCampaignWithRequest(int campaignId)
+        {
+            var requestsWithAttachment = new List<RequestWithAttachmentFileResult>();
+            try
+            {
+                requestsWithAttachment = await requestFormRepository.GetAll(x => x.CampaignId == campaignId
+                && x.Status.Equals(Resource.ApprovedStatus)
+                && x.TypeId == IntConstant.PaymentRequestType)
+                    .Include(x => x.User)
+                    .Include(x => x.AttachmentFiles)
+                    .Select(x => new RequestWithAttachmentFileResult
+                    {
+                        Id = x.Id,
+                        CreateAt = x.CreateAt,
+                        Description = x.Description,
+                        ExpectedMoney = x.ExpectedMoney,
+                        CreateByName = x.User.FirstName + " " + x.User.LastName,
+                        CreateByEmail = x.User.Email,
+                        AttachmentFilePath = (x.AttachmentFiles.FirstOrDefault() != null ? x.AttachmentFiles.First().FilePath : null)
+                    })
+                    .ToListAsync();
+                return requestsWithAttachment;
+            }
+            catch (Exception ex)
+            {
+                return requestsWithAttachment;
             }
         }
     }

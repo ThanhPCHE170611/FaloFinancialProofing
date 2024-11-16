@@ -487,7 +487,12 @@ namespace FALOFinancialProofing.Controllers
             {
                 Success = true,
                 Message = "Request Form canceled successfully.",
-                Data = requestFormIsCancel
+                Data = new {
+                    Id = requestFormIsCancel.Id,
+                    Description = requestFormIsCancel.Description,
+                    Status = requestFormIsCancel.Status,
+                    ExpectedMoney = requestFormIsCancel.ExpectedMoney
+                }
             });
         }
 
