@@ -1,6 +1,7 @@
 ﻿using Azure;
 using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.DTOs.CampaignMemberDTO;
+using FALOFinancialProofing.DTOs.MoveNextCampaignStatusRequestDTO;
 using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.DTOs.RoleDTOs;
 using FALOFinancialProofing.DTOs.UserDTOs;
@@ -17,6 +18,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 //using System.Security.Policy;
 using System.Text;
+using System.Text.RegularExpressions;
 
 
 
@@ -524,11 +526,28 @@ namespace FALOFinancialProofing.Services
             var user = await userManager.FindByEmailAsync(email);
             if (user != null)
             {
-                var token = await userManager.GeneratePasswordResetTokenAsync(user);
-                var forgotPasswordLink = GenerateForgotPasswordLink(httpContext, token, email);
-                var message = new Message(new string[] { user.Email! }, "Forgot Password link", forgotPasswordLink!);
-                emailService.SendEmail(message);
+                //var token = await userManager.GeneratePasswordResetTokenAsync(user);
+                //var forgotPasswordLink = GenerateForgotPasswordLink(httpContext, token, email);
+                //var message = new Message(new string[] { user.Email! }, "Forgot Password link", forgotPasswordLink!);
+                //emailService.SendEmail(message);
 
+                var token = await userManager.GeneratePasswordResetTokenAsync(user);
+
+                // Tạo nội dung email
+                string resetPasswordLink = "https://localhost:7109"; // Đường dẫn cố định
+                string emailContent = $@"
+Mã token của bạn: {token}
+
+Click vào link này để đặt lại mật khẩu: {resetPasswordLink}";
+
+                // Create the email message
+                var message = new Message(
+                    new string[] { user.Email! },
+                    "Forgot Password",
+                    emailContent
+                );
+
+                emailService.SendEmail(message);
                 return "Password reset email sent successfully.";
             };
             return null;
@@ -549,9 +568,60 @@ namespace FALOFinancialProofing.Services
                 return resetPassResult;
             }
             return null; // tam thoi
-
-
         }
+        public async Task<bool> ValidateResetPasswordAsync(ResetPassword resetPassword, StringBuilder message)
+        {
+            bool IsValid = false;
+            try
+            {
+                var user = await userManager.FindByEmailAsync(resetPassword.Email);
+                if (user == null)
+                {
+                    throw new Exception($"Email: {resetPassword.Email} is not registered in the system!");
+                }
+                else
+                {
+                    var isValidToken = await userManager.VerifyUserTokenAsync(user, userManager.Options.Tokens.PasswordResetTokenProvider, "ResetPassword", resetPassword.Token);
+                    if (!isValidToken)
+                    {
+                        throw new Exception("Incorrect Token!");
+                    }
+
+                    if (string.IsNullOrEmpty(resetPassword.Password))
+                    {
+                        throw new Exception("Password cannot be null");
+                    }
+                    else
+                    {
+                        if (resetPassword.Password.Length < 8
+                        || !Regex.IsMatch(resetPassword.Password, "[a-z]")
+                        || !Regex.IsMatch(resetPassword.Password, "[A-Z]")
+                        || !Regex.IsMatch(resetPassword.Password, "[0-9]")
+                        || !Regex.IsMatch(resetPassword.Password, @"[@$!%*?&]"))
+                        {
+                            throw new Exception("Password must be at least 8 characters, including letters, uppercase letters, numbers, and special characters.");
+                        }
+                        else
+                        {
+                            if (!resetPassword.Password.Equals(resetPassword.ConfirmPassword))
+                            {
+                                throw new Exception("The password and confirmation password do not match.");
+                            }
+                        }
+                    }
+                }
+                IsValid = true;
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"ValidateResetPassword: {ex.Message}");
+            }
+            
+            return IsValid;
+        }
+
+
         public string GenerateForgotPasswordLink(HttpContext httpContext, string token, string email)
         {
             // Sử dụng LinkGenerator để tạo URL tương tự như Url.Action
