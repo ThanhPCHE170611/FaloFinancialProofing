@@ -10,6 +10,7 @@ using Humanizer.Localisation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using System.Drawing.Printing;
 using System.Text;
 
@@ -543,9 +544,22 @@ namespace FALOFinancialProofing.Controllers
         }
 
         [HttpPost("approverequestforaccounting")]
-        public async Task<IActionResult> ApproveRequestAndSubmitVoucherForAccounting(string userid, string currentLoggingRole, int requestid, List<IFormFile> voucherFiles)
+        public async Task<IActionResult> ApproveRequestAndSubmitVoucherForAccounting(string userid, string currentLoggingRole, int requestid, IFormFile voucherFiles)
         {
             var message = new StringBuilder();
+            var files = new List<IFormFile>();
+            string fileExtension = Path.GetExtension(voucherFiles.FileName);
+
+            if (!string.Equals(fileExtension, ".zip", StringComparison.OrdinalIgnoreCase))
+            {
+                message.Append("Voucher file must be a zip file");
+                return Ok(new
+                {
+                    Success = false,
+                    Message = message.ToString()
+                });
+            }
+            files.Add(voucherFiles);
             var requestForm = await requestFormServices.GetRequestFormByIdAsync(requestid);
             var isRequestFormCreateByProjectManager = await requestFormServices.IsRequestFormCreateByProjectManager(requestForm);
             if(!isRequestFormCreateByProjectManager)
@@ -588,7 +602,7 @@ namespace FALOFinancialProofing.Controllers
                     });
                 }
                 // save voucher file
-                var vouchers = await requestFormServices.SaveUploadedVoucherAsync(newApproveProcess.Id, voucherFiles);
+                var vouchers = await requestFormServices.SaveUploadedVoucherAsync(newApproveProcess.Id, files);
                 var canCreateVouchers = await voucherServices.CreateManyVoucherAsync(vouchers);
                 if (!canCreateVouchers)
                 {
@@ -665,7 +679,7 @@ namespace FALOFinancialProofing.Controllers
                     });
                 }
                 // save voucher file
-                var vouchers = await requestFormServices.SaveUploadedVoucherAsync(aproveProcess.Id, voucherFiles);
+                var vouchers = await requestFormServices.SaveUploadedVoucherAsync(aproveProcess.Id, files);
                 var canCreateVouchers = await voucherServices.CreateManyVoucherAsync(vouchers);
                 if (!canCreateVouchers)
                 {
