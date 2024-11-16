@@ -56,7 +56,6 @@ namespace FALOFinancialProofing.Services.CampaignService
                 EndDate = createCampaignDTO.EndDate,
                 Address = createCampaignDTO.Address,
                 IsActive = createCampaignDTO.IsActive,
-                //BankingNumber = createCampaignDTO.BankingNumber,
                 BankId = createCampaignDTO.BankId,
                 Status = createCampaignDTO.Status
             };
@@ -67,6 +66,7 @@ namespace FALOFinancialProofing.Services.CampaignService
             try
             {
                 data = await campaignRepository.GetAll()
+                    .Where(p => p.Status != null && !p.Status.Equals(RequestStatus.Rejected))
                     .Select(p => new CampaignInformation()
                     {
                         FirstName = p.User.FirstName,
@@ -83,9 +83,9 @@ namespace FALOFinancialProofing.Services.CampaignService
                         EndDate = p.EndDate,
                         Address = p.Address,
                         IsActive = p.IsActive,
-                        //BankingNumber = p.BankingNumber,
                         BankId = p.BankId,
                         Status = p.Status,
+                        UpdateLog = p.UpdateLog,
                         TotalMoneyEarned = p.TransactionLogs.Sum(x => (double)x.Amount)
                     }).ToListAsync();
             }
@@ -118,10 +118,10 @@ namespace FALOFinancialProofing.Services.CampaignService
                         EndDate = p.EndDate,
                         Address = p.Address,
                         IsActive = p.IsActive,
-                        //BankingNumber = p.BankingNumber,
                         BankId = p.BankId,
                         Status = p.Status,
-                        TotalMoneyEarned = p.TransactionLogs.Sum(x => (double)x.Amount)
+                        TotalMoneyEarned = p.TransactionLogs.Sum(x => (double)x.Amount),
+                        UpdateLog = p.UpdateLog,
                     }).ToListAsync();
             }
             catch (Exception ex)

@@ -10,6 +10,11 @@ using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services.EmailService;
 using FALOFinancialProofing.Services.SocialNetworkService;
 using FALOFinancialProofing.Services.UserSDGServices;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Oauth2.v2;
+using Google.Apis.Oauth2.v2.Data;
+using Google.Apis.Services;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -160,7 +165,7 @@ namespace FALOFinancialProofing.Services
             {
                 return null;
             }
-            var result = await signInManager.PasswordSignInAsync(userLogin.UserName, userLogin.Password, true, false);
+            var result = await signInManager.PasswordSignInAsync(userLogin.UserName, userLogin.Password, false, false);
             if (result.Succeeded)
             {
                 var userDTO = new UserDto
@@ -178,7 +183,30 @@ namespace FALOFinancialProofing.Services
             }
             return null;
         }
-
+        public async Task<UserDto> GetUserDto(Userinfo userinfo)
+        {
+            var user = await userManager.FindByEmailAsync(userinfo.Email);
+            var userDTO = new UserDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                UserName = user.UserName,
+                BirthDate = user.BirthDate,
+                RoleInformations = await _roleService.GetRoleInformationsByUserId(user.Id)
+            };
+            return userDTO;
+        }
+        public async Task<bool> CheckGoogleExistAccount(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return false;
+            }
+            return true;
+        }
 
         //public async Task<User?> RegisterUser(SignUpRequest registerRequest)
         //{
@@ -853,6 +881,79 @@ namespace FALOFinancialProofing.Services
             }
 
             return user;
+        }
+
+        public async Task<bool> CheckValidExternalRegister(string roleName, StringBuilder message)
+        {
+            bool checkValid = false;
+            try
+            {
+                userManager.AddLoginAsync(null, null);
+                if (roleName == null)
+                {
+                    throw new Exception("Role Name is null");
+                }
+                if (!roleName.Equals(AppRole.Volunteer) && !roleName.Equals(AppRole.Donor))
+                {
+                    throw new Exception("Not Allowed To Register Other Roles Except Donor And Volunteer!");
+                }
+                checkValid = true;
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"CheckValidExternalRegister: {ex.Message}");
+            }
+            return checkValid;
+        }
+        public async Task<IdentityResult?> ExternalRegisterUser(Userinfo userInfo, string roleName)
+        {
+            try
+            {
+                var newUser = new User
+                {
+                    FirstName = userInfo.GivenName ?? string.Empty,
+                    LastName = userInfo.FamilyName ?? string.Empty,
+                    Email = userInfo.Email,
+                    UserName = userInfo.Email,
+                    TwoFactorEnabled = true,
+                    Gender = userInfo.Gender != null && userInfo.Gender.Equals("Male", StringComparison.OrdinalIgnoreCase) ? true : false,
+                    Image = userInfo.Picture,
+                };
+                var result = await userManager.CreateAsync(newUser);
+                if (result.Succeeded)
+                {
+                    result = await userManager.AddToRoleAsync(newUser, roleName);
+                    if (result.Succeeded)
+                    {
+                        var info = new UserLoginInfo(GoogleDefaults.AuthenticationScheme, userInfo.Id, userInfo.Name);
+                        result = await userManager.AddLoginAsync(newUser, info);
+                        return result;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"ExternalRegisterUser: {ex.Message}");
+            }
+
+
+            return null;
+        }
+        public async Task<Userinfo> GetUserInfoAsync(string accessToken)
+        {
+            // Tạo credential từ access token
+            var credential = GoogleCredential.FromAccessToken(accessToken);
+
+            // Tạo dịch vụ OAuth2
+            var oauth2Service = new Oauth2Service(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = credential,
+                //ApplicationName = "FALO"
+            });
+            // Lấy thông tin người dùng
+            Userinfo userInfo = await oauth2Service.Userinfo.Get().ExecuteAsync();
+            return userInfo;
         }
     }
 

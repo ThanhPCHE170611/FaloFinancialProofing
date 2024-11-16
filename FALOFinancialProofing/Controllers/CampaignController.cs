@@ -54,7 +54,7 @@ namespace FALOFinancialProofing.Controllers
         //        Data = campaigns
         //    });
         //}
-
+        // những campaign không ở trạng thái pending và rejected
         [HttpGet("GetAllCampaignInSystem")]
         public async Task<IActionResult> GetAllCampaignInSystem(string? title, string? status, bool? IsActive, int currentPage = IntConstant.PageNumberDefault)
         {
@@ -102,7 +102,7 @@ namespace FALOFinancialProofing.Controllers
             });
         }
         //[RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
-        [HttpGet("GetAllCampaignByProjectId/{ProjectId}")]
+        [HttpGet("GetAllCampaignByProjectId/{ProjectId}")]// search theo title
         public async Task<IActionResult> GetAllCampaignByProjectId(string? title, int ProjectId, string? status, int currentPage = IntConstant.PageNumberDefault)
         {
             List<CampaignInformation> data = null;

@@ -189,6 +189,8 @@ namespace FALOFinancialProofing.Models
             });
             modelBuilder.Entity<User>(entity =>
             {
+                entity.HasIndex(u => u.Email)
+                      .IsUnique();
                 //entity.HasMany(c => c.TransactionLogs)
                 //    .WithOne(u => u.SenderUser)
                 //    .HasForeignKey(c => c.SenderID);
