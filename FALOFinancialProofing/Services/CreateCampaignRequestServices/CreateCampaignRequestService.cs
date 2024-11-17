@@ -237,6 +237,7 @@ namespace FALOFinancialProofing.Services.CreateCampaignRequestServices
                         Description = s.Description,
                         EndDate = s.Campaign.EndDate,
                         Address = s.Campaign.Address,
+                        FundTarget = s.Campaign.FundTarget,
                         CreateCampaignFiles = s.CreateCampaignFiles.Select(f => new CreateCampaignFileInformation()
                         {
                             Id = f.Id,

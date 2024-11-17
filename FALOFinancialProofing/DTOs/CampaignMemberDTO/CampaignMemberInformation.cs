@@ -20,5 +20,6 @@ namespace FALOFinancialProofing.DTOs.CampaignMemberDTO
         public double Debt { get; set; } = 0;
         public RoleInformation roleInformation { get; set; } = null!;
         public bool IsActive { get; set; }
+        public string? Status { get; set; }// campaign
     }
 }

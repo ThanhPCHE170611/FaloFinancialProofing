@@ -156,7 +156,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                         EndDate = p.EndDate,
                         Address = p.Address,
                         IsActive = p.IsActive,
-                        //BankingNumber = p.BankingNumber,
+                        AccountNumber = p.Bank.AccountNumber,
                         BankId = p.BankId,
                         Status = p.Status,
                         UpdateLog = p.UpdateLog,
