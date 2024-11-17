@@ -113,7 +113,7 @@ namespace FALOFinancialProofing
             builder.Services.AddControllers();
             builder.Services.Configure<FormOptions>(options =>
             {
-                options.MultipartBodyLengthLimit = 102400; // Giới hạn 100kb chẳng hạn
+                options.MultipartBodyLengthLimit = 52428800; // Giới hạn 50Mb chẳng hạn
             });
             builder.Services.AddSwaggerGen(c =>
             {
