@@ -178,7 +178,8 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestHistorySer
                             var requestHistoryRejected = requestHistoriesCreated.OrderBy(r => r.DateOfApproval)
                                 .Where(r => !r.IsAllowed).First();
                             moveNextCampaignStatusRequest.ReceiverId = requestHistoryRejected.ReceiverId;
-                            moveNextCampaignStatusRequest.CreatedAt = requestHistoryRejected.DateOfApproval;
+                            //moveNextCampaignStatusRequest.CreatedAt = requestHistoryRejected.DateOfApproval;
+                            moveNextCampaignStatusRequest.CreatedAt = DateTime.Now;
                             moveNextCampaignStatusRequest.Feedback = requestHistoryRejected.Feedback;
                             moveNextCampaignStatusRequest.Status = RequestStatus.Rejected;
                             await _moveNextCampaignStatusRequestRepository.UpdateAsync(moveNextCampaignStatusRequest);
@@ -221,7 +222,8 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestHistorySer
                     }
                 }
                 moveNextCampaignStatusRequest.ReceiverId = moveNextCampaignStatusRequestHistoryDTO.ReceiverId;
-                moveNextCampaignStatusRequest.CreatedAt = moveNextCampaignStatusRequestHistoryDTO.DateOfApproval;
+                //moveNextCampaignStatusRequest.CreatedAt = moveNextCampaignStatusRequestHistoryDTO.DateOfApproval;
+                moveNextCampaignStatusRequest.CreatedAt = DateTime.Now;
                 moveNextCampaignStatusRequest.Feedback = moveNextCampaignStatusRequestHistoryDTO.Feedback;
                 await _campaignRepository.UpdateAsync(campaign);
                 await _moveNextCampaignStatusRequestRepository.UpdateAsync(moveNextCampaignStatusRequest);
