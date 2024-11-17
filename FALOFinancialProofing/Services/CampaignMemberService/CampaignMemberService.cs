@@ -351,7 +351,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             };
         }
 
-        public async Task<List<CreateManyCampaignMemberDTO>> ValidateCampaignMembersCreateAsync(List<CreateManyCampaignMemberDTO> createManyCampaignMemberDTOs, int campaignId, StringBuilder message)
+        public async Task<List<CreateManyCampaignMemberDTO>> ValidateCampaignMembersCreateAsync(List<CreateManyCampaignMemberDTO> createManyCampaignMemberDTOs, int campaignId, string pmUserId, StringBuilder message)
         {
             List<CreateManyCampaignMemberDTO> successDatas = new List<CreateManyCampaignMemberDTO>();
             try
@@ -361,6 +361,17 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 if (campaign == null)
                 {
                     throw new Exception($"Campaign not found with id = {campaignId}.");
+                }
+                // chỉ người tạo hoặc pmb mới có quyền add người vào chiến dịch
+                //var campaignMember = await cmRepository.Get(cm=>cm.CampaignId==campaignId&&pmUserId.Equals(cm.))
+                var pmUser = await campaignRepository.Get(c => c.Id == campaignId && c.CreateBy.Equals(pmUserId));
+                // kiểm tra thằng add này có phải là pmb không
+                var checkPMB = await authServices.CheckUserInRoleId(pmUserId, AppRole.ProjectManagementBoard, message);
+                var checkAdmin = await authServices.CheckUserInRoleId(pmUserId, AppRole.Admin, message);
+                // người dùng không tạo ra chiến dịch, hoặc tạo ra nhưng bị vô hiệu hóa hoặc không phải là pmb hoặc admin
+                if ((pmUser == null && !checkPMB && !checkAdmin) || !pmUser.IsActive)
+                {
+                    throw new Exception("You do not have permission to add members to this campaign.");
                 }
                 var DbData = await cmRepository.GetAll()
                     .Where(x => x.CampaignId == campaignId)

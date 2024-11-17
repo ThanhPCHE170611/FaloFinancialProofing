@@ -251,7 +251,7 @@ namespace FALOFinancialProofing.Controllers
                 });
             }
         }
-
+        [RoleAttribute(AppRole.Admin)]
         [HttpPost("Admin-Register")]
         public async Task<IActionResult> AdminRegister([FromBody] SignUpAdminRequest registerRequest)
         {

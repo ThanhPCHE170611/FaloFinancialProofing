@@ -219,13 +219,21 @@ namespace FALOFinancialProofing.Controllers
                 Data = createCampaignMember
             });
         }
-        [RoleAttribute(AppRole.ProjectManager)]
-        [HttpPost("CreateManyCampaignMembers/{CampaignId}")]
-        public async Task<IActionResult> CreateManyCampaignMembers(int CampaignId, [FromBody] List<CreateManyCampaignMemberDTO> createManyCampaignMemberDTOs)
+        [RoleAttribute(AppRole.ProjectManager, AppRole.ProjectManagementBoard, AppRole.Admin)]
+        [HttpPost("CreateManyCampaignMembers/{CampaignId}/{pmUserId}")]
+        public async Task<IActionResult> CreateManyCampaignMembers(int CampaignId, string pmUserId, [FromBody] List<CreateManyCampaignMemberDTO> createManyCampaignMemberDTOs)
         {
             var message = new StringBuilder();
 
-            var ValidCreateManyCampaignMemberDTOs = await _campaignMemberService.ValidateCampaignMembersCreateAsync(createManyCampaignMemberDTOs, CampaignId, message);
+            var ValidCreateManyCampaignMemberDTOs = await _campaignMemberService.ValidateCampaignMembersCreateAsync(createManyCampaignMemberDTOs, CampaignId, pmUserId, message);
+            if (ValidCreateManyCampaignMemberDTOs == null || ValidCreateManyCampaignMemberDTOs.Count == 0)
+            {
+                return Ok(new ApiResponse()
+                {
+                    Success = false,
+                    Message = message.ToString()
+                });
+            }
             var invalidData = await _campaignMemberService.InValidCampaignMembersCreateAsync(createManyCampaignMemberDTOs, ValidCreateManyCampaignMemberDTOs);
             var InvalidUserInformation = await authServices.GetUserInformationList(invalidData);
             var CheckCreateSuccess = await _campaignMemberService.CreateManyCampaignMembersAsync(ValidCreateManyCampaignMemberDTOs, CampaignId, message);
@@ -237,6 +245,7 @@ namespace FALOFinancialProofing.Controllers
             }
             );
         }
+        [RoleAttribute(AppRole.Admin)]
         [HttpPut("UpdateCampaignMemberStatus")]
         public async Task<IActionResult> UpdateCampaignMemberStatus([FromBody] UpdateCampaignMemberStatusDTO updateCampaignMemberStatusDTO)
         {
