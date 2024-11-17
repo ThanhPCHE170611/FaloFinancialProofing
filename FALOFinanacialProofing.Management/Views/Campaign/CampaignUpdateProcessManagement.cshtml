@@ -155,6 +155,7 @@
                             <option value="Accepted">Accepted</option>
                             <option value="Pending">Pending</option>
                             <option value="Rejected">Rejected</option>
+                            <option value="Cancel">Cancel</option>
                         </select>
                     </div>
                     <div class="card-body px-0 pb-2">
@@ -446,23 +447,23 @@
                 let actionButtons = `
                     <button class="btn btn-success btn-sm" onclick="approveRequest(this,${request.id}, true)">Approve</button>
                     <button class="btn btn-danger btn-sm" onclick="openDeclineModal(this, ${request.id})">Reject</button>
-                    <a class="btn btn-info btn-sm" href="/Campaign/CampaignRequestDetail?requestId=${request.id}">Detail</a>
+                    <a class="btn btn-info btn-sm" href="/Campaign/CampaignUpdateProcessRequestDetail?requestId=${request.id}">Detail</a>
                 `;
 
                 if (request.status === "Accepted") {
                     actionButtons = `<span class="text-approved me-2">Approved</span>
-                                     <a href="/Campaign/CampaignRequestDetail?requestId=${request.id}" class="text-blue me-2">Detail</a>`;
+                                     <a href="/Campaign/CampaignUpdateProcessRequestDetail?requestId=${request.id}" class="text-blue me-2">Detail</a>`;
                 } else if (request.status === "Rejected") {
                     actionButtons = `<span class="text-declined me-2">Rejected</span>
-                                     <a href="/Campaign/CampaignRequestDetail?requestId=${request.id}" class="text-blue me-2">Detail</a>`;
+                                     <a href="/Campaign/CampaignUpdateProcessRequestDetail?requestId=${request.id}" class="text-blue me-2">Detail</a>`;
                 } else if(request.status === "Cancel") {
                     actionButtons = `
-                        <a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>
+                        <a class="btn btn-info btn-sm" href="/Campaign/CampaignUpdateProcessRequestDetail?requestId=${request.id}">Detail</a>
                     `;
                 }
 
                 if (checkrole !== "Project Management Board") {
-                     actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>`;
+                     actionButtons = `<a class="btn btn-info btn-sm" href="/Campaign/CampaignUpdateProcessRequestDetail?requestId=${request.id}">Detail</a>`;
                 }
                 let receiverName = `${request.receiverName}`
                 if(request.receiverName === null) {

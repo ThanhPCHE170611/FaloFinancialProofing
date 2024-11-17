@@ -78,6 +78,10 @@
                                 <label for="status" class="form-label">Status</label>
                                 <input type="text" class="form-control" id="status" readonly>
                             </div>
+                            <div class="col-md-12">
+                                <label for="status" class="form-label">Fund Target</label>
+                                <input type="text" class="form-control" id="fundTaget" readonly>
+                            </div>
                         </div>
                         <div class="row mb-3" id="approver-section">
                             <div class="col-md-12">
@@ -116,12 +120,12 @@
 </body>
 
 </html>
-<script async defer src="https://buttons.github.io/buttons.js"></script>
-<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
 <script src="../assets/js/core/popper.min.js"></script>
 <script src="../assets/js/core/bootstrap.min.js"></script>
 <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
 <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     function formatDateTime(dateString) {
@@ -157,6 +161,7 @@
                 $('#createdAt').val(formatDateTime(data.createdAt));
                 $('#status').val(data.status);
                 $('#description').val(data.description);
+                $('#fundTaget').val(data.fundTarget);
                 if (data.receiverName !== ' ') {
                     $('#receiverName').val(data.receiverName);
                     $('#approver-section').show();
