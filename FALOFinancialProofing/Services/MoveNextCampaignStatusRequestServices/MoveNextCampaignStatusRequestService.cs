@@ -69,6 +69,11 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                 {
                     throw new Exception("Not Found Campaign");
                 }
+                bool check = await CheckRequestHasBeenCreated(requestDto.CampaignID);
+                if (!check)
+                {
+                    throw new Exception("The request to change the campaign status has been created, you cannot create more");
+                }
                 string nextStatus = "";
                 if (campaign.Status == Resource.CampaignStatus_FundRaising)
                 {
@@ -113,7 +118,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                         Status = "Pending",
                         Title = requestDto.Title,
                         SenderId = requestDto.SenderId,
-                        CreatedAt = requestDto.CreatedAt,
+                        CreatedAt = DateTime.Now,
                         Description = requestDto.Description
                     };
                     await _moveNextCampaignStatusRequestRepository.InsertAsync(request);
@@ -241,6 +246,22 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
             return IsValid;
         }
 
+        private async Task<bool> CheckRequestHasBeenCreated(int campaignId)
+        {
+            bool IsValid = true;
+            try
+            {
+                var mncsrWithStatusPending = await _moveNextCampaignStatusRequestRepository.GetAll().Where(m => m.CampaignID == campaignId && m.Status == "Pending").SingleOrDefaultAsync();
+                if(mncsrWithStatusPending != null)
+                {
+                    IsValid = false;
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return IsValid;
+        }
 
         public async Task<bool> ApproveOrRejectRequestAsync(int requestId, bool isApproved)
         {
