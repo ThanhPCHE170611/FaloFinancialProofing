@@ -183,6 +183,7 @@ namespace FALOFinancialProofing.Services.CreateCampaignRequestServices
             {
                 data = await _createCampaignRequestRepository.GetAll()
                     //.Where(pr => pr.Status.Equals(RequestStatus.Pending))
+                    .Where(pr => pr.SenderId.Equals(userId))
                     .Select(s => new CreateCampaignRequestInformation()
                     {
                         ProjectName = s.Campaign.Project.ProjectName,
