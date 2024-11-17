@@ -1,7 +1,5 @@
 ﻿using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.DTOs.CampaignMemberDTO;
-using FALOFinancialProofing.DTOs.MoveNextCampaignStatusRequestDTO;
-using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.DTOs.RoleDTOs;
 using FALOFinancialProofing.DTOs.SDGDTOs;
 using FALOFinancialProofing.DTOs.UserDTOs;
