@@ -163,10 +163,10 @@ namespace FALOFinancialProofing.Controllers
                 }
                 if (!string.IsNullOrEmpty(search))
                 {
-                    search = search.ToLower();
+                    search = search.ToLower().Trim();
                     data = data.FindAll(x =>
-                        (x.SenderName != null && x.SenderName.ToLower().Contains(search)) ||
-                        (x.ReceiverName != null && x.ReceiverName.ToLower().Contains(search)) ||
+                        //(x.SenderName != null && x.SenderName.ToLower().Contains(search)) ||
+                        //(x.ReceiverName != null && x.ReceiverName.ToLower().Contains(search)) ||
                         (x.CampaignName != null && x.CampaignName.ToLower().Contains(search)) ||
                         (x.Title != null && x.Title.ToLower().Contains(search))
                     );
@@ -208,16 +208,12 @@ namespace FALOFinancialProofing.Controllers
                         Data = filterPagingData
                     });
                 }
-                if (!string.IsNullOrEmpty(status))
-                {
-                    data = data.FindAll(x => x.Status.Equals(status));
-                }
                 if (!string.IsNullOrEmpty(search))
                 {
-                    search = search.ToLower();
+                    search = search.ToLower().Trim();
                     data = data.FindAll(x =>
-                        (x.SenderName != null && x.SenderName.ToLower().Contains(search)) ||
-                        (x.ReceiverName != null && x.ReceiverName.ToLower().Contains(search)) ||
+                        //(x.SenderName != null && x.SenderName.ToLower().Contains(search)) ||
+                        //(x.ReceiverName != null && x.ReceiverName.ToLower().Contains(search)) ||
                         (x.CampaignName != null && x.CampaignName.ToLower().Contains(search)) ||
                         (x.Title != null && x.Title.ToLower().Contains(search))
                     );
