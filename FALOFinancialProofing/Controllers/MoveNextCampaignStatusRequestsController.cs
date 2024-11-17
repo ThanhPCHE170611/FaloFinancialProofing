@@ -208,6 +208,10 @@ namespace FALOFinancialProofing.Controllers
                         Data = filterPagingData
                     });
                 }
+                if (!string.IsNullOrEmpty(status))
+                {
+                    data = data.FindAll(x => x.Status.Equals(status));
+                }
                 if (!string.IsNullOrEmpty(search))
                 {
                     search = search.ToLower().Trim();
