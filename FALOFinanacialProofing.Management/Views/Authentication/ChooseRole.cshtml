@@ -91,6 +91,7 @@
                 localStorage.setItem('loggingRoleId', roleId);
                 const checkrole = localStorage.getItem('loggingRole');
                 const checkRoleId = localStorage.getItem('loggingRoleId');
+                localStorage.setItem('fullname', decodedToken.sub);
                 console.log('checkrole Selected:',checkrole);
                 console.log('Role ID selected:', checkRoleId);
                 $.ajax({
@@ -117,7 +118,7 @@
           } catch (error) {
             console.error('Lỗi khi giải mã token:', error);
             alert('Token không hợp lệ. Vui lòng đăng nhập lại.');
-            // window.location.href = '/Authentication/Login';
+            window.location.href = '/Authentication/Login';
           }
         });
     </script>

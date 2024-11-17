@@ -201,7 +201,7 @@
                     processData: false,
                     contentType: false,
                     success: function (response) {
-                        alert(response.Message || 'Project created successfully!');
+                        alert(response.message || 'Campaign Request created successfully!');
                         window.location.href = '/Campaign/CampaignRequestManagement';
                     },
                     error: function (xhr, status, error) {

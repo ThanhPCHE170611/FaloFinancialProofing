@@ -375,12 +375,43 @@
                     });
                 });
                 console.log('SDGUserRequestJsons:', JSON.stringify(sdgUserRequests));
+
+
+                const gender = $('input[name="gender"]:checked').val();
+                const dob = $('#dob').val();
+                const phoneNumber = $('#phone').val();
+                let validationErrors = [];
+
+                if (!gender) {
+                    validationErrors.push('Gender field cannot be empty.');
+                }
+                if (!dob) {
+                    validationErrors.push('Date of Birth cannot be empty.');
+                } else {
+                    const dobDate = new Date(dob);
+                    const currentDate = new Date();
+                    if (dobDate > currentDate) {
+                        validationErrors.push('Date of Birth must be in the past.');
+                    }
+                }
+                const phonePattern = /^[0-9]{10}$/;
+                if (!phoneNumber) {
+                    validationErrors.push('Phone Number cannot be empty.');
+                } else if (!phonePattern.test(phoneNumber)) {
+                    validationErrors.push('Phone Number must be 10 digits.');
+                }
+
+                if (validationErrors.length > 0) {
+                    alert('Validation errors:\n' + validationErrors.join('\n'));
+                    return;
+                }
+
                 var formData = new FormData();
                 formData.append('Id', userId); 
                 formData.append('FirstName', $('#fullName').val().split(' ')[0]);
                 formData.append('LastName', $('#fullName').val().split(' ').slice(1).join(' '));
-                formData.append('BirthDate', $('#dob').val());
-                formData.append('Gender', $('input[name="gender"]:checked').val());
+                formData.append('BirthDate', dob);
+                formData.append('Gender', gender);
                 formData.append('Address', $('#address').val());
                 formData.append('WorkPlace', $('#workplace').val());
                 formData.append('Bio', $('#bio').val());
@@ -390,7 +421,7 @@
                 formData.append('Strength', $('#strengths').val());
                 formData.append('VolunteerExperience', $('#volunteerExperience').val());
                 formData.append('VolunteerGoal', $('#volunteerGoals').val());
-                formData.append('PhoneNumber', $('#phone').val());
+                formData.append('PhoneNumber', phoneNumber);
                 formData.append('SocialNetworkRequestJsons', JSON.stringify(socialNetworkRequests));
                 formData.append('SDGUserRequestJsons', JSON.stringify(sdgUserRequests));
                 console.log('Final formData:', socialNetworkRequests, sdgUserRequests);
@@ -411,6 +442,8 @@
                     success: function (response) {
                         if (response.success) {
                             alert('Profile updated successfully!');
+                            console.log($('#fullName').val());
+                            localStorage.setItem('fullname', $('#fullName').val());
                             location.reload();
                         } else {
                         alert('Failed to update profile: ' + response.message);
@@ -418,17 +451,17 @@
                     },
                     error: function (errors) {
                         if (errors.responseJSON && errors.responseJSON.errors) {
-            console.error('Detailed Validation Errors:');
-            for (const [field, messages] of Object.entries(errors.responseJSON.errors)) {
-                console.group(`Field: ${field}`);
-                messages.forEach(message => console.error(`Error: ${message}`));
-                console.groupEnd();
-            }
-            alert('Validation errors occurred. Check console for details.');
-        } else {
-            console.error('Unexpected error:', errors);
-            alert('An unexpected error occurred. Check console for details.');
-        }
+                            console.error('Detailed Validation Errors:');
+                            for (const [field, messages] of Object.entries(errors.responseJSON.errors)) {
+                                console.group(`Field: ${field}`);
+                                messages.forEach(message => console.error(`Error: ${message}`));
+                                console.groupEnd();
+                            }
+                            alert('Validation errors occurred. Check console for details.');
+                        } else {
+                            console.error('Unexpected error:', errors);
+                            alert('An unexpected error occurred. Check console for details.');
+                        }
                     }
                 });
             });

@@ -296,13 +296,13 @@
             if (jwtToken) {
                 decodedToken = jwt_decode(jwtToken);
             }
-
+            
             const userRoleElement = document.querySelector('.nav-item.d-flex.align-items-center .nav-link .d-sm-inline');
             if (userRoleElement) {
                 const roleIcon = document.createElement('span');
                 roleIcon.classList.add('badge', 'bg-secondary', 'ms-2');
                 roleIcon.textContent = checkrole || (decodedToken && decodedToken.role)
-                userRoleElement.textContent = decodedToken.sub;
+                userRoleElement.textContent = localStorage.getItem('fullname');
                 userRoleElement.appendChild(roleIcon);
             }
             if(checkrole !== "Admin") {

@@ -437,7 +437,7 @@
                     let actionButtons = `
                         <button class="btn btn-success btn-sm" onclick="handleProjectApproval(this,${request.id}, true)">Approve</button>
                         <button class="btn btn-danger btn-sm" onclick="openDeclineModal(this,${request.id})">Decline</button>
-                        <a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail/requestId=${request.id}">Detail</a>
+                        <a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>
                     `;
                     if (request.status === "Accepted") {
                         actionButtons = `<span class="text-approved me-2" style="margin-left:5px">Approved</span>
@@ -445,11 +445,15 @@
                     } else if (request.status === "Rejected") {
                         actionButtons = `<span class="text-declined me-2" style="margin-left:5px">Rejected</span>
                                     <a href="/Project/ProjectRequestDetail?requestId=${request.id}" class="text-blue me-2">Detail</a>`;
+                    } else if(request.status === "Cancel") {
+                        actionButtons = `
+                            <a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>
+                        `;
                     }
 
                     if (checkrole !== "Project Management Board") {
                         if(checkrole === "Project Manager") {
-                            if(request.status === "Rejected" || request.status === "Pending") {
+                            if(request.status === "Rejected" || request.status === "Pending" || request.status === "Cancel") {
                                 actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>`;
                             } else {
                                 actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>
@@ -479,6 +483,7 @@
             function getStatusClass(status) {
                 if (status === "Accepted") return "badge-approved";
                 if (status === "Rejected") return "badge-declined";
+                if (status === "Cancel") return "bg-gradient-secondary";
                 return "badge-pending";
             }
             function setupPagination(totalItems) {

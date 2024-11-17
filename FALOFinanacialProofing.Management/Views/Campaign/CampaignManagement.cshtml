@@ -75,61 +75,6 @@
                                     </tr>
                                 </thead>
                                 <tbody class="text-center">
-                                    <tr>
-                                        <td class="align-middle text-center text-sm">
-                                            <span class="text-secondary text-xs font-weight-bold">1</span>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex px-2 py-1">
-                                                <span class="text-secondary text-xs font-weight-bold">Campaign 1</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex px-2 py-1">
-                                                <span class="text-secondary text-xs font-weight-bold">Project A</span>
-                                            </div>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            <span class="text-secondary text-xs font-weight-bold">$10,000</span>
-                                        </td>
-                                        <td class="align-middle text-center">
-                                            <button onclick="changeCampaign(this, 1)" class="btn btn-info btn-sm detail-btn">Detail</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="align-middle text-center text-sm">
-                                            <span class="text-secondary text-xs font-weight-bold">2</span>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex px-2 py-1">
-                                                <span class="text-secondary text-xs font-weight-bold">Campaign 2</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex px-2 py-1">
-                                                <span class="text-secondary text-xs font-weight-bold">Project B</span>
-                                            </div>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            <span class="text-secondary text-xs font-weight-bold">$20,000</span>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            <span class="badge badge-sm bg-gradient-warning" id="status-2">Pending</span>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            <select class="form-select" onchange="showSaveButton(this)">
-                                                <option value="fundraising">Gây Quỹ</option>
-                                                <option value="deployment">Triển Khai</option>
-                                                <option value="disbursement">Giải Ngân</option>
-                                            </select>
-                                        </td>
-                                        <td class="align-middle text-center">
-                                            <button class="btn btn-success btn-sm" onclick="approveCampaign(2)">Approve</button>
-                                            <button class="btn btn-danger btn-sm" onclick="declineCampaign(2)">Decline</button>
-                                            <button onclick="changeCampaign(this, 2)" class="btn btn-info btn-sm detail-btn">Detail</button>
-                                            <button class="btn btn-primary btn-sm save-btn" style="display:none;" onclick="saveProcess(this, 2)">Save</button>
-                                        </td>
-                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -156,12 +101,13 @@
         $(document).ready(function () {
             let currentPage = 1;
             const userId = localStorage.getItem('userId');
+            const roleId = localStorage.getItem('loggingRoleId');
             const pageSize = 5; 
             function fetchCampaignData(searchInput = '', isActive = null, page = 1) {
                 const jwtToken = localStorage.getItem('jwtToken');
 
                 $.ajax({
-                    url: `https://localhost:7294/api/CampaignMember/GetAllCampaignMembersByUserId`,
+                    url: `https://localhost:7294/api/CampaignMember/GetAllCampaignMembersByUserIdAndRoleId`,
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${jwtToken}`
@@ -169,6 +115,7 @@
                     data: {
                         searchInput: searchInput,
                         userId: userId,
+                        roleId: roleId,
                         isActive: isActive,
                         currentPage: page
                     },

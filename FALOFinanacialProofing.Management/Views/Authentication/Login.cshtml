@@ -95,6 +95,7 @@
 
                             const userId = decodedToken.nameid;
                             const roleId = decodedToken.RoleId;
+                            localStorage.setItem('fullname', decodedToken.sub);
                             localStorage.setItem('userId', userId);
                             localStorage.setItem('loggingRoleId', roleId);
 

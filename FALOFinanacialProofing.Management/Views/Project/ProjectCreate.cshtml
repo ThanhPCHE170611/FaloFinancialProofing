@@ -185,8 +185,6 @@
                 const formData = new FormData();
                 formData.append('ProjectName', projectName);
                 formData.append('Description', projectDescription);
-                formData.append('DateOfCreation', dateTime);
-                formData.append('IsActive', false);
                 formData.append('CreatedBy', userId);
                 formData.append('OrganizationId', 0);
 
@@ -204,12 +202,11 @@
                         'Authorization': `Bearer ${jwtToken}`
                     },
                     success: function (response) {
-                        alert(response.Message || 'Project created successfully!');
+                        alert(response.message || 'Project created successfully!');
                         window.location.href = `/Project/ProjectManagement`;
                     },
                     error: function (xhr, status, error) {
-                        console.error('Error creating project:', error);
-                        alert('Failed to create project. Please try again.');
+                        alert('Error: ' + xhr.responseText || status);
                     }
                 });
             });
