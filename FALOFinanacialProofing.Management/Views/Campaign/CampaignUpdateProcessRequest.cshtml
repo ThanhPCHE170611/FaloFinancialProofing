@@ -56,7 +56,7 @@
                             <div id="save-btn">
                                 <button type="button" class="btn btn-warning btn-lg" onclick="sendRequest()">Send</button>
                                 <div>
-                                    <a href="campaignmanagement" class="btn btn-success btn-lg" style="margin-left:10px">Cancel</a>
+                                    <a href="/Campaign/CampaignUpdateProcessManagement" class="btn btn-success btn-lg" style="margin-left:10px">Cancel</a>
                                 </div>
                             </div>
                         </div>
@@ -108,7 +108,6 @@
             senderId: userId,
             campaignId: campaignId,
             title: title,
-            createdAt: dateTime,
             description: description,
             status: title,
             statusOfCampaign: description
@@ -131,7 +130,7 @@
             } else {
                 const errorData = await response.json();
                 console.error('Error:', errorData);
-                alert(`Error: ${errorData.Message || 'Failed to send request.'}`);
+                alert(`Error: ${errorData.message || 'Failed to send request.'}`);
             }
         } catch (error) {
             console.error('Unexpected error:', error);
