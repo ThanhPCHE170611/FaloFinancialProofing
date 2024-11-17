@@ -13,9 +13,9 @@ namespace FALOFinanacialProofing.Management.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string AccessToken)
         {
-            return View();
+            return View((object)AccessToken);
         }
 
         public IActionResult Privacy()

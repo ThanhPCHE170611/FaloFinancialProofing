@@ -35,23 +35,25 @@
                     <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
                 </div>
                 @*  <div class="mb-3">
-                    <label for="role" class="form-label">Select Role</label>
-                    <select class="form-select" id="role" required>
-                        <option value="" disabled selected>Select your role</option>
-                        <option value="admin">Team Leader</option>
-                        <option value="user">Accountant</option>
-                        <option value="guest">Project Manager</option>
-                        <option value="guest">Project Management Board</option>
-                    </select>
+                <label for="role" class="form-label">Select Role</label>
+                <select class="form-select" id="role" required>
+                <option value="" disabled selected>Select your role</option>
+                <option value="admin">Team Leader</option>
+                <option value="user">Accountant</option>
+                <option value="guest">Project Manager</option>
+                <option value="guest">Project Management Board</option>
+                </select>
                 </div> *@
                 <div class="d-grid">
                     <button type="submit" class="btn btn-primary">Login</button>
                 </div>
                 <div class="text-center mt-3">
                     <hr>
-                    <button type="button" class="btn btn-danger btn-block" onclick="alert('Login with Google')">
-                        <i class="fab fa-google"></i> Login with Google
-                    </button>
+                    @* <button type="submit" class="btn btn-danger btn-block" onclick="alert('Login with Google')">
+                    <i class="fab fa-google"></i> Login with Google
+                    </button> *@
+
+                    <a asp-area="" asp-controller="Authentication" asp-action="LoginGoogle" asp-route-GoogleClick="true" class="btn btn-danger btn-block"><i class="fab fa-google"></i> Login with Google</a>
                 </div>
                 <div class="text-center mt-3">
                     <a asp-area="" asp-controller="Authentication" asp-action="Register" class="btn btn-link">Don't have an account? Sign up</a>
@@ -64,64 +66,67 @@
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#loginForm').submit(function(event) {
-                event.preventDefault();
 
-                const loginData = {
-                    Username: $('#username').val(),
-                    Password: $('#password').val()
-                    // Role: $('#role').val()
-                };
-
-                $('#loginMessage').text('');
-                $.ajax({
-                    url: 'https://localhost:7294/api/Users/Login',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(loginData),
-                    success: function(response) {
-                        if (response.success) {
-                            console.log(response.data.accessToken);
-                            localStorage.setItem('jwtToken', response.data.accessToken);
-
-                            const jwtToken = localStorage.getItem('jwtToken');
-                            const decodedToken = jwt_decode(jwtToken);
-
-                            const userId = decodedToken.nameid;
-                            const roleId = decodedToken.RoleId;
-                            localStorage.setItem('userId', userId);
-                            localStorage.setItem('loggingRoleId', roleId);
-
-                            let roles = decodedToken.role || [];
-                            if (!Array.isArray(roles)) {
-                                localStorage.setItem('loggingRole', roles);
-                                console.log(roles);
-                                $('#loginMessage').html('<span class="text-success">Login Success</span>');
-                                setTimeout(() => {
-                                    window.location.href = '/Home/Index';
-                                }, 1000);
-                            }  else {
-                                $('#loginMessage').html('<span class="text-success">Login Success</span>');
-                                    setTimeout(() => {
-                                    window.location.href = '/Authentication/ChooseRole';
-                                }, 1000);
-                            }          
-                        } else {
-                            $('#loginMessage').html('<span class="text-danger">' + response.message + '</span>');
-                        }
-                    },
-                    error: function() {
-                        $('#loginMessage').html('<span class="text-danger">An error occurred. Please try again.</span>');
-                    }
-                });
-            });
-        });
-    </script>
 </body>
 </html>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#loginForm').submit(function (event) {
+            console.log('Login form submitted');
+            event.preventDefault();
+
+            const loginData = {
+                Username: $('#username').val(),
+                Password: $('#password').val()
+                // Role: $('#role').val()
+            };
+
+            $('#loginMessage').text('');
+            $.ajax({
+                url: 'https://localhost:7294/api/Users/Login',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(loginData),
+                success: function (response) {
+                    if (response.success) {
+                        console.log(response.data.accessToken);
+                        localStorage.setItem('jwtToken', response.data.accessToken);
+
+                        const jwtToken = localStorage.getItem('jwtToken');
+                        const decodedToken = jwt_decode(jwtToken);
+
+                        const userId = decodedToken.nameid;
+                        const roleId = decodedToken.RoleId;
+                        localStorage.setItem('userId', userId);
+                        localStorage.setItem('loggingRoleId', roleId);
+                        const sub = decodedToken.sub
+                        localStorage.setItem('fullname', sub);
+                        let roles = decodedToken.role || [];
+                        if (!Array.isArray(roles)) {
+                            localStorage.setItem('loggingRole', roles);
+                            console.log(roles);
+                            $('#loginMessage').html('<span class="text-success">Login Success</span>');
+                            setTimeout(() => {
+                                window.location.href = '/Home/Index';
+                            }, 1000);
+                        } else {
+                            $('#loginMessage').html('<span class="text-success">Login Success</span>');
+                            setTimeout(() => {
+                                window.location.href = '/Authentication/ChooseRole';
+                            }, 1000);
+                        }
+                    } else {
+                        $('#loginMessage').html('<span class="text-danger">' + response.message + '</span>');
+                    }
+                },
+                error: function () {
+                    $('#loginMessage').html('<span class="text-danger">An error occurred. Please try again.</span>');
+                }
+            });
+        });
+    });
+</script>

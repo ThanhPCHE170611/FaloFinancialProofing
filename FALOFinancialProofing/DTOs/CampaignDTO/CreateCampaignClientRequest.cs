@@ -12,7 +12,6 @@ namespace FALOFinancialProofing.DTOs.CampaignDTO
         [StringLength(100, MinimumLength = 8, ErrorMessage = "Title must be at least 8 and max 100 characters")]
         public string Title { get; set; }
         [Required]
-        [StringLength(500, MinimumLength = 8, ErrorMessage = "Title must be at least 8 and max 500 characters")]
         public string Description { get; set; }
         [Required]
         public double FundTarget { get; set; }

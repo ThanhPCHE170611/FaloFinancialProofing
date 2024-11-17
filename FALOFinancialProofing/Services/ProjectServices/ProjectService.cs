@@ -190,6 +190,7 @@ namespace FALOFinancialProofing.Services.ProjectServices
             try
             {
                 data = await _projectRepository.GetAll()
+                      .Where(p => p.Status != null)
                     .Select(p => new ProjectInformation()
                     {
                         id = p.Id,

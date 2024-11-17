@@ -166,6 +166,7 @@ namespace FALOFinancialProofing.Controllers
                 Message = message
             });
         }
+        #region Xóa sau
         [HttpGet("loginGG")]
         public IActionResult Login()
         {
@@ -206,6 +207,7 @@ namespace FALOFinancialProofing.Controllers
             //return Ok(new { token });
             return Ok();
         }
+        #endregion
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] SignUpRequest registerRequest)
         {

@@ -58,7 +58,8 @@ namespace FALOFinancialProofing.Services.SocialNetworkService
             try
             {
                 var socialNetwork = await socialNetworksRepository.Get(x => x.Id == id);
-                if (socialNetwork == null) return false;
+                if (socialNetwork == null)
+                    return false;
 
                 return await socialNetworksRepository.DeleteAsync(socialNetwork);
             }
