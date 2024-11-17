@@ -177,180 +177,181 @@
         </div>
     </div>
 
-    <script src="../assets/js/core/popper.min.js"></script>
-    <script src="../assets/js/core/bootstrap.min.js"></script>
-    <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
-    <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        const checkrole = localStorage.getItem('loggingRole');
-        const campaignId = localStorage.getItem('campaignId');
-        const navTabs = document.getElementById('navTabs');
-        const userId = localStorage.getItem('userId');
-        const jwtToken = localStorage.getItem('jwtToken');
-        console.log(campaignId);
-        console.log(checkrole);
 
-        if(checkrole !== "Accounting") {
-            document.getElementById('btnupload').style.display = 'none';
-        }
-        if (checkrole && checkrole !== 'Volunteer') {
-            const newLink = document.createElement('a');
-            newLink.setAttribute('asp-controller', 'Prepay');
-            newLink.setAttribute('asp-action', 'PrepayManagement_PM');
-            newLink.textContent = 'Prepay Created Request';
-
-            const newLink2 = document.createElement('a');
-            newLink2.setAttribute('asp-controller', 'Payment');
-            newLink2.setAttribute('asp-action', 'PaymentManagement_PM');
-            newLink2.textContent = 'Payment Created Request';
-
-            const url = new URL(`/Prepay/PrepayManagement_PM`, window.location.origin);
-
-
-            const url2 = new URL(`/Payment/PaymentManagement_PM`, window.location.origin);
-
-            newLink.href = url.toString();
-            newLink2.href = url2.toString();
-            navTabs.appendChild(newLink);
-            navTabs.appendChild(newLink2);
-        }
-        function showCreateVoucherPopup() {
-            document.getElementById('createVoucherModal').style.display = 'block';
-        }
-
-        function submitVoucher() {
-            const fileInput = document.getElementById('voucherFile');
-            if (fileInput.files.length === 0) {
-                alert("Please upload a file before submitting.");
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('File', fileInput.files[0]);
-            formData.append('CurrentRole', checkrole);
-            formData.append('UserId', userId);
-            formData.append('CampaignId', campaignId);
-
-            $.ajax({
-                url: 'https://localhost:7294/api/AccountingBook/uploadaccountingbook',
-                type: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${jwtToken}`
-                },
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    alert(response.message);
-                    if (response.success) {
-                        document.getElementById('voucherTableBody').insertAdjacentHTML('beforeend', createTableRow(response.Data));
-                        closeModal('createVoucherModal');
-                    }
-                },
-                error: function (xhr, status, error) {
-                    alert('An error occurred while uploading the file. Please try again.');
-                    console.error('Error:', error);
-                }
-            });
-        }
-
-                function createTableRow(accountingBook, index) {
-            return `
-                <tr>
-                    <td>${index + 1}</td>
-                    <td>${accountingBook.filePath}</td>
-                    <td>
-                        <button class="btn btn-success btn-sm" onclick="downloadFile(this,'${accountingBook.filePath}')">Download</button>
-                        <button class="btn btn-info btn-sm" onclick="showDetail(this)">Detail</button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteRow(this)">Delete</button>
-                    </td>
-                </tr>
-            `;
-        }
-
-        function fetchAccountingBooks() {
-            $.ajax({
-                url: `https://localhost:7294/api/AccountingBook/getaccountingbookincampaign?campaignId=${campaignId}`,
-                type: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${jwtToken}`
-                },
-                success: function (response) {
-                    console.log('API Response:', response);
-                    if (response.success) {
-                        console.log('Data:', response.data);
-                        populateTable(response.data);
-                    } else {
-                        const tableBody = $('#voucherTableBody');
-                        tableBody.empty();
-                        tableBody.append('<tr><td colspan="3" class="text-center">No accounting books found</td></tr>');
-                    }
-                },
-                error: function (xhr, status, error) {
-                    alert('An error occurred while fetching the accounting books.');
-                    console.error('Error:', error);
-                }
-            });
-        }
-
-        function populateTable(data) {
-            const tableBody = $('#voucherTableBody');
-            tableBody.empty();
-
-            if (typeof data === 'object' && data !== null) {
-                tableBody.append(createTableRow(data, 0));
-            } else {
-                tableBody.append('<tr><td colspan="3" class="text-center">No accounting books found</td></tr>');
-            }
-        }
-
-        function downloadFile(button, fileName) {
-            $.ajax({
-                url: `https://localhost:7294/api/AccountingBook/downloadaccountingbook/${fileName}`,
-                type: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${jwtToken}`
-                },
-                xhrFields: {
-                    responseType: 'blob'
-                },
-                success: function (data, status, xhr) {
-                    const downloadUrl = window.URL.createObjectURL(data);
-                    const a = document.createElement('a');
-                    a.href = downloadUrl;
-                    a.download = fileName;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    window.URL.revokeObjectURL(downloadUrl);
-                },
-                error: function (xhr, status, error) {
-                    alert('An error occurred while downloading the file.');
-                    console.error('Error:', error);
-                }
-            });
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        window.onclick = function (event) {
-            if (event.target == document.getElementById('createVoucherModal')) {
-                closeModal('createVoucherModal');
-            }
-            if (event.target == document.getElementById('detailModal')) {
-                closeModal('detailModal');
-            }
-        };
-
-        fetchAccountingBooks();
-    </script>
-
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
 </body>
 
 </html>
 
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    const checkrole = localStorage.getItem('loggingRole');
+    const campaignId = localStorage.getItem('campaignId');
+    const navTabs = document.getElementById('navTabs');
+    const userId = localStorage.getItem('userId');
+    const jwtToken = localStorage.getItem('jwtToken');
+    console.log(campaignId);
+    console.log(checkrole);
+
+    if(checkrole !== "Accounting") {
+        document.getElementById('btnupload').style.display = 'none';
+    }
+    if (checkrole && checkrole !== 'Volunteer') {
+        const newLink = document.createElement('a');
+        newLink.setAttribute('asp-controller', 'Prepay');
+        newLink.setAttribute('asp-action', 'PrepayManagement_PM');
+        newLink.textContent = 'Prepay Created Request';
+
+        const newLink2 = document.createElement('a');
+        newLink2.setAttribute('asp-controller', 'Payment');
+        newLink2.setAttribute('asp-action', 'PaymentManagement_PM');
+        newLink2.textContent = 'Payment Created Request';
+
+        const url = new URL(`/Prepay/PrepayManagement_PM`, window.location.origin);
+
+
+        const url2 = new URL(`/Payment/PaymentManagement_PM`, window.location.origin);
+
+        newLink.href = url.toString();
+        newLink2.href = url2.toString();
+        navTabs.appendChild(newLink);
+        navTabs.appendChild(newLink2);
+    }
+    function showCreateVoucherPopup() {
+        document.getElementById('createVoucherModal').style.display = 'block';
+    }
+
+    function submitVoucher() {
+        const fileInput = document.getElementById('voucherFile');
+        if (fileInput.files.length === 0) {
+            alert("Please upload a file before submitting.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('File', fileInput.files[0]);
+        formData.append('CurrentRole', checkrole);
+        formData.append('UserId', userId);
+        formData.append('CampaignId', campaignId);
+
+        $.ajax({
+            url: 'https://localhost:7294/api/AccountingBook/uploadaccountingbook',
+            type: 'POST',
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            },
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                alert(response.message);
+                if (response.success) {
+                    document.getElementById('voucherTableBody').insertAdjacentHTML('beforeend', createTableRow(response.Data));
+                    closeModal('createVoucherModal');
+                }
+            },
+            error: function (xhr, status, error) {
+                alert('An error occurred while uploading the file. Please try again.');
+                console.error('Error:', error);
+            }
+        });
+    }
+
+            function createTableRow(accountingBook, index) {
+        return `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${accountingBook.filePath}</td>
+                <td>
+                    <button class="btn btn-success btn-sm" onclick="downloadFile(this,'${accountingBook.filePath}')">Download</button>
+                    <button class="btn btn-info btn-sm" onclick="showDetail(this)">Detail</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteRow(this)">Delete</button>
+                </td>
+            </tr>
+        `;
+    }
+
+    function fetchAccountingBooks() {
+        $.ajax({
+            url: `https://localhost:7294/api/AccountingBook/getaccountingbookincampaign?campaignId=${campaignId}`,
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            },
+            success: function (response) {
+                console.log('API Response:', response);
+                if (response.success) {
+                    console.log('Data:', response.data);
+                    populateTable(response.data);
+                } else {
+                    const tableBody = $('#voucherTableBody');
+                    tableBody.empty();
+                    tableBody.append('<tr><td colspan="3" class="text-center">No accounting books found</td></tr>');
+                }
+            },
+            error: function (xhr, status, error) {
+                alert('An error occurred while fetching the accounting books.');
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    function populateTable(data) {
+        const tableBody = $('#voucherTableBody');
+        tableBody.empty();
+
+        if (typeof data === 'object' && data !== null) {
+            tableBody.append(createTableRow(data, 0));
+        } else {
+            tableBody.append('<tr><td colspan="3" class="text-center">No accounting books found</td></tr>');
+        }
+    }
+
+    function downloadFile(button, fileName) {
+        $.ajax({
+            url: `https://localhost:7294/api/AccountingBook/downloadaccountingbook/${fileName}`,
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            },
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function (data, status, xhr) {
+                const downloadUrl = window.URL.createObjectURL(data);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(downloadUrl);
+            },
+            error: function (xhr, status, error) {
+                alert('An error occurred while downloading the file.');
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    window.onclick = function (event) {
+        if (event.target == document.getElementById('createVoucherModal')) {
+            closeModal('createVoucherModal');
+        }
+        if (event.target == document.getElementById('detailModal')) {
+            closeModal('detailModal');
+        }
+    };
+
+    fetchAccountingBooks();
+</script>
+
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>

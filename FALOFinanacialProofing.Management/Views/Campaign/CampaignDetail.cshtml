@@ -168,144 +168,145 @@
             </div>
         </div>
     </div>
-    <script src="../assets/js/core/popper.min.js"></script>
-    <script src="../assets/js/core/bootstrap.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        function formatDateToDisplay(dateString) {
-            const date = new Date(dateString);
-            date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
-            return date.toISOString().split('T')[0];
-        }
-        $(document).ready(function () {
-            const jwtToken = localStorage.getItem('jwtToken');
-            const campaignId = localStorage.getItem('campaignId');
-            const checkrole = localStorage.getItem('loggingRole');
-            const userId = localStorage.getItem('userId');
-            if (checkrole && checkrole !== 'Volunteer') {
-                const newLink = document.createElement('a');
-                newLink.setAttribute('asp-controller', 'Prepay');
-                newLink.setAttribute('asp-action', 'PrepayManagement_PM');
-                newLink.textContent = 'Prepay Created Request';
 
-                const newLink2 = document.createElement('a');
-                newLink2.setAttribute('asp-controller', 'Payment');
-                newLink2.setAttribute('asp-action', 'PaymentManagement_PM');
-                newLink2.textContent = 'Payment Created Request';
-
-                const url = new URL(`/Prepay/PrepayManagement_PM`, window.location.origin);
-
-
-                const url2 = new URL(`/Payment/PaymentManagement_PM`, window.location.origin);
-
-                newLink.href = url.toString();
-                newLink2.href = url2.toString();
-                navTabs.appendChild(newLink);
-                navTabs.appendChild(newLink2);
-            }
-
-            if (checkrole === 'Project Manager') {
-            const updateButton = $('<button>', {
-                class: 'btn btn-warning btn-lg',
-                text: 'Update End Date',
-                id: 'btnUpdateEndDate',
-            });
-            $('#save-btn').prepend(updateButton);
-
-            const popupHTML = `
-                <div id="updateDatePopup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; border: 1px solid #ccc; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
-                    <h5>Select New End Date</h5>
-                    <input type="date" id="newEndDateInput" class="form-control mb-3">
-                    <button class="btn btn-success" id="submitNewEndDate">Submit</button>
-                    <button class="btn btn-secondary" id="closePopup">Cancel</button>
-                </div>
-            `;
-            $('body').append(popupHTML);
-
-            $('#btnUpdateEndDate').on('click', function () {
-                $('#updateDatePopup').show();
-            });
-
-            $('#closePopup').on('click', function () {
-                $('#updateDatePopup').hide();
-            });
-
-            $('#submitNewEndDate').on('click', function () {
-                const newEndDate = new Date($('#newEndDateInput').val());
-                newEndDate.setMinutes(newEndDate.getMinutes() - newEndDate.getTimezoneOffset());
-
-                const currentEndDate = new Date($('#endDate').val());
-                currentEndDate.setMinutes(currentEndDate.getMinutes() - currentEndDate.getTimezoneOffset());
-
-                if (isNaN(newEndDate)) {
-                    alert('Please select a valid date.');
-                    return;
-                }
-
-                if (newEndDate <= currentEndDate) {
-                    alert('The new end date must be later than the current end date.');
-                    return;
-                }
-                
-                $.ajax({
-                    url: `https://localhost:7294/api/Campaign/updateenddateforprojectmanager?campaignId=${campaignId}&userId=${userId}&currentRole=${checkrole}&newDateTime=${newEndDate.toISOString()}`,
-                    type: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${jwtToken}`,
-                    },
-                    success: function (response) {
-                        if (response.success) {
-                            alert(response.message);
-                            location.reload();
-                        } else {
-                            alert(response.message);
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Error updating end date:', error);
-                    }
-                });
-            });
-        }
-            if (campaignId) {
-                fetchCampaignDetails(campaignId);
-            }
-
-            function fetchCampaignDetails(id) {
-                $.ajax({
-                    url: `https://localhost:7294/api/Campaign/GetCampaignDetailsById/${id}`,
-                    type: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${jwtToken}`
-                    },
-                    success: function (response) {
-                        if (response.success) {
-                            const data = response.data;
-                            $('#campaignName').val(data.title);
-                            $('#location').val(data.address);
-                            $('#projectSelect').val(data.projectId);
-                            $('#creator').val(`${data.firstName} ${data.lastName}`);
-                            $('#totalAmount').val(data.fundTarget.toLocaleString());
-                            $('#realtimeAmount').val(data.totalMoneyEarned.toLocaleString());
-                            $('#startDate').val(formatDateToDisplay(data.dateOfCreation));
-                            $('#endDate').val(formatDateToDisplay(data.endDate));
-                            $('#status').val(data.status);
-                            $('#description').val(data.description);
-
-                            $('#bankAccountNumber').val(data.bankingNumber ? data.bankingNumber : 'N/A');
-                        } else {
-                            alert(response.message);
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Error fetching campaign details:', error);
-                    }
-                });
-            }
-        });
-
-    </script>
 </body>
 
 </html>
 
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function formatDateToDisplay(dateString) {
+        const date = new Date(dateString);
+        date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+        return date.toISOString().split('T')[0];
+    }
+    $(document).ready(function () {
+        const jwtToken = localStorage.getItem('jwtToken');
+        const campaignId = localStorage.getItem('campaignId');
+        const checkrole = localStorage.getItem('loggingRole');
+        const userId = localStorage.getItem('userId');
+        if (checkrole && checkrole !== 'Volunteer') {
+            const newLink = document.createElement('a');
+            newLink.setAttribute('asp-controller', 'Prepay');
+            newLink.setAttribute('asp-action', 'PrepayManagement_PM');
+            newLink.textContent = 'Prepay Created Request';
+
+            const newLink2 = document.createElement('a');
+            newLink2.setAttribute('asp-controller', 'Payment');
+            newLink2.setAttribute('asp-action', 'PaymentManagement_PM');
+            newLink2.textContent = 'Payment Created Request';
+
+            const url = new URL(`/Prepay/PrepayManagement_PM`, window.location.origin);
+
+
+            const url2 = new URL(`/Payment/PaymentManagement_PM`, window.location.origin);
+
+            newLink.href = url.toString();
+            newLink2.href = url2.toString();
+            navTabs.appendChild(newLink);
+            navTabs.appendChild(newLink2);
+        }
+
+        if (checkrole === 'Project Manager') {
+        const updateButton = $('<button>', {
+            class: 'btn btn-warning btn-lg',
+            text: 'Update End Date',
+            id: 'btnUpdateEndDate',
+        });
+        $('#save-btn').prepend(updateButton);
+
+        const popupHTML = `
+            <div id="updateDatePopup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; border: 1px solid #ccc; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+                <h5>Select New End Date</h5>
+                <input type="date" id="newEndDateInput" class="form-control mb-3">
+                <button class="btn btn-success" id="submitNewEndDate">Submit</button>
+                <button class="btn btn-secondary" id="closePopup">Cancel</button>
+            </div>
+        `;
+        $('body').append(popupHTML);
+
+        $('#btnUpdateEndDate').on('click', function () {
+            $('#updateDatePopup').show();
+        });
+
+        $('#closePopup').on('click', function () {
+            $('#updateDatePopup').hide();
+        });
+
+        $('#submitNewEndDate').on('click', function () {
+            const newEndDate = new Date($('#newEndDateInput').val());
+            newEndDate.setMinutes(newEndDate.getMinutes() - newEndDate.getTimezoneOffset());
+
+            const currentEndDate = new Date($('#endDate').val());
+            currentEndDate.setMinutes(currentEndDate.getMinutes() - currentEndDate.getTimezoneOffset());
+
+            if (isNaN(newEndDate)) {
+                alert('Please select a valid date.');
+                return;
+            }
+
+            if (newEndDate <= currentEndDate) {
+                alert('The new end date must be later than the current end date.');
+                return;
+            }
+
+            $.ajax({
+                url: `https://localhost:7294/api/Campaign/updateenddateforprojectmanager?campaignId=${campaignId}&userId=${userId}&currentRole=${checkrole}&newDateTime=${newEndDate.toISOString()}`,
+                type: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`,
+                },
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error updating end date:', error);
+                }
+            });
+        });
+    }
+        if (campaignId) {
+            fetchCampaignDetails(campaignId);
+        }
+
+        function fetchCampaignDetails(id) {
+            $.ajax({
+                url: `https://localhost:7294/api/Campaign/GetCampaignDetailsById/${id}`,
+                type: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                success: function (response) {
+                    if (response.success) {
+                        const data = response.data;
+                        $('#campaignName').val(data.title);
+                        $('#location').val(data.address);
+                        $('#projectSelect').val(data.projectId);
+                        $('#creator').val(`${data.firstName} ${data.lastName}`);
+                        $('#totalAmount').val(data.fundTarget.toLocaleString());
+                        $('#realtimeAmount').val(data.totalMoneyEarned.toLocaleString());
+                        $('#startDate').val(formatDateToDisplay(data.dateOfCreation));
+                        $('#endDate').val(formatDateToDisplay(data.endDate));
+                        $('#status').val(data.status);
+                        $('#description').val(data.description);
+
+                        $('#bankAccountNumber').val(data.bankingNumber ? data.bankingNumber : 'N/A');
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching campaign details:', error);
+                }
+            });
+        }
+    });
+
+</script>

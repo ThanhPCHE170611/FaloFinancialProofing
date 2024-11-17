@@ -106,61 +106,62 @@
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script>
-        function formatDateTime(dateString) {
-            if (!dateString) return 'N/A';
-
-            const date = new Date(dateString);
-            if (isNaN(date.getTime())) {
-                return 'Invalid Date';
-            }
-
-            const formattedDate = date.getDate().toString().padStart(2, '0') + '-' +
-                (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
-                date.getFullYear();
-
-            const formattedTime = date.getHours().toString().padStart(2, '0') + ':' +
-                date.getMinutes().toString().padStart(2, '0') + ':' +
-                date.getSeconds().toString().padStart(2, '0');
-
-            return formattedDate + ' ' + formattedTime;
-        }
-        $(document).ready(function () {
-            const campaignId = new URLSearchParams(window.location.search).get('requestId');
-            const jwtToken = localStorage.getItem('jwtToken');
-            $.ajax({
-                url: `https://localhost:7294/api/CreateCampaignRequests/GetCreateCampaignRequest/${campaignId}`,
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${jwtToken}`
-                },
-                success: function (data) {
-                    $('#title').val(data.title);
-                    $('#senderName').val(data.senderName);
-                    $('#createdAt').val(formatDateTime(data.createdAt));
-                    $('#status').val(data.status);
-                    $('#description').val(data.description);
-                    if (data.receiverName !== ' ') {
-                        $('#receiverName').val(data.receiverName);
-                        $('#approver-section').show();
-                    }
-
-                    if (data.status.toLowerCase() === 'rejected') {
-                        $('#feedback-section').show();
-                        $('#feedback').val(data.feedback);
-                    }
-
-                    data.createProjectFiles.forEach(function (file) {
-                        $('#docList').append(`<li class="list-group-item">${file}</li>`);
-                    });
-                },
-                error: function (err) {
-                    console.error('Error fetching campaign request details:', err);
-                }
-            });
-        });
-    </script>
+    
 </body>
 
 </html>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+    function formatDateTime(dateString) {
+        if (!dateString) return 'N/A';
+
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+            return 'Invalid Date';
+        }
+
+        const formattedDate = date.getDate().toString().padStart(2, '0') + '-' +
+            (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
+            date.getFullYear();
+
+        const formattedTime = date.getHours().toString().padStart(2, '0') + ':' +
+            date.getMinutes().toString().padStart(2, '0') + ':' +
+            date.getSeconds().toString().padStart(2, '0');
+
+        return formattedDate + ' ' + formattedTime;
+    }
+    $(document).ready(function () {
+        const campaignId = new URLSearchParams(window.location.search).get('requestId');
+        const jwtToken = localStorage.getItem('jwtToken');
+        $.ajax({
+            url: `https://localhost:7294/api/CreateCampaignRequests/GetCreateCampaignRequest/${campaignId}`,
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            },
+            success: function (data) {
+                $('#title').val(data.title);
+                $('#senderName').val(data.senderName);
+                $('#createdAt').val(formatDateTime(data.createdAt));
+                $('#status').val(data.status);
+                $('#description').val(data.description);
+                if (data.receiverName !== ' ') {
+                    $('#receiverName').val(data.receiverName);
+                    $('#approver-section').show();
+                }
+
+                if (data.status.toLowerCase() === 'rejected') {
+                    $('#feedback-section').show();
+                    $('#feedback').val(data.feedback);
+                }
+
+                data.createProjectFiles.forEach(function (file) {
+                    $('#docList').append(`<li class="list-group-item">${file}</li>`);
+                });
+            },
+            error: function (err) {
+                console.error('Error fetching campaign request details:', err);
+            }
+        });
+    });
+</script>
