@@ -37,6 +37,14 @@ namespace FALOFinanacialProofing.Management.Controllers
         {
             return View();
         }
+        public ActionResult CampaignUpdateProcessManagement()
+        {
+            return View();
+        }
+        public ActionResult CampaignUpdateProcessRequestDetail()
+        {
+            return View();
+        }
 
 
         // GET: CampaignController/Details/5

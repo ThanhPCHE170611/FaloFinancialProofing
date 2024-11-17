@@ -16,6 +16,14 @@
     @* <link id="pagestyle" href="./assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" /> *@
     <link id="pagestyle" href="~/assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
     @* <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script> *@
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .custom-hover:hover {
+            background-color: #EC407A;
+            color: #ffffff; 
+        }
+    </style>
 </head>
 <body class="g-sidenav-show  bg-gray-100">
     <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3   bg-gradient-dark"
@@ -44,7 +52,7 @@
                     </a>
                 </li>
 
-                <li class="nav-item mt-3" id="adminTabTitle">
+                @* <li class="nav-item mt-3" id="adminTabTitle">
                     <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">User</h6>
                 </li>
 
@@ -55,7 +63,7 @@
                         </div>
                         <span class="nav-link-text ms-1">User Management</span>
                     </a>
-                </li>
+                </li> *@
 
                 <li class="nav-item mt-3">
                     <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Accounting Management</h6>
@@ -69,44 +77,77 @@
                         <span class="nav-link-text ms-1">Debt Management</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white " asp-area="" asp-controller="Home" asp-action="Privacy">
-                        <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="material-icons opacity-10">receipt_long</i>
-                        </div>
-
-                        <span class="nav-link-text ms-1">Transaction Management</span>
-                    </a>
-                </li>
 
                 <li class="nav-item mt-3">
                     <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Management</h6>
                 </li>
-                <li class="nav-item" id="projectTab">
-                    <a class="nav-link text-white " asp-area="" asp-controller="Project" asp-action="ProjectManagement">
+                @* <li class="nav-item" id="projectTab">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="projectDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">table_view</i>
                         </div>
-                        <span class="nav-link-text ms-1">Project</span>
+                        <span class="nav-link-text ms-1">Project Management</span>
                     </a>
+                    <ul style="margin-left:0.8rem" class="dropdown-menu" aria-labelledby="projectDropdown">
+                        <li>
+                            <a class="dropdown-item custom-hover" asp-area="" asp-controller="Project" asp-action="ProjectRequestManagement">
+                                <strong>Project Registration Request</strong>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item custom-hover" asp-area="" asp-controller="Project" asp-action="ProjectManagement">
+                                <strong>Project List</strong>
+                            </a>
+                        </li>
+                    </ul>
+                </li> *@
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="campaignDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="material-icons opacity-10">table_view</i>
+                        </div>
+                        <span class="nav-link-text ms-1">Project Management</span>
+                    </a>
+                    <ul style="margin-left:0.8rem" class="dropdown-menu" aria-labelledby="campaignDropdown">
+                        <li>
+                            <a class="dropdown-item custom-hover" asp-area="" asp-controller="Project" asp-action="ProjectRequestManagement">
+                                <strong>Project Registration Request</strong>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item custom-hover" asp-area="" asp-controller="Project" asp-action="ProjectManagement">
+                                <strong>Project List</strong>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="campaignDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="material-icons opacity-10">table_view</i>
+                        </div>
+                        <span class="nav-link-text ms-1">Campaign Management</span>
+                    </a>
+                    <ul style="margin-left:0.8rem" class="dropdown-menu" aria-labelledby="campaignDropdown">
+                        <li>
+                            <a class="dropdown-item custom-hover" asp-area="" asp-controller="Campaign" asp-action="CampaignRequestManagement">
+                                <strong>Campaign Registration Request</strong>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item custom-hover" asp-area="" asp-controller="Campaign" asp-action="CampaignUpdateProcessManagement">
+                                <strong>Campaign Update Process Request</strong>
+                            </a>
+                        </li>   
+                        <li>
+                            <a class="dropdown-item custom-hover" asp-area="" asp-controller="Campaign" asp-action="CampaignManagement">
+                                <strong>Campaign List</strong>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                
 
-                <li class="nav-item" id="campaignrequestTab">
-                    <a class="nav-link text-white " asp-area="" asp-controller="Campaign" asp-action="CampaignRequestManagement">
-                        <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="material-icons opacity-10">table_view</i>
-                        </div>
-                        <span class="nav-link-text ms-1">Campaign Request</span>
-                    </a>
-                </li>
-                <li class="nav-item" id="campaignlistTab">
-                    <a class="nav-link text-white " asp-area="" asp-controller="Campaign" asp-action="CampaignManagement">
-                        <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="material-icons opacity-10">table_view</i>
-                        </div>
-                        <span class="nav-link-text ms-1">Campaign</span>
-                    </a>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link text-white " asp-area="" asp-controller="Organization" asp-action="OrganizationManagement">
                         <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -263,7 +304,7 @@
                             <a href="/UserProfile/UserProfileIndex" class="nav-link text-body font-weight-bold px-0">
                                 <i class="fa fa-user me-sm-1"></i>
 
-                                <span class="d-sm-inline d-none">Sign In</span>
+                                <span class="d-sm-inline d-none"></span>
 
                             </a>
                         </li>
@@ -303,15 +344,49 @@
             userRoleElement.textContent = fullname;
             userRoleElement.appendChild(roleIcon);
         }
-        if (checkrole !== "Admin") {
-            document.getElementById('adminTab').style.display = 'none';
-            document.getElementById('adminTabTitle').style.display = 'none';
+
+        if (checkrole === 'Admin') {
+        const adminTabTitle = document.createElement('li');
+        adminTabTitle.className = 'nav-item mt-3';
+        adminTabTitle.id = 'adminTabTitle';
+        adminTabTitle.innerHTML = `
+            <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">User</h6>
+        `;
+
+        const adminTab = document.createElement('li');
+        adminTab.className = 'nav-item';
+        adminTab.id = 'adminTab';
+        adminTab.innerHTML = `
+            <a class="nav-link text-white" asp-area="" asp-controller="User" asp-action="UserManagement">
+                <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                    <i class="material-icons opacity-10">manage_accounts</i>
+                </div>
+                <span class="nav-link-text ms-1">User Management</span>
+            </a>
+        `;
+
+        const homeTab = document.querySelector('.nav-item > a[asp-action="Index"]').closest('li');
+
+        if (homeTab) {
+            homeTab.insertAdjacentElement('afterend', adminTabTitle);
+            adminTabTitle.insertAdjacentElement('afterend', adminTab);
         }
+    }
+        // if (checkrole !== "Project Manager" && checkrole !== "Project Management Board") {
+        //     document.getElementById('projectTab').style.display = 'none';
+        // }
         if (checkrole !== "Project Manager" && checkrole !== "Project Management Board") {
-            document.getElementById('projectTab').style.display = 'none';
-            document.getElementById('campaignrequestTab').style.display = 'none';
+        const campaignRegistration = document.querySelector('[asp-action="CampaignRequestManagement"]');
+        if (campaignRegistration) {
+            campaignRegistration.closest('li').style.display = 'none';
         }
+        const campaignChangeStage = document.querySelector('[asp-action="CampaignUpdateProcessRequest"]');
+        if (campaignChangeStage) {
+            campaignChangeStage.closest('li').style.display = 'none';
+        }
+    }
     });
 </script>
 @* <script async defer src="https://buttons.github.io/buttons.js"></script> *@
 <script src="~/assets/js/material-dashboard.min.js?v=3.1.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

@@ -170,96 +170,97 @@
         </div>
     </div>
 
-    <script src="../assets/js/core/popper.min.js"></script>
-    <script src="../assets/js/core/bootstrap.min.js"></script>
-    <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
-    <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
 
-    <script>
-        function showCreateVoucherPopup() {
-            document.getElementById('createVoucherModal').style.display = 'block';
-        }
-
-        function submitVoucher() {
-            const title = document.getElementById('voucherTitle').value;
-            const money = document.getElementById('voucherMoney').value;
-            const description = document.getElementById('voucherDescription').value;
-            const dateCreated = new Date().toLocaleDateString();
-            const fileInput = document.getElementById('voucherFile');
-
-            if (fileInput.files.length === 0) {
-                alert("Please upload a file before submitting.");
-                return;
-            }
-
-            const fileName = fileInput.files[0].name;
-
-            const newRow = `
-                <tr>
-                    <td><span class="text-secondary text-xs font-weight-bold">${title}</span></td>
-                    <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">$${money}</span></td>
-                    <td><span class="text-secondary text-xs font-weight-bold">${description}</span></td>
-                    <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${dateCreated}</span></td>
-                    <td class="align-middle text-center"><a href="#" class="btn btn-link text-info" download="${fileName}">${fileName}</a></td>
-                    <td class="align-middle text-center">
-                        <button class="btn btn-info btn-sm" onclick="showDetail(this)">Detail</button>
-                    </td>
-                </tr>
-            `;
-            document.getElementById('voucherTableBody').insertAdjacentHTML('beforeend', newRow);
-            resetForm();
-            closeModal('createVoucherModal');
-        }
-
-        function resetForm() {
-            document.getElementById('voucherTitle').value = '';
-            document.getElementById('voucherMoney').value = '';
-            document.getElementById('voucherDescription').value = '';
-            document.getElementById('voucherFile').value = '';
-            document.getElementById('fileNameDisplay').textContent = '';
-        }
-
-        document.getElementById('voucherFile').addEventListener('change', function () {
-            const fileName = this.files.length > 0 ? this.files[0].name : 'No file chosen';
-            document.getElementById('fileNameDisplay').textContent = `Selected File: ${fileName}`;
-        });
-
-        function showDetail(button) {
-            const row = button.closest('tr');
-            const title = row.cells[0].innerText;
-            const money = row.cells[1].innerText;
-            const description = row.cells[2].innerText;
-            const dateCreated = row.cells[3].innerText;
-            const file = row.cells[4].innerText;
-
-            const detailContent = `
-                <p><strong>Title:</strong> ${title}</p>
-                <p><strong>Money:</strong> ${money}</p>
-                <p><strong>Description:</strong> ${description}</p>
-                <p><strong>Date Created:</strong> ${dateCreated}</p>
-                <p><strong>File:</strong> <a href="#" download="${file}">${file}</a></p>
-            `;
-            document.getElementById('voucherDetailContent').innerHTML = detailContent;
-            document.getElementById('detailModal').style.display = 'block';
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        window.onclick = function (event) {
-            if (event.target == document.getElementById('createVoucherModal')) {
-                closeModal('createVoucherModal');
-            }
-            if (event.target == document.getElementById('detailModal')) {
-                closeModal('detailModal');
-            }
-        }
-    </script>
-
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
 </body>
 
 </html>
 
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+
+<script>
+    function showCreateVoucherPopup() {
+        document.getElementById('createVoucherModal').style.display = 'block';
+    }
+
+    function submitVoucher() {
+        const title = document.getElementById('voucherTitle').value;
+        const money = document.getElementById('voucherMoney').value;
+        const description = document.getElementById('voucherDescription').value;
+        const dateCreated = new Date().toLocaleDateString();
+        const fileInput = document.getElementById('voucherFile');
+
+        if (fileInput.files.length === 0) {
+            alert("Please upload a file before submitting.");
+            return;
+        }
+
+        const fileName = fileInput.files[0].name;
+
+        const newRow = `
+            <tr>
+                <td><span class="text-secondary text-xs font-weight-bold">${title}</span></td>
+                <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">$${money}</span></td>
+                <td><span class="text-secondary text-xs font-weight-bold">${description}</span></td>
+                <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${dateCreated}</span></td>
+                <td class="align-middle text-center"><a href="#" class="btn btn-link text-info" download="${fileName}">${fileName}</a></td>
+                <td class="align-middle text-center">
+                    <button class="btn btn-info btn-sm" onclick="showDetail(this)">Detail</button>
+                </td>
+            </tr>
+        `;
+        document.getElementById('voucherTableBody').insertAdjacentHTML('beforeend', newRow);
+        resetForm();
+        closeModal('createVoucherModal');
+    }
+
+    function resetForm() {
+        document.getElementById('voucherTitle').value = '';
+        document.getElementById('voucherMoney').value = '';
+        document.getElementById('voucherDescription').value = '';
+        document.getElementById('voucherFile').value = '';
+        document.getElementById('fileNameDisplay').textContent = '';
+    }
+
+    document.getElementById('voucherFile').addEventListener('change', function () {
+        const fileName = this.files.length > 0 ? this.files[0].name : 'No file chosen';
+        document.getElementById('fileNameDisplay').textContent = `Selected File: ${fileName}`;
+    });
+
+    function showDetail(button) {
+        const row = button.closest('tr');
+        const title = row.cells[0].innerText;
+        const money = row.cells[1].innerText;
+        const description = row.cells[2].innerText;
+        const dateCreated = row.cells[3].innerText;
+        const file = row.cells[4].innerText;
+
+        const detailContent = `
+            <p><strong>Title:</strong> ${title}</p>
+            <p><strong>Money:</strong> ${money}</p>
+            <p><strong>Description:</strong> ${description}</p>
+            <p><strong>Date Created:</strong> ${dateCreated}</p>
+            <p><strong>File:</strong> <a href="#" download="${file}">${file}</a></p>
+        `;
+        document.getElementById('voucherDetailContent').innerHTML = detailContent;
+        document.getElementById('detailModal').style.display = 'block';
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    window.onclick = function (event) {
+        if (event.target == document.getElementById('createVoucherModal')) {
+            closeModal('createVoucherModal');
+        }
+        if (event.target == document.getElementById('detailModal')) {
+            closeModal('detailModal');
+        }
+    }
+</script>
+
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>

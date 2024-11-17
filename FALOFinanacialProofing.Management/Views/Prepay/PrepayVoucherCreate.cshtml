@@ -129,57 +129,57 @@
             </div>
         </div>
     </div>
-    <script>
-        document.getElementById('attachments').addEventListener('change', function (e) {
-            const fileList = document.getElementById('fileList');
-            fileList.innerHTML = '';
-            Array.from(e.target.files).forEach(file => {
-                const li = document.createElement('li');
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(file);
-                a.textContent = file.name;
-                a.download = file.name;
-                li.appendChild(a);
-                fileList.appendChild(li);
-            });
-        });
 
-        document.getElementById('createBtn').addEventListener('click', function() {
-            const title = document.getElementById('voucherTitle').value;
-            const money = document.getElementById('voucherMoney').value;
-            const description = document.getElementById('voucherDescription').value;
-            const dateCreated = new Date().toLocaleDateString();
-            const attachments = document.getElementById('attachments').files;
-
-
-            if (attachments.length === 0) {
-                alert('Please upload a file before submitting.');
-                return;
-            }
-
-
-            console.log({
-                title,
-                money,
-                assignFrom,
-                dateCreated,
-                description
-            });
-
-            alert('Payment voucher saved!');
-        });
-
-        function resetForm() {
-            document.getElementById('voucherTitle').value = '';
-            document.getElementById('voucherMoney').value = '';
-            document.getElementById('voucherDescription').value = '';
-            document.getElementById('voucherFile').value = '';
-            document.getElementById('fileNameDisplay').textContent = '';
-        }
-    </script>
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
 </body>
 
 </html>
+<script>
+    document.getElementById('attachments').addEventListener('change', function (e) {
+        const fileList = document.getElementById('fileList');
+        fileList.innerHTML = '';
+        Array.from(e.target.files).forEach(file => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(file);
+            a.textContent = file.name;
+            a.download = file.name;
+            li.appendChild(a);
+            fileList.appendChild(li);
+        });
+    });
 
+    document.getElementById('createBtn').addEventListener('click', function() {
+        const title = document.getElementById('voucherTitle').value;
+        const money = document.getElementById('voucherMoney').value;
+        const description = document.getElementById('voucherDescription').value;
+        const dateCreated = new Date().toLocaleDateString();
+        const attachments = document.getElementById('attachments').files;
+
+
+        if (attachments.length === 0) {
+            alert('Please upload a file before submitting.');
+            return;
+        }
+
+
+        console.log({
+            title,
+            money,
+            assignFrom,
+            dateCreated,
+            description
+        });
+
+        alert('Payment voucher saved!');
+    });
+
+    function resetForm() {
+        document.getElementById('voucherTitle').value = '';
+        document.getElementById('voucherMoney').value = '';
+        document.getElementById('voucherDescription').value = '';
+        document.getElementById('voucherFile').value = '';
+        document.getElementById('fileNameDisplay').textContent = '';
+    }
+</script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>

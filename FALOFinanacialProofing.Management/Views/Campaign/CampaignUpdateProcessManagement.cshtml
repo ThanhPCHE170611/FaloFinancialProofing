@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "ProjectManagement";
+    ViewData["Title"] = "CampaignRequestManagement";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -7,29 +7,16 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
-    <link href="~/assets/css/nucleo-icons.css" rel="stylesheet" />
-    <link href="~/assets/css/nucleo-svg.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-    <link id="pagestyle" href="~/assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
     <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
-
     <style>
-        .badge-approved {
-            background-color: #28a745;
-            color: #fff;
-        }
-
-        .badge-declined {
-            background-color: #dc3545;
-            color: #fff;
-        }
-
-        .badge-pending {
-            background-color: #ffc107;
-            color: #fff;
-        }
 
         .search-filter-container {
             display: flex;
@@ -49,6 +36,57 @@
             padding: 10px;
             border-radius: 5px;
             border: 1px solid #ddd;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            padding: 20px;
+            z-index: 1000;
+        }
+
+        .popup-content {
+            text-align: center;
+        }
+
+        .popup-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        .popup input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .popup .btn {
+            width: 48%;
+        }
+
+        .badge-approved {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        .badge-declined {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .badge-pending {
+            background-color: #ffc107;
+            color: #fff;
         }
 
         .text-declined {
@@ -104,39 +142,36 @@
                 <div class="card my-4">
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
-                            <h6 class="text-white text-capitalize ps-3 mb-0">Project Management</h6>
-                            <div id="createRequestBtn">
-                                <a class="btn btn-dark mb-0 me-3" asp-area="" asp-controller="Project" asp-action="ProjectCreate">Create Project (Individual)</a>
-                                <a class="btn btn-dark mb-0 me-3" asp-area="" asp-controller="Project" asp-action="ProjectCreate">Create Project (Organization)</a>
-                            </div>
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Campaign Update Process Management</h6>
+                            @* <a class="btn btn-dark mb-0 me-3" asp-controller="Campaign" asp-action="CampaignCreate">
+                                Add Campaign
+                            </a> *@
                         </div>
                     </div>
-
                     <div class="search-filter-container px-3">
-                        <input type="text" id="searchInput" class="search-box" placeholder="Search by Project Title" onkeyup="searchProject()">
-                        <select id="statusFilter" class="filter-box" onchange="filterByStatus()">
-                            <option value="">All Status</option>
+                        <input type="text" id="searchInput" placeholder="Search by Campaign Title" class="search-box" />
+                        <select id="statusFilter" class="filter-box">
+                            <option value="">All Statuses</option>
+                            <option value="Accepted">Accepted</option>
                             <option value="Pending">Pending</option>
-                            <option value="Accepted">Approved</option>
                             <option value="Rejected">Rejected</option>
                         </select>
                     </div>
-
                     <div class="card-body px-0 pb-2">
                         <div class="table-responsive p-0">
-                            <table class="table align-items-center mb-0" id="projectTable">
-                                <thead>
+                            <table class="table align-items-center mb-0" id="campaignTable">
+                                <thead class="text-center">
                                     <tr>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 5%;">STT</th>
-                                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2" style="width: 25%;">Project</th>
-                                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7" style="width: 25%;">Created By</th>
-                                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7" style="width: 15%;">Created Date</th>
-                                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7" style="width: 15%;">Status</th>
-                                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7" style="width: 15%;">Action</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">STT</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Campaign Name</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Title</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Created Date</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Campaign Process</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Status</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    
+                                <tbody class="text-center">
                                 </tbody>
                             </table>
                         </div>
@@ -147,28 +182,29 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div id="declineModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModalDeclineProjectRequest()">&times;</span>
-            <h3>Reject</h3>
-            <label for="declineReason">Reason for Rejection:</label>
-            <textarea id="declineReason" class="form-control" rows="3" placeholder="Enter feedback..."></textarea>
-            <button class="btn btn-danger mt-3" onclick="submitDecline()">Submit</button>
+        <div id="declineModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModalDeclineCampainChangeStageRequest()">&times;</span>
+                <h3>Reject</h3>
+                <label for="declineReason">Reason for Rejection:</label>
+                <textarea id="declineReason" class="form-control" rows="3" placeholder="Enter feedback"></textarea>
+                <button class="btn btn-danger mt-3" onclick="submitDecline()">Submit</button>
+            </div>
         </div>
     </div>
 
-</body>
 
+</body>
 </html>
-<script async defer src="https://buttons.github.io/buttons.js"></script>
-<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
 <script src="../assets/js/core/popper.min.js"></script>
 <script src="../assets/js/core/bootstrap.min.js"></script>
 <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
 <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
 <script>
+
     let currentButton = null;
     let currentRequestId = null;
 
@@ -178,7 +214,7 @@
         $('#declineModal').fadeIn();
     }
 
-    function closeModalDeclineProjectRequest() {
+    function closeModalDeclineCampainChangeStageRequest() {
         $('#declineModal').fadeOut();
     }
 
@@ -190,7 +226,7 @@
             return;
         }
 
-        closeModalDeclineProjectRequest();
+        closeModalDeclineCampainChangeStageRequest();
         handleProjectReject(currentButton, currentRequestId, false, feedback);
     }
 
@@ -208,18 +244,18 @@
         const dateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 
         const payload = {
-            createProjectRequestId: createProjectRequestId,
-            approverId: userId,
+            moveNextCampaignStatusRequestId: createProjectRequestId,
+            receiverId: userId,
             dateOfApproval: dateTime,
-            isAllowed: isAllowed,
-            feedBack: feedback
+            feedBack: feedback,
+            isAllowed: isAllowed
         };
 
         console.log('Payload:', payload);
 
 
         $.ajax({
-            url: 'https://localhost:7294/api/CreateProjectRequestApproveHistories/CreateCreateProjectRequestApproveHistory',
+            url: 'https://localhost:7294/CreateMoveNextCampaignStatusRequestHistory',
             type: 'POST',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -235,16 +271,61 @@
                 }
             },
             error: function (xhr, status, error) {
-                console.error('Error in project approval:', error);
+                console.error('Error in project approval:', JSON.stringify(error));
                 alert('An error occurred. Please try again.');
             }
         });
     }
+    function updateRowToRejected(button, id) {
+        const row = button.closest('tr');
+        const actionCell = row.querySelector('td:nth-child(7)');
+        const statusCell = row.querySelector('td:nth-child(6)');
+
+        const declinedText = document.createElement('span');
+        declinedText.classList.add('badge', 'badge-sm', 'bg-gradient-danger');
+        declinedText.textContent = 'Rejected';
+
+        button.style.display = 'none';
+        actionCell.querySelector('.btn-info').style.display = 'none';
+        actionCell.querySelector('.btn-success').style.display = 'none';
+
+        const rejectedText = document.createElement('span');
+        rejectedText.classList.add('text-declined', 'me-2');
+        rejectedText.textContent = 'Rejected';
+
+        const detailLink = document.createElement('a');
+        detailLink.classList.add('text-blue');
+        detailLink.textContent = 'Detail';
+        detailLink.href = `/Project/ProjectRequestDetail?requestId=${id}`;
+
+        actionCell.appendChild(rejectedText);
+        actionCell.appendChild(detailLink);
+        statusCell.innerHTML = '';
+        statusCell.appendChild(declinedText);
+    }
+    function formatDate(dateString) {
+        if (!dateString) return 'N/A';
+
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+            return 'Invalid Date';
+        }
+
+        const formattedDate = date.getDate().toString().padStart(2, '0') + '-' +
+            (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
+            date.getFullYear();
+
+        const formattedTime = date.getHours().toString().padStart(2, '0') + ':' +
+            date.getMinutes().toString().padStart(2, '0') + ':' +
+            date.getSeconds().toString().padStart(2, '0');
+
+        return formattedDate + ' ' + formattedTime;
+    }
 
     function updateRowToApprovedForPM(button, id) {
         const row = button.closest('tr');
-        const actionCell = row.querySelector('td:nth-child(6)');
-        const statusCell = row.querySelector('td:nth-child(5)');
+        const actionCell = row.querySelector('td:nth-child(7)');
+        const statusCell = row.querySelector('td:nth-child(6)');
 
         const declinedText = document.createElement('span');
         declinedText.classList.add('badge', 'badge-sm', 'bg-gradient-success');
@@ -269,75 +350,7 @@
         statusCell.appendChild(declinedText);
     }
 
-    function updateRowToRejected(button, id) {
-        const row = button.closest('tr');
-        const actionCell = row.querySelector('td:nth-child(6)');
-        const statusCell = row.querySelector('td:nth-child(5)');
-
-        const declinedText = document.createElement('span');
-        declinedText.classList.add('badge', 'badge-sm', 'bg-gradient-danger');
-        declinedText.textContent = 'Rejected';
-
-        button.style.display = 'none';
-        actionCell.querySelector('.btn-info').style.display = 'none';
-        actionCell.querySelector('.btn-success').style.display = 'none';
-
-        const rejectedText = document.createElement('span');
-        rejectedText.classList.add('text-declined', 'me-2');
-        rejectedText.textContent = 'Rejected';
-
-        const detailLink = document.createElement('a');
-        detailLink.classList.add('text-blue');
-        detailLink.textContent = 'Detail';
-        detailLink.href = `/Project/ProjectRequestDetail?requestId=${id}`;
-
-        actionCell.appendChild(rejectedText);
-        actionCell.appendChild(detailLink);
-        statusCell.innerHTML = '';
-        statusCell.appendChild(declinedText);
-    }
-
-    function filterTable() {
-        const searchInput = document.getElementById('searchBox').value.toLowerCase();
-        const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
-        const table = document.getElementById('projectTable');
-        const rows = table.getElementsByTagName('tr');
-
-        for (let i = 1; i < rows.length; i++) {
-            const project = rows[i].cells[1].innerText.toLowerCase();
-            const address = rows[i].cells[2].innerText.toLowerCase();
-            const status = rows[i].cells[4].innerText.toLowerCase();
-
-            let matchesSearch = project.includes(searchInput) || address.includes(searchInput);
-            let matchesStatus = statusFilter === "" || status.includes(statusFilter);
-
-            if (matchesSearch && matchesStatus) {
-                rows[i].style.display = '';
-            } else {
-                rows[i].style.display = 'none';
-            }
-        }
-    }
-    function formatDateTime(dateString) {
-        if (!dateString) return 'N/A';
-
-        const date = new Date(dateString);
-        if (isNaN(date.getTime())) {
-            return 'Invalid Date';
-        }
-
-        const formattedDate = date.getDate().toString().padStart(2, '0') + '-' +
-            (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
-            date.getFullYear();
-
-        const formattedTime = date.getHours().toString().padStart(2, '0') + ':' +
-            date.getMinutes().toString().padStart(2, '0') + ':' +
-            date.getSeconds().toString().padStart(2, '0');
-
-        return formattedDate + ' ' + formattedTime;
-    }
-
-    function handleProjectApproval(button,createProjectRequestId, isAllowed) {
+    function approveRequest(button,createProjectRequestId, isAllowed) {
         const userId = localStorage.getItem('userId');
 
         const today = new Date();
@@ -350,15 +363,15 @@
         const dateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 
         const payload = {
-            createProjectRequestId: createProjectRequestId,
-            approverId: userId,
+            moveNextCampaignStatusRequestId: createProjectRequestId,
+            receiverId: userId,
             dateOfApproval: dateTime,
             isAllowed: isAllowed
         };
 
         const jwtToken = localStorage.getItem('jwtToken');
         $.ajax({
-            url: 'https://localhost:7294/api/CreateProjectRequestApproveHistories/CreateCreateProjectRequestApproveHistory',
+            url: 'https://localhost:7294/CreateMoveNextCampaignStatusRequestHistory',
             type: 'POST',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -381,24 +394,19 @@
     }
 
     $(document).ready(function () {
+        const userId = localStorage.getItem('userId');
         const jwtToken = localStorage.getItem('jwtToken');
         const checkrole = localStorage.getItem('loggingRole');
-        const userId = localStorage.getItem('userId');
         let currentPage = 1;
         const pageSize = 5;
-        let apiUrl;
         if (checkrole === "Project Management Board") {
-            $('.action-buttons').show();
-            apiUrl = 'https://localhost:7294/api/CreateProjectRequests/GetCreateProjectRequestByPMB';
+            apiUrl = 'https://localhost:7294/api/MoveNextCampaignStatusRequests/GetAllMoveNextCampaignStatusRequestsByPMB';
         } else {
-            apiUrl = `https://localhost:7294/api/CreateProjectRequests/GetAllCreateProjectRequestsByUserId/${userId}`;
+            apiUrl = `https://localhost:7294/api/MoveNextCampaignStatusRequests/GetAllMoveNextCampaignStatusRequestsByUserId/${userId}`;
         }
 
-        if(checkrole === 'Project Management Board') {
-            document.getElementById('createRequestBtn').style.display = 'none';
-        }
 
-        function fetchProjectRequests(searchInput = '', status = null, page = 1) {
+        function fetchCampaignUpdateProcessRequests(searchInput = '', status = '', page = 1) {
             $.ajax({
                 url: apiUrl,
                 type: 'GET',
@@ -406,51 +414,47 @@
                     'Authorization': `Bearer ${jwtToken}`
                 },
                 data: {
-                    searchInput: searchInput,
-                    userId: userId,
                     status: status,
+                    search: searchInput,
                     currentPage: page
                 },
                 success: function (response) {
                     if (response.success) {
-                        console.log("API response data:", response.data.data);
                         populateTable(response.data.data);
                         setupPagination(response.data.dataCount);
                     } else {
-                        $('#projectTable tbody').append('<tr><td colspan="6" class="text-center">No campaign requests found</td></tr>');
+                        $('#campaignTable tbody').empty().append('<tr><td colspan="7" class="text-center">No campaign requests found</td></tr>');
                     }
                 },
-                error: function (xhr, status, error) {
-                    const tableBody = $('#projectTable tbody');
-                    tableBody.empty();
-                    tableBody.append('<tr><td colspan="6" class="text-center">No campaign requests found</td></tr>');
+                error: function () {
+                    $('#campaignTable tbody').empty().append('<tr><td colspan="7" class="text-center">No campaign requests found</td></tr>');
                 }
             });
         }
 
         function populateTable(data) {
-            const tableBody = $('#projectTable tbody');
+            const tableBody = $('#campaignTable tbody');
             tableBody.empty();
 
             if (data.length === 0) {
-                tableBody.append('<tr><td colspan="6" class="text-center">No campaign requests found</td></tr>');
+                tableBody.append('<tr><td colspan="7" class="text-center">No campaign requests found</td></tr>');
                 return;
             }
 
             data.forEach((request, index) => {
                 const statusClass = getStatusClass(request.status);
-
                 let actionButtons = `
-                    <button class="btn btn-success btn-sm" onclick="handleProjectApproval(this,${request.id}, true)">Approve</button>
-                    <button class="btn btn-danger btn-sm" onclick="openDeclineModal(this,${request.id})">Decline</button>
-                    <a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>
+                    <button class="btn btn-success btn-sm" onclick="approveRequest(this,${request.id}, true)">Approve</button>
+                    <button class="btn btn-danger btn-sm" onclick="openDeclineModal(this, ${request.id})">Reject</button>
+                    <a class="btn btn-info btn-sm" href="/Campaign/CampaignRequestDetail?requestId=${request.id}">Detail</a>
                 `;
+
                 if (request.status === "Accepted") {
-                    actionButtons = `<span class="text-approved me-2" style="margin-left:5px">Approved</span>
-                                    <a href="/Project/ProjectRequestDetail?requestId=${request.id}" class="text-blue me-2" >Detail</a>`;
+                    actionButtons = `<span class="text-approved me-2">Approved</span>
+                                     <a href="/Campaign/CampaignRequestDetail?requestId=${request.id}" class="text-blue me-2">Detail</a>`;
                 } else if (request.status === "Rejected") {
-                    actionButtons = `<span class="text-declined me-2" style="margin-left:5px">Rejected</span>
-                                <a href="/Project/ProjectRequestDetail?requestId=${request.id}" class="text-blue me-2">Detail</a>`;
+                    actionButtons = `<span class="text-declined me-2">Rejected</span>
+                                     <a href="/Campaign/CampaignRequestDetail?requestId=${request.id}" class="text-blue me-2">Detail</a>`;
                 } else if(request.status === "Cancel") {
                     actionButtons = `
                         <a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>
@@ -458,69 +462,64 @@
                 }
 
                 if (checkrole !== "Project Management Board") {
-                    if(checkrole === "Project Manager") {
-                        if(request.status === "Rejected" || request.status === "Pending" || request.status === "Cancel") {
-                            actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>`;
-                        } else {
-                            actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>
-                                    <a class="btn btn-primary btn-sm" href="/Campaign/CampaignCreate?projectId=${request.projectId}">Campaign</a>`;
-                        }
-                    } else {
-                        actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>`;
-                    }
-
+                     actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>`;
                 }
+                let receiverName = `${request.receiverName}`
+                if(request.receiverName === null) {
+                    receiverName =`N/A`;
+                }
+                
+
                 const row = `
                     <tr>
                         <td class="align-middle text-center text-sm">${index + 1}</td>
+                        <td class="align-middle text-center text-sm">${request.campaignName}</td>
                         <td class="align-middle text-center text-sm">${request.title}</td>
-                        <td class="align-middle text-center text-sm">${request.senderName}</td>
-                        <td class="align-middle text-center text-sm">${formatDateTime(request.createdAt)}</span></td>
-                        <td class="align-middle text-center text-sm">
-                            <span class="badge badge-sm ${statusClass}">${request.status}</span>
-                        </td>
-                        <td class="align-middle text-center">${actionButtons}</td>
+                        <td class="align-middle text-center text-sm">${formatDate(request.createdAt)}</td>
+                        <td class="align-middle text-center text-sm">${request.statusOfCampaign}</td>
+                        <td class="align-middle text-center text-sm"><span class="badge ${statusClass}">${request.status}</span></td>
+                        <td class="align-middle text-center text-sm">${actionButtons}</td>
                     </tr>
                 `;
-
                 tableBody.append(row);
             });
         }
+
         function getStatusClass(status) {
             if (status === "Accepted") return "badge-approved";
             if (status === "Rejected") return "badge-declined";
             if (status === "Cancel") return "bg-gradient-secondary";
             return "badge-pending";
         }
+
         function setupPagination(totalItems) {
             const totalPages = Math.ceil(totalItems / pageSize);
             const paginationContainer = $('#pagination');
             paginationContainer.empty();
 
             for (let i = 1; i <= totalPages; i++) {
-                const pageButton = $(`<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}">${i}</button>`);
+                const pageButton = $(`<button class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-light'}">${i}</button>`);
                 pageButton.on('click', () => changePage(i));
                 paginationContainer.append(pageButton);
             }
         }
 
-    window.changePage = function (page) {
+        window.changePage = function (page) {
         currentPage = page;
-        fetchProjectRequests($('#searchInput').val(), $('#statusFilter').val(), currentPage);
-    };
+        fetchCampaignUpdateProcessRequests($('#searchInput').val(), $('#statusFilter').val(), currentPage);
+        };
 
         $('#searchInput').on('keyup', function () {
             currentPage = 1;
-            fetchProjectRequests($(this).val(), $('#statusFilter').val(), currentPage);
+            fetchCampaignUpdateProcessRequests($(this).val(), $('#statusFilter').val(), currentPage);
         });
 
         $('#statusFilter').on('change', function () {
             currentPage = 1;
-            fetchProjectRequests($('#searchInput').val(), $(this).val(), currentPage);
+            fetchCampaignUpdateProcessRequests($('#searchInput').val(), $(this).val(), currentPage);
         });
 
-        fetchProjectRequests();
+        fetchCampaignUpdateProcessRequests();
     });
 
 </script>
-
