@@ -136,7 +136,7 @@
     <value>Disbursement</value>
   </data>
   <data name="CampaignStatus.FundRaising" xml:space="preserve">
-    <value>Fund Raising</value>
+    <value>Fund-Raising</value>
   </data>
   <data name="CampaignStatus.Implement" xml:space="preserve">
     <value>Implement</value>

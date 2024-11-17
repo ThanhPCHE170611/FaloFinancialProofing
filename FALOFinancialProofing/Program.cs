@@ -136,9 +136,19 @@ namespace FALOFinancialProofing
                     }
                 });
             });
-            builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<FALOFinancialProofingDbContext>()
-                .AddDefaultTokenProviders();
+            builder.Services.AddIdentity<User, IdentityRole>(options =>
+            {
+                // Cấu hình thời gian hết hạn token
+                options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultProvider;
+            }
 
+                ).AddEntityFrameworkStores<FALOFinancialProofingDbContext>()
+                .AddDefaultTokenProviders();
+            builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+            {
+                //options.TokenLifespan = TimeSpan.FromHours(1);
+                options.TokenLifespan = TimeSpan.FromMinutes(10);
+            });
             builder.Services.AddDbContext<FALOFinancialProofingDbContext>(options =>
             {
                 // Đọc chuỗi kết nối

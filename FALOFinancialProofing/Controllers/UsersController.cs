@@ -384,16 +384,29 @@ namespace FALOFinancialProofing.Controllers
         [Route("reset-password")]
         public async Task<IActionResult> ResetPassword([Required] ResetPassword resetPassword)
         {
-            var user = await authServices.ResetPassword(resetPassword);
-            if (user == null)
+            StringBuilder stringBuilderMessage = new StringBuilder();
+            bool checkValidateProject = await authServices.ValidateResetPasswordAsync(resetPassword, stringBuilderMessage);
+            if (!checkValidateProject)
             {
                 return Ok(new
                 {
                     Success = false,
-                    Message = "Could not send link to email. Email is not registered, or you have entered the wrong email address"
+                    Message = stringBuilderMessage.ToString()
                 });
             }
-            else
+
+            //var user = await authServices.ResetPassword(resetPassword);
+            //if (user == null)
+            //{
+            //    return Ok(new
+            //    {
+            //        Success = false,
+            //        Message = "Could not send link to email. Email is not registered, or you have entered the wrong email address"
+            //    });
+            //}
+            //else
+
+            var user = await authServices.ResetPassword(resetPassword);
             {
                 return Ok(new
                 {
