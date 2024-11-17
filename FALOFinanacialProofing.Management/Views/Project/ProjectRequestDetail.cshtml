@@ -133,6 +133,7 @@
         $(document).ready(function () {
             const projectId = new URLSearchParams(window.location.search).get('requestId');
             const jwtToken = localStorage.getItem('jwtToken');
+            const userId = localStorage.getItem('userId');
             $.ajax({
                 url: `https://localhost:7294/api/CreateProjectRequests/GetCreateProjectRequest/${projectId}`,
                 method: 'GET',
@@ -147,20 +148,49 @@
                         $('#receiverName').val(data.receiverName);
                         $('#approver-section').show();
                     }
-                    $('#description').val(data.projectDescription);
+                    $('#description').val(data.description);
                     $('#status').val(data.status);
 
                     if (data.status.toLowerCase() === 'rejected') {
                         $('#feedback-section').show();
                         $('#feedback').val(data.feedback);
                     }
+                    console.log('senderid = ' + data.senderId);
+                    console.log('userid = ' + userId);
+                    if (data.status.toLowerCase() === 'pending' && data.senderId === userId) {
+                        console.log('status = ' + data.status.toLowerCase());
+                        const cancelButton = $('<button>')
+                        .attr('id', 'cancelButton')
+                        .addClass('btn btn-danger btn-lg')
+                        .css('margin-left', '10px')
+                        .text('Cancel Request')
+                        .click(function () {
+                            $.ajax({
+                                url: `https://localhost:7294/api/CreateProjectRequests/CancelCreateProjectRequest/${userId}/${projectId}`,
+                                method: 'PUT',
+                                headers: {
+                                    'Authorization': `Bearer ${jwtToken}`
+                                },
+                                success: function (response) {
+                                    alert(response.message);
+                                    if (response.success) {
+                                        location.reload();
+                                    }
+                                },
+                                error: function (xhr, status, error) {
+                                    alert('Error: ' + (xhr.responseText || status));
+                                }
+                            });
+                        });
+                        $('#save-btn').append(cancelButton);
+                    }
 
                     data.createProjectFiles.forEach(function (file) {
                         $('#docList').append(`<li class="list-group-item">${file.filePath}</li>`);
                     });
                 },
-                error: function (err) {
-                    console.error('Error fetching project details:', err);
+                error: function (xhr, status, error) {
+                    alert('Error: ' + xhr.responseText || status);
                 }
             });
         });
