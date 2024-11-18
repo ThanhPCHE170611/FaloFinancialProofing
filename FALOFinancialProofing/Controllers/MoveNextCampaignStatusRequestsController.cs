@@ -26,70 +26,70 @@ namespace FALOFinancialProofing.Controllers
 
 
         //Manh moi them
-        [HttpGet("APIBASICGetAllMoveNextCampaignStatusRequests")]
-        public async Task<IActionResult> GetAllMoveNextCampaignStatusRequests()
-        {
-            var moveNextCampaignStatusRequests = await _moveNextCampaignStatusRequestService.GetAllMoveNextCampaignStatusRequestAsync();
-            if (moveNextCampaignStatusRequests == null || moveNextCampaignStatusRequests.Count == 0)
-            {
-                return Ok(new
-                {
-                    Success = false,
-                    Message = "No MoveNextCampaignStatusRequest found."
-                });
-            }
+        //[HttpGet("APIBASICGetAllMoveNextCampaignStatusRequests")]
+        //public async Task<IActionResult> GetAllMoveNextCampaignStatusRequests()
+        //{
+        //    var moveNextCampaignStatusRequests = await _moveNextCampaignStatusRequestService.GetAllMoveNextCampaignStatusRequestAsync();
+        //    if (moveNextCampaignStatusRequests == null || moveNextCampaignStatusRequests.Count == 0)
+        //    {
+        //        return Ok(new
+        //        {
+        //            Success = false,
+        //            Message = "No MoveNextCampaignStatusRequest found."
+        //        });
+        //    }
 
-            return Ok(new
-            {
-                Success = true,
-                Message = "MoveNextCampaignStatusRequests retrieved successfully.",
-                Data = moveNextCampaignStatusRequests
-            });
-        }
+        //    return Ok(new
+        //    {
+        //        Success = true,
+        //        Message = "MoveNextCampaignStatusRequests retrieved successfully.",
+        //        Data = moveNextCampaignStatusRequests
+        //    });
+        //}
 
 
-        [HttpGet("APIBASICGetMoveNextCampaignStatusRequestById/{id}")]
-        public async Task<IActionResult> GetMoveNextCampaignStatusRequestById(int id)
-        {
-            var moveNextCampaignStatusRequest = await _moveNextCampaignStatusRequestService.GetMoveNextCampaignStatusRequestByIdAsync(id);
-            if (moveNextCampaignStatusRequest == null)
-            {
-                return Ok(new
-                {
-                    Success = false,
-                    Message = $"MoveNextCampaignStatusRequest with Id = {id} not found."
-                });
-            }
+        //[HttpGet("APIBASICGetMoveNextCampaignStatusRequestById/{id}")]
+        //public async Task<IActionResult> GetMoveNextCampaignStatusRequestById(int id)
+        //{
+        //    var moveNextCampaignStatusRequest = await _moveNextCampaignStatusRequestService.GetMoveNextCampaignStatusRequestByIdAsync1(id);
+        //    if (moveNextCampaignStatusRequest == null)
+        //    {
+        //        return Ok(new
+        //        {
+        //            Success = false,
+        //            Message = $"MoveNextCampaignStatusRequest with Id = {id} not found."
+        //        });
+        //    }
 
-            return Ok(new
-            {
-                Success = true,
-                Message = "MoveNextCampaignStatusRequest retrieved successfully.",
-                Data = moveNextCampaignStatusRequest
-            });
-        }
+        //    return Ok(new
+        //    {
+        //        Success = true,
+        //        Message = "MoveNextCampaignStatusRequest retrieved successfully.",
+        //        Data = moveNextCampaignStatusRequest
+        //    });
+        //}
 
-        [HttpPost("APIBASICCreateMoveNextCampaignStatusRequest")]
-        public async Task<IActionResult> CreateMoveNextCampaignStatusRequest([FromBody] CreateMoveNextCampaignStatusRequestDTO createMoveNextCampaignStatusRequestDTO)
-        {
-            StringBuilder stringBuilderMessage = new StringBuilder();
-            var createMoveNextCampaignStatusRequest = await _moveNextCampaignStatusRequestService.CreateMoveNextCampaignStatusRequestAsync(createMoveNextCampaignStatusRequestDTO, stringBuilderMessage);
-            if (createMoveNextCampaignStatusRequest == null)
-            {
-                return Ok(new
-                {
-                    Success = false,
-                    Message = "Unable to create MoveNextCampaignStatusRequest."
-                });
-            }
+        //[HttpPost("APIBASICCreateMoveNextCampaignStatusRequest")]
+        //public async Task<IActionResult> CreateMoveNextCampaignStatusRequest([FromBody] CreateMoveNextCampaignStatusRequestDTO createMoveNextCampaignStatusRequestDTO)
+        //{
+        //    StringBuilder stringBuilderMessage = new StringBuilder();
+        //    var createMoveNextCampaignStatusRequest = await _moveNextCampaignStatusRequestService.CreateMoveNextCampaignStatusRequestAsync(createMoveNextCampaignStatusRequestDTO, stringBuilderMessage);
+        //    if (createMoveNextCampaignStatusRequest == null)
+        //    {
+        //        return Ok(new
+        //        {
+        //            Success = false,
+        //            Message = "Unable to create MoveNextCampaignStatusRequest."
+        //        });
+        //    }
 
-            return Ok(new
-            {
-                Success = true,
-                Message = "MoveNextCampaignStatusRequest created successfully.",
-                Data = createMoveNextCampaignStatusRequest
-            });
-        }
+        //    return Ok(new
+        //    {
+        //        Success = true,
+        //        Message = "MoveNextCampaignStatusRequest created successfully.",
+        //        Data = createMoveNextCampaignStatusRequest
+        //    });
+        //}
         [RoleAttribute(AppRole.ProjectManager)]
         [HttpPost("CreateMoveNextCampaignStatusRequest")]
         public async Task<ActionResult<MoveNextCampaignStatusRequest>> CreateMoveNextCampaignStatusRequestAsync([FromBody] CreateMoveNextCampaignStatusRequestDTO requestDto)
@@ -163,10 +163,10 @@ namespace FALOFinancialProofing.Controllers
                 }
                 if (!string.IsNullOrEmpty(search))
                 {
-                    search = search.ToLower();
+                    search = search.ToLower().Trim();
                     data = data.FindAll(x =>
-                        (x.SenderName != null && x.SenderName.ToLower().Contains(search)) ||
-                        (x.ReceiverName != null && x.ReceiverName.ToLower().Contains(search)) ||
+                        //(x.SenderName != null && x.SenderName.ToLower().Contains(search)) ||
+                        //(x.ReceiverName != null && x.ReceiverName.ToLower().Contains(search)) ||
                         (x.CampaignName != null && x.CampaignName.ToLower().Contains(search)) ||
                         (x.Title != null && x.Title.ToLower().Contains(search))
                     );
@@ -214,10 +214,10 @@ namespace FALOFinancialProofing.Controllers
                 }
                 if (!string.IsNullOrEmpty(search))
                 {
-                    search = search.ToLower();
+                    search = search.ToLower().Trim();
                     data = data.FindAll(x =>
-                        (x.SenderName != null && x.SenderName.ToLower().Contains(search)) ||
-                        (x.ReceiverName != null && x.ReceiverName.ToLower().Contains(search)) ||
+                        //(x.SenderName != null && x.SenderName.ToLower().Contains(search)) ||
+                        //(x.ReceiverName != null && x.ReceiverName.ToLower().Contains(search)) ||
                         (x.CampaignName != null && x.CampaignName.ToLower().Contains(search)) ||
                         (x.Title != null && x.Title.ToLower().Contains(search))
                     );
@@ -281,6 +281,18 @@ namespace FALOFinancialProofing.Controllers
                 return BadRequest(new { Message = message.ToString() });
             }
         }
+        [HttpGet("GetMoveNextCampaignStatusRequestById/{id}")]
+        public async Task<ActionResult<MoveNextCampaignStatusRequestInformation>> GetMoveNextCampaignStatusRequestById(int id)
+        {
 
+            var moveNextCampaignStatusRequestById = await _moveNextCampaignStatusRequestService.GetMoveNextCampaignStatusRequestByIdAsync(id);
+
+            if (moveNextCampaignStatusRequestById == null)
+            {
+                return NotFound();
+            }
+
+            return moveNextCampaignStatusRequestById;
+        }
     }
 }

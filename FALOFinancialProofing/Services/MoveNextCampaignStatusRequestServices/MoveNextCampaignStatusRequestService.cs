@@ -42,7 +42,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
             }
         }
 
-        public async Task<MoveNextCampaignStatusRequest?> GetMoveNextCampaignStatusRequestByIdAsync(int id)
+        public async Task<MoveNextCampaignStatusRequest?> GetMoveNextCampaignStatusRequestByIdAsync1(int id)
         {
             try
             {
@@ -53,6 +53,8 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                 return null;
             }
         }
+
+
         //tao don move next campaign status request
         public async Task<MoveNextCampaignStatusRequest> CreateMoveNextCampaignStatusRequestAsync(CreateMoveNextCampaignStatusRequestDTO requestDto, StringBuilder message)
         {
@@ -66,6 +68,11 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                 if (campaign == null)
                 {
                     throw new Exception("Not Found Campaign");
+                }
+                bool check = await CheckRequestHasBeenCreated(requestDto.CampaignID);
+                if (!check)
+                {
+                    throw new Exception("The request to change the campaign status has been created, you cannot create more");
                 }
                 string nextStatus = "";
                 if (campaign.Status == Resource.CampaignStatus_FundRaising)
@@ -111,7 +118,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                         Status = "Pending",
                         Title = requestDto.Title,
                         SenderId = requestDto.SenderId,
-                        CreatedAt = requestDto.CreatedAt,
+                        CreatedAt = DateTime.Now,
                         Description = requestDto.Description
                     };
                     await _moveNextCampaignStatusRequestRepository.InsertAsync(request);
@@ -239,10 +246,26 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
             return IsValid;
         }
 
+        private async Task<bool> CheckRequestHasBeenCreated(int campaignId)
+        {
+            bool IsValid = true;
+            try
+            {
+                var mncsrWithStatusPending = await _moveNextCampaignStatusRequestRepository.GetAll().Where(m => m.CampaignID == campaignId && m.Status == "Pending").SingleOrDefaultAsync();
+                if(mncsrWithStatusPending != null)
+                {
+                    IsValid = false;
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return IsValid;
+        }
 
         public async Task<bool> ApproveOrRejectRequestAsync(int requestId, bool isApproved)
         {
-            var request = await GetMoveNextCampaignStatusRequestByIdAsync(requestId);
+            var request = await GetMoveNextCampaignStatusRequestByIdAsync1(requestId);
             if (request == null || request.Status != "Pending")
                 throw new InvalidOperationException("Request not found or already processed.");
 
@@ -502,5 +525,35 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
             }
         }
 
+        public async Task<MoveNextCampaignStatusRequestInformation> GetMoveNextCampaignStatusRequestByIdAsync(int id)
+        {
+            MoveNextCampaignStatusRequestInformation data = null!;
+            try
+            {
+                data = await _moveNextCampaignStatusRequestRepository.GetAll()
+                     .Where(mncpsr => mncpsr.Id == id)
+                    .Select(s => new MoveNextCampaignStatusRequestInformation()
+                    {
+                        SenderId = s.SenderId,
+                        SenderName = $"{s.SenderUser.FirstName} {s.SenderUser.LastName}",
+                        ReceiverId = s.ReceiverId,
+                        ReceiverName = $"{s.ReceiverUser.FirstName} {s.ReceiverUser.LastName}",
+                        CampaignID = s.CampaignID,
+                        CampaignName = s.Campaign.Title,
+                        Title = s.Title,
+                        Description = s.Description,
+                        CreatedAt = s.CreatedAt,
+                        Feedback = s.Feedback,
+                        Status = s.Status,
+                        StatusOfCampaign = s.StatusOfCampaign
+                    }).SingleOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetMoveNextCampaignStatusRequestByIdAsync: {ex.Message}");
+            }
+
+            return data;
+        }
     }
 }
