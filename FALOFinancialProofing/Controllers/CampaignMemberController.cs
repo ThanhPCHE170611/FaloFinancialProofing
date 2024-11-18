@@ -245,7 +245,7 @@ namespace FALOFinancialProofing.Controllers
             }
             );
         }
-        [RoleAttribute(AppRole.Admin)]
+        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
         [HttpPut("UpdateCampaignMemberStatus")]
         public async Task<IActionResult> UpdateCampaignMemberStatus([FromBody] UpdateCampaignMemberStatusDTO updateCampaignMemberStatusDTO)
         {

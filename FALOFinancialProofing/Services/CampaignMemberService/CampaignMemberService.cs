@@ -5,6 +5,7 @@ using FALOFinancialProofing.DTOs.RoleDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
+using FALOFinancialProofing.Services.CampaignService;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Text;
@@ -16,11 +17,13 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
         private readonly IRepository<CampaignMember, int> cmRepository;
         private readonly IRepository<Campaign, int> campaignRepository;
         private readonly AuthServices authServices;
-        public CampaignMemberService(IRepository<CampaignMember, int> _cmRepository, IRepository<Campaign, int> campaignRepository, AuthServices authServices)
+        private readonly ICampaignService campaignService;
+        public CampaignMemberService(IRepository<CampaignMember, int> _cmRepository, IRepository<Campaign, int> campaignRepository, AuthServices authServices, ICampaignService campaignService)
         {
             cmRepository = _cmRepository;
             this.campaignRepository = campaignRepository;
             this.authServices = authServices;
+            this.campaignService = campaignService;
         }
 
         public async Task<CampaignMember?> CreateCampaignMemberAsync(CreateCampaignMemberDTO createCampaignMemberDTO)
@@ -267,6 +270,13 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 if (existingCampaignMember.Debt != 0)
                 {
                     throw new Exception("Cannot deactivate CampaignMember with debt greater than 0.");
+                }
+                var campaignOwner = await campaignService.GetCampaignByUserIdAndCampaignIdAsync(updateCampaignMemberStatusDTO.PmUserId, updateCampaignMemberStatusDTO.CampaignId);
+                bool checkAdmin = await authServices.CheckUserInRole(updateCampaignMemberStatusDTO.PmUserId, AppRole.Admin, new StringBuilder());
+                bool checkPMB = await authServices.CheckUserInRole(updateCampaignMemberStatusDTO.PmUserId, AppRole.ProjectManagementBoard, new StringBuilder());
+                if ((campaignOwner == null && !checkPMB && !checkAdmin) || (campaignOwner != null && !campaignOwner.IsActive))
+                {
+                    throw new Exception("You don't have permission to update campaign!");
                 }
                 UpdateCampaignMemberStatusDTOToEntity(existingCampaignMember, updateCampaignMemberStatusDTO);
 
