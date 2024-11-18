@@ -9,6 +9,13 @@ using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.TransactionLogsServices;
 using FALOFinancialProofing.DTOs.TransactionLogsDTOs;
 using Microsoft.VisualBasic;
+using FALOFinancialProofing.Helpers;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using FALOFinancialProofing.Constant;
+using FALOFinancialProofing.DTOs.CreateCampaignRequestDTO;
+using FALOFinancialProofing.Utilities;
+using System.Text;
+using FALOFinancialProofing.DTOs.UserDTOs;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -44,7 +51,109 @@ namespace FALOFinancialProofing.Controllers
 
             return transactionLog;
         }
+        // lịch sử chuyển tiền cua nguoi dung
+        [HttpGet("GetUserTransactionLogs/{userId}")]
+        public async Task<ActionResult> GetUserTransactionLogs(string? searchInput, string userId, int currentPage = IntConstant.PageNumberDefault)
+        {
+            List<UserTransactionHistory> data = null;
+            FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
+            StringBuilder stringBuilder = new StringBuilder();
+            try
+            {
+                data = (await _transactionLogService.GetUserTransactionsByUserIdAsync(userId)).ToList();
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "Get User Transaction Logs Successfully Failed!",
+                        Data = filterPagingData
+                    });
+                }
+                if (!string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = searchInput.Trim();
+                    data = data.FindAll(x => ($"{x.CampaignName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
+                }
+                filterPagingData.DataCount = data.Count;
+                data = PaginationHelper.Paginate<UserTransactionHistory>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                filterPagingData.Data = data;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"Get User Transaction Logs: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "Get User Transaction Logs Successfully!",
+                Data = filterPagingData
+            });
+        }
 
+        //[HttpGet("GetCampaignTransactionLogs/{campaignId}")]
+        //public async Task<ActionResult> GetCampaignTransactionLogs(string? searchInput, int campaignId, int currentPage = IntConstant.PageNumberDefault)
+        //{
+
+        //    var transactionLog = await _transactionLogService.GetUserTransactionsByCampaignIdAsync(campaignId);
+
+        //    if (transactionLog == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    if (!string.IsNullOrEmpty(searchInput))
+        //    {
+        //        searchInput = searchInput.Trim();
+        //        transactionLog = transactionLog.FindAll(x => ($"{x.CampaignName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.TransactionDate.ToShortDateString()}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
+        //    }
+        //    return Ok(new ApiResponse()
+        //    {
+        //        Data = transactionLog,
+        //        Success = true,
+        //        Message = "Get Campaign Transaction Logs Successfully!"
+        //    });
+        //}
+
+        [HttpGet("GetCampaignTransactionLogs/{campaignId}")]
+        public async Task<ActionResult> GetCampaignTransactionLogs(string? searchInput, int campaignId, int currentPage = IntConstant.PageNumberDefault)
+        {
+            List<UserTransactionHistory> data = null;
+            FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
+            StringBuilder stringBuilder = new StringBuilder();
+            try
+            {
+                data = (await _transactionLogService.GetUserTransactionsByCampaignIdAsync(campaignId)).ToList();
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "Get All TransactionLogs By CampaignId Failed!",
+                        Data = filterPagingData
+                    });
+                }
+                if (!string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = searchInput.Trim();
+                    data = data.FindAll(x => ($"{x.CampaignName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
+                }
+                filterPagingData.DataCount = data.Count;
+                data = PaginationHelper.Paginate<UserTransactionHistory>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                filterPagingData.Data = data;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"Get All TransactionLogs By CampaignId: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "Get All TransactionLogs By CampaignId Successfully!",
+                Data = filterPagingData
+            });
+        }
         // PUT: api/TransactionLogs/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("UpdateTransactionLog")]

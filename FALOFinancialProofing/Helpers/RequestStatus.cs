@@ -8,5 +8,6 @@
         public const string Running = "Running";
         public const string Rejected = "Rejected";
         public const string FundRaising = "Fund-Raising";
+        public const string Cancel = "Cancel";
     }
 }

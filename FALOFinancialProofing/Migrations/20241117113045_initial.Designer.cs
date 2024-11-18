@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FALOFinancialProofing.Migrations
 {
     [DbContext(typeof(FALOFinancialProofingDbContext))]
-    [Migration("20241116101005_addDescription")]
-    partial class addDescription
+    [Migration("20241117113045_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -111,7 +111,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.Property<string>("AccountNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("BankCodeName")
                         .IsRequired()
@@ -129,7 +129,33 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Bank");
+                    b.HasIndex("AccountNumber")
+                        .IsUnique();
+
+                    b.HasIndex("CassoAccountID")
+                        .IsUnique();
+
+                    b.ToTable("Banks");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AccountNumber = "1016161976",
+                            BankCodeName = "VietComBank",
+                            CassoAccountID = 123L,
+                            OwnerName = "Nguyen Van Duc",
+                            acqId = 970436
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AccountNumber = "4270774590",
+                            BankCodeName = "BIDV",
+                            CassoAccountID = 222L,
+                            OwnerName = "Bui Minh Manh",
+                            acqId = 970418
+                        });
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.Campaign", b =>
@@ -146,9 +172,6 @@ namespace FALOFinancialProofing.Migrations
 
                     b.Property<int?>("BankId")
                         .HasColumnType("int");
-
-                    b.Property<string>("BankingNumber")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -252,6 +275,9 @@ namespace FALOFinancialProofing.Migrations
                     b.Property<DateTime>("DateOfApproval")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("FeedBack")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsAllowed")
                         .HasColumnType("bit");
 
@@ -300,9 +326,12 @@ namespace FALOFinancialProofing.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Feedback")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ReceiverId")
                         .HasColumnType("nvarchar(450)");
@@ -363,9 +392,12 @@ namespace FALOFinancialProofing.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Feedback")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
@@ -414,6 +446,9 @@ namespace FALOFinancialProofing.Migrations
                     b.Property<DateTime>("DateOfApproval")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("FeedBack")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsAllowed")
                         .HasColumnType("bit");
 
@@ -448,7 +483,7 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("CreateQrCode");
+                    b.ToTable("CreateQrCodes");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.MoveNextCampaignStatusRequest", b =>
@@ -659,6 +694,10 @@ namespace FALOFinancialProofing.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Image")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -772,6 +811,38 @@ namespace FALOFinancialProofing.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SDGs");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            SDGName = "No Poverty"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            SDGName = "Zero Hunger"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            SDGName = "Good Health And Well-Being"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            SDGName = "Quality Education"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            SDGName = "Gender Equality"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            SDGName = "Clean Water And Sanitation"
+                        });
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.SocialNetwork", b =>
@@ -805,8 +876,8 @@ namespace FALOFinancialProofing.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<double>("Amount")
-                        .HasColumnType("float");
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
 
                     b.Property<int>("CampaignId")
                         .HasColumnType("int");
@@ -832,6 +903,10 @@ namespace FALOFinancialProofing.Migrations
 
                     b.HasIndex("CampaignId");
 
+                    b.HasIndex("CassoTransactionId")
+                        .IsUnique()
+                        .HasFilter("[CassoTransactionId] IS NOT NULL");
+
                     b.HasIndex("CreateQrCodeId");
 
                     b.ToTable("TransactionLogs");
@@ -845,11 +920,20 @@ namespace FALOFinancialProofing.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Bio")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateOnly?>("BirthDate")
                         .HasColumnType("date");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Education")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -861,6 +945,12 @@ namespace FALOFinancialProofing.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("Gender")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Hobby")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Image")
@@ -896,6 +986,12 @@ namespace FALOFinancialProofing.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Skill")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Strength")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -903,7 +999,20 @@ namespace FALOFinancialProofing.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<string>("VolunteerExperience")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VolunteerGoal")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WorkPlace")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -918,16 +1027,22 @@ namespace FALOFinancialProofing.Migrations
 
             modelBuilder.Entity("FALOFinancialProofing.Models.UserSDG", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("SDGId")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
+                    b.HasKey("Id");
 
-                    b.HasKey("SDGId", "UserId");
+                    b.HasIndex("SDGId");
 
                     b.HasIndex("UserId");
 

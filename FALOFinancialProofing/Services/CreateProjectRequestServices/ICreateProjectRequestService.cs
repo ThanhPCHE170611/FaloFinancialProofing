@@ -14,5 +14,7 @@ namespace FALOFinancialProofing.Services.CreateProjectRequestServices
         Task<CreateProjectRequest> CreateCreateProjectRequestReturnEntityAsync(CreateProjectRequest createCreateProjectRequest);
         Task<IEnumerable<CreateProjectRequestInformation>> GetAllCreateProjectRequestsByPMBAsync(StringBuilder message);
         Task<IEnumerable<CreateProjectRequestInformation>> GetAllCreateProjectRequestsByUserIdAsync(string userId, StringBuilder message);
+        Task<bool> ValidateCreateProjectRequestByUserIdAndRequestIdAsync(string userId, int CreateProjectRequestId, StringBuilder message);
+        Task<bool> CancelCreateProjectRequestAsync(string userId, int CreateProjectRequestId);
     }
 }

@@ -1,32 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using FALOFinancialProofing.Attributes.RoleAttributes;
+using FALOFinancialProofing.Constant;
+using FALOFinancialProofing.DTOs;
+using FALOFinancialProofing.DTOs.UserDTOs;
+using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
+using FALOFinancialProofing.Services;
+using FALOFinancialProofing.Utilities;
+using Google.Apis.Oauth2.v2.Data;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Text;
-using System.Security.Cryptography;
-using FALOFinancialProofing.Repository;
-using FALOFinancialProofing.DTOs;
-using Microsoft.AspNetCore.Identity.Data;
-using FALOFinancialProofing.Services;
-using Microsoft.AspNetCore.Authorization;
-using System.ComponentModel.DataAnnotations;
-using FALOFinancialProofing.Helpers;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Identity;
-using FALOFinancialProofing.DTOs.UserDTOs;
-using FALOFinancialProofing.Attributes.RoleAttributes;
-using FALOFinancialProofing.Constant;
-using FALOFinancialProofing.DTOs.CampaignDTO;
-using FALOFinancialProofing.Utilities;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -62,6 +51,51 @@ namespace FALOFinancialProofing.Controllers
                 });
             }
         }
+
+        [HttpPost("Login-Google/{roleName}")]
+        public async Task<IActionResult> LoginGoogle([FromHeader(Name = "Authorization")] string accessToken, string roleName)
+        {
+            accessToken = accessToken.Replace("AccessToken ", "");
+            StringBuilder message = new StringBuilder();
+            var checkValid = await authServices.CheckValidExternalRegister(roleName, message);
+            if (!checkValid)
+            {
+                return Ok(new ApiResponse()
+                {
+                    Success = checkValid,
+                    Message = message.ToString()
+                });
+            }
+            Userinfo userInfo = await authServices.GetUserInfoAsync(accessToken);
+            if (userInfo == null)
+            {
+                return Ok(new ApiResponse()
+                {
+                    Success = false,
+                    Message = "Login with Google Fails, No access to account!"
+                });
+            }
+            var checkAccountExist = await authServices.CheckGoogleExistAccount(userInfo.Email);
+            if (!checkAccountExist)
+            {
+                var checkSuccessCreate = await authServices.ExternalRegisterUser(userInfo, roleName);
+                if (checkSuccessCreate == null || !checkSuccessCreate.Succeeded)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "Login with Google Fails, No access to account!"
+                    });
+                }
+            }
+            UserDto userDto = await authServices.GetUserDto(userInfo);
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Google Authentication Success",
+                Data = await authServices.GenerateToken(userDto)
+            });
+        }
         [RoleAttribute(AppRole.Admin)]
         [HttpPut("Update-User-Role")]
         public async Task<IActionResult> UpdateUserRole([FromBody] UpdateUserRole updateUserRole)
@@ -82,9 +116,14 @@ namespace FALOFinancialProofing.Controllers
         [Authorize]
         // hiển thị thông tin danh sách người dùng không ở trong một chiến dịch cụ thể
         [HttpGet("GetUserNotInCampaignById/{CampaignId}")]
-        public async Task<IActionResult> GetUserNotInCampaignById(int CampaignId)
+        public async Task<IActionResult> GetUserNotInCampaignById(string? searchInput, int CampaignId)
         {
             var users = await authServices.GetUserNotInCampaignById(CampaignId);
+            if (!string.IsNullOrEmpty(searchInput))
+            {
+                searchInput = searchInput.Trim();
+                users = users.FindAll(x => ($"{x.FirstName} {x.LastName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.Email}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
+            }
             return Ok(new ApiResponse()
             {
                 Message = "Get Users Successfully!",
@@ -131,6 +170,7 @@ namespace FALOFinancialProofing.Controllers
                 Message = message
             });
         }
+        #region Xóa sau
         [HttpGet("loginGG")]
         public IActionResult Login()
         {
@@ -171,6 +211,7 @@ namespace FALOFinancialProofing.Controllers
             //return Ok(new { token });
             return Ok();
         }
+        #endregion
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] SignUpRequest registerRequest)
         {
@@ -214,7 +255,7 @@ namespace FALOFinancialProofing.Controllers
                 });
             }
         }
-
+        [RoleAttribute(AppRole.Admin)]
         [HttpPost("Admin-Register")]
         public async Task<IActionResult> AdminRegister([FromBody] SignUpAdminRequest registerRequest)
         {
@@ -238,7 +279,7 @@ namespace FALOFinancialProofing.Controllers
         }
         [RoleAttribute(AppRole.Admin)]
         [HttpGet("GetAccountList")]
-        public async Task<IActionResult> GetAllAccountInSystem(int currentPage = IntConstant.PageNumberDefault)
+        public async Task<IActionResult> GetAllAccountInSystem(string? searchInput, int currentPage = IntConstant.PageNumberDefault)
         {
             List<UserInformation_Admin> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -254,6 +295,11 @@ namespace FALOFinancialProofing.Controllers
                         Message = "Get All Account Failed!",
                         Data = filterPagingData
                     });
+                }
+                if (!string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = searchInput.Trim();
+                    data = data.FindAll(x => ($"{x.FirstName} {x.LastName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.Email}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || x.Roles.Any(rl => rl.RoleName.Contains(searchInput, StringComparison.OrdinalIgnoreCase)));
                 }
 
                 filterPagingData.DataCount = data.Count;
@@ -272,6 +318,45 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
+        [HttpGet("GetPMBAccountList")]
+        public async Task<IActionResult> GetAllPMBAccountInSystem(string? searchInput, int currentPage = IntConstant.PageNumberDefault)
+        {
+            List<UserInformation_Admin> data = null;
+            FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
+            try
+            {
+                data = await authServices.GetPMBAccountList();
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "Get All PMB Account Failed!",
+                        Data = filterPagingData
+                    });
+                }
+                if (!string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = searchInput.Trim();
+                    data = data.FindAll(x => ($"{x.FirstName} {x.LastName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.Email}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
+                }
+
+                filterPagingData.DataCount = data.Count;
+                data = PaginationHelper.Paginate<UserInformation_Admin>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                filterPagingData.Data = data;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"Get All PMB Account In System: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "Get All PMB Accounts In System Successfully!",
+                Data = filterPagingData
+            });
+        }
         [RoleAttribute(AppRole.Admin)]
         [HttpGet("GetAccount/{UserId}")]
         public async Task<IActionResult> GetAccount(string UserId)
@@ -376,11 +461,11 @@ namespace FALOFinancialProofing.Controllers
 
         [HttpGet("getuserdebincampaign")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetUserDebInCampaign(string userId,int campaignId)
+        public async Task<IActionResult> GetUserDebInCampaign(string userId, int campaignId)
         {
             var message = new StringBuilder();
-            var userDeb = await authServices.GetUserDebInCampaign( userId, campaignId, message);
-            if(userDeb == Double.MinValue)
+            var userDeb = await authServices.GetUserDebInCampaign(userId, campaignId, message);
+            if (userDeb == Double.MinValue)
             {
                 return Ok(new
                 {
@@ -394,6 +479,67 @@ namespace FALOFinancialProofing.Controllers
                 Data = userDeb,
                 Success = true
             });
+        }
+        // ấn vào profile rồi hiển thị chi tiết
+        [HttpGet("GetUserProfile/{UserId}")]
+        public async Task<IActionResult> GetUserProfile(string UserId)
+        {
+            StringBuilder message = new StringBuilder();
+            UserProfileDetail data = null;
+            try
+            {
+                data = await authServices.GetUserProfile(UserId, message, Request);
+                if (data == null)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = message.ToString(),
+                        Data = data
+                    });
+                }
+                message.Append("Get User Profile Successfully!");
+
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"Get User Profile: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = message.ToString(),
+                Data = data
+            });
+        }
+
+        [HttpPost("UpdateUserProfile")]
+        public async Task<IActionResult> UpdateProfile([FromForm] UpdateUserProfileRequest updateUserProfileRequest)
+        {
+
+            if (updateUserProfileRequest == null)
+                return Ok(new ApiResponse()
+                {
+                    Success = false,
+                    Message = "Update Profile Failed!"
+                });
+            StringBuilder message = new StringBuilder();
+            bool checkValid = await authServices.CheckValidUser(updateUserProfileRequest, message);
+            if (!checkValid)
+            {
+                return Ok(new ApiResponse()
+                {
+                    Success = checkValid,
+                    Message = message.ToString()
+                });
+            }
+            var UserUpdated = await authServices.UpdateUserProfile(updateUserProfileRequest, message);
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "Update Profile successfully"
+            });
+
         }
 
     }

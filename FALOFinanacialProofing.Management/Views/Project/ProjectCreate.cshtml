@@ -63,7 +63,7 @@
                         <div class="row mb-3">
                             <div class="col-md-12">
                                 <label for="projectName" class="form-label">Project Name</label>
-                                <input type="text" class="form-control" id="projectName" value="Nhà Hạnh Phúc 130">
+                                <input type="text" class="form-control" id="projectName" placeholder="Enter Project Name">
                             </div>
                         </div>
 
@@ -185,13 +185,11 @@
                 const formData = new FormData();
                 formData.append('ProjectName', projectName);
                 formData.append('Description', projectDescription);
-                formData.append('DateOfCreation', dateTime);
-                formData.append('IsActive', false);
                 formData.append('CreatedBy', userId);
                 formData.append('OrganizationId', 0);
 
                 Array.from(files).forEach(file => {
-                    formData.append('UploadFiles', file);
+                    formData.append('FormFiles', file);
                 });
 
                 $.ajax({
@@ -204,12 +202,11 @@
                         'Authorization': `Bearer ${jwtToken}`
                     },
                     success: function (response) {
-                        alert(response.Message || 'Project created successfully!');
+                        alert(response.message || 'Project created successfully!');
                         window.location.href = `/Project/ProjectManagement`;
                     },
                     error: function (xhr, status, error) {
-                        console.error('Error creating project:', error);
-                        alert('Failed to create project. Please try again.');
+                        alert('Error: ' + xhr.responseText || status);
                     }
                 });
             });

@@ -1,30 +1,4 @@
 ﻿
-document.getElementById('attachments').addEventListener('change', function (e) {
-    const fileList = document.getElementById('fileList');
-    fileList.innerHTML = '';
-    Array.from(e.target.files).forEach(file => {
-        const li = document.createElement('li');
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(file);
-        a.textContent = file.name;
-        a.download = file.name;
-        li.appendChild(a);
-        fileList.appendChild(li);
-    });
-});
-document.getElementById('vouchers').addEventListener('change', function (e) {
-    const voucherList = document.getElementById('voucherList');
-    voucherList.innerHTML = '';
-    Array.from(e.target.files).forEach(file => {
-        const li = document.createElement('li');
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(file);
-        a.textContent = file.name;
-        a.download = file.name;
-        li.appendChild(a);
-        voucherList.appendChild(li);
-    });
-});
 
 $(document).ready(function () {
     const userId = localStorage.getItem('userId');
@@ -35,6 +9,60 @@ $(document).ready(function () {
     if (checkrole === "Accounting") {
         $('#voucherInput').show();
     }
+
+
+
+    document.getElementById('attachments').addEventListener('change', function (e) {
+        const fileList = document.getElementById('fileList');
+        fileList.innerHTML = '';
+        Array.from(e.target.files).forEach(file => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(file);
+            a.textContent = file.name;
+            a.download = file.name;
+            li.appendChild(a);
+            fileList.appendChild(li);
+        });
+    });
+    document.getElementById('vouchers').addEventListener('change', function (e) {
+        const voucherList = document.getElementById('voucherList');
+        voucherList.innerHTML = '';
+        Array.from(e.target.files).forEach(file => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(file);
+            a.textContent = file.name;
+            a.download = file.name;
+            li.appendChild(a);
+            voucherList.appendChild(li);
+        });
+    });
+
+    $.ajax({
+        url: `https://localhost:7294/api/Users/getuserdebincampaign?userId=${userId}&campaignId=${campaignId}`,
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${jwtToken}`
+        },
+        success: function (response) {
+            console.log('User Debt Response:', response);
+            if (response.success && response.data !== 0) {
+                const debtSection = `
+                <div class="mb-3">
+                    <label class="form-label">Current Debt</label>
+                    <p class="form-control" id="userDebt" readonly>${response.data.toLocaleString()} VND</p>
+                </div>
+            `;
+                $('.card-body').prepend(debtSection);
+            } else if (!response.success) {
+                alert('Error fetching user debt: ' + response.message);
+            }
+        },
+        error: function () {
+            alert('Failed to fetch user debt. Please try again.');
+        }
+    });
 
     var today = new Date();
     var year = today.getFullYear();

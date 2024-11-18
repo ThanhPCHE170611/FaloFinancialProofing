@@ -64,7 +64,7 @@
                     </div>
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
-                            <h6 class="text-white text-capitalize ps-3 mb-0">Prepay Request List</h6>
+                            <h6 class="text-white text-capitalize ps-3 mb-0" id="nametitle">Prepay Request</h6>
                             <a id="create_request_page" class="btn btn-dark mb-0 me-3" asp-controller="Prepay" asp-action="PrepayCreate">Create Prepay Request</a>
                         </div>
                     </div>
@@ -84,13 +84,13 @@
                             <table class="table align-items-center mb-0" id="prepayTable">
                                 <thead>
                                     <tr>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 5%;">STT</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Sender</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 15%;">Expected Money</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 15%;">Assign From</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 10%;">File</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 10%;">Voucher</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 10%;">Status</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7" style="width: 5%;">STT</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7" style="width: 15%;">Sender</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-center" style="width: 15%;">Expected Money</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-center" style="width: 15%;">Email</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-center" style="width: 10%;">File</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-center" style="width: 10%;">Voucher</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-center" style="width: 10%;">Status</th>
 
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 15%;">Created Date</th>
                                         <th class="text-secondary opacity-7 text-center" style="width: 10%;">Action</th>
@@ -112,20 +112,12 @@
 
     <div id="declineModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h3>Decline Request</h3>
-            <label for="declineReason">Reason for Decline:</label>
-            <textarea id="declineReason" class="form-control" rows="4" placeholder="Enter reason"></textarea>
+            <span class="close" onclick="closeModalDeclinePrepay()">&times;</span>
+            <h3>Reject</h3>
+            <label for="declineReason">Reason for Rejection:</label>
+            <textarea id="declineReason" class="form-control" rows="3" placeholder="Enter feedback..."></textarea>
             <button class="btn btn-danger mt-3" onclick="submitDecline()">Submit</button>
         </div>
-    </div>
-
-    <div id="detailModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <div id="voucherDetailContent"></div>
-        </div>
-    </div>
     </div>
     <script src="../assets/js/core/popper.min.js"></script>
     <script src="../assets/js/core/bootstrap.min.js"></script>

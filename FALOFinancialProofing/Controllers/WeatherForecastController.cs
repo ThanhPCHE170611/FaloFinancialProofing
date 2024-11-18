@@ -1,10 +1,12 @@
-using FALOFinancialProofing.Attributes;
+﻿using FALOFinancialProofing.Attributes;
 using FALOFinancialProofing.Attributes.RoleAttributes;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Services;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -20,8 +22,8 @@ namespace FALOFinancialProofing.Controllers
 
         private readonly ILogger<WeatherForecastController> _logger;
 
-        private readonly BankService bankService;
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, BankService bankService)
+        private readonly BankService1 bankService;
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, BankService1 bankService)
         {
             _logger = logger;
             this.bankService = bankService;
@@ -86,37 +88,27 @@ namespace FALOFinancialProofing.Controllers
             })
             .ToArray();
         }
-        //[HttpGet("ReturnImage")]
-        //public async Task<IActionResult> GetImageByAPI()
-        //{
-        //    var filePath = "E:\\PRN231\\PRNPEImage\\ACB.png";
-        //    if (!System.IO.File.Exists(filePath))
-        //    {
-        //        return NotFound();
-        //    }
 
-        //    var image = System.IO.File.OpenRead(filePath);
-        //    return File(image, "image/png");
-        //}
-
-        [HttpGet("Get-Banks")]
-        public async Task<IActionResult> GetBanks()
+        [HttpPost("Test-DateOnly")]// yyyy-MM-dd
+        public async Task<IActionResult> GetBanks([FromForm] DateOnly dateOnly)
         {
-            var b = await bankService.GetBanks();
-            BankRequest bankRequest = new BankRequest()
-            {
-                accountNo = 1016161976,
-                accountName = "Nguyen Van Duc",
-                acqId = 970436,
-                amount = 100000,
-                addInfo = "Test chuyen tien",
-                format = "text",
-                template = "print"
-            };
-            var response = await bankService.GetQRCode(bankRequest);
-            var image = bankService.ConvertBase64ToImage(response.data.qrDataURL);
-
-            return File(image, "image/png");
+            var date = dateOnly;
+            return Ok();
         }
+
+        [HttpPost("Test-StringLeng")]// yyyy-MM-dd
+        public async Task<IActionResult> GetStringLength([FromBody] ClassA ClassA)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            return Ok("Thanh Cong");
+        }
+    }
+    public class ClassA
+    {
+        [StringLength(10, MinimumLength = 3)]
+        public string Name { get; set; }
     }
 }

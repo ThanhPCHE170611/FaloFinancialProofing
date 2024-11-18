@@ -6,7 +6,6 @@ namespace FALOFinancialProofing.DTOs
     {
         public int? Id { get; set; }
         public string? SocialNetworksLink { get; set; }
-
         [Required]
         public string UserId { get; set; }
     }

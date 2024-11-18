@@ -38,6 +38,8 @@ namespace FALOFinancialProofing.Models
         public DbSet<ApproveProcess> ApproveProcesses { get; set; }
         public DbSet<Voucher> Vouchers { get; set; }
         public DbSet<MoveNextCampaignStatusRequestHistory> MoveNextCampaignStatusRequestHistories { get; set; }
+        public DbSet<Bank> Banks { get; set; }
+        public DbSet<CreateQrCode> CreateQrCodes { get; set; }
 
 
         #endregion
@@ -103,7 +105,7 @@ namespace FALOFinancialProofing.Models
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<UserSDG>()
-                .HasKey(us => new { us.SDGId, us.UserId });
+                .HasKey(us => new { us.Id });
 
             modelBuilder.Entity<UserSDG>()
                 .HasOne(us => us.User)
@@ -143,6 +145,8 @@ namespace FALOFinancialProofing.Models
                     .WithMany(u => u.TransactionLogs)
                     .HasForeignKey(c => c.CreateQrCodeId)
                     .OnDelete(DeleteBehavior.NoAction);
+                entity.HasIndex(u => u.CassoTransactionId)
+                      .IsUnique();
             });
 
             modelBuilder.Entity<MoveNextCampaignStatusRequest>(entity =>
@@ -185,6 +189,8 @@ namespace FALOFinancialProofing.Models
             });
             modelBuilder.Entity<User>(entity =>
             {
+                entity.HasIndex(u => u.Email)
+                      .IsUnique();
                 //entity.HasMany(c => c.TransactionLogs)
                 //    .WithOne(u => u.SenderUser)
                 //    .HasForeignKey(c => c.SenderID);
@@ -300,6 +306,13 @@ namespace FALOFinancialProofing.Models
                     .HasForeignKey(c => c.BankId);
 
             });
+
+            modelBuilder.Entity<Bank>(entity =>
+            {
+                entity.HasIndex(u => u.CassoAccountID).IsUnique();
+                entity.HasIndex(u => u.AccountNumber).IsUnique();
+            });
+
             RoleSeedData(modelBuilder);
             DeleteIdentityPrefix(modelBuilder);
         }
@@ -322,6 +335,18 @@ namespace FALOFinancialProofing.Models
                 new RequestType { Id = 1, TypeName = "Pre-Pay" },
                 new RequestType { Id = 2, TypeName = "Payment" }
              );
+
+            // Seed Bank
+            modelBuilder.Entity<Bank>().HasData(
+                new Bank { Id = 1, OwnerName = "Nguyen Van Duc", AccountNumber = "1016161976", BankCodeName = "VietComBank", acqId = 970436, CassoAccountID = 123 },
+                 new Bank { Id = 2, OwnerName = "Bui Minh Manh", AccountNumber = "4270774590", BankCodeName = "BIDV", acqId = 970418, CassoAccountID = 222 }
+
+            );
+            // seed SDG
+            modelBuilder.Entity<SDG>().HasData(
+               new SDG() { Id = 1, SDGName = "No Poverty" }, new SDG() { Id = 2, SDGName = "Zero Hunger" }, new SDG() { Id = 3, SDGName = "Good Health And Well-Being" }, new SDG() { Id = 4, SDGName = "Quality Education" }, new SDG() { Id = 5, SDGName = "Gender Equality" }, new SDG() { Id = 6, SDGName = "Clean Water And Sanitation" }
+
+            );
         }
 
         public void DeleteIdentityPrefix(ModelBuilder modelBuilder)

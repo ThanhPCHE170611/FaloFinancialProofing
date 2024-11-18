@@ -1,4 +1,5 @@
-﻿@{
+﻿@model string
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -106,24 +107,38 @@
             </div>
         </div>
     </div>
-    <script src="../assets/js/core/popper.min.js"></script>
-    <script src="../assets/js/core/bootstrap.min.js"></script>
-    <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
-    <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
-    <script>
-        var win = navigator.platform.indexOf('Win') > -1;
-        if (win && document.querySelector('#sidenav-scrollbar')) {
-          var options = {
-            damping: '0.5'
-          }
-          Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
-        }
-        const checkrole = localStorage.getItem('loggingRole');
-        console.log('checkroleSelected:',checkrole);
-        const userId = localStorage.getItem('userId');
-        console.log('User ID:', userId);
-    </script>
+
 </body>
 </html>
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+<script>
+    if ('@Model' && '@Model' !== '') {
+        localStorage.setItem('jwtToken', '@Model');
+        const decodedToken = jwt_decode('@Model');
+        const userId = decodedToken.nameid;
+        const roleId = decodedToken.RoleId;
+        const roles = decodedToken.role
+        const sub = decodedToken.sub
+        localStorage.setItem('userId', userId);
+        localStorage.setItem('loggingRoleId', roleId);
+        localStorage.setItem('loggingRole', roles);
+        localStorage.setItem('fullname', sub);
+    }
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+        var options = {
+            damping: '0.5'
+        }
+        Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+    const checkrole = localStorage.getItem('loggingRole');
+    console.log('checkroleSelected:', checkrole);
+    const userId = localStorage.getItem('userId');
+    console.log('User ID:', userId);
+</script>

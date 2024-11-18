@@ -17,6 +17,7 @@ namespace FALOFinancialProofing.DTOs.ProjectDTOs
         public bool IsActive { get; set; }
         public int? OrganizationId { get; set; }
         public string OrganizationName { get; set; }
+        public string? Image { get; set; }
 
     }
 }

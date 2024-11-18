@@ -1,18 +1,25 @@
-﻿using Azure;
-using FALOFinancialProofing.DTOs;
+﻿using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.DTOs.CampaignMemberDTO;
-using FALOFinancialProofing.DTOs.MoveNextCampaignStatusRequestDTO;
-using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.DTOs.RoleDTOs;
+using FALOFinancialProofing.DTOs.SDGDTOs;
 using FALOFinancialProofing.DTOs.UserDTOs;
+using FALOFinancialProofing.DTOs.UserSDGDTO;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services.EmailService;
+using FALOFinancialProofing.Services.SocialNetworkService;
+using FALOFinancialProofing.Services.UserSDGServices;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Oauth2.v2;
+using Google.Apis.Oauth2.v2.Data;
+using Google.Apis.Services;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -33,6 +40,9 @@ namespace FALOFinancialProofing.Services
         public readonly UserManager<User> userManager;
         private readonly SignInManager<User> signInManager;
         private readonly IRepository<CampaignMember, int> campaignMemberRepository;
+        private readonly ISocialNetworkService socialNetworkService;
+        private readonly RoleService _roleService;
+        private readonly IUserSDGService userSDGService;
         //moi
         private readonly LinkGenerator _linkGenerator;
 
@@ -40,7 +50,7 @@ namespace FALOFinancialProofing.Services
         public AuthServices(UserManager<User> userManager, SignInManager<User> signInManager,
             IOptionsMonitor<AppSetting> optionsMonitor, RoleManager<IdentityRole> roleManager,
             IEmailService emailService,
-            LinkGenerator linkGenerator, IRepository<CampaignMember, int> campaignMemberRepository)
+            LinkGenerator linkGenerator, IRepository<CampaignMember, int> campaignMemberRepository, ISocialNetworkService socialNetworkService, RoleService roleService, IUserSDGService userSDGService)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
@@ -49,6 +59,28 @@ namespace FALOFinancialProofing.Services
             this.emailService = emailService;
             _linkGenerator = linkGenerator;
             this.campaignMemberRepository = campaignMemberRepository;
+            this.socialNetworkService = socialNetworkService;
+            _roleService = roleService;
+            this.userSDGService = userSDGService;
+        }
+        public async Task<bool> CheckUserExist(string userId, StringBuilder message)
+        {
+            bool checkValid = false;
+            try
+            {
+                var user = await userManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    throw new Exception("User not found");
+                }
+                checkValid = true;
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"CheckUserExist: {ex.Message}");
+            }
+            return checkValid;
         }
         public async Task<bool> CheckUserInRole(string userId, string userRole, StringBuilder message)
         {
@@ -134,7 +166,7 @@ namespace FALOFinancialProofing.Services
             {
                 return null;
             }
-            var result = await signInManager.PasswordSignInAsync(userLogin.UserName, userLogin.Password, true, false);
+            var result = await signInManager.PasswordSignInAsync(userLogin.UserName, userLogin.Password, false, false);
             if (result.Succeeded)
             {
                 var userDTO = new UserDto
@@ -145,11 +177,36 @@ namespace FALOFinancialProofing.Services
                     Email = user.Email,
                     UserName = user.UserName,
                     BirthDate = user.BirthDate,
-                    RoleNames = userManager.GetRolesAsync(user).Result.ToList()
+                    RoleInformations = await _roleService.GetRoleInformationsByUserId(user.Id)
+                    //RoleNames = (await userManager.GetRolesAsync(user)).ToList()
                 };
                 return userDTO;
             }
             return null;
+        }
+        public async Task<UserDto> GetUserDto(Userinfo userinfo)
+        {
+            var user = await userManager.FindByEmailAsync(userinfo.Email);
+            var userDTO = new UserDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                UserName = user.UserName,
+                BirthDate = user.BirthDate,
+                RoleInformations = await _roleService.GetRoleInformationsByUserId(user.Id)
+            };
+            return userDTO;
+        }
+        public async Task<bool> CheckGoogleExistAccount(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return false;
+            }
+            return true;
         }
 
         //public async Task<User?> RegisterUser(SignUpRequest registerRequest)
@@ -208,9 +265,8 @@ namespace FALOFinancialProofing.Services
 
         public async Task<List<UserInformation>> GetUserNotInCampaignById(int CampaignId)
         {
-
-            var Users = await userManager.Users.Where(u => !u.CampaignMembers.Any(cm => cm.CampaignId == CampaignId) && !u.UserRoles.Any(ur => ur.RoleId == AppRole.DonorRoleId)).ToListAsync();
-
+            //var Users = await userManager.Users.Where(u => !u.CampaignMembers.Any(cm => cm.CampaignId == CampaignId) && !u.UserRoles.Any(ur => ur.RoleId == AppRole.DonorRoleId)).ToListAsync();
+            var Users = await userManager.Users.Where(u => !u.CampaignMembers.Any(cm => cm.CampaignId == CampaignId)).ToListAsync();
             List<UserInformation> data = new List<UserInformation>();
             try
             {
@@ -225,6 +281,8 @@ namespace FALOFinancialProofing.Services
 
                     foreach (var roleName in roles)
                     {
+                        if (roleName.Equals(AppRole.Donor) || roleName.Equals(AppRole.ProjectManager) || roleName.Equals(AppRole.ProjectManagementBoard) || roleName.Equals(AppRole.Admin))
+                            continue;
                         var role = await roleManager.FindByNameAsync(roleName);
                         if (role != null)
                         {
@@ -294,6 +352,39 @@ namespace FALOFinancialProofing.Services
             {
                 //var    users = await userManager.Users.ToListAsync();
                 data = await userManager.Users.Select(u => new UserInformation_Admin()
+                {
+                    Id = u.Id,
+                    Email = u.Email,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    BirthDate = u.BirthDate,
+                    Roles = u.UserRoles.Select(ur => new RoleInformation
+                    {
+                        RoleId = ur.RoleId,
+                        RoleName = roleManager.Roles.FirstOrDefault(r => r.Id == ur.RoleId).Name
+                    }).ToList(),
+                    SocialNetworkRequests = u.SocialNetworks.Select(snr => new SocialNetworkRequest
+                    {
+                        Id = snr.Id,
+                        UserId = snr.UserId,
+                        SocialNetworksLink = snr.SocialNetworksLink,
+                    }).ToList()
+                }).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAccountList: {ex.Message}");
+            }
+
+            return data;
+        }
+
+        public async Task<List<UserInformation_Admin>> GetPMBAccountList()
+        {
+            var data = new List<UserInformation_Admin>();
+            try
+            {
+                data = await userManager.Users.Where(u => u.UserRoles.Any(ur => ur.RoleId.Equals("205d4496-4ac8-40d9-84b9-e09e1ada7a49"))).Select(u => new UserInformation_Admin()
                 {
                     Id = u.Id,
                     Email = u.Email,
@@ -468,16 +559,18 @@ namespace FALOFinancialProofing.Services
                 new Claim(ClaimTypes.Name,User.LastName),
                 new Claim(ClaimTypes.DateOfBirth,User.BirthDate.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, User.Email),
-                new Claim(JwtRegisteredClaimNames.Sub, User.Email),
+                new Claim(JwtRegisteredClaimNames.Sub,  User.FirstName +" "+ User.LastName),
                 //tokenId
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.NameId, User.Id),
+                //new Claim("RoleId", User.RoleNames),
                 //new Claim("TokenId", Guid.NewGuid().ToString()),
 
             };
-            foreach (var roleName in User.RoleNames)
+            foreach (var roleName in User.RoleInformations)
             {
-                authClaims.Add(new Claim(ClaimTypes.Role, roleName));
+                authClaims.Add(new Claim(ClaimTypes.Role, roleName.RoleName));
+                authClaims.Add(new Claim("RoleId", roleName.RoleId));
             }
             var tokenDescription = new SecurityTokenDescriptor
             {
@@ -618,7 +711,7 @@ Click vào link này để đặt lại mật khẩu: {resetPasswordLink}";
                 message.Append(ex.Message);
                 await Console.Out.WriteLineAsync($"ValidateResetPassword: {ex.Message}");
             }
-            
+
             return IsValid;
         }
 
@@ -675,12 +768,296 @@ Click vào link này để đặt lại mật khẩu: {resetPasswordLink}";
         {
             var userinCampaign = await campaignMemberRepository.GetAll(x => x.UserId.Equals(userId)
                                     && x.CampaignId == campaignId).FirstOrDefaultAsync();
-            if(userinCampaign == null)
+            if (userinCampaign == null)
             {
                 message.Append("Can't not find debt of this user with specify campaign");
                 return Double.MinValue;
             }
             return userinCampaign.Debt;
+        }
+
+        public async Task<bool> CheckValidUser(UpdateUserProfileRequest updateUserProfileRequest, StringBuilder message)
+        {
+            bool checkValid = false;
+            try
+            {
+                var user = await userManager.FindByIdAsync(updateUserProfileRequest.Id);
+                if (user == null)
+                {
+                    throw new Exception("User not found");
+                }
+                //long MaxFileSize = 5 * 1024 * 1024;
+                if (updateUserProfileRequest.LogoFile != null && updateUserProfileRequest.LogoFile.Length > FileHelper.UserImageMaxFileSize)
+                {
+                    throw new Exception("Logo is too large");
+                }
+
+                var data = JsonConvert.DeserializeObject<List<SocialNetworkRequest>>(updateUserProfileRequest.SocialNetworkRequestJsons);
+
+                var SdgData = JsonConvert.DeserializeObject<List<SDGUserRequest>>(updateUserProfileRequest.SDGUserRequestJsons);
+
+                checkValid = true;
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"CheckUserInRole: {ex.Message}");
+            }
+            return checkValid;
+        }
+
+        public async Task<UserProfileDetail?> GetUserProfile(string userId, StringBuilder message, HttpRequest request)
+        {
+            UserProfileDetail data = null!;
+            try
+            {
+                data = await userManager.Users.Where(u => u.Id == userId)
+                    .Select(u => new UserProfileDetail()
+                    {
+                        Id = u.Id,
+                        Email = u.Email,
+                        FirstName = u.FirstName,
+                        LastName = u.LastName,
+                        BirthDate = u.BirthDate,
+                        Gender = u.Gender,
+                        Address = u.Address,
+                        WorkPlace = u.WorkPlace,
+                        Bio = u.Bio,
+                        Image = UrlHelper.GetImageUrl(request, u.Image, FolderImage.UserImageUpload),
+                        Education = u.Education,
+                        Skill = u.Skill,
+                        Hobby = u.Hobby,
+                        Strength = u.Strength,
+                        PhoneNumber = u.PhoneNumber,
+                        VolunteerExperience = u.VolunteerExperience,
+                        VolunteerGoal = u.VolunteerGoal,
+                        SocialNetworkRequests = u.SocialNetworks.Select(snr => new SocialNetworkRequest
+                        {
+                            Id = snr.Id,
+                            UserId = snr.UserId,
+                            SocialNetworksLink = snr.SocialNetworksLink,
+                        }).ToList(),
+                        userSDGInformations = u.UserSDGs.Select(usdg => new UserSDGInformation
+                        {
+                            Id = usdg.Id,
+                            UserId = usdg.UserId,
+                            sDGInformation = new SDGInformation()
+                            {
+                                Id = usdg.SDG.Id,
+                                SDGName = usdg.SDG.SDGName
+                            }
+                        }).ToList()
+                    }).FirstOrDefaultAsync();
+                if (data == null)
+                {
+                    throw new Exception("User not found in system!");
+                }
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"GetAccount: {ex.Message}");
+            }
+
+            return data;
+        }
+        #region May use later
+        //FileHelper
+        //public async Task<bool> UpdateUserProfile(UpdateUserProfileRequest updateUserProfileRequest, StringBuilder message)
+        //{
+        //    User user = null!;
+        //    bool result = false;
+        //    try
+        //    {
+        //        user = await userManager.FindByIdAsync(updateUserProfileRequest.Id);
+        //        user.FirstName = updateUserProfileRequest.FirstName;
+        //        user.LastName = updateUserProfileRequest.LastName;
+        //        user.Email = updateUserProfileRequest.Email;
+        //        user.BirthDate = updateUserProfileRequest.BirthDate;
+        //        user.Image = await FileHelper.ConvertIFormFileToStringAsync(updateUserProfileRequest.LogoFile) != null ? await FileHelper.ConvertIFormFileToStringAsync(updateUserProfileRequest.LogoFile) : user.Image;
+        //        foreach (var item in updateUserProfileRequest.SocialNetworkRequests)
+        //        {
+        //            var socialNetwork = await socialNetworkService.GetSocialNetworkByIdAsync(item.Id.Value);
+        //            socialNetwork.SocialNetworksLink = item.SocialNetworksLink;
+        //            await socialNetworkService.UpdateSocialNetworkAsync(socialNetwork);
+        //        }
+        //        var UpdateResult = await userManager.UpdateAsync(user);
+        //        if (UpdateResult.Succeeded)
+        //        {
+        //            result = true;
+        //            message.Append("User profile updated successfully");
+        //        }
+        //        else
+        //        {
+        //            throw new Exception("User profile update failed");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        message.Append(ex.Message);
+        //        await Console.Out.WriteLineAsync($"UpdateUserProfile: {ex.Message}");
+        //    }
+
+        //    return result;
+        //} 
+        #endregion
+
+        public async Task<User?> UpdateUserProfile(UpdateUserProfileRequest updateUserProfileRequest, StringBuilder message)
+        {
+            User user = null!;
+            try
+            {
+                user = await userManager.FindByIdAsync(updateUserProfileRequest.Id);
+                user.FirstName = updateUserProfileRequest.FirstName;
+                user.LastName = updateUserProfileRequest.LastName;
+                user.BirthDate = updateUserProfileRequest.BirthDate;
+                user.Image = await FileHelper.SaveImageAndReturnShortPathAsync(updateUserProfileRequest.LogoFile, FolderImage.UserImageUpload, user.Image) ?? user.Image;
+                user.Gender = updateUserProfileRequest.Gender;
+                user.Address = updateUserProfileRequest.Address;
+                user.WorkPlace = updateUserProfileRequest.WorkPlace;
+                user.Bio = updateUserProfileRequest.Bio;
+                user.Education = updateUserProfileRequest.Education;
+                user.Skill = updateUserProfileRequest.Skill;
+                user.Hobby = updateUserProfileRequest.Hobby;
+                user.Strength = updateUserProfileRequest.Strength;
+                user.VolunteerExperience = updateUserProfileRequest.VolunteerExperience;
+                user.VolunteerGoal = updateUserProfileRequest.VolunteerGoal;
+                user.PhoneNumber = updateUserProfileRequest.PhoneNumber;
+                updateUserProfileRequest.SocialNetworkRequests = JsonConvert.DeserializeObject<List<SocialNetworkRequest>>(updateUserProfileRequest.SocialNetworkRequestJsons);
+                updateUserProfileRequest.sDGUserRequests = JsonConvert.DeserializeObject<List<SDGUserRequest>>(updateUserProfileRequest.SDGUserRequestJsons);
+                foreach (var item in updateUserProfileRequest.SocialNetworkRequests)
+                {
+
+                    var socialNetwork = await socialNetworkService.GetSocialNetworkByIdAsync(item.Id.Value);
+
+                    if (socialNetwork != null)
+                    {
+                        socialNetwork.SocialNetworksLink = item.SocialNetworksLink;
+                        await socialNetworkService.UpdateSocialNetworkAsync(socialNetwork);
+                    }
+                    else
+                    {
+                        socialNetwork = new SocialNetwork()
+                        {
+                            UserId = updateUserProfileRequest.Id,
+                            SocialNetworksLink = item.SocialNetworksLink
+                        };
+                        await socialNetworkService.CreateSocialNetworkAsync(socialNetwork);
+                    }
+                }
+                foreach (var item in updateUserProfileRequest.sDGUserRequests)
+                {
+                    var userSdg = await userSDGService.GetUserSDGByUserIdAndSdgIdAsync(item.UserId, item.SDGId);
+                    if (item.IsActive)// trạng thái add
+                    {
+                        if (userSdg == null)
+                        {
+                            userSdg = new UserSDG()
+                            {
+                                UserId = item.UserId,
+                                SDGId = item.SDGId
+                            };
+                            await userSDGService.CreateUserSDGAsync(userSdg);
+                        }
+                    }
+                    else// trạng thái xóa
+                    {
+                        if (userSdg != null)
+                        {
+                            await userSDGService.DeleteUserSDGAsync(userSdg);
+                        }
+                    }
+                }
+                var UpdateResult = await userManager.UpdateAsync(user);
+                if (UpdateResult.Succeeded)
+                {
+                    message.Append("User profile updated successfully");
+                }
+                else
+                {
+                    throw new Exception("User profile update failed");
+                }
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"UpdateUserProfile: {ex.Message}");
+            }
+
+            return user;
+        }
+
+        public async Task<bool> CheckValidExternalRegister(string roleName, StringBuilder message)
+        {
+            bool checkValid = false;
+            try
+            {
+                userManager.AddLoginAsync(null, null);
+                if (roleName == null)
+                {
+                    throw new Exception("Role Name is null");
+                }
+                if (!roleName.Equals(AppRole.Volunteer) && !roleName.Equals(AppRole.Donor))
+                {
+                    throw new Exception("Not Allowed To Register Other Roles Except Donor And Volunteer!");
+                }
+                checkValid = true;
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"CheckValidExternalRegister: {ex.Message}");
+            }
+            return checkValid;
+        }
+        public async Task<IdentityResult?> ExternalRegisterUser(Userinfo userInfo, string roleName)
+        {
+            try
+            {
+                var newUser = new User
+                {
+                    FirstName = userInfo.GivenName ?? string.Empty,
+                    LastName = userInfo.FamilyName ?? string.Empty,
+                    Email = userInfo.Email,
+                    UserName = userInfo.Email,
+                    TwoFactorEnabled = true,
+                    Gender = userInfo.Gender != null ? false : true,
+                    Image = userInfo.Picture,
+                };
+                var result = await userManager.CreateAsync(newUser);
+                if (result.Succeeded)
+                {
+                    result = await userManager.AddToRoleAsync(newUser, roleName);
+                    if (result.Succeeded)
+                    {
+                        var info = new UserLoginInfo(GoogleDefaults.AuthenticationScheme, userInfo.Id, userInfo.Name);
+                        result = await userManager.AddLoginAsync(newUser, info);
+                        return result;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"ExternalRegisterUser: {ex.Message}");
+            }
+
+
+            return null;
+        }
+        public async Task<Userinfo> GetUserInfoAsync(string accessToken)
+        {
+            // Tạo credential từ access token
+            var credential = GoogleCredential.FromAccessToken(accessToken);
+
+            // Tạo dịch vụ OAuth2
+            var oauth2Service = new Oauth2Service(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = credential,
+                //ApplicationName = "FALO"
+            });
+            // Lấy thông tin người dùng
+            Userinfo userInfo = await oauth2Service.Userinfo.Get().ExecuteAsync();
+            return userInfo;
         }
     }
 

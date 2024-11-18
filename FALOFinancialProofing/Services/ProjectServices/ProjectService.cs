@@ -1,12 +1,12 @@
-﻿using FALOFinancialProofing.DTOs;
-using FALOFinancialProofing.DTOs.ProjectDTOs;
+﻿using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+//using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
+//using Project = FALOFinancialProofing.Models.Project;
 
 namespace FALOFinancialProofing.Services.ProjectServices
 {
@@ -123,6 +123,24 @@ namespace FALOFinancialProofing.Services.ProjectServices
 
             return checkValid;
         }
+        public async Task<Project> GetProjectByUserIdAndProjectIdAsync(string pmUserId, int projectId)
+        {
+            Project project = null!;
+            try
+            {
+                project = await _projectRepository.Get(p => p.CreatedBy == pmUserId && p.Id == projectId);
+                if (project == null)
+                {
+                    throw new Exception("This user Has no such Project");
+                }
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"CheckProjectByUserIdAndProjectIdAsync: {ex.Message}");
+            }
+
+            return project;
+        }
         public async Task<IEnumerable<ProjectInformation>> GetAllProjectsAsync()
         {
             List<ProjectInformation> data = null!;
@@ -142,7 +160,7 @@ namespace FALOFinancialProofing.Services.ProjectServices
                           Status = p.Status,
                           IsActive = p.IsActive,
                           OrganizationId = p.OrganizationId,
-                          OrganizationName = p.Organization != null ? p.Organization.Name : "No Organization"
+                          OrganizationName = p.Organization != null ? p.Organization.Name : "No Organization",
 
                       }).ToListAsync();
             }
@@ -153,7 +171,7 @@ namespace FALOFinancialProofing.Services.ProjectServices
 
             return data;
         }
-        public async Task<List<ProjectInformation>> GetAllProjectsByUserIdAsync(string UserId)
+        public async Task<List<ProjectInformation>> GetAllProjectsByUserIdAsync(string UserId, HttpRequest request)
         {
             List<ProjectInformation> data = null!;
             try
@@ -172,8 +190,8 @@ namespace FALOFinancialProofing.Services.ProjectServices
                         Status = p.Status,
                         IsActive = p.IsActive,
                         OrganizationId = p.OrganizationId,
-                        OrganizationName = p.Organization != null ? p.Organization.Name : "No Organization"
-
+                        OrganizationName = p.Organization != null ? p.Organization.Name : "No Organization",
+                        Image = UrlHelper.GetImageUrl(request, p.Image, FolderImage.ProjectImageUpload),
                     }).ToListAsync();
             }
             catch (Exception ex)
@@ -184,17 +202,18 @@ namespace FALOFinancialProofing.Services.ProjectServices
             return data;
         }
 
-        public async Task<List<ProjectInformation>> GetAllProjectInSystemAsync()
+        public async Task<List<ProjectInformation>> GetAllProjectInSystemAsync(HttpRequest request)
         {
             List<ProjectInformation> data = null!;
             try
             {
                 data = await _projectRepository.GetAll()
+                      .Where(p => p.Status != null)
                     .Select(p => new ProjectInformation()
                     {
                         id = p.Id,
                         CreatedBy = p.CreatedBy,
-                        UserImage = p.User != null ? p.User.Image : "No Image",
+                        UserImage = p.User != null ? UrlHelper.GetImageUrl(request, p.User.Image, FolderImage.UserImageUpload) : "No Image",
                         FirstName = p.User.FirstName,
                         LastName = p.User.LastName,
                         ProjectName = p.ProjectName,
@@ -203,7 +222,8 @@ namespace FALOFinancialProofing.Services.ProjectServices
                         Status = p.Status,
                         IsActive = p.IsActive,
                         OrganizationId = p.OrganizationId,
-                        OrganizationName = p.Organization != null ? p.Organization.Name : "No Organization"
+                        OrganizationName = p.Organization != null ? p.Organization.Name : "No Organization",
+                        Image = UrlHelper.GetImageUrl(request, p.Image, FolderImage.ProjectImageUpload),
                     }).ToListAsync();
             }
             catch (Exception ex)
@@ -213,7 +233,7 @@ namespace FALOFinancialProofing.Services.ProjectServices
 
             return data;
         }
-        public async Task<ProjectInformation> GetProjectDetailsByProjectId(int ProjectId)
+        public async Task<ProjectInformation> GetProjectDetailsByProjectId(int ProjectId, HttpRequest request)
         {
             ProjectInformation data = null!;
             try
@@ -222,7 +242,7 @@ namespace FALOFinancialProofing.Services.ProjectServices
                     .Select(p => new ProjectInformation()
                     {
                         id = p.Id,
-                        UserImage = p.User != null ? p.User.Image : "No Image",
+                        UserImage = p.User != null ? UrlHelper.GetImageUrl(request, p.User.Image, FolderImage.UserImageUpload) : "No Image",
                         FirstName = p.User.FirstName,
                         LastName = p.User.LastName,
                         CreatedBy = p.CreatedBy,
@@ -232,8 +252,8 @@ namespace FALOFinancialProofing.Services.ProjectServices
                         Status = p.Status,
                         IsActive = p.IsActive,
                         OrganizationId = p.OrganizationId,
-                        OrganizationName = p.Organization != null ? p.Organization.Name : "No Organization"
-
+                        OrganizationName = p.Organization != null ? p.Organization.Name : "No Organization",
+                        Image = UrlHelper.GetImageUrl(request, p.Image, FolderImage.ProjectImageUpload)
                     }).SingleOrDefaultAsync();
             }
             catch (Exception ex)
@@ -264,16 +284,11 @@ namespace FALOFinancialProofing.Services.ProjectServices
                         throw new Exception("Organization not exist");
                     }
                 }
-                //trạng thái dự án chưa được phép true
-                if (createProject.IsActive)
+                if (createProject.LogoFile != null && createProject.LogoFile.Length > FileHelper.ProjectImageMaxFileSize)
                 {
-                    throw new Exception("IsActive must be false");
+                    throw new Exception("Logo is too large");
                 }
-                // ngày tạo không được lớn hơn ngày hiện tại
-                if (createProject.DateOfCreation > DateTime.Now)
-                {
-                    throw new Exception("Date of creation cannot be in the future");
-                }
+
                 IsValid = true;
             }
             catch (Exception ex)
@@ -294,8 +309,8 @@ namespace FALOFinancialProofing.Services.ProjectServices
                     CreatedBy = createProject.CreatedBy,
                     ProjectName = createProject.ProjectName,
                     Description = createProject.Description,
-                    DateOfCreation = createProject.DateOfCreation,
-                    Status = createProject.Status,
+                    DateOfCreation = DateTime.Now,
+                    Image = await FileHelper.SaveImageAndReturnShortPathAsync(createProject.LogoFile, FolderImage.ProjectImageUpload, null),
                     OrganizationId = createProject.OrganizationId != 0 ? createProject.OrganizationId : null
                 };
             }
@@ -306,28 +321,25 @@ namespace FALOFinancialProofing.Services.ProjectServices
 
             return project;
         }
-        // admin can update transaction logs
-        public async Task<bool> UpdateProjectAsync(Project updateProject)
+
+        public async Task<bool> UpdateProjectAsync(UpdateProjectRequest updateProjectRequest, StringBuilder message)
         {
-            Project organization = null!;
-            bool result = false;
+            bool checkValid = false;
             try
             {
-                organization = await _projectRepository.Get(updateProject.Id);
-                if (organization == null)
-                {
-                    throw new Exception("Project not found!");
-                }
-                //ConvertToBaseEntity(organization, updateProject);
-                result = await _projectRepository.UpdateAsync(updateProject);
-
+                var project = await _projectRepository.Get(updateProjectRequest.ProjectId);
+                project.ProjectName = updateProjectRequest.ProjectName;
+                project.Description = updateProjectRequest.Description;
+                project.Image = await FileHelper.SaveImageAndReturnShortPathAsync(updateProjectRequest.LogoFile, FolderImage.ProjectImageUpload, project.Image) ?? project.Image;
+                checkValid = await _projectRepository.UpdateAsync(project);
             }
             catch (Exception ex)
             {
-                await Console.Out.WriteLineAsync($"UpdateProject: {ex.Message}");
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"UpdateProjectAsync: {ex.Message}");
             }
 
-            return result;
+            return checkValid;
         }
         // admin can delete transaction logs
         public async Task<bool> DeleteProjectAsync(int id)
@@ -364,6 +376,43 @@ namespace FALOFinancialProofing.Services.ProjectServices
                 await Console.Out.WriteLineAsync($"CheckProjectIsActiveAsync: {ex.Message}");
             }
             return checkValid;
+        }
+        // check user có phải là admin, pmb, pm(người tạo ra project hay không)
+        public async Task<bool> ValidateProjectUpdateAsync(UpdateProjectRequest updateProjectRequest, StringBuilder message)
+        {
+            bool checkValid = false;
+            try
+            {
+                var project = await _projectRepository.Get(updateProjectRequest.ProjectId);
+                if (project == null)
+                {
+                    throw new Exception("Project not found!");
+                }
+                var projectOwner = await GetProjectByUserIdAndProjectIdAsync(updateProjectRequest.UserId, updateProjectRequest.ProjectId);
+                bool checkAdmin = await _authServices.CheckUserInRole(updateProjectRequest.UserId, AppRole.Admin, new StringBuilder());
+                bool checkPMB = await _authServices.CheckUserInRole(updateProjectRequest.UserId, AppRole.ProjectManagementBoard, new StringBuilder());
+                if ((projectOwner == null && !checkPMB && !checkAdmin) || (projectOwner != null && !projectOwner.IsActive))
+                {
+                    throw new Exception("You don't have permission to update project!");
+                }
+                if (updateProjectRequest.LogoFile != null && updateProjectRequest.LogoFile.Length > FileHelper.ProjectImageMaxFileSize)
+                {
+                    throw new Exception("Logo is too large");
+                }
+
+                checkValid = true;
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"ValidateProjectUpdateAsync: {ex.Message}");
+            }
+            return checkValid;
+        }
+
+        public Task<bool> UpdateProjectAsync(Project updateProject)
+        {
+            throw new NotImplementedException();
         }
     }
 }

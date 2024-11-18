@@ -18,7 +18,10 @@ namespace FALOFinanacialProofing.Management.Controllers
         {
             return View();
         }
-
+        public ActionResult ProjectRequestDetail()
+        {
+            return View();
+        }
 
 
         // POST: ProjectController/Create

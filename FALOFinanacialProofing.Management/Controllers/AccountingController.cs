@@ -14,6 +14,10 @@ namespace FALOFinanacialProofing.Management.Controllers
         {
             return View();
         }
+        public ActionResult AccountingBookProject()
+        {
+            return View();
+        }
 
         // GET: AccountingController/Details/5
         public ActionResult Details(int id)
