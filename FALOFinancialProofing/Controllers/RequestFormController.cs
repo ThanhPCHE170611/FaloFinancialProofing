@@ -7,15 +7,18 @@ using FALOFinancialProofing.Services.AttachmentFIleServices;
 using FALOFinancialProofing.Services.RequestFormServices;
 using FALOFinancialProofing.Services.VoucherServices;
 using Humanizer.Localisation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Mail;
 using System.Text;
 
 namespace FALOFinancialProofing.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RequestFormController : ControllerBase
     {
         private readonly IRequestFormServices requestFormService;
@@ -113,6 +116,38 @@ namespace FALOFinancialProofing.Controllers
                     Message = $"Create Request Failed {message}"
                 });
             }
+            var attachmentfiles = new List<IFormFile>();
+            var voucherFiles = new List<IFormFile>();
+            if(requestFormRequest.UploadFiles != null)
+            {
+                string attachmentfileExtension = Path.GetExtension(requestFormRequest.UploadFiles.FileName);
+
+                if (!string.Equals(attachmentfileExtension, ".zip", StringComparison.OrdinalIgnoreCase))
+                {
+                    message.Append("Attachment file must be a zip file");
+                    return Ok(new
+                    {
+                        Success = false,
+                        Message = message.ToString()
+                    });
+                }
+                attachmentfiles.Add(requestFormRequest.UploadFiles);
+            }
+            if(requestFormRequest.VoucherFile != null)
+            {
+                string voucherfileExtension = Path.GetExtension(requestFormRequest.VoucherFile.FileName);
+
+                if (!string.Equals(voucherfileExtension, ".zip", StringComparison.OrdinalIgnoreCase))
+                {
+                    message.Append("Voucher file must be a zip file");
+                    return Ok(new
+                    {
+                        Success = false,
+                        Message = message.ToString()
+                    });
+                }
+                voucherFiles.Add(requestFormRequest.VoucherFile);
+            }
             // Create new RequestForm
             var newRequestFormInfor = new RequestFormInformation
             {
@@ -144,9 +179,9 @@ namespace FALOFinancialProofing.Controllers
             };
             var newApproveProcess = await approveProcessServices.CreateApproveProcessAsync(approveProcessDTO);
             //Create new AttachmentFile
-            if (requestFormRequest.UploadFiles != null && requestFormRequest.UploadFiles.Count > 0)
+            if (requestFormRequest.UploadFiles != null)
             {
-                var attachmentFiles = await requestFormService.SaveAttachmentFilesAsync(validatedRequest.UploadFiles, newRequestForm.Id, newRequestForm.TypeId);
+                var attachmentFiles = await requestFormService.SaveAttachmentFilesAsync(attachmentfiles, newRequestForm.Id, newRequestForm.TypeId);
                 var canCreateAttachmentFiles = await attachmentFileService.CreateManyAttachmentFileAsync(attachmentFiles);
                 if (!canCreateAttachmentFiles)
                 {
@@ -157,9 +192,9 @@ namespace FALOFinancialProofing.Controllers
                     });
                 }
             }
-            if (requestFormRequest.VoucherFile != null && requestFormRequest.VoucherFile.Count > 0)
+            if (requestFormRequest.VoucherFile != null)
             {
-                var newVouchers = await requestFormService.SaveUploadedVoucherAsync(newApproveProcess.Id, validatedRequest.VoucherFile);
+                var newVouchers = await requestFormService.SaveUploadedVoucherAsync(newApproveProcess.Id, voucherFiles);
                 var canCreateVouchers = await voucherServices.CreateManyVoucherAsync(newVouchers);
                 if (!canCreateVouchers)
                 {
@@ -189,6 +224,38 @@ namespace FALOFinancialProofing.Controllers
             requestFormRequest.TypeId = IntConstant.PaymentRequestType.ToString();
             StringBuilder message = new StringBuilder();
             // Validate Data from RequestForm
+            var attachmentfiles = new List<IFormFile>();
+            var voucherFiles = new List<IFormFile>();
+            if (requestFormRequest.UploadFiles != null)
+            {
+                string attachmentfileExtension = Path.GetExtension(requestFormRequest.UploadFiles.FileName);
+
+                if (!string.Equals(attachmentfileExtension, ".zip", StringComparison.OrdinalIgnoreCase))
+                {
+                    message.Append("Attachment file must be a zip file");
+                    return Ok(new
+                    {
+                        Success = false,
+                        Message = message.ToString()
+                    });
+                }
+                attachmentfiles.Add(requestFormRequest.UploadFiles);
+            }
+            if (requestFormRequest.VoucherFile != null)
+            {
+                string voucherfileExtension = Path.GetExtension(requestFormRequest.VoucherFile.FileName);
+
+                if (!string.Equals(voucherfileExtension, ".zip", StringComparison.OrdinalIgnoreCase))
+                {
+                    message.Append("Voucher file must be a zip file");
+                    return Ok(new
+                    {
+                        Success = false,
+                        Message = message.ToString()
+                    });
+                }
+                voucherFiles.Add(requestFormRequest.VoucherFile);
+            }
             var validatedRequest = await requestFormService.ValidateRequestForm(requestFormRequest, message);
             if ((bool)!validatedRequest.IsValidate)
             {
@@ -228,9 +295,9 @@ namespace FALOFinancialProofing.Controllers
             };
             var newApproveProcess = await approveProcessServices.CreateApproveProcessAsync(approveProcessDTO);
             //Create new AttachmentFile
-            if (requestFormRequest.UploadFiles != null && requestFormRequest.UploadFiles.Count > 0)
+            if (requestFormRequest.UploadFiles != null)
             {
-                var attachmentFiles = await requestFormService.SaveAttachmentFilesAsync(validatedRequest.UploadFiles, newRequestForm.Id, newRequestForm.TypeId);
+                var attachmentFiles = await requestFormService.SaveAttachmentFilesAsync(attachmentfiles, newRequestForm.Id, newRequestForm.TypeId);
                 var canCreateAttachmentFiles = await attachmentFileService.CreateManyAttachmentFileAsync(attachmentFiles);
                 if (!canCreateAttachmentFiles)
                 {
@@ -241,9 +308,9 @@ namespace FALOFinancialProofing.Controllers
                     });
                 }
             }
-            if (requestFormRequest.VoucherFile != null && requestFormRequest.VoucherFile.Count > 0)
+            if (requestFormRequest.VoucherFile != null)
             {
-                var newVouchers = await requestFormService.SaveUploadedVoucherAsync(newApproveProcess.Id, validatedRequest.VoucherFile);
+                var newVouchers = await requestFormService.SaveUploadedVoucherAsync(newApproveProcess.Id, voucherFiles);
                 var canCreateVouchers = await voucherServices.CreateManyVoucherAsync(newVouchers);
                 if (!canCreateVouchers)
                 {
@@ -447,28 +514,6 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
-
-        [HttpPost("uploadvoucherforaccounting/{approveId}")]
-        public async Task<IActionResult> UploadVoucherForAccounting(int approveId, List<IFormFile> files)
-        {
-            var vouchers = await requestFormService.SaveUploadedVoucherAsync(approveId, files);
-            var canCreateVouchers = await voucherServices.CreateManyVoucherAsync(vouchers);
-            if (!canCreateVouchers)
-            {
-                return Ok(new
-                {
-                    Success = false,
-                    Message = "Create new Voucher failed."
-                });
-            }
-            return Ok(new
-            {
-                Success = true,
-                Message = "Create new PrePay RequestForm successfully.",
-                Data = vouchers
-            });
-        }
-
         [HttpGet("cancelrequest/{requestId}")]
         public async Task<IActionResult> CancelRequest(int requestId)
         {
@@ -500,6 +545,17 @@ namespace FALOFinancialProofing.Controllers
         public async Task<IActionResult> AddMissingAttachmentFileForRequest(int requestId, IFormFile attachment)
         {
             var message = new StringBuilder();
+            string fileExtension = Path.GetExtension(attachment.FileName);
+
+            if (!string.Equals(fileExtension, ".zip", StringComparison.OrdinalIgnoreCase))
+            {
+                message.Append("Attachment file must be a zip file");
+                return Ok(new
+                {
+                    Success = false,
+                    Message = message.ToString()
+                });
+            }
             var addMissingFileSuccess = await requestFormService.AddMissingAttachmentFileForRequestAsync(requestId, message, attachment);
             if(!addMissingFileSuccess)
             {
