@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Member";
 }
 <!DOCTYPE html>
@@ -30,6 +29,15 @@
             background-color: rgba(0, 0, 0, 0.4);
         }
 
+        .badge-approved {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        .badge-declined {
+            background-color: #dc3545;
+            color: #fff;
+        }
         .modal-content, .add-member-content {
             background-color: #fefefe;
             margin: auto;
@@ -55,19 +63,27 @@
         .search-filter-container {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin: 20px 0;
         }
 
         .search-box {
             width: 70%;
             padding: 10px;
-            border: 1px solid #ddd;
             border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .filter-box {
+            width: 25%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
         }
 
         .table th, .table td {
             text-align: center;
         }
+
 
         .nav-tabs {
             display: flex;
@@ -137,12 +153,10 @@
                 <div class="card my-4">
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class=" pt-4 pb-3 d-flex justify-content-between align-items-center">
-                            <nav class="nav-tabs">
-                                <a asp-controller="Campaign" asp-action="CampaignDetail" >Campaign Detail</a>
+                            <nav class="nav-tabs" id="navTabs">
+                                <a asp-controller="Campaign" asp-action="CampaignDetail">Campaign Detail</a>
                                 <a asp-controller="Prepay" asp-action="PrepayManagement">Prepay Request</a>
                                 <a asp-controller="Payment" asp-action="PaymentManagement">Payment Request</a>
-                                <a asp-controller="Prepay" asp-action="PrepayVoucher">Prepay Voucher</a>
-                                <a asp-controller="Payment" asp-action="PaymentVoucher">Payment Voucher</a>
                                 <a asp-controller="Accounting" asp-action="AccountingBookCampaign">Accounting Book</a>
                                 <a asp-controller="Campaign" asp-action="Member" class="active">Member</a>
                             </nav>
@@ -151,11 +165,16 @@
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
                             <h6 class="text-white text-capitalize ps-3 mb-0">Member List</h6>
-                            <a class="btn btn-dark mb-0 me-3" asp-controller="Campaign" asp-action="MemberAdd">Add Member</a>
+
                         </div>
                     </div>
                     <div class="search-filter-container px-3">
-                        <input type="text" id="searchBox" class="search-box" placeholder="Search by Name or Email..." onkeyup="filterTable()">
+                        <input type="text" id="searchInput" placeholder="Search by Name" class="search-box" />
+                        <select id="statusFilter" class="filter-box">
+                            <option value="">All Statuses</option>
+                            <option value="true">Active</option>
+                            <option value="false">Inactive</option>
+                        </select>
                     </div>
 
                     <div class="card-body px-0 pb-2">
@@ -173,31 +192,13 @@
                                 </thead>
                                 <tbody id="memberList">
 
-                                    <tr>
-                                        <td>1</td>
-                                        <td><span class="text-secondary text-xs font-weight-bold">John Doe</span></td>
-                                        <td><span class="text-secondary text-xs font-weight-bold">john.doe@example.com</span></td>
-                                        <td>
-                                            <select class="form-select" onchange="changeToSaveButton(this)">
-                                                <option value="Team Member">Team Member</option>
-                                                <option value="Team Leader">Team Leader</option>
-                                                <option value="Accountant">Accountant</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <select class="form-select" onchange="changeToSaveButton(this)">
-                                                <option value="Active">Active</option>
-                                                <option value="Inactive">Inactive</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-info btn-sm" onclick="showDetail(this)">Detail</button>
-                                        </td>
-                                    </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
+                </div>
+                <div class="pagination-container text-center mt-4">
+                    <div id="pagination"></div>
                 </div>
             </div>
         </div>
@@ -208,157 +209,190 @@
                 <div id="memberDetailContent"></div>
             </div>
         </div>
-
-        <div id="addMemberModal" class="add-member-modal">
-            <div class="add-member-content">
-                <span class="close" onclick="closeAddMemberModal()">&times;</span>
-                <h4>Add Member</h4>
-                <div class="listbox">
-                    <input type="text" id="memberSearchBox" placeholder="Search member..." onkeyup="filterMemberList()" />
-                    <ul id="searchResultList">
-                        <li onclick="selectMember('Alice Johnson', 'alice.johnson@example.com')">Alice Johnson</li>
-                        <li onclick="selectMember('Bob Williams', 'bob.williams@example.com')">Bob Williams</li>
-                        <li onclick="selectMember('Charlie Brown', 'charlie.brown@example.com')">Charlie Brown</li>
-                    </ul>
-                </div>
-                <button class="btn btn-primary mt-3" onclick="addMember()">Add Member</button>
-            </div>
-        </div>
     </div>
-
-    <script>
-        let selectedMember = null;
-
-        function filterTable() {
-            const searchInput = document.getElementById('searchBox').value.toLowerCase();
-            const table = document.getElementById('memberTable');
-            const rows = table.getElementsByTagName('tr');
-
-            for (let i = 1; i < rows.length; i++) {
-                const name = rows[i].cells[1].innerText.toLowerCase();
-                const email = rows[i].cells[2].innerText.toLowerCase();
-
-                if (name.includes(searchInput) || email.includes(searchInput)) {
-                    rows[i].style.display = '';
-                } else {
-                    rows[i].style.display = 'none';
-                }
-            }
-        }
-
-        function changeToSaveButton(select) {
-            const row = select.closest('tr');
-            const actionButton = row.querySelector('.btn-info');
-            actionButton.innerText = 'Save';
-            actionButton.classList.remove('btn-info');
-            actionButton.classList.add('btn-success');
-            actionButton.setAttribute('onclick', 'saveChanges(this)');
-        }
-
-        function showDetail(button) {
-            const row = button.closest('tr');
-            const name = row.cells[1].innerText;
-            const email = row.cells[2].innerText;
-            const role = row.cells[3].querySelector('select').value;
-            const status = row.cells[4].querySelector('select').value;
-
-            const detailContent = `
-                <p><strong>Name:</strong> ${name}</p>
-                <p><strong>Email:</strong> ${email}</p>
-                <p><strong>Role:</strong> ${role}</p>
-                <p><strong>Status:</strong> ${status}</p>
-            `;
-
-            document.getElementById('memberDetailContent').innerHTML = detailContent;
-            document.getElementById('detailModal').style.display = 'block';
-        }
-
-        function saveChanges(button) {
-            const row = button.closest('tr');
-            const actionButton = row.querySelector('.btn-success');
-            actionButton.innerText = 'Detail';
-            actionButton.classList.add('btn-info');
-            actionButton.classList.remove('btn-success');
-            actionButton.setAttribute('onclick', 'showDetail(this)');
-
-            closeModal();
-            alert('Changes saved successfully!');
-        }
-
-        function closeModal() {
-            document.getElementById('detailModal').style.display = 'none';
-        }
-
-        function openAddMemberModal() {
-            document.getElementById('addMemberModal').style.display = 'block';
-        }
-
-        function closeAddMemberModal() {
-            document.getElementById('addMemberModal').style.display = 'none';
-        }
-
-        function filterMemberList() {
-            const searchInput = document.getElementById('memberSearchBox').value.toLowerCase();
-            const list = document.getElementById('searchResultList');
-            const members = list.getElementsByTagName('li');
-
-            for (let i = 0; i < members.length; i++) {
-                const member = members[i].innerText.toLowerCase();
-                if (member.includes(searchInput)) {
-                    members[i].style.display = '';
-                } else {
-                    members[i].style.display = 'none';
-                }
-            }
-
-            list.style.display = searchInput ? 'block' : 'none';
-        }
-
-        function selectMember(name, email) {
-            selectedMember = { name, email };
-            document.getElementById('memberSearchBox').value = name;
-            document.getElementById('searchResultList').style.display = 'none';
-        }
-
-        function addMember() {
-            if (!selectedMember) {
-                alert('Please select a member');
-                return;
-            }
-
-            const table = document.getElementById('memberList');
-            const newRow = `
-                <tr>
-                    <td>${table.rows.length + 1}</td>
-                    <td><span class="text-secondary text-xs font-weight-bold">${selectedMember.name}</span></td>
-                    <td><span class="text-secondary text-xs font-weight-bold">${selectedMember.email}</span></td>
-                    <td>
-                        <select class="form-select" onchange="changeToSaveButton(this)">
-                            <option value="Team Member">Team Member</option>
-                            <option value="Team Leader">Team Leader</option>
-                            <option value="Accountant">Accountant</option>
-                        </select>
-                    </td>
-                    <td>
-                        <select class="form-select" onchange="changeToSaveButton(this)">
-                            <option value="Active">Active</option>
-                            <option value="Inactive">Inactive</option>
-                        </select>
-                    </td>
-                    <td>
-                        <button class="btn btn-info btn-sm" onclick="showDetail(this)">Detail</button>
-                    </td>
-                </tr>
-            `;
-            table.innerHTML += newRow;
-
-            closeAddMemberModal();
-        }
-    </script>
-
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
 </body>
 
 </html>
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+<script>
+    const campaignId = localStorage.getItem('campaignId');
+    const jwtToken = localStorage.getItem('jwtToken');
+    let currentPage = 1;
+    const pageSize = 5;
+    let selectedMember = null;
+    const checkrole = localStorage.getItem('loggingRole');
+    const userId = localStorage.getItem('userId');
+    if (checkrole && checkrole !== 'Volunteer') {
 
+        const navTabs = document.getElementById('navTabs');
+        const newLink = document.createElement('a');
+        newLink.setAttribute('asp-controller', 'Prepay');
+        newLink.setAttribute('asp-action', 'PrepayManagement_PM');
+        newLink.textContent = 'Prepay Created Request';
+
+        const newLink2 = document.createElement('a');
+        newLink2.setAttribute('asp-controller', 'Payment');
+        newLink2.setAttribute('asp-action', 'PaymentManagement_PM');
+        newLink2.textContent = 'Payment Created Request';
+
+        const url = new URL(`/Prepay/PrepayManagement_PM`, window.location.origin);
+
+
+        const url2 = new URL(`/Payment/PaymentManagement_PM`, window.location.origin);
+
+        newLink.href = url.toString();
+        newLink2.href = url2.toString();
+        navTabs.appendChild(newLink);
+        navTabs.appendChild(newLink2);
+    }
+    function showDetail(button) {
+        const row = button.closest('tr');
+        const name = row.cells[1].innerText;
+        const email = row.cells[2].innerText;
+        const role = row.cells[3].innerText;
+        const status = row.cells[4].innerText;
+
+        const detailContent = `
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Role:</strong> ${role}</p>
+            <p><strong>Status:</strong> ${status}</p>
+        `;
+
+        document.getElementById('memberDetailContent').innerHTML = detailContent;
+        document.getElementById('detailModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('detailModal').style.display = 'none';
+    }
+
+    $(document).ready(function () {
+        if (checkrole === 'Project Manager') {
+            const addMemberButton = `
+                <a class="btn btn-dark mb-0 me-3" href="/Campaign/MemberAdd">Add Member</a>
+            `;
+            $('.bg-gradient-primary').append(addMemberButton);
+        }
+        loadMembers();
+
+        $('#searchInput').on('keyup', function () {
+            currentPage = 1;
+            loadMembers();
+        });
+
+        $('#statusFilter').on('change', function () {
+            currentPage = 1;
+            loadMembers();
+        });
+    });
+
+    function loadMembers() {
+        const searchInput = $('#searchInput').val().trim();
+        const isActive = $('#statusFilter').val();
+
+        $.ajax({
+            url: `https://localhost:7294/api/CampaignMember/GetAllCampaignMembersByCampaignId?searchInput=${searchInput}&CampaignId=${campaignId}&isActive=${isActive}&currentPage=${currentPage}`,
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            },
+            success: function (response) {
+                if (response.success && response.data.data.length > 0) {
+                    renderTable(response.data.data);
+                    setupPagination(response.data.dataCount);
+                } else {
+                    $('#memberList').html('<tr><td colspan="6">No members found.</td></tr>');
+                }
+            },
+            error: function () {
+                alert('Error fetching campaign members');
+            }
+        });
+    }
+
+    function renderTable(members) {
+        const memberList = $('#memberList');
+        memberList.empty();
+
+        members.forEach((member, index) => {
+            const statusText = member.isActive ? 'Active' : 'Inactive';
+            const statusColor = member.isActive ? 'green' : 'red';
+            const actionButtonColor = member.isActive ? 'btn-danger' : 'btn-success';
+            const getStatusClass = member.isActive ? 'badge badge-sm badge-approved' : 'badge badge-sm badge-declined';
+            const actionButtonText = member.isActive ? 'Inactive' : 'Active';
+            const detailButton = `
+                <button class="btn btn-info btn-sm" onclick="showDetail(this)">Detail</button>
+            `;
+            const actionButton = checkrole === 'Project Manager' ? `
+                ${detailButton}
+                <button class="btn ${actionButtonColor} btn-sm" onclick="confirmStatusChange('${member.userId}', ${!member.isActive})">
+                    ${actionButtonText}
+                </button>` : detailButton;
+            const row = `
+                <tr>
+                    <td class="align-middle text-center text-sm">${index + 1 + (currentPage - 1) * pageSize}</td>
+                    <td class="align-middle text-center text-sm">${member.firstName} ${member.lastName}</td>
+                    <td class="align-middle text-center text-sm">${member.userName}</td>
+                    <td class="align-middle text-center text-sm">${member.roleInformation.roleName}</td>
+                    <td class="align-middle text-center text-sm"><span class="${getStatusClass}">${statusText}</span></td>
+                    <td class="align-middle text-center text-sm">${actionButton}</td>
+                </tr>
+            `;
+            memberList.append(row);
+        });
+    }
+
+
+    function setupPagination(totalCount) {
+        const totalPages = Math.ceil(totalCount / pageSize);
+        const paginationContainer = $('#pagination');
+        paginationContainer.empty();
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = `<button class="btn ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}" onclick="goToPage(${i})">${i}</button>`;
+            paginationContainer.append(pageButton);
+        }
+    }
+
+    function goToPage(page) {
+        currentPage = page;
+        loadMembers();
+    }
+
+    function confirmStatusChange(userId, newStatus) {
+        const statusText = newStatus ? 'Active' : 'Inactive';
+        if (confirm(`Are you sure you want to set the status to ${statusText}?`)) {
+            updateMemberStatus(userId, newStatus);
+        }
+    }
+
+    function updateMemberStatus(userId, isActive) {
+        $.ajax({
+            url: `https://localhost:7294/api/CampaignMember/UpdateCampaignMemberStatus`,
+            method: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify({ userId, isActive }),
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            },
+            success: function (response) {
+                if (response.success) {
+                    alert('Campaign member status updated successfully.');
+                    loadMembers();
+                } else {
+                    alert('Failed to update member status: ' + response.message);
+                }
+            },
+            error: function () {
+                alert('Error updating member status');
+            }
+        });
+    }
+</script>
