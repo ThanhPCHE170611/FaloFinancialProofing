@@ -1,7 +1,6 @@
 ﻿using FALOFinancialProofing.Attributes.RoleAttributes;
 using FALOFinancialProofing.Constant;
 using FALOFinancialProofing.DTOs;
-using FALOFinancialProofing.DTOs.OrganizationDTO;
 using FALOFinancialProofing.DTOs.UserDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
@@ -117,9 +116,14 @@ namespace FALOFinancialProofing.Controllers
         [Authorize]
         // hiển thị thông tin danh sách người dùng không ở trong một chiến dịch cụ thể
         [HttpGet("GetUserNotInCampaignById/{CampaignId}")]
-        public async Task<IActionResult> GetUserNotInCampaignById(int CampaignId)
+        public async Task<IActionResult> GetUserNotInCampaignById(string? searchInput, int CampaignId)
         {
             var users = await authServices.GetUserNotInCampaignById(CampaignId);
+            if (!string.IsNullOrEmpty(searchInput))
+            {
+                searchInput = searchInput.Trim();
+                users = users.FindAll(x => ($"{x.FirstName} {x.LastName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.Email}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
+            }
             return Ok(new ApiResponse()
             {
                 Message = "Get Users Successfully!",

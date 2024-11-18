@@ -265,9 +265,8 @@ namespace FALOFinancialProofing.Services
 
         public async Task<List<UserInformation>> GetUserNotInCampaignById(int CampaignId)
         {
-
-            var Users = await userManager.Users.Where(u => !u.CampaignMembers.Any(cm => cm.CampaignId == CampaignId) && !u.UserRoles.Any(ur => ur.RoleId == AppRole.DonorRoleId)).ToListAsync();
-
+            //var Users = await userManager.Users.Where(u => !u.CampaignMembers.Any(cm => cm.CampaignId == CampaignId) && !u.UserRoles.Any(ur => ur.RoleId == AppRole.DonorRoleId)).ToListAsync();
+            var Users = await userManager.Users.Where(u => !u.CampaignMembers.Any(cm => cm.CampaignId == CampaignId)).ToListAsync();
             List<UserInformation> data = new List<UserInformation>();
             try
             {
@@ -282,6 +281,8 @@ namespace FALOFinancialProofing.Services
 
                     foreach (var roleName in roles)
                     {
+                        if (roleName.Equals(AppRole.Donor) || roleName.Equals(AppRole.ProjectManager) || roleName.Equals(AppRole.ProjectManagementBoard) || roleName.Equals(AppRole.Admin))
+                            continue;
                         var role = await roleManager.FindByNameAsync(roleName);
                         if (role != null)
                         {

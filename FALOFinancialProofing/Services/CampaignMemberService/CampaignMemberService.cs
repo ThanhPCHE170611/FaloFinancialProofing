@@ -88,6 +88,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                         CampaignTitle = cm.Campaign.Title,
                         Debt = cm.Debt,
                         IsActive = cm.IsActive,
+                        Email = cm.User.Email,
                         roleInformation = new RoleInformation()
                         {
                             RoleId = cm.RoleId,
@@ -121,6 +122,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                     FundTarget = cm.Campaign.FundTarget,
                     Status = cm.Campaign.Status,
                     IsActive = cm.IsActive,
+                    Email = cm.User.Email,
                     roleInformation = new RoleInformation()
                     {
                         RoleId = cm.RoleId,
@@ -156,6 +158,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                         IsActive = cm.IsActive,
                         FundTarget = cm.Campaign.FundTarget,
                         ProjectName = cm.Campaign.Project.ProjectName,
+                        Email = cm.User.Email,
                         roleInformation = new RoleInformation()
                         {
                             RoleId = cm.RoleId,
@@ -187,6 +190,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                         CampaignTitle = cm.Campaign.Title,
                         Debt = cm.Debt,
                         IsActive = cm.IsActive,
+                        Email = cm.User.Email,
                         roleInformation = new RoleInformation()
                         {
                             RoleId = cm.RoleId,
@@ -223,6 +227,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                         CampaignTitle = cm.Campaign.Title,
                         Debt = cm.Debt,
                         IsActive = cm.IsActive,
+                        Email = cm.User.Email,
                         roleInformation = new RoleInformation()
                         {
                             RoleId = cm.RoleId,
