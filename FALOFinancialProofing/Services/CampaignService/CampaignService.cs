@@ -3,9 +3,11 @@ using FALOFinancialProofing.DTOs.CampaignDTO;
 using FALOFinancialProofing.DTOs.CreateCampaignFileDTO;
 using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.DTOs.TransactionLogsDTOs;
+using FALOFinancialProofing.DTOs.UserDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
+using FALOFinancialProofing.Services.BankServices;
 using FALOFinancialProofing.Services.CreateProjectRequestServices;
 using FALOFinancialProofing.Services.ProjectServices;
 using Microsoft.CodeAnalysis;
@@ -19,13 +21,15 @@ namespace FALOFinancialProofing.Services.CampaignService
         private readonly IRepository<Campaign, int> campaignRepository;
         private readonly AuthServices _authServices;
         private readonly IProjectService _projectService;
+        private readonly IBankService bankService;
         private readonly ILogger<CampaignService> _logger;
-        public CampaignService(IRepository<Campaign, int> _campaignRepository, AuthServices authServices, IProjectService projectService, ILogger<CampaignService> logger)
+        public CampaignService(IRepository<Campaign, int> _campaignRepository, AuthServices authServices, IProjectService projectService, ILogger<CampaignService> logger, IBankService bankService)
         {
             campaignRepository = _campaignRepository;
             _authServices = authServices;
             _projectService = projectService;
             _logger = logger;
+            this.bankService = bankService;
         }
 
         public async Task<Campaign?> CreateCampaignAsync(CreateCampaignDTO createcampaignDTO)
@@ -60,7 +64,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                 Status = createCampaignDTO.Status
             };
         }
-        public async Task<List<CampaignInformation>> GetAllCampaignsAsync()
+        public async Task<List<CampaignInformation>> GetAllCampaignsAsync(HttpRequest request)
         {
             List<CampaignInformation> data = null!;
             try
@@ -79,7 +83,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                         Description = p.Description,
                         DateOfCreation = p.DateOfCreation,
                         FundTarget = p.FundTarget,
-                        Image = p.Image,
+                        Image = UrlHelper.GetImageUrl(request, p.Image, FolderImage.CampaignImageUpload),
                         EndDate = p.EndDate,
                         Address = p.Address,
                         IsActive = p.IsActive,
@@ -96,7 +100,7 @@ namespace FALOFinancialProofing.Services.CampaignService
 
             return data;
         }
-        public async Task<List<CampaignInformation>> GetAllCampaignsByProjectIdAsync(int ProjectId)
+        public async Task<List<CampaignInformation>> GetAllCampaignsByProjectIdAsync(int ProjectId, HttpRequest request)
         {
             List<CampaignInformation> data = null!;
             try
@@ -114,7 +118,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                         Description = p.Description,
                         DateOfCreation = p.DateOfCreation,
                         FundTarget = p.FundTarget,
-                        Image = p.Image,
+                        Image = UrlHelper.GetImageUrl(request, p.Image, FolderImage.CampaignImageUpload),
                         EndDate = p.EndDate,
                         Address = p.Address,
                         IsActive = p.IsActive,
@@ -134,7 +138,7 @@ namespace FALOFinancialProofing.Services.CampaignService
 
 
 
-        public async Task<CampaignInformation> GetCampaignByCampaignIdAsync(int CampaignId)
+        public async Task<CampaignInformation> GetCampaignByCampaignIdAsync(int CampaignId, HttpRequest request)
         {
             CampaignInformation data = null!;
             try
@@ -152,7 +156,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                         Description = p.Description,
                         DateOfCreation = p.DateOfCreation,
                         FundTarget = p.FundTarget,
-                        Image = p.Image,
+                        Image = UrlHelper.GetImageUrl(request, p.Image, FolderImage.CampaignImageUpload),
                         EndDate = p.EndDate,
                         Address = p.Address,
                         IsActive = p.IsActive,
@@ -176,6 +180,21 @@ namespace FALOFinancialProofing.Services.CampaignService
 
             return data;
         }
+        public async Task<Campaign> GetCampaignByCampaignIdAsync(int CampaignId)
+        {
+            Campaign data = null!;
+            try
+            {
+                data = await campaignRepository.GetAll().Where(p => p.Id == CampaignId)
+                    .SingleOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetCampaignByCampaignIdAsync: {ex.Message}");
+            }
+
+            return data;
+        }
         public async Task<Campaign?> GetCampaignByIdAsync(int id)
         {
             try
@@ -187,64 +206,37 @@ namespace FALOFinancialProofing.Services.CampaignService
                 return null;
             }
         }
-        public async Task<bool> UpdateCampaignAsync(UpdateCampaignDTO updateCampaignDTO)
+        public async Task<bool> UpdateCampaignAsync(UpdateCampaignDTO updateCampaignDTO, StringBuilder message)
         {
-            Campaign campaign = null!;
-            bool result = false;
+            bool checkValid = false;
             try
             {
-                campaign = await campaignRepository.Get(updateCampaignDTO.Id);
-                if (campaign == null)
+                var campaign = await campaignRepository.Get(updateCampaignDTO.Id);
+                campaign.Title = updateCampaignDTO.Title;
+                campaign.Description = updateCampaignDTO.Description;
+                campaign.Address = updateCampaignDTO.Address;
+                campaign.Image = await FileHelper.SaveImageAndReturnShortPathAsync(updateCampaignDTO.LogoFile, FolderImage.CampaignImageUpload, campaign.Image) ?? campaign.Image;
+                bool checkAdmin = await _authServices.CheckUserInRole(updateCampaignDTO.UserId, AppRole.Admin, new StringBuilder());
+                bool checkPMB = await _authServices.CheckUserInRole(updateCampaignDTO.UserId, AppRole.ProjectManagementBoard, new StringBuilder());
+                if (checkAdmin || checkPMB)
                 {
-                    _logger.LogError("Campaign not found!"); // Log when the campaign is not found
-                    return false;
+                    var GetBank = await bankService.GetBankByIdAsync(updateCampaignDTO.BankId ?? 0);
+                    if (GetBank == null)
+                        throw new Exception("There no such bank in system!");
+                    campaign.FundTarget = updateCampaignDTO.FundTarget ?? campaign.FundTarget;
+                    campaign.IsActive = updateCampaignDTO.IsActive ?? campaign.IsActive;
+                    campaign.Status = updateCampaignDTO.Status ?? campaign.Status;
+                    campaign.BankId = updateCampaignDTO.BankId;
                 }
-
-                UpdateCampaignDTOEntity(campaign, updateCampaignDTO);
-                result = await campaignRepository.UpdateAsync(campaign);
+                checkValid = await campaignRepository.UpdateAsync(campaign);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Update Campaign: {ex.Message}"); // Log any exception that occurs
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"UpdateCampaignAsync: {ex.Message}");
             }
 
-            return result;
-        }
-        //public async Task<bool> UpdateCampaignAsync(UpdateCampaignDTO updateCampaignDTO)
-        //{
-        //    Campaign campaign = null!;
-        //    bool result = false;
-        //    try
-        //    {
-        //        campaign = await campaignRepository.Get(updateCampaignDTO.Id);
-        //        if (campaign == null)
-        //        {
-        //            throw new Exception("Campaign not found!");
-        //        }
-        //        UpdateCampaignDTOEntity(campaign, updateCampaignDTO);
-        //        result = await campaignRepository.UpdateAsync(campaign);
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await Console.Out.WriteLineAsync($"Update Campaign: {ex.Message}");
-        //    }
-
-        //    return result;
-        //}
-
-        private void UpdateCampaignDTOEntity(Campaign campaignModels, UpdateCampaignDTO updateCampaignDTO)
-        {
-            campaignModels.Title = updateCampaignDTO.Title;
-            campaignModels.Description = updateCampaignDTO.Description;
-            campaignModels.FundTarget = updateCampaignDTO.FundTarget;
-            campaignModels.Image = updateCampaignDTO.Image;
-            campaignModels.EndDate = updateCampaignDTO.EndDate;
-            campaignModels.Address = updateCampaignDTO.Address;
-            campaignModels.IsActive = updateCampaignDTO.IsActive;
-            //campaignModels.BankingNumber = updateCampaignDTO.BankingNumber;
-            campaignModels.BankId = updateCampaignDTO.BankId;
-            campaignModels.Status = updateCampaignDTO.Status;
+            return checkValid;
         }
 
         public async Task<bool> DeleteCampaignByIdAsync(int id)
@@ -296,6 +288,10 @@ namespace FALOFinancialProofing.Services.CampaignService
                 {
                     throw new Exception("End Date must be after");
                 }
+                if (createCampaignClientRequest.LogoFile != null && createCampaignClientRequest.LogoFile.Length > FileHelper.CampaignImageMaxFileSize)
+                {
+                    throw new Exception("Logo is too large");
+                }
                 IsValid = true;
             }
             catch (Exception ex)
@@ -319,7 +315,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                     Title = createCampaignClientRequest.Title,
                     DateOfCreation = DateTime.Now, // sửa ở đây
                     FundTarget = createCampaignClientRequest.FundTarget,
-                    Image = createCampaignClientRequest.Image,
+                    Image = await FileHelper.SaveImageAndReturnShortPathAsync(createCampaignClientRequest.LogoFile, FolderImage.CampaignImageUpload, null),
                     EndDate = createCampaignClientRequest.EndDate,
                     Address = createCampaignClientRequest.Address,
                     IsActive = false,
@@ -435,5 +431,58 @@ namespace FALOFinancialProofing.Services.CampaignService
             }
 
         }
+
+        public async Task<Campaign> GetCampaignByUserIdAndCampaignIdAsync(string pmUserId, int campaignId)
+        {
+            Campaign campaign = null!;
+            try
+            {
+                campaign = await campaignRepository.Get(p => p.CreateBy == pmUserId && p.Id == campaignId);
+                if (campaign == null)
+                {
+                    throw new Exception("This user Has no such Campaign");
+                }
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"CheckCampaignByUserIdAndCampaignIdAsync: {ex.Message}");
+            }
+
+            return campaign;
+        }
+
+        // check user có phải là admin, pmb, pm(người tạo ra project hay không)
+        public async Task<bool> ValidateCampaignUpdateAsync(UpdateCampaignDTO updateCampaignDTO, StringBuilder message)
+        {
+            bool checkValid = false;
+            try
+            {
+                var campaign = await campaignRepository.Get(updateCampaignDTO.Id);
+                if (campaign == null)
+                {
+                    throw new Exception("Campaign not found!");
+                }
+                var campaignOwner = await GetCampaignByUserIdAndCampaignIdAsync(updateCampaignDTO.UserId, updateCampaignDTO.Id);
+                bool checkAdmin = await _authServices.CheckUserInRole(updateCampaignDTO.UserId, AppRole.Admin, new StringBuilder());
+                bool checkPMB = await _authServices.CheckUserInRole(updateCampaignDTO.UserId, AppRole.ProjectManagementBoard, new StringBuilder());
+                if ((campaignOwner == null && !checkPMB && !checkAdmin) || (campaignOwner != null && !campaignOwner.IsActive))
+                {
+                    throw new Exception("You don't have permission to update campaign!");
+                }
+                if (updateCampaignDTO.LogoFile != null && updateCampaignDTO.LogoFile.Length > FileHelper.CampaignImageMaxFileSize)
+                {
+                    throw new Exception("Logo is too large");
+                }
+
+                checkValid = true;
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"ValidateProjectUpdateAsync: {ex.Message}");
+            }
+            return checkValid;
+        }
+
     }
 }

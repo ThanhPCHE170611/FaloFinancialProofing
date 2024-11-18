@@ -369,7 +369,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 var checkPMB = await authServices.CheckUserInRoleId(pmUserId, AppRole.ProjectManagementBoard, message);
                 var checkAdmin = await authServices.CheckUserInRoleId(pmUserId, AppRole.Admin, message);
                 // người dùng không tạo ra chiến dịch, hoặc tạo ra nhưng bị vô hiệu hóa hoặc không phải là pmb hoặc admin
-                if ((pmUser == null && !checkPMB && !checkAdmin) || !pmUser.IsActive)
+                if ((pmUser == null && !checkPMB && !checkAdmin) || (pmUser != null && !pmUser.IsActive))
                 {
                     throw new Exception("You do not have permission to add members to this campaign.");
                 }

@@ -39,7 +39,7 @@ namespace FALOFinancialProofing.Controllers
             filterPagingData.CurrentPage = currentPage;
             try
             {
-                data = await _projectService.GetAllProjectInSystemAsync();
+                data = await _projectService.GetAllProjectInSystemAsync(Request);
                 if (data == null || data.Count == 0)
                 {
                     return Ok(new ApiResponse()
@@ -86,7 +86,7 @@ namespace FALOFinancialProofing.Controllers
             filterPagingData.CurrentPage = currentPage;
             try
             {
-                data = await _projectService.GetAllProjectsByUserIdAsync(UserId);
+                data = await _projectService.GetAllProjectsByUserIdAsync(UserId, Request);
                 if (data == null || data.Count == 0)
                 {
                     return Ok(new ApiResponse()
@@ -124,7 +124,7 @@ namespace FALOFinancialProofing.Controllers
         [HttpGet("GetProjectDetailsById/{ProjectId}")]
         public async Task<IActionResult> GetProjectDetailsById(int ProjectId)
         {
-            var project = await _projectService.GetProjectDetailsByProjectId(ProjectId);
+            var project = await _projectService.GetProjectDetailsByProjectId(ProjectId, Request);
             if (project == null)
             {
                 return Ok(new
@@ -145,24 +145,35 @@ namespace FALOFinancialProofing.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
         [HttpPut("UpdateProject")]
-        public async Task<IActionResult> PutProject([FromBody] Project UpdateProject)
+        public async Task<IActionResult> PutProject([FromForm] UpdateProjectRequest updateProjectRequest)
         {
-            var statusMessage = "";
+            StringBuilder message = new StringBuilder();
+            bool checkValid = false;
             try
             {
-                if (!ModelState.IsValid)
+                checkValid = await _projectService.ValidateProjectUpdateAsync(updateProjectRequest, message);
+                if (!checkValid)
                 {
-                    return BadRequest(ModelState);
+                    return Ok(new ApiResponse()
+                    {
+                        Message = message.ToString(),
+                        Success = checkValid
+                    });
                 }
-                statusMessage = await _projectService.UpdateProjectAsync(UpdateProject) != false ? "Update Project Successfully!" : throw new Exception();
+                checkValid = await _projectService.UpdateProjectAsync(updateProjectRequest, message);
+                if (checkValid)
+                    message.Append("Update Project Successfully!");
             }
             catch (Exception ex)
             {
-                statusMessage = "Update Project Failed!";
-                await Console.Out.WriteLineAsync("PutProject: Error");
+                await Console.Out.WriteLineAsync($"PutProject: Error {ex.Message}");
             }
 
-            return Content(statusMessage);
+            return Ok(new ApiResponse()
+            {
+                Message = message.ToString(),
+                Success = checkValid
+            });
         }
         // POST: api/Projects
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -277,8 +288,8 @@ namespace FALOFinancialProofing.Controllers
             List<ProjectInformation> data = null;
             try
             {
-                data = (await _projectService.GetAllProjectsAsync()).ToList();
-                data = data.Take(numOfElements).ToList();
+                //data = (await _projectService.GetAllProjectsAsync()).ToList();
+                data = await _projectService.GetAllProjectInSystemAsync(Request);
                 if (data == null || data.Count == 0)
                 {
                     return Ok(new ApiResponse()
@@ -300,6 +311,7 @@ namespace FALOFinancialProofing.Controllers
                 {
                     data = data.OrderByDescending(o => o.DateOfCreation).ToList();
                 }
+                data = data.Take(numOfElements).ToList();
 
             }
             catch (Exception ex)
@@ -313,5 +325,6 @@ namespace FALOFinancialProofing.Controllers
                 Data = data
             });
         }
+
     }
 }

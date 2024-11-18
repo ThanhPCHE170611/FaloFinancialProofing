@@ -1,5 +1,6 @@
 ﻿using FALOFinancialProofing.Attributes;
 using FALOFinancialProofing.DTOs;
+using FALOFinancialProofing.Extensions;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
@@ -34,7 +35,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -89,6 +89,10 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped(typeof(BankService1));
             builder.Services.AddScoped(typeof(WebHookService));
             builder.Services.AddDistributedMemoryCache(); // Sử dụng bộ nhớ trong để lưu trữ session
+            builder.Services.Configure<FormOptions>(options =>
+            {
+                options.MultipartBodyLengthLimit = 10485760; // Giới hạn kích thước tệp là 10 MB
+            });
             builder.Services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(30); // Thiết lập thời gian timeout cho session
@@ -103,10 +107,10 @@ namespace FALOFinancialProofing
 
             //builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddControllers();
-            builder.Services.Configure<FormOptions>(options =>
-            {
-                options.MultipartBodyLengthLimit = 102400; // Giới hạn 100kb chẳng hạn
-            });
+            //builder.Services.Configure<FormOptions>(options =>
+            //{
+            //    options.MultipartBodyLengthLimit = 102400; // Giới hạn 100kb chẳng hạn
+            //});
             builder.Services.AddSwaggerGen(c =>
             {
                 c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
@@ -183,15 +187,7 @@ namespace FALOFinancialProofing
                     IssuerSigningKey = new SymmetricSecurityKey(secretKeyByte),
                     ClockSkew = TimeSpan.Zero
                 };
-            }).AddGoogle(googleOptions =>
-            {
-                //googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
-                //googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
-
-                googleOptions.ClientId = "1079045769870-tn77k2e2psvlv5tdi7mak8i0nlqahr76.apps.googleusercontent.com";
-                googleOptions.ClientSecret = "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";
             });
-            ;
             builder.Services.AddAuthorization(options =>
             {
                 //options.AddPolicy("AdminOnly", policy
@@ -216,29 +212,8 @@ namespace FALOFinancialProofing
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            //app.UseStaticFiles(new StaticFileOptions
-            //{
-            //    FileProvider = new PhysicalFileProvider(
-            //   Path.Combine(Directory.GetCurrentDirectory(), "UserImageUpload")),
-            //    RequestPath = "/UserImageUpload"
-            //});
-
-            var staticFileDirectories = new List<(string Directory, string RequestPath)>
-    {
-        ("UserImageUpload", "/UserImageUpload"),
-        //("AnotherStaticFolder", "/AnotherStaticFolder"),
-        //("YetAnotherFolder", "/YetAnotherFolder")
-    };
-            // Cấu hình các thư mục tĩnh
-            foreach (var (directory, requestPath) in staticFileDirectories)
-            {
-                app.UseStaticFiles(new StaticFileOptions
-                {
-                    FileProvider = new PhysicalFileProvider(
-                        Path.Combine(Directory.GetCurrentDirectory(), directory)),
-                    RequestPath = requestPath
-                });
-            }
+            //app.UseMiddleware<StaticFileMiddleware>();
+            app.CustomStaticFiles(); // folder upload
             app.UseStaticFiles();
             app.UseSession();
             app.UseHttpsRedirection();

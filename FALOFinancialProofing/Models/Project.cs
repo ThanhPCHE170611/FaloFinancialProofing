@@ -20,6 +20,8 @@ namespace FALOFinancialProofing.Models
         public Organization Organization { get; set; }
         public ICollection<Campaign> Campaigns { get; set; }
         public ICollection<CreateProjectRequest> CreateProjectRequests { get; set; }
+        [MaxLength(200)]
+        public string? Image { get; set; }
 
     }
 }

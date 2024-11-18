@@ -38,7 +38,6 @@ namespace FALOFinancialProofing.Models
 
         [Required]
         public bool IsActive { get; set; }
-        //public string? BankingNumber { get; set; }
         public int? BankId { get; set; }
         public Bank Bank { get; set; }
 

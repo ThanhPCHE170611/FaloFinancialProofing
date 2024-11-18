@@ -677,7 +677,7 @@ Click vào link này để đặt lại mật khẩu: {resetPasswordLink}";
                 message.Append(ex.Message);
                 await Console.Out.WriteLineAsync($"ValidateResetPassword: {ex.Message}");
             }
-            
+
             return IsValid;
         }
 
@@ -752,8 +752,8 @@ Click vào link này để đặt lại mật khẩu: {resetPasswordLink}";
                 {
                     throw new Exception("User not found");
                 }
-                long MaxFileSize = 5 * 1024 * 1024;
-                if (updateUserProfileRequest.LogoFile != null && updateUserProfileRequest.LogoFile.Length > MaxFileSize)
+                //long MaxFileSize = 5 * 1024 * 1024;
+                if (updateUserProfileRequest.LogoFile != null && updateUserProfileRequest.LogoFile.Length > FileHelper.UserImageMaxFileSize)
                 {
                     throw new Exception("Logo is too large");
                 }
@@ -789,7 +789,7 @@ Click vào link này để đặt lại mật khẩu: {resetPasswordLink}";
                         Address = u.Address,
                         WorkPlace = u.WorkPlace,
                         Bio = u.Bio,
-                        Image = UrlHelper.GetImageUrl(request, u.Image),
+                        Image = UrlHelper.GetImageUrl(request, u.Image, FolderImage.UserImageUpload),
                         Education = u.Education,
                         Skill = u.Skill,
                         Hobby = u.Hobby,
@@ -987,7 +987,7 @@ Click vào link này để đặt lại mật khẩu: {resetPasswordLink}";
                     Email = userInfo.Email,
                     UserName = userInfo.Email,
                     TwoFactorEnabled = true,
-                    Gender = userInfo.Gender != null && userInfo.Gender.Equals("Male", StringComparison.OrdinalIgnoreCase) ? true : false,
+                    Gender = userInfo.Gender != null ? false : true,
                     Image = userInfo.Picture,
                 };
                 var result = await userManager.CreateAsync(newUser);

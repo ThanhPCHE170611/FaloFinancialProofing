@@ -3,8 +3,8 @@
     public class FolderImage
     {
         public const string UserImageUpload = "UserImageUpload";
-        public const string OrganizationUpload = "OrganizationUpload";
-        public const string ProjectUpload = "ProjectUpload";
-        public const string CampaignUpload = "CampaignUpload";
+        public const string OrganizationImageUpload = "OrganizationImageUpload";
+        public const string ProjectImageUpload = "ProjectImageUpload";
+        public const string CampaignImageUpload = "CampaignImageUpload";
     }
 }
