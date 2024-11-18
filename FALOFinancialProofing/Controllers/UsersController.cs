@@ -318,6 +318,45 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
+        [HttpGet("GetPMBAccountList")]
+        public async Task<IActionResult> GetAllPMBAccountInSystem(string? searchInput, int currentPage = IntConstant.PageNumberDefault)
+        {
+            List<UserInformation_Admin> data = null;
+            FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
+            try
+            {
+                data = await authServices.GetPMBAccountList();
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "Get All PMB Account Failed!",
+                        Data = filterPagingData
+                    });
+                }
+                if (!string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = searchInput.Trim();
+                    data = data.FindAll(x => ($"{x.FirstName} {x.LastName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.Email}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
+                }
+
+                filterPagingData.DataCount = data.Count;
+                data = PaginationHelper.Paginate<UserInformation_Admin>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                filterPagingData.Data = data;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"Get All PMB Account In System: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "Get All PMB Accounts In System Successfully!",
+                Data = filterPagingData
+            });
+        }
         [RoleAttribute(AppRole.Admin)]
         [HttpGet("GetAccount/{UserId}")]
         public async Task<IActionResult> GetAccount(string UserId)

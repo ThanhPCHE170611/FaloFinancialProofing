@@ -379,6 +379,39 @@ namespace FALOFinancialProofing.Services
             return data;
         }
 
+        public async Task<List<UserInformation_Admin>> GetPMBAccountList()
+        {
+            var data = new List<UserInformation_Admin>();
+            try
+            {
+                data = await userManager.Users.Where(u => u.UserRoles.Any(ur => ur.RoleId.Equals("205d4496-4ac8-40d9-84b9-e09e1ada7a49"))).Select(u => new UserInformation_Admin()
+                {
+                    Id = u.Id,
+                    Email = u.Email,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    BirthDate = u.BirthDate,
+                    Roles = u.UserRoles.Select(ur => new RoleInformation
+                    {
+                        RoleId = ur.RoleId,
+                        RoleName = roleManager.Roles.FirstOrDefault(r => r.Id == ur.RoleId).Name
+                    }).ToList(),
+                    SocialNetworkRequests = u.SocialNetworks.Select(snr => new SocialNetworkRequest
+                    {
+                        Id = snr.Id,
+                        UserId = snr.UserId,
+                        SocialNetworksLink = snr.SocialNetworksLink,
+                    }).ToList()
+                }).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAccountList: {ex.Message}");
+            }
+
+            return data;
+        }
+
         public async Task<UserInformation_Admin> GetAccount(string UserId, StringBuilder message)
         {
             UserInformation_Admin data = null!;
