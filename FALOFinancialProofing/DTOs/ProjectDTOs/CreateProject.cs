@@ -9,17 +9,17 @@ namespace FALOFinancialProofing.DTOs.ProjectDTOs
         [Required]
         public string CreatedBy { get; set; }
         [Required]
-        [StringLength(200)]
+        [StringLength(100, MinimumLength = 8, ErrorMessage = "Title must be at least 8 and max 100 characters")]
         public string ProjectName { get; set; }
-        public string? Description { get; set; }
         [Required]
-        public DateTime DateOfCreation { get; set; }
-        public string? Status { get; set; }
-        public bool IsActive { get; set; }
+        [MinLength(8, ErrorMessage = "Description must be at least 8 characters")]
+        public string Description { get; set; }
         // check if the OrganizationId is valid (exist),
         public int OrganizationId { get; set; }
         // tệp đính kèm
         //[Required(ErrorMessage = "Please select a file.")]
         public List<IFormFile>? FormFiles { get; set; }
+
+        public IFormFile? LogoFile { get; set; }
     }
 }

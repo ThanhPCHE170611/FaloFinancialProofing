@@ -15,11 +15,12 @@ namespace FALOFinancialProofing.Services.SocialNetworkService
         //Task<SocialNetworkDto?> CreateSocialNetworkAsync(SocialNetworkRequest socialNetworkRequest);
 
         Task<bool> UpdateSocialNetworkAsync(SocialNetworkRequest socialNetworkRequest);
+        Task<bool> UpdateSocialNetworkAsync(SocialNetwork socialNetwork);
 
         Task<bool> DeleteSocialNetworkAsync(SocialNetworkRequest socialNetworkRequest);
 
         Task<bool> DeleteSocialNetworkByIdAsync(int id);
-
+        Task<SocialNetwork> CreateSocialNetworkAsync(SocialNetwork socialNetwork);
 
     }
 }

@@ -5,11 +5,11 @@ using System.Text;
 
 namespace FALOFinancialProofing.Services
 {
-    public class BankService
+    public class BankService1
     {
         private readonly HttpClient _httpClient;
 
-        public BankService(IHttpClientFactory httpClientFactory)
+        public BankService1(IHttpClientFactory httpClientFactory)
         {
             _httpClient = httpClientFactory.CreateClient("MyHttpClient");
         }
@@ -27,7 +27,7 @@ namespace FALOFinancialProofing.Services
 
         public async Task<BankResponse> GetQRCode(BankRequest bankRequest)
         {
-            var dataResponse = new BankResponse();
+            BankResponse dataResponse = null!;
             string jsonData = JsonConvert.SerializeObject(bankRequest);
             HttpContent httpContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync("https://api.vietqr.io/v2/generate", httpContent);

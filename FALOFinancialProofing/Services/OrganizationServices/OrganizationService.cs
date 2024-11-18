@@ -1,32 +1,24 @@
-﻿using FALOFinancialProofing.Models;
+﻿using FALOFinancialProofing.DTOs.OrganizationDTO;
+using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace FALOFinancialProofing.Services.OrganizationServices
 {
     public class OrganizationService : IOrganizationService
     {
         private readonly IRepository<Organization, int> _organizationRepository;
+        private readonly AuthServices _authServices;
 
-        public OrganizationService(IRepository<Organization, int> organizationRepository)
+        public OrganizationService(IRepository<Organization, int> organizationRepository, AuthServices authServices)
         {
             _organizationRepository = organizationRepository;
+            _authServices = authServices;
         }
 
         #region Comment may use
-        //private Organization ConvertToBaseEntity(Organization createOrganization)
-        //{
-        //    var organization = new Organization
-        //    {
-        //        SenderID = createOrganization.SenderID,
-        //        CampaignId = createOrganization.CampaignId,
-        //        TransactionDate = createOrganization.TransactionDate,
-        //        Amount = createOrganization.Amount,
-        //        Description = createOrganization.Description,
-        //        BankId = createOrganization.BankId
-        //    };
-        //    return organization;
-        //}
+
 
         //private void ConvertToBaseEntity(Organization SourceOrganization, Organization DesOrganization)
         //{
@@ -37,25 +29,69 @@ namespace FALOFinancialProofing.Services.OrganizationServices
         //    SourceOrganization.CampaignId = DesOrganization.CampaignId;
         //}
         #endregion
-        public async Task<bool> CreateOrganizationAsync(Organization createOrganization)
+        private Organization ConvertToBaseEntity(CreateOrganization createOrganization)
         {
+            var organization = new Organization
+            {
+                Name = createOrganization.Name,
+                Main_office = createOrganization.Main_office,
+                Representative = createOrganization.Representative,
+                PhoneNumber = createOrganization.PhoneNumber,
+                Email = createOrganization.Email,
+                Logo = createOrganization.Logo,
+                Description = createOrganization.Description,
+                Vision = createOrganization.Vision,
+                Mission = createOrganization.Mission,
+                CoreValue = createOrganization.CoreValue,
+                MainActivity = createOrganization.MainActivity,
+                Interests = createOrganization.Interests,
+                VolunteerExperience = createOrganization.VolunteerExperience,
+                VolunteerObjectives = createOrganization.VolunteerObjectives,
+                Attachments = createOrganization.Attachments,
+                Bio = createOrganization.Bio,
+            };
+            return organization;
+        }
+        public async Task<Organization> CreateOrganizationAsync(CreateOrganization createOrganization, StringBuilder message)
+        {
+            Organization organization = null!;
             try
             {
                 if (createOrganization == null)
                 {
                     throw new Exception("Organization is null");
                 }
-                //var organization = ConvertToBaseEntity(createOrganization);
-                await _organizationRepository.InsertAsync(createOrganization);
-
-                return true;
+                var Organization = ConvertToBaseEntity(createOrganization);
+                organization = await _organizationRepository.InsertAsync(Organization);
+                message.Append("Create Organization Successfully!");
             }
             catch (Exception ex)
             {
-                await Console.Out.WriteLineAsync($"Organization: {ex.Message}!");
+                message.Append("Create Organization Failed!");
+                await Console.Out.WriteLineAsync($"CreateOrganizationAsync: {ex.Message}!");
             }
 
-            return false;
+            return organization;
+        }
+        public async Task<bool> ValidateCreateOrganizationAsync(CreateOrganization createOrganization, StringBuilder message)
+        {
+            bool checkValid = false;
+            try
+            {
+                var user = await _authServices.CheckUserExist(createOrganization.UserId, message);
+                if (!user)
+                {
+                    throw new Exception();
+                }
+                checkValid = true;
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"ValidateCreateOrganizationAsync: {ex.Message}!");
+            }
+
+            return checkValid;
         }
 
         public async Task<Organization> GetOrganizationByIdAsync(int id)

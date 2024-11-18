@@ -1,5 +1,6 @@
 ﻿using FALOFinancialProofing.Attributes;
 using FALOFinancialProofing.DTOs;
+using FALOFinancialProofing.Extensions;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
@@ -7,6 +8,7 @@ using FALOFinancialProofing.Services;
 using FALOFinancialProofing.Services.AccountingBookServices;
 using FALOFinancialProofing.Services.ApproveProcessServices;
 using FALOFinancialProofing.Services.AttachmentFIleServices;
+using FALOFinancialProofing.Services.BankServices;
 using FALOFinancialProofing.Services.CampaignMemberService;
 using FALOFinancialProofing.Services.CampaignRequestApproveHistoryServices;
 using FALOFinancialProofing.Services.CampaignService;
@@ -15,7 +17,10 @@ using FALOFinancialProofing.Services.CreateCampaignRequestServices;
 using FALOFinancialProofing.Services.CreateProjectFileServices;
 using FALOFinancialProofing.Services.CreateProjectRequestApproveHistoryServices;
 using FALOFinancialProofing.Services.CreateProjectRequestServices;
+using FALOFinancialProofing.Services.CreateQrCodeServices;
+using FALOFinancialProofing.Services.DebManagementServices;
 using FALOFinancialProofing.Services.EmailService;
+using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestHistoryService;
 using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices;
 using FALOFinancialProofing.Services.OrganizationMemberServices;
 using FALOFinancialProofing.Services.OrganizationServices;
@@ -24,6 +29,7 @@ using FALOFinancialProofing.Services.RequestFormServices;
 using FALOFinancialProofing.Services.SDGServices;
 using FALOFinancialProofing.Services.SocialNetworkService;
 using FALOFinancialProofing.Services.TransactionLogsServices;
+using FALOFinancialProofing.Services.UserSDGServices;
 using FALOFinancialProofing.Services.VoucherServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -33,23 +39,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using FALOFinancialProofing.Services.RequestFormServices;
-using FALOFinancialProofing.Services.AttachmentFIleServices;
-using FALOFinancialProofing.Services.ApproveProcessServices;
-using FALOFinancialProofing.Services.VoucherServices;
-using Example;
-using Microsoft.AspNetCore.Http.Features;
-using FALOFinancialProofing.Services.OrganizationServices;
-using FALOFinancialProofing.Services.CreateProjectRequestServices;
-using FALOFinancialProofing.Services.CreateProjectFileServices;
-using FALOFinancialProofing.Services.CreateCampaignFileServices;
-using FALOFinancialProofing.Services.CreateCampaignRequestServices;
-using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices;
-using FALOFinancialProofing.Services.ProjectServices;
-using FALOFinancialProofing.Services.CampaignService;
-using FALOFinancialProofing.Services.CampaignMemberService;
-using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestHistoryService;
-using FALOFinancialProofing.Services.DebManagementServices;
 
 namespace FALOFinancialProofing
 {
@@ -66,9 +55,12 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 
             builder.Services.AddScoped(typeof(AuthServices));
+            builder.Services.AddScoped(typeof(RoleService));
             builder.Services.AddScoped<ITransactionLogService, TransactionLogService>();
 
-            //builder.Services.AddScoped(typeof(AuthServices));
+            //builder.Services.AddHostedService<BankAccountPolling>();
+            builder.Services.AddScoped<ICreateQrCodeService, CreateQrCodeService>();
+            builder.Services.AddScoped<IBankService, BankService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<ISDGServices, SDGServices>();
             builder.Services.AddScoped<IOrganizationService, OrganizationService>();
@@ -85,6 +77,7 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped<IMoveNextCampaignStatusRequestService, MoveNextCampaignStatusRequestService>();
             builder.Services.AddScoped<IMoveNextCampaignStatusRequestHistoryService, MoveNextCampaignStatusRequestHistoryService>();
             builder.Services.AddScoped<IProjectService, ProjectService>();
+            builder.Services.AddScoped<IUserSDGService, UserSDGService>();
             builder.Services.AddScoped<ICampaignService, CampaignService>();
             builder.Services.AddScoped<ICampaignMemberService, CampaignMemberService>();
             builder.Services.AddScoped<IOrganizationMemberService, OrganizationMemberService>();
@@ -93,9 +86,10 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped<IDebManagementServices, DebManagementServices>();
             builder.Services.AddHttpClient("MyHttpClient", client =>
             {
-                client.DefaultRequestHeaders.Add("Accept", "application/json");
+                //client.DefaultRequestHeaders.Add("Accept", "application/json");
             });
-            builder.Services.AddScoped(typeof(BankService));
+            builder.Services.AddScoped(typeof(BankService1));
+            builder.Services.AddScoped(typeof(WebHookService));
             builder.Services.AddDistributedMemoryCache(); // Sử dụng bộ nhớ trong để lưu trữ session
             builder.Services.AddSession(options =>
             {
@@ -144,9 +138,19 @@ namespace FALOFinancialProofing
                     }
                 });
             });
-            builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<FALOFinancialProofingDbContext>()
-                .AddDefaultTokenProviders();
+            builder.Services.AddIdentity<User, IdentityRole>(options =>
+            {
+                // Cấu hình thời gian hết hạn token
+                options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultProvider;
+            }
 
+                ).AddEntityFrameworkStores<FALOFinancialProofingDbContext>()
+                .AddDefaultTokenProviders();
+            builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+            {
+                //options.TokenLifespan = TimeSpan.FromHours(1);
+                options.TokenLifespan = TimeSpan.FromMinutes(10);
+            });
             builder.Services.AddDbContext<FALOFinancialProofingDbContext>(options =>
             {
                 // Đọc chuỗi kết nối
@@ -181,15 +185,7 @@ namespace FALOFinancialProofing
                     IssuerSigningKey = new SymmetricSecurityKey(secretKeyByte),
                     ClockSkew = TimeSpan.Zero
                 };
-            }).AddGoogle(googleOptions =>
-            {
-                //googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
-                //googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
-
-                googleOptions.ClientId = "1079045769870-tn77k2e2psvlv5tdi7mak8i0nlqahr76.apps.googleusercontent.com";
-                googleOptions.ClientSecret = "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";
             });
-            ;
             builder.Services.AddAuthorization(options =>
             {
                 //options.AddPolicy("AdminOnly", policy
@@ -214,6 +210,8 @@ namespace FALOFinancialProofing
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            //app.UseMiddleware<StaticFileMiddleware>();
+            app.CustomStaticFiles(); // folder upload
             app.UseStaticFiles();
             app.UseSession();
             app.UseHttpsRedirection();

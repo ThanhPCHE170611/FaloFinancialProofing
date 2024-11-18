@@ -121,6 +121,59 @@ function downloadVoucher(fileName) {
     });
 }
 
+function showAddMissingFilePopup(requestId) {
+    const popupHtml = `
+        <div id="addFileModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('addFileModal')">&times;</span>
+                <h3>Add Missing File</h3>
+                <input type="file" id="missingFileInput" class="form-control" />
+                <button class="btn btn-success mt-3" onclick="submitMissingFile(${requestId})">Submit</button>
+            </div>
+        </div>
+    `;
+    $('body').append(popupHtml);
+    $('#addFileModal').show();
+}
+
+function closeModal(modalId) {
+    $(`#${modalId}`).remove();
+}
+
+function submitMissingFile(requestId) {
+    const jwtToken = localStorage.getItem('jwtToken');
+    const fileInput = document.getElementById('missingFileInput');
+    if (fileInput.files.length === 0) {
+        alert('Please upload a file before submitting.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('attachment', fileInput.files[0]);
+
+    $.ajax({
+        url: `https://localhost:7294/api/RequestForm/addmissingattachmentforrequest/${requestId}`,
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: {
+            'Authorization': `Bearer ${jwtToken}`
+        },
+        success: function (response) {
+            if (response.success) {
+                alert(response.message);
+                location.reload();
+            } else {
+                alert('Failed to add missing file: ' + response.message);
+            }
+        },
+        error: function () {
+            alert('Error occurred while adding the missing file.');
+        }
+    });
+}
+
 $(document).ready(function () {
     const userId = localStorage.getItem('userId');
     const campaignId = localStorage.getItem('campaignId');
@@ -165,6 +218,7 @@ $(document).ready(function () {
                     prepayRequests.forEach((request, index) => {
                         const statusClass = request.status === "Approved" ? "bg-gradient-success" :
                             request.status === "Rejected" ? "bg-gradient-danger" :
+                                request.status === "Cancel" ? "bg-gradient-Cancel" :
                                 "bg-gradient-warning";
                         const statusLabel = `<span class="badge badge-sm ${statusClass}">${request.status}</span>`;
 
@@ -177,6 +231,11 @@ $(document).ready(function () {
                             `).join('<br>');
                         } else {
                             attachmentLinks = '<span class="text-muted">No Attachments</span>';
+                            if (request.status === "Approved" && request.createdBy === userId) {
+                                actionButtons += `
+                                <button class="btn btn-warning btn-sm" onclick="showAddMissingFilePopup(${request.id})">Add Missing File</button>
+                            `;
+                            }
                         }
 
                         let voucherLinks = '';
@@ -198,7 +257,7 @@ $(document).ready(function () {
                                         <td class="align-middle text-center text-sm">${index + 1}</td>
                                         <td><span class="text-secondary text-xs font-weight-bold">${request.createByName}</span></td>
                                         <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${request.expectedMoney.toLocaleString()}</span></td>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${request.description}</span></td>
+                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${request.createByEmail}</span></td>
                                         <td class="align-middle text-center">${attachmentLinks}</td>
                                         <td class="align-middle text-center">${voucherLinks}</td>
                                         <td class="align-middle text-center text-sm">${statusLabel}</td>
@@ -218,6 +277,7 @@ $(document).ready(function () {
             }
         });
     }
+
 
     function setupPagination(totalRecords, currentPage) {
         const totalPages = Math.ceil(totalRecords / pageSize);

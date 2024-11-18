@@ -42,9 +42,9 @@ namespace FALOFinancialProofing.Controllers
                 Data = campaignMembers
             });
         }
-
+        // có thể là tự xem chính mình hoặc admin xem uid và rid này nằm trong những campaign nào
         [HttpGet("GetAllCampaignMembersByUserIdAndRoleId")]
-        public async Task<IActionResult> GetAllCampaignMembersByUserIdAndRoleId(string userId, string roleId, bool? isActive, int currentPage = IntConstant.PageNumberDefault)
+        public async Task<IActionResult> GetAllCampaignMembersByUserIdAndRoleId(string? searchInput, string userId, string roleId, bool? isActive, int currentPage = IntConstant.PageNumberDefault)
         {
             List<CampaignMemberInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -62,12 +62,17 @@ namespace FALOFinancialProofing.Controllers
                         Data = filterPagingData
                     });
                 }
+                if (!string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = searchInput.Trim();
+                    data = data.FindAll(x => ($"{x.CampaignTitle}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
+                }
                 if (isActive != null)
                 {
                     data = data.FindAll(x => x.IsActive == isActive);
                 }
                 filterPagingData.DataCount = data.Count;
-              
+
                 data = PaginationHelper.Paginate<CampaignMemberInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
                 filterPagingData.Data = data;
             }
@@ -82,9 +87,55 @@ namespace FALOFinancialProofing.Controllers
                 Data = filterPagingData
             });
         }
+        // admin xem của thằng khác
+        [RoleAttribute(AppRole.Admin)]
+        [HttpGet("GetAllCampaignMembersByUserId")]
+        public async Task<IActionResult> GetAllCampaignMembersByUserId(string? searchInput, string userId, bool? isActive, int currentPage = IntConstant.PageNumberDefault)
+        {
+            List<CampaignMemberInformation> data = null;
+            FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
+            try
+            {
+                data = await _campaignMemberService.GetAllCampaignMemberByUserIdAsync(userId);
+
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "GetAllCampaignMember By UserId Failed!",
+                        Data = filterPagingData
+                    });
+                }
+                if (!string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = searchInput.Trim();
+                    data = data.FindAll(x => ($"{x.CampaignTitle}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
+                }
+                if (isActive != null)
+                {
+                    data = data.FindAll(x => x.IsActive == isActive);
+                }
+                filterPagingData.DataCount = data.Count;
+
+                data = PaginationHelper.Paginate<CampaignMemberInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                filterPagingData.Data = data;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAllCampaignMemberByUserId: {ex.Message}");
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "GetAllCampaignMember By UserId Successfully!",
+                Data = filterPagingData
+            });
+        }
 
         [HttpGet("GetAllCampaignMembersByCampaignId")]
-        public async Task<IActionResult> GetAllCampaignMembersByCampaignId(int CampaignId, bool? isActive, int currentPage = IntConstant.PageNumberDefault)
+        public async Task<IActionResult> GetAllCampaignMembersByCampaignId(string? searchInput, int CampaignId, bool? isActive, int currentPage = IntConstant.PageNumberDefault)
         {
             List<CampaignMemberInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -101,6 +152,11 @@ namespace FALOFinancialProofing.Controllers
                         Message = "GetAllCampaignMembers By CampaignId Failed!",
                         Data = filterPagingData
                     });
+                }
+                if (!string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = searchInput.Trim();
+                    data = data.FindAll(x => ($"{x.FirstName} {x.LastName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.Email}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
                 }
                 if (isActive != null)
                 {
@@ -163,13 +219,21 @@ namespace FALOFinancialProofing.Controllers
                 Data = createCampaignMember
             });
         }
-        [RoleAttribute(AppRole.ProjectManager)]
-        [HttpPost("CreateManyCampaignMembers/{CampaignId}")]
-        public async Task<IActionResult> CreateManyCampaignMembers(int CampaignId, [FromBody] List<CreateManyCampaignMemberDTO> createManyCampaignMemberDTOs)
+        [RoleAttribute(AppRole.ProjectManager, AppRole.ProjectManagementBoard, AppRole.Admin)]
+        [HttpPost("CreateManyCampaignMembers/{CampaignId}/{pmUserId}")]
+        public async Task<IActionResult> CreateManyCampaignMembers(int CampaignId, string pmUserId, [FromBody] List<CreateManyCampaignMemberDTO> createManyCampaignMemberDTOs)
         {
             var message = new StringBuilder();
 
-            var ValidCreateManyCampaignMemberDTOs = await _campaignMemberService.ValidateCampaignMembersCreateAsync(createManyCampaignMemberDTOs, CampaignId, message);
+            var ValidCreateManyCampaignMemberDTOs = await _campaignMemberService.ValidateCampaignMembersCreateAsync(createManyCampaignMemberDTOs, CampaignId, pmUserId, message);
+            if (ValidCreateManyCampaignMemberDTOs == null || ValidCreateManyCampaignMemberDTOs.Count == 0)
+            {
+                return Ok(new ApiResponse()
+                {
+                    Success = false,
+                    Message = message.ToString()
+                });
+            }
             var invalidData = await _campaignMemberService.InValidCampaignMembersCreateAsync(createManyCampaignMemberDTOs, ValidCreateManyCampaignMemberDTOs);
             var InvalidUserInformation = await authServices.GetUserInformationList(invalidData);
             var CheckCreateSuccess = await _campaignMemberService.CreateManyCampaignMembersAsync(ValidCreateManyCampaignMemberDTOs, CampaignId, message);
@@ -181,6 +245,7 @@ namespace FALOFinancialProofing.Controllers
             }
             );
         }
+        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
         [HttpPut("UpdateCampaignMemberStatus")]
         public async Task<IActionResult> UpdateCampaignMemberStatus([FromBody] UpdateCampaignMemberStatusDTO updateCampaignMemberStatusDTO)
         {

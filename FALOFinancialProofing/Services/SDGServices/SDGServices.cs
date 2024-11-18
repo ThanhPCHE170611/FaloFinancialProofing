@@ -1,4 +1,5 @@
 ﻿using FALOFinancialProofing.DTOs;
+using FALOFinancialProofing.DTOs.SDGDTOs;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using Microsoft.AspNetCore.Identity;
@@ -37,11 +38,12 @@ namespace FALOFinancialProofing.Services.SDGServices
                     Id = sdg.Id != null ? sdg.Id.Value : 0,
                     SDGName = sdg.SDGName,
                 };
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return null;
             }
-            
+
         }
 
         public async Task<bool> DeleteSDGByIdAsync(int id)
@@ -74,29 +76,23 @@ namespace FALOFinancialProofing.Services.SDGServices
             }
         }
 
-        public async Task<List<SDG>> GetAllSDGsAsync()
+        public async Task<List<SDGInformation>> GetAllSDGsAsync()
         {
             try
             {
-                //return await sdgRepository.GetAll().Include(x => x.User).Select(
-                //    sdg => new SDG
-                //    {
-                //        Id = sdg.Id,
-                //        SDGName = sdg.SDGName,
-                //        UserId = sdg.UserId,
-                //        User = new User
-                //        {
-                //            Id = sdg.User.Id,
-                //            FirstName = sdg.User.FirstName,
-                //            LastName = sdg.User.LastName,
-                //        }
-                //    }
-                //    ).ToListAsync();
-                return null;
+                return await sdgRepository.GetAll()
+                    .Select(
+                        sdg => new SDGInformation
+                        {
+                            Id = sdg.Id,
+                            SDGName = sdg.SDGName,
+                        }
+                    ).ToListAsync();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return new List<SDG>();
+                await Console.Out.WriteLineAsync($"GetAllSDGsAsync: {ex.Message}");
+                return null;
             }
         }
 
@@ -164,5 +160,7 @@ namespace FALOFinancialProofing.Services.SDGServices
                 return false;
             }
         }
+
+
     }
 }

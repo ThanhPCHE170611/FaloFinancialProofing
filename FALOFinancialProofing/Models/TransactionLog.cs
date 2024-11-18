@@ -9,7 +9,7 @@ namespace FALOFinancialProofing.Models
         public int CreateQrCodeId { get; set; }
         public CreateQrCode CreateQrCode { get; set; }
         [JsonPropertyOrder(3)]
-        public double Amount { get; set; }
+        public int Amount { get; set; }
         [JsonPropertyOrder(4)]
         public int CampaignId { get; set; }
         public Campaign Campaign { get; set; }

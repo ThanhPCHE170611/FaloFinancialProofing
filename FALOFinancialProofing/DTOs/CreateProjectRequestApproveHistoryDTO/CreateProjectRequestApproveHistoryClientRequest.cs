@@ -9,5 +9,6 @@ namespace FALOFinancialProofing.DTOs.CreateProjectRequestApproveHistoryDTO
         public string ApproverId { get; set; }
         public DateTime DateOfApproval { get; set; }
         public bool IsAllowed { get; set; }
+        public string? FeedBack { get; set; }
     }
 }

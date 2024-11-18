@@ -1,6 +1,8 @@
 ﻿using FALOFinancialProofing.DTOs.TransactionLogsDTOs;
+using FALOFinancialProofing.DTOs.UserDTOs;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace FALOFinancialProofing.Services.TransactionLogsServices
@@ -8,10 +10,11 @@ namespace FALOFinancialProofing.Services.TransactionLogsServices
     public class TransactionLogService : ITransactionLogService
     {
         private readonly IRepository<TransactionLog, int> _transactionLogRepository;
-
-        public TransactionLogService(IRepository<TransactionLog, int> transactionLogRepository)
+        private readonly UserManager<User> userManager;
+        public TransactionLogService(IRepository<TransactionLog, int> transactionLogRepository, UserManager<User> userManager)
         {
             _transactionLogRepository = transactionLogRepository;
+            this.userManager = userManager;
         }
 
         private TransactionLog ConvertToBaseEntity(CreateTransactionLog createTransactionLog)
@@ -48,6 +51,24 @@ namespace FALOFinancialProofing.Services.TransactionLogsServices
             return false;
         }
 
+        public async Task<bool> CreateTransactionLogAsync(TransactionLog createTransactionLog)
+        {
+            try
+            {
+                if (createTransactionLog == null)
+                {
+                    throw new Exception("CreateTransactionLog is null");
+                }
+                await _transactionLogRepository.InsertAsync(createTransactionLog);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"CreateTransactionLog: {ex.Message}!");
+            }
+
+            return false;
+        }
         private void ConvertToBaseEntity(TransactionLog SourceTransactionLog, UpdateTransactionLog DesTransactionLog)
         {
             //SourceTransactionLog.SenderID = DesTransactionLog.SenderID;
@@ -57,6 +78,25 @@ namespace FALOFinancialProofing.Services.TransactionLogsServices
             SourceTransactionLog.CampaignId = DesTransactionLog.CampaignId;
         }
 
+        public async Task<TransactionLog> GetTransactionLogByCassoTransactionIdAsync(int id)
+        {
+            TransactionLog transactionLog = null!;
+            try
+            {
+                transactionLog = await _transactionLogRepository.Get(x => x.CassoTransactionId == id);
+                if (transactionLog == null)
+                {
+                    throw new Exception("TransactionLog not found");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetTransactionLogById: {ex.Message}");
+            }
+
+            return transactionLog;
+        }
         public async Task<TransactionLog> GetTransactionLogByIdAsync(int id)
         {
             TransactionLog transactionLog = null!;
@@ -76,7 +116,72 @@ namespace FALOFinancialProofing.Services.TransactionLogsServices
 
             return transactionLog;
         }
+        // lịch sử chuyển tiền vào chiến dịch
+        public async Task<List<UserTransactionHistory>> GetUserTransactionsByCampaignIdAsync(int campaignId)
+        {
+            List<UserTransactionHistory> userTransaction = null!;
+            try
+            {
+                userTransaction = await _transactionLogRepository.GetAll()
+                   .Where(u => u.CampaignId == campaignId)
+                   .Select(u => new UserTransactionHistory()
+                   {
+                       UserId = u.CreateQrCode.UserId,
+                       CreateQrCodeId = u.CreateQrCode.Id,
+                       IsPaid = u.CreateQrCode.IsPaid,
+                       Amount = u.Amount,
+                       CampaignId = u.CampaignId,
+                       CampaignName = u.Campaign.Title,
+                       Description = u.Description,
+                       TransactionDate = u.TransactionDate,
+                       tid = u.tid,
+                   }).ToListAsync();
+                if (userTransaction == null)
+                {
+                    throw new Exception("userTransaction not found");
+                }
 
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetUserTransactionsByCampaignIdAsync: {ex.Message}");
+            }
+
+            return userTransaction;
+        }
+
+        public async Task<List<UserTransactionHistory>> GetUserTransactionsByUserIdAsync(string userId)
+        {
+            List<UserTransactionHistory> userTransaction = null!;
+            try
+            {
+                userTransaction = await _transactionLogRepository.GetAll()
+                   .Where(u => u.CreateQrCode.UserId.Equals(userId))
+                   .Select(u => new UserTransactionHistory()
+                   {
+                       UserId = u.CreateQrCode.UserId,
+                       CreateQrCodeId = u.CreateQrCode.Id,
+                       IsPaid = u.CreateQrCode.IsPaid,
+                       Amount = u.Amount,
+                       CampaignId = u.CampaignId,
+                       CampaignName = u.Campaign.Title,
+                       Description = u.Description,
+                       TransactionDate = u.TransactionDate,
+                       tid = u.tid,
+                   }).ToListAsync();
+                if (userTransaction == null)
+                {
+                    throw new Exception("userTransaction not found");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetUserTransactionsByUserIdAsync: {ex.Message}");
+            }
+
+            return userTransaction;
+        }
         public async Task<IEnumerable<TransactionLog>> GetAllTransactionLogsAsync()
         {
             List<TransactionLog> data = null!;

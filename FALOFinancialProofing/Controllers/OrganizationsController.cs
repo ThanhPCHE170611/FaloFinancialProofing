@@ -1,7 +1,11 @@
-﻿using FALOFinancialProofing.Models;
+﻿using FALOFinancialProofing.DTOs.OrganizationDTO;
+using FALOFinancialProofing.Helpers;
+using FALOFinancialProofing.Models;
+using FALOFinancialProofing.Services.OrganizationMemberServices;
 using FALOFinancialProofing.Services.OrganizationServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -10,10 +14,12 @@ namespace FALOFinancialProofing.Controllers
     public class OrganizationsController : ControllerBase
     {
         private readonly IOrganizationService _organizationService;
+        private readonly IOrganizationMemberService _organizationMemberService;
 
-        public OrganizationsController(IOrganizationService organizationService)
+        public OrganizationsController(IOrganizationService organizationService, IOrganizationMemberService organizationMemberService)
         {
             _organizationService = organizationService;
+            _organizationMemberService = organizationMemberService;
         }
 
         // GET: api/Organizations
@@ -75,27 +81,41 @@ namespace FALOFinancialProofing.Controllers
         // POST: api/Organizations
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("CreateOrganization", Name = "CreateOrganization")]
-        public async Task<ActionResult<Organization>> PostOrganization([FromBody] Organization createOrganization)
+        public async Task<ActionResult> PostOrganization([FromBody] CreateOrganization createOrganization)
         {
-            var statusMessage = "";
+            StringBuilder statusMessage = new StringBuilder();
+            Organization createOrganizationResult = null!;
+            bool checkValid = false;
             try
             {
-                //var url = Url.RouteUrl("CreateOrganization");
-                if (!ModelState.IsValid)
+                checkValid = await _organizationService.ValidateCreateOrganizationAsync(createOrganization, statusMessage);
+                if (!checkValid)
                 {
-                    return BadRequest(ModelState);
+                    return Ok(new ApiResponse
+                    {
+                        Success = checkValid,
+                        Message = statusMessage.ToString()
+                    });
                 }
-                statusMessage = await _organizationService.CreateOrganizationAsync(createOrganization)
-                    != false ? "Create Organization Successfully!" : throw new Exception();
-
+                createOrganizationResult = await _organizationService.CreateOrganizationAsync(createOrganization, statusMessage);
+                await _organizationMemberService.CreateOrganizationMemberAsync(new OrganizationMember
+                {
+                    UserId = createOrganization.UserId,
+                    OrganizationId = createOrganizationResult.Id,
+                });
+                checkValid = true;
             }
             catch (Exception ex)
             {
-                statusMessage = "Create Organization Failed!";
+                statusMessage.Append(ex.Message);
                 await Console.Out.WriteLineAsync($"PostOrganization: {ex.Message}");
             }
 
-            return Content(statusMessage);
+            return Ok(new ApiResponse
+            {
+                Success = checkValid,
+                Message = statusMessage.ToString()
+            });
         }
 
         // DELETE: api/Organizations/5

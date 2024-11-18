@@ -22,6 +22,7 @@ namespace FALOFinancialProofing.Models
         public DateTime CreatedAt { get; set; }
         [StringLength(250)]
         public string? Feedback { get; set; }
+        public string Description { get; set; }
         public string StatusOfCampaign { get; set; }
         [StringLength(20)]
         public string Status { get; set; }

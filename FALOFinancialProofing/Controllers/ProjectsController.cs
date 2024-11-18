@@ -32,14 +32,14 @@ namespace FALOFinancialProofing.Controllers
         }
         //[RoleAttribute(AppRole.ProjectManagementBoard, AppRole.Admin)]
         [HttpGet("GetAllProjectInSystem")]
-        public async Task<IActionResult> GetAllProjectInSystem(string? status, bool? IsActive, int currentPage = IntConstant.PageNumberDefault)
+        public async Task<IActionResult> GetAllProjectInSystem(string? searchInput, string? status, bool? IsActive, int currentPage = IntConstant.PageNumberDefault)
         {
             List<ProjectInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
             filterPagingData.CurrentPage = currentPage;
             try
             {
-                data = await _projectService.GetAllProjectInSystemAsync();
+                data = await _projectService.GetAllProjectInSystemAsync(Request);
                 if (data == null || data.Count == 0)
                 {
                     return Ok(new ApiResponse()
@@ -48,6 +48,11 @@ namespace FALOFinancialProofing.Controllers
                         Message = "Get All Project By In System Failed!",
                         Data = filterPagingData
                     });
+                }
+                if (!string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = searchInput.Trim();
+                    data = data.FindAll(x => ($"{x.FirstName} {x.LastName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.ProjectName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
                 }
                 if (!string.IsNullOrEmpty(status))
                 {
@@ -74,14 +79,14 @@ namespace FALOFinancialProofing.Controllers
         }
         //[RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
         [HttpGet("GetAllProjectByUserId/{UserId}")]
-        public async Task<IActionResult> GetProjectsByUserIdAsync(string UserId, string? status, int currentPage = IntConstant.PageNumberDefault)
+        public async Task<IActionResult> GetProjectsByUserIdAsync(string? searchInput, string UserId, string? status, int currentPage = IntConstant.PageNumberDefault)
         {
             List<ProjectInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
             filterPagingData.CurrentPage = currentPage;
             try
             {
-                data = await _projectService.GetAllProjectsByUserIdAsync(UserId);
+                data = await _projectService.GetAllProjectsByUserIdAsync(UserId, Request);
                 if (data == null || data.Count == 0)
                 {
                     return Ok(new ApiResponse()
@@ -90,6 +95,11 @@ namespace FALOFinancialProofing.Controllers
                         Message = "Get All Project By UserId Failed!",
                         Data = filterPagingData
                     });
+                }
+                if (!string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = searchInput.Trim();
+                    data = data.FindAll(x => ($"{x.FirstName} {x.LastName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.ProjectName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
                 }
                 if (!string.IsNullOrEmpty(status))
                 {
@@ -114,7 +124,7 @@ namespace FALOFinancialProofing.Controllers
         [HttpGet("GetProjectDetailsById/{ProjectId}")]
         public async Task<IActionResult> GetProjectDetailsById(int ProjectId)
         {
-            var project = await _projectService.GetProjectDetailsByProjectId(ProjectId);
+            var project = await _projectService.GetProjectDetailsByProjectId(ProjectId, Request);
             if (project == null)
             {
                 return Ok(new
@@ -135,41 +145,36 @@ namespace FALOFinancialProofing.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
         [HttpPut("UpdateProject")]
-        public async Task<IActionResult> PutProject([FromBody] Project UpdateProject)
+        public async Task<IActionResult> PutProject([FromForm] UpdateProjectRequest updateProjectRequest)
         {
-            var statusMessage = "";
+            StringBuilder message = new StringBuilder();
+            bool checkValid = false;
             try
             {
-                if (!ModelState.IsValid)
+                checkValid = await _projectService.ValidateProjectUpdateAsync(updateProjectRequest, message);
+                if (!checkValid)
                 {
-                    return BadRequest(ModelState);
+                    return Ok(new ApiResponse()
+                    {
+                        Message = message.ToString(),
+                        Success = checkValid
+                    });
                 }
-                statusMessage = await _projectService.UpdateProjectAsync(UpdateProject) != false ? "Update Project Successfully!" : throw new Exception();
+                checkValid = await _projectService.UpdateProjectAsync(updateProjectRequest, message);
+                if (checkValid)
+                    message.Append("Update Project Successfully!");
             }
             catch (Exception ex)
             {
-                statusMessage = "Update Project Failed!";
-                await Console.Out.WriteLineAsync("PutProject: Error");
+                await Console.Out.WriteLineAsync($"PutProject: Error {ex.Message}");
             }
 
-            return Content(statusMessage);
+            return Ok(new ApiResponse()
+            {
+                Message = message.ToString(),
+                Success = checkValid
+            });
         }
-        #region TestData
-        //[HttpPost("CreateProject1", Name = "CreateProject1")]
-        //public async Task CreateProject()
-        //{
-        //    Project project = new Project()
-        //    {
-        //        CreatedBy = "09360c31-c34d-430c-a354-6bc3925e206d",
-        //        ProjectName = "Nguyen Duc Project",
-        //        DateOfCreation = DateTime.Now,
-        //        Description = "This is a project",
-        //        Status = "NotRunning",
-        //        OrganizationId = 1
-        //    };
-        //    var checkCreate = await _projectService.CreateProjectReturnEntityAsync(project);
-        //} 
-        #endregion
         // POST: api/Projects
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)] // mở nếu làm thật
@@ -207,7 +212,8 @@ namespace FALOFinancialProofing.Controllers
                     SenderId = createProject.CreatedBy,
                     Title = $"{checkProjectCreated.ProjectName}",
                     CreatedAt = DateTime.Now,
-                    Status = RequestStatus.Pending
+                    Status = RequestStatus.Pending,
+                    Description = $"{createProject.Description}",
                 };
                 var CreateProjectRequestCreated = await _createProjectRequestService.CreateCreateProjectRequestReturnEntityAsync(createProjectRequest);
                 if (CreateProjectRequestCreated == null)
@@ -282,8 +288,8 @@ namespace FALOFinancialProofing.Controllers
             List<ProjectInformation> data = null;
             try
             {
-                data = (await _projectService.GetAllProjectsAsync()).ToList();
-                data = data.Take(numOfElements).ToList();
+                //data = (await _projectService.GetAllProjectsAsync()).ToList();
+                data = await _projectService.GetAllProjectInSystemAsync(Request);
                 if (data == null || data.Count == 0)
                 {
                     return Ok(new ApiResponse()
@@ -305,6 +311,7 @@ namespace FALOFinancialProofing.Controllers
                 {
                     data = data.OrderByDescending(o => o.DateOfCreation).ToList();
                 }
+                data = data.Take(numOfElements).ToList();
 
             }
             catch (Exception ex)
@@ -318,5 +325,6 @@ namespace FALOFinancialProofing.Controllers
                 Data = data
             });
         }
+
     }
 }

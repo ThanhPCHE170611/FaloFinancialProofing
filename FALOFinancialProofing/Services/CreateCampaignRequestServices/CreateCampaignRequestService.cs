@@ -1,7 +1,8 @@
 ﻿using FALOFinancialProofing.DTOs.CreateCampaignFileDTO;
 using FALOFinancialProofing.DTOs.CreateCampaignRequestDTO;
 using FALOFinancialProofing.DTOs.CreateProjectFileDTO;
-using FALOFinancialProofing.DTOs.CreateProjectRequestDTO;
+using FALOFinancialProofing.DTOs.CreateCampaignRequestDTO;
+using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using Microsoft.EntityFrameworkCore;
@@ -157,6 +158,7 @@ namespace FALOFinancialProofing.Services.CreateCampaignRequestServices
                         CreatedAt = s.CreatedAt,
                         Feedback = s.Feedback,
                         Status = s.Status,
+                        Description = s.Description,
                         CreateCampaignFiles = s.CreateCampaignFiles.Select(f => new CreateCampaignFileInformation()
                         {
                             Id = f.Id,
@@ -181,6 +183,7 @@ namespace FALOFinancialProofing.Services.CreateCampaignRequestServices
             {
                 data = await _createCampaignRequestRepository.GetAll()
                     //.Where(pr => pr.Status.Equals(RequestStatus.Pending))
+                    .Where(pr => pr.SenderId.Equals(userId))
                     .Select(s => new CreateCampaignRequestInformation()
                     {
                         ProjectName = s.Campaign.Project.ProjectName,
@@ -194,6 +197,7 @@ namespace FALOFinancialProofing.Services.CreateCampaignRequestServices
                         CreatedAt = s.CreatedAt,
                         Feedback = s.Feedback,
                         Status = s.Status,
+                        Description = s.Description,
                         CreateCampaignFiles = s.CreateCampaignFiles.Select(f => new CreateCampaignFileInformation()
                         {
                             Id = f.Id,
@@ -231,6 +235,10 @@ namespace FALOFinancialProofing.Services.CreateCampaignRequestServices
                         CreatedAt = s.CreatedAt,
                         Feedback = s.Feedback,
                         Status = s.Status,
+                        Description = s.Description,
+                        EndDate = s.Campaign.EndDate,
+                        Address = s.Campaign.Address,
+                        FundTarget = s.Campaign.FundTarget,
                         CreateCampaignFiles = s.CreateCampaignFiles.Select(f => new CreateCampaignFileInformation()
                         {
                             Id = f.Id,
@@ -245,6 +253,49 @@ namespace FALOFinancialProofing.Services.CreateCampaignRequestServices
             }
 
             return data;
+        }
+
+        public async Task<bool> ValidateCreateCampaignRequestByUserIdAndRequestIdAsync(string userId, int CreateCampaignRequestId, StringBuilder message)
+        {
+            bool checkValidUser = false;
+            try
+            {
+                var request = await _createCampaignRequestRepository
+                     .Get(r => r.Id == CreateCampaignRequestId && userId.Equals(r.SenderId));
+                if (request == null)
+                {
+                    throw new Exception("Not Valid User To Cancel Request!");
+                }
+                if (!request.Status.Equals(RequestStatus.Pending, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new Exception("Can not Cancel, request is not pending!");
+                }
+                checkValidUser = true;
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"ValidateCreateCampaignRequestByUserIdAndRequestIdAsync: {ex.Message}");
+            }
+
+            return checkValidUser;
+        }
+
+        public async Task<bool> CancelCreateCampaignRequestAsync(string userId, int CreateCampaignRequestId)
+        {
+            bool result = false;
+            try
+            {
+                var createCampaignRequest = await _createCampaignRequestRepository.Get(CreateCampaignRequestId);
+                createCampaignRequest.Status = RequestStatus.Cancel;
+                result = await _createCampaignRequestRepository.UpdateAsync(createCampaignRequest);
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"CancelCreateCampaignRequestAsync: {ex.Message}");
+            }
+
+            return result;
         }
 
     }
