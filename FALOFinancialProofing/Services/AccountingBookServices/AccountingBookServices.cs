@@ -197,5 +197,38 @@ namespace FALOFinancialProofing.Services.AccountingBookServices
                 return accountingBooks;
             }
         }
+
+        public async Task<bool> DeleteAccountingBook(string fileName, StringBuilder message)
+        {
+            try
+            {
+                // Đường dẫn đầy đủ đến file trong server
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), Resource.AccountingBookFolderName, fileName);
+
+                // Kiểm tra xem file có tồn tại không
+                if (!System.IO.File.Exists(filePath))
+                {
+                    message.Append("Cannot find Accounting Book file in storage, please try again later!");
+                    return false;
+                }
+                var accountingBook = await repository.Get(x => x.FilePath.Equals(fileName));
+                if (accountingBook == null)
+                {
+                    message.Append("Cannot find Accounting Book file in database, please try again later!");
+                    return false;
+                }
+                // Xóa file
+                System.IO.File.Delete(filePath);
+                var canDelete = await repository.DeleteAsync(accountingBook.Id);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                message.Append("Cannot delete Accounting Book file, please try again later!");
+                return false;
+            }
+
+        }
     }
 }

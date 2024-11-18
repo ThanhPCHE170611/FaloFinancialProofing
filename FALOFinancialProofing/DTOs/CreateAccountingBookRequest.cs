@@ -1,10 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FALOFinancialProofing.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace FALOFinancialProofing.DTOs
 {
     public class CreateAccountingBookRequest
     {
-        [Required]
+        [Required, ZipFileValidate(ErrorMessage ="File extension must be .zip")]
         public IFormFile File { get; set; }
         [Required]
         public string CurrentRole { get; set;}
