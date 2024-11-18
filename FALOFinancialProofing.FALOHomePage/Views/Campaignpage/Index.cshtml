@@ -65,7 +65,7 @@
                         <div class="item shadow mb-30">
                             <h5 class="title">Chứng Thực</h5>
                             <ul class="category">
-                                <li><a href="@Url.Action("DownloadAccountingBooks", "Donation", new {id=campaignDetails.CampaignId})">Báo Cáo Tài Chính</a></li>
+                                <li><a <a href="javascript:void(0);" onclick="downloadAccountingBook(@campaignDetails.CampaignId)">Báo Cáo Tài Chính</a></li>
                                 <li><a href="@Url.Action("Index", "Donation", new {id=campaignDetails.BankId})">Sao Kê</a></li>
                                 <li><a href="@Url.Action("CampaignActivity", "Campaignpage", new {id=campaignDetails.BankId})">Hoạt Động</a></li>
                             </ul>
@@ -86,3 +86,39 @@
     </section>
     <!-- Blog single area end here -->
 </main>
+
+<script>
+    function downloadAccountingBook(campaignId) {
+        // First, make a request to get the file path from the API
+        const apiUrl = `https://localhost:7294/api/AccountingBook/getaccountingbookincampaign?campaignId=${campaignId}`;
+
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // If the API call is successful, use the file path to download the actual file
+                    const filePath = data.data?.filePath;
+
+                    if (!filePath) {
+                        alert('File không tồn tại');
+                        return;
+                    }
+
+                    const downloadUrl = `https://localhost:7294/api/AccountingBook/downloadaccountingbook/${filePath}`;
+
+                    // Create a temporary anchor element to trigger the download
+                    const a = document.createElement('a');
+                    a.href = downloadUrl;
+                    a.download = filePath; // Optional: use the file name as the download name
+                    a.click(); // Trigger the download
+                } else {
+                    // If the success flag is false, show the error message
+                    alert('Lỗi khi lấy dữ liệu: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Lỗi khi lấy dữ liệu:', error);
+                alert('Lỗi khi tải báo cáo tài chính');
+            });
+    }
+</script>

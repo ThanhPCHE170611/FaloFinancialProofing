@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using static FALOFinancialProofing.FALOHomePage.Models.AttachmentFileDTO;
 
 namespace FALOFinancialProofing.FALOHomePage.Controllers
 {
@@ -52,7 +53,7 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
             }
         }
 
-        public async Task<IActionResult> CampaignActivity(int? id)
+        public async Task<IActionResult> CampaignActivity(int? id, int page = 1)
         {
             if (id == null)
             {
@@ -65,20 +66,36 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
                     var client = _httpClientFactory.CreateClient();
 
                     // Make a GET request to the API
-                    var response = await client.GetStringAsync($"https://localhost:7294/api/Campaign/GetCampaignDetailsById/{id}");
+                    HttpResponseMessage response = await client.GetAsync($"https://localhost:7294/api/AttachmentFile/getallpaymentattachmentincampaignwithrequest/{id}?page={page}");
 
-                    var campaignDetails = JsonConvert.DeserializeObject<ApiResponseCampaignDetails>(response);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string jsonResponse = await response.Content.ReadAsStringAsync();
 
-                    ViewBag.campaignDetails = campaignDetails.Data;
+                        var attachmentFileResponse = JsonConvert.DeserializeObject<AttachmentFileResponse>(jsonResponse);
 
-                    return View();
+                        if (attachmentFileResponse != null && attachmentFileResponse.Success && attachmentFileResponse.Data != null && attachmentFileResponse.Data.Any())
+                        {
+                            ViewBag.Attachments = attachmentFileResponse.Data;
+                            ViewBag.Message = attachmentFileResponse.Message;
+                        }
+                        else
+                        {
+                            ViewBag.ErrorMessage = attachmentFileResponse?.Message ?? "Attachment files not found";
+                        }
+                    }
+                    else
+                    {
+                        // API call failed
+                        ViewBag.ErrorMessage = "Failed to fetch attachment files.";
+                    }
                 }
                 catch (Exception ex)
                 {
                     return RedirectToAction("Error404", "Error");
                 }
-
             }
+            return View();
         }
 
 

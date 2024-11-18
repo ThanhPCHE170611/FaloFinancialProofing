@@ -35,17 +35,20 @@
 <style>
     .dropdown {
         position: relative;
+        z-index: 9999;
         display: inline-block;
     }
 
     .dropdown-content {
         display: none;
-        position: absolute;
+        position: absolute; 
+        top: 100%; 
+        left: 0;
+        z-index: 9999;
         background-color: #f9f9f9;
         min-width: 160px;
         box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
         padding: 12px 16px;
-        z-index: 1;
     }
 
     .dropdown:hover .dropdown-content {
@@ -75,7 +78,7 @@
                 <div class="main-menu">
                     <nav>
                         <ul>
-                            <li><a href="@Url.Action("Index", "Homepage")">Về Chúng Tôi</a></li>
+                            <li><a href="@Url.Action("Index", "Homepage")">Home</a></li>
                             <li><a href="@Url.Action("ListPageRedirect", "Projectpage")">Dự Án</a></li>
                             <li><a href="@Url.Action("ListPageRedirect", "Campaignpage")">Chiến Dịch</a></li>
                         </ul>

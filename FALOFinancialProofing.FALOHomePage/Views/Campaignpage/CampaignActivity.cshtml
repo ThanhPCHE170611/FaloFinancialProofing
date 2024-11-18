@@ -1,7 +1,10 @@
 ﻿@page "/campaignActivity"
+@using static FALOFinancialProofing.FALOHomePage.Models.AttachmentFileDTO
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var attachments = ViewBag.Attachments as List<RequestWithAttachmentFileResult>;
+    var errorMessage = ViewBag.ErrorMessage as string;
 }
 
 <style>
@@ -17,36 +20,55 @@
 
 <div class="container">
     <h2>Hoạt Động</h2>
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger">
+            @errorMessage
+        </div>
+    }
 
-    <table class="table table-bordered table-hover" id="transactions-table">
+    else if (attachments != null && attachments.Any())
+    {
+        <div class="blog-single__right-item">
+            <div class="item shadow mb-30">
+                <h5 class="title">Search</h5>
+                <div class="serach-bar">
+                    <input type="text" placeholder="Search here">
+                    <button><i class="fa-regular fa-magnifying-glass"></i></button>
+                </div>
+            </div>
+        </div>
+    <table class="table table-bordered table-hover">
         <thead>
             <tr>
-                <th scope="col">Thời gian</th>
-                <th scope="col">Nội Dung Hoạt Động</th>
-                <th scope="col">Số Tiền</th>
-                <th scope="col">Chứng Từ</th>
+                <th scope="col">Thời Gian</th>
+                <th scope="col">Mô tả hoạt động</th>
+                <th scope="col">Số tiền</th>
+                <th scope="col">Người thực hiện</th>
+                <th scope="col">Chứng thực</th>
             </tr>
         </thead>
         <tbody>
-            @*            @foreach (var transaction in Model)
+            @foreach (var attachment in attachments)
             {
-            <tr>
-            <td scope="col">@transaction.Reference</td>
-            <td scope="col">@transaction.TransactionDateTime</td>
-            <td scope="col">@transaction.Amount</td>
-            <td scope="col">@transaction.Description</td>
-            <td scope="col">@transaction.CounterAccountNumber</td>
-            </tr>
+                <tr>
+                    <td scope="col">@attachment.CreateAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td scope="col">@attachment.Description</td>
+                    <td scope="col">@attachment.ExpectedMoney</td>
+                    <td scope="col">@attachment.CreateByName (@attachment.CreateByEmail)</td>
+                        @if (@attachment.AttachmentFilePath != null && @attachment.AttachmentFilePath !="")
+                        {
+                            <td scope="col"><a href="@attachment.AttachmentFilePath" target="_blank">Tải File</a></td>
+                        }
+                </tr>
             }
-            *@
-            <tr>
-                <td scope="col"></td>
-                <td scope="col"></td>
-                <td scope="col"></td>
-                <td scope="col"></td>
-            </tr>
         </tbody>
     </table>
+    }
+    else
+    {
+    <p>Hiện tại chiến dịch chưa có hoạt động</p>
+    }
 </div>
 
 
