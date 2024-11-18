@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "CampaignCreate";
 }
 <!DOCTYPE html>
@@ -11,10 +10,8 @@
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
     <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
-    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <style>
         .form-control {
             border: 1px solid #ced4da;
@@ -25,11 +22,6 @@
             display: flex;
             justify-content: center;
             margin-top: 20px;
-        }
-
-        #imagePreview img {
-            width: 100%;
-            height: auto;
         }
 
         #fileList {
@@ -46,64 +38,81 @@
                 list-style: none;
             }
 
+        #imagePreview img {
+            width: 100%;
+            height: auto;
+        }
     </style>
 </head>
 
 <body>
     <div class="container-fluid py-4">
-        <form>
-            <div class="row">
-                <div class="col-12">
-                    <div class="card my-4">
-                        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                            <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
-                                <h6 class="text-white text-capitalize ps-3 mb-0">Create Campaign</h6>
-                            </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Create Campaign Registration Request</h6>
                         </div>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <label for="campaignName" class="form-label">Campaign Name</label>
-                                <input type="text" class="form-control" id="campaignName" placeholder="Enter campaign name">
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="location" class="form-label">Location</label>
-                                <textarea class="form-control" id="location" rows="2" placeholder="Enter campaign location"></textarea>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="totalAmount" class="form-label">Fund Target</label>
-                                <input type="number" class="form-control" id="totalAmount" placeholder="Enter total amount" min="0" step="0.01">
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="endDate" class="form-label">Expected End Date</label>
-                                <input type="date" class="form-control" id="endDate">
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="projectDescription" class="form-label">Campaign Description</label>
-                                <div id="editor-container" style="height: 200px;"></div>
-                            </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="campaignName" class="form-label">Campaign Name</label>
+                            <input type="text" class="form-control" id="campaignName" placeholder="Enter campaign name">
                         </div>
 
                         <div class="mb-3">
-                            <label for="attachments" class="form-label">File Attachments</label>
-                            <input type="file" class="form-control" id="attachments" multiple>
-                            <ul id="fileList"></ul>
+                            <label for="location" class="form-label">Location</label>
+                            <textarea class="form-control" id="location" rows="2" placeholder="Enter campaign location"></textarea>
                         </div>
 
+                        <div class="mb-3">
+                            <label for="totalAmount" class="form-label">Fund Target</label>
+                            <input type="number" class="form-control" id="totalAmount" placeholder="Enter total amount" min="0" step="0.01">
+                        </div>
 
-                        <div id="save-btn">
-                            <button class="btn btn-warning btn-lg" style="margin-left:10px">Create</button>
-                            <div>
-                                <a href="/Project/ProjectManagement" class="btn btn-success btn-lg" style="margin-left:10px">Cancel</a>
-                            </div>
+                        <div class="mb-3">
+                            <label for="endDate" class="form-label">Expected End Date</label>
+                            <input type="date" class="form-control" id="endDate">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="projectDescription" class="form-label">Campaign Description</label>
+                            <div id="editor-container" style="height: 200px;"></div>
                         </div>
                     </div>
                 </div>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>File Include</h5>
+                    </div>
+                    <div class="mb-3">
+                        <label for="attachments" class="form-label">Attachments</label>
+                        <input type="file" class="form-control" id="attachments" multiple>
+                        <ul id="fileList">
+                        </ul>
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Campaign Picture</h5>
+                    </div>
+                    <div class="card-body">
+                        <button class="btn btn-primary mb-3" onclick="document.getElementById('projectImages').click()">Choose file</button>
+                        <input type="file" id="projectImages" class="form-control d-none" accept="image/*" multiple>
+                        <div id="imagePreview" class="mt-3 row"></div>
+                    </div>
+                </div>
+                <div id="save-btn">
+                    <button class="btn btn-warning btn-lg" style="margin-left:10px">Create</button>
+                    <div>
+                        <a href="/Project/ProjectManagement" class="btn btn-success btn-lg" style="margin-left:10px">Cancel</a>
+                    </div>
+                </div>
             </div>
-        </form>
+        </div>
+
     </div>
 
 
@@ -113,6 +122,10 @@
 
 <script src="../assets/js/core/popper.min.js"></script>
 <script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
 <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
@@ -142,6 +155,24 @@
         const seconds = String(date.getSeconds()).padStart(2, '0');
         return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
     }
+    document.getElementById('projectImages').addEventListener('change', function(event) {
+      const imagePreview = document.getElementById('imagePreview');
+      imagePreview.innerHTML = '';
+      const files = event.target.files;
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const colDiv = document.createElement('div');
+          colDiv.classList.add('col-md-4', 'mb-3');
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.classList.add('img-fluid', 'rounded');
+          colDiv.appendChild(img);
+          imagePreview.appendChild(colDiv);
+        }
+        reader.readAsDataURL(file);
+      });
+    });
     $(document).ready(function () {
         $('#save-btn button').on('click', function (e) {
             e.preventDefault();
@@ -155,7 +186,6 @@
             const campaignName = $('#campaignName').val();
             const location = $('#location').val();
             const totalAmount = $('#totalAmount').val();
-            // const bankAccountNumber = $('#realtimeAmount').val();
             let endDate = $('#endDate').val();
             const description = quill.getText();;
             const files = $('#attachments')[0].files;
@@ -185,12 +215,16 @@
             formData.append('Address', location);
             formData.append('ProjectId', projectId);
             formData.append('FundTarget', totalAmount);
-            // formData.append('BankAccountNumber', bankAccountNumber);
             formData.append('EndDate', endDate);
             formData.append('Description', description);
             formData.append('CreateBy', userId);
             formData.append('IsActive', false);
             formData.append('DateOfCreation', dateTime);
+
+            var logoFile = $('#projectImages')[0].files[0];
+            if (logoFile) {
+                formData.append('LogoFile', logoFile);
+            }
 
             Array.from(files).forEach(file => {
                 formData.append('FormFiles', file);
