@@ -377,39 +377,60 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 {
                     throw new Exception($"Campaign not found with id = {campaignId}.");
                 }
+                if (!campaign.IsActive)
+                {
+                    throw new Exception($"Campaign is not active.");
+                }
                 // chỉ người tạo hoặc pmb mới có quyền add người vào chiến dịch
                 //var campaignMember = await cmRepository.Get(cm=>cm.CampaignId==campaignId&&pmUserId.Equals(cm.))
                 var pmUser = await campaignRepository.Get(c => c.Id == campaignId && c.CreateBy.Equals(pmUserId));
                 // kiểm tra thằng add này có phải là pmb không
-                var checkPMB = await authServices.CheckUserInRoleId(pmUserId, AppRole.ProjectManagementBoard, message);
-                var checkAdmin = await authServices.CheckUserInRoleId(pmUserId, AppRole.Admin, message);
+                var checkPMB = await authServices.CheckUserInRoleId(pmUserId, AppRole.ProjectManagementBoard, new StringBuilder());
+                var checkAdmin = await authServices.CheckUserInRoleId(pmUserId, AppRole.Admin, new StringBuilder());
                 // người dùng không tạo ra chiến dịch, hoặc tạo ra nhưng bị vô hiệu hóa hoặc không phải là pmb hoặc admin
                 if ((pmUser == null && !checkPMB && !checkAdmin) || (pmUser != null && !pmUser.IsActive))
                 {
                     throw new Exception("You do not have permission to add members to this campaign.");
                 }
-                var DbData = await cmRepository.GetAll()
+                var DbData = await cmRepository.GetAll().Include(cm => cm.IdentityRole)
                     .Where(x => x.CampaignId == campaignId)
-                    .ToListAsync();
-                //var isExist = DbData.Any(cm => createManyCampaignMemberDTOs.Any(cmd => cmd.UserId == cm.UserId));
+                    .ToListAsync(); //**
+                                    //var isExist = DbData.Any(cm => createManyCampaignMemberDTOs.Any(cmd => cmd.UserId == cm.UserId));
                 var checkExistFailData = false;
                 foreach (var item in createManyCampaignMemberDTOs)
                 {
-                    var checkUserInRole = await authServices.CheckUserInRoleId(item.UserId, item.RoleId, message);
-                    var isExist = DbData.Any(cm => cm.UserId == item.UserId);
-                    if (isExist || !checkUserInRole)
+                    // phải check ở đây vì kiểm tra trong từng lần add
+                    var checkExistActiveAccounting = DbData.Any(cm => cm.IdentityRole.Name.Equals(AppRole.Accounting) && cm.IsActive);
+                    var checkUserInRole = await authServices.CheckUserInRoleId(item.UserId, item.RoleId, new StringBuilder());
+                    if (!checkUserInRole)
                     {
                         checkExistFailData = true;
+                        continue;
                     }
-                    else
+                    var isExist = DbData.Any(cm => cm.UserId.Equals(item.UserId));
+                    if (isExist)
                     {
-                        successDatas.Add(item);
+                        checkExistFailData = true;
+                        continue;
                     }
-
+                    // nếu trong campaigin có accountting rồi và ở trạng thái is active thì không được add accountting nữa
+                    bool checkIsAccountingRole = await authServices.CheckIsAccountingRole(item.RoleId, new StringBuilder());
+                    if (checkExistActiveAccounting && checkIsAccountingRole)
+                    {
+                        checkExistFailData = true;
+                        continue;
+                    }
+                    bool checkNotAllowRole = await authServices.CheckIsDonorAdminPmbPmRole(item.RoleId, new StringBuilder());
+                    if (checkNotAllowRole)
+                    {
+                        checkExistFailData = true;
+                        continue;
+                    }
+                    successDatas.Add(item);
                 }
                 if (checkExistFailData)
                 {
-                    message.Append($"Users already exist in Campaign with Id = {campaignId}.");
+                    message.Append($"Not Valid User(s) Occurs! ");
                 }
             }
             catch (Exception ex)

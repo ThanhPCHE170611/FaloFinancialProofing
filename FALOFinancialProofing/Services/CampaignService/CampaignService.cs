@@ -319,7 +319,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                     EndDate = createCampaignClientRequest.EndDate,
                     Address = createCampaignClientRequest.Address,
                     IsActive = false,
-                    BankId = createCampaignClientRequest.BankId,
+                    Description = createCampaignClientRequest.Description,
                 };
             }
             catch (Exception ex)

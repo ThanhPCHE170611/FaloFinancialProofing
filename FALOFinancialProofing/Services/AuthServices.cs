@@ -118,6 +118,10 @@ namespace FALOFinancialProofing.Services
                     throw new Exception("User not found");
                 }
                 var role = await roleManager.FindByIdAsync(userRoleID);
+                if (role == null)
+                {
+                    throw new Exception("Role not found");
+                }
                 var isInRole = await userManager.IsInRoleAsync(user, role.Name);
                 if (!isInRole)
                 {
@@ -133,6 +137,40 @@ namespace FALOFinancialProofing.Services
             return checkValid;
         }
 
+        public async Task<bool> CheckIsAccountingRole(string userRoleID, StringBuilder message)
+        {
+            bool checkValid = false;
+            try
+            {
+                var role = await roleManager.FindByIdAsync(userRoleID);
+                if (role != null && role.Name.Equals(AppRole.Accounting))
+                    checkValid = true;
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"CheckIsAccountingRole: {ex.Message}");
+            }
+            return checkValid;
+        }
+
+        public async Task<bool> CheckIsDonorAdminPmbPmRole(string userRoleID, StringBuilder message)
+        {
+            bool checkValid = false;
+            try
+            {
+                var role = await roleManager.FindByIdAsync(userRoleID);
+                if (role != null && (role.Name.Equals(AppRole.ProjectManagementBoard) || role.Name.Equals(AppRole.Admin) || role.Name.Equals(AppRole.ProjectManager)))
+                    checkValid = true;
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"CheckIsAccountingRole: {ex.Message}");
+            }
+            return checkValid;
+        }
+
         public async Task<bool> CheckUserInDonorRole(string userId, string userRoleID, StringBuilder message)
         {
             bool checkValid = false;
@@ -144,6 +182,10 @@ namespace FALOFinancialProofing.Services
                     throw new Exception("User not found");
                 }
                 var role = await roleManager.FindByIdAsync(userRoleID);
+                if (role == null)
+                {
+                    throw new Exception("Role not found");
+                }
                 var isInRole = await userManager.IsInRoleAsync(user, role.Name);
                 if (!isInRole)
                 {

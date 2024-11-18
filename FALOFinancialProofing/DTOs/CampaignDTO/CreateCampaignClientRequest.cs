@@ -21,7 +21,7 @@ namespace FALOFinancialProofing.DTOs.CampaignDTO
         public DateTime? EndDate { get; set; }
         public string? Address { get; set; }
         public List<IFormFile>? FormFiles { get; set; }
-        public int? BankId { get; set; }
+        //public int? BankId { get; set; }
 
     }
 }
