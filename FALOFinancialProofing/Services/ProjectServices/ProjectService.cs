@@ -176,7 +176,7 @@ namespace FALOFinancialProofing.Services.ProjectServices
             List<ProjectInformation> data = null!;
             try
             {
-                data = await _projectRepository.GetAll().Where(p => p.CreatedBy.Equals(UserId))
+                data = await _projectRepository.GetAll().Where(p => p.CreatedBy.Equals(UserId) && p.Status != null && !p.Status.Equals(RequestStatus.Rejected))
                     .Select(p => new ProjectInformation()
                     {
                         id = p.Id,
@@ -208,7 +208,7 @@ namespace FALOFinancialProofing.Services.ProjectServices
             try
             {
                 data = await _projectRepository.GetAll()
-                      .Where(p => p.Status != null)
+                      .Where(p => p.Status != null && !p.Status.Equals(RequestStatus.Rejected))
                     .Select(p => new ProjectInformation()
                     {
                         id = p.Id,
