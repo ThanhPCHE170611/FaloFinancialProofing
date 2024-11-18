@@ -74,9 +74,9 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
 
                         var attachmentFileResponse = JsonConvert.DeserializeObject<AttachmentFileResponse>(jsonResponse);
 
-                        if (attachmentFileResponse != null && attachmentFileResponse.Success && attachmentFileResponse.Data != null && attachmentFileResponse.Data.Any())
+                        if (attachmentFileResponse != null && attachmentFileResponse.Success && attachmentFileResponse.Data != null && attachmentFileResponse.Data.Data.Any())
                         {
-                            ViewBag.Attachments = attachmentFileResponse.Data;
+                            ViewBag.Attachments = attachmentFileResponse.Data.Data;
                             ViewBag.Message = attachmentFileResponse.Message;
                         }
                         else

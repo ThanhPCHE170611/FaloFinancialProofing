@@ -176,7 +176,7 @@ namespace FALOFinancialProofing.Controllers
             }
 
             var filteredAttachmentFiles = attachmentFiles.AsEnumerable();
-            if (String.IsNullOrEmpty(name))
+            if (!String.IsNullOrEmpty(name))
             {
                 filteredAttachmentFiles = filteredAttachmentFiles
                     .Where(x => x.AttachmentFilePath != null && x.AttachmentFilePath.ToLower().Contains(name.ToLower()));

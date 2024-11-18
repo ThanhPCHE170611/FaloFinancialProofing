@@ -67,7 +67,7 @@
                             <ul class="category">
                                 <li><a <a href="javascript:void(0);" onclick="downloadAccountingBook(@campaignDetails.CampaignId)">Báo Cáo Tài Chính</a></li>
                                 <li><a href="@Url.Action("Index", "Donation", new {id=campaignDetails.BankId})">Sao Kê</a></li>
-                                <li><a href="@Url.Action("CampaignActivity", "Campaignpage", new {id=campaignDetails.BankId})">Hoạt Động</a></li>
+                                <li><a href="@Url.Action("CampaignActivity", "Campaignpage", new {id=campaignDetails.CampaignId})">Hoạt Động</a></li>
                             </ul>
                         </div>
                         @if (campaignDetails.UpdateLog != null && campaignDetails.UpdateLog!="")

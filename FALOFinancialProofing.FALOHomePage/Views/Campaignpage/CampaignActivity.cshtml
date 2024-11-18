@@ -3,7 +3,7 @@
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var attachments = ViewBag.Attachments as List<RequestWithAttachmentFileResult>;
+    var attachments = ViewBag.Attachments as List<AttachmentFile>;
     var errorMessage = ViewBag.ErrorMessage as string;
 }
 
@@ -58,7 +58,9 @@
                     <td scope="col">@attachment.CreateByName (@attachment.CreateByEmail)</td>
                         @if (@attachment.AttachmentFilePath != null && @attachment.AttachmentFilePath !="")
                         {
-                            <td scope="col"><a href="@attachment.AttachmentFilePath" target="_blank">Tải File</a></td>
+                            <td scope="col"><a href="@attachment.AttachmentFilePath" target="_blank">@attachment.AttachmentFilePath</a></td>
+                        }else{
+                            <td scope="col" class="text-danger">Thiếu</td>
                         }
                 </tr>
             }
