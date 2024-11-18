@@ -28,31 +28,18 @@
             <form id="loginForm">
                 <div class="mb-3">
                     <label for="username" class="form-label">User Name</label>
-                    <input type="text" class="form-control" id="username" placeholder="Enter your email" required>
+                    <input type="text" class="form-control" id="username" placeholder="Enter your username" required>
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
                     <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
                 </div>
-                @*  <div class="mb-3">
-                <label for="role" class="form-label">Select Role</label>
-                <select class="form-select" id="role" required>
-                <option value="" disabled selected>Select your role</option>
-                <option value="admin">Team Leader</option>
-                <option value="user">Accountant</option>
-                <option value="guest">Project Manager</option>
-                <option value="guest">Project Management Board</option>
-                </select>
-                </div> *@
+
                 <div class="d-grid">
                     <button type="submit" class="btn btn-primary">Login</button>
                 </div>
                 <div class="text-center mt-3">
                     <hr>
-                    @* <button type="submit" class="btn btn-danger btn-block" onclick="alert('Login with Google')">
-                    <i class="fab fa-google"></i> Login with Google
-                    </button> *@
-
                     <a asp-area="" asp-controller="Authentication" asp-action="LoginGoogle" asp-route-GoogleClick="true" class="btn btn-danger btn-block"><i class="fab fa-google"></i> Login with Google</a>
                 </div>
                 <div class="text-center mt-3">
