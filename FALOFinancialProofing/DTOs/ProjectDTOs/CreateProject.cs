@@ -12,12 +12,14 @@ namespace FALOFinancialProofing.DTOs.ProjectDTOs
         [StringLength(100, MinimumLength = 8, ErrorMessage = "Title must be at least 8 and max 100 characters")]
         public string ProjectName { get; set; }
         [Required]
-        [StringLength(500, MinimumLength = 8, ErrorMessage = "Title must be at least 8 and max 500 characters")]
+        [MinLength(8, ErrorMessage = "Description must be at least 8 characters")]
         public string Description { get; set; }
         // check if the OrganizationId is valid (exist),
         public int OrganizationId { get; set; }
         // tệp đính kèm
         //[Required(ErrorMessage = "Please select a file.")]
         public List<IFormFile>? FormFiles { get; set; }
+
+        public IFormFile? LogoFile { get; set; }
     }
 }

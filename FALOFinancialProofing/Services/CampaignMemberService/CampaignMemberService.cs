@@ -5,6 +5,7 @@ using FALOFinancialProofing.DTOs.RoleDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
+using FALOFinancialProofing.Services.CampaignService;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Text;
@@ -16,11 +17,13 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
         private readonly IRepository<CampaignMember, int> cmRepository;
         private readonly IRepository<Campaign, int> campaignRepository;
         private readonly AuthServices authServices;
-        public CampaignMemberService(IRepository<CampaignMember, int> _cmRepository, IRepository<Campaign, int> campaignRepository, AuthServices authServices)
+        private readonly ICampaignService campaignService;
+        public CampaignMemberService(IRepository<CampaignMember, int> _cmRepository, IRepository<Campaign, int> campaignRepository, AuthServices authServices, ICampaignService campaignService)
         {
             cmRepository = _cmRepository;
             this.campaignRepository = campaignRepository;
             this.authServices = authServices;
+            this.campaignService = campaignService;
         }
 
         public async Task<CampaignMember?> CreateCampaignMemberAsync(CreateCampaignMemberDTO createCampaignMemberDTO)
@@ -88,6 +91,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                         CampaignTitle = cm.Campaign.Title,
                         Debt = cm.Debt,
                         IsActive = cm.IsActive,
+                        Email = cm.User.Email,
                         roleInformation = new RoleInformation()
                         {
                             RoleId = cm.RoleId,
@@ -121,6 +125,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                     FundTarget = cm.Campaign.FundTarget,
                     Status = cm.Campaign.Status,
                     IsActive = cm.IsActive,
+                    Email = cm.User.Email,
                     roleInformation = new RoleInformation()
                     {
                         RoleId = cm.RoleId,
@@ -156,6 +161,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                         IsActive = cm.IsActive,
                         FundTarget = cm.Campaign.FundTarget,
                         ProjectName = cm.Campaign.Project.ProjectName,
+                        Email = cm.User.Email,
                         roleInformation = new RoleInformation()
                         {
                             RoleId = cm.RoleId,
@@ -187,6 +193,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                         CampaignTitle = cm.Campaign.Title,
                         Debt = cm.Debt,
                         IsActive = cm.IsActive,
+                        Email = cm.User.Email,
                         roleInformation = new RoleInformation()
                         {
                             RoleId = cm.RoleId,
@@ -223,6 +230,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                         CampaignTitle = cm.Campaign.Title,
                         Debt = cm.Debt,
                         IsActive = cm.IsActive,
+                        Email = cm.User.Email,
                         roleInformation = new RoleInformation()
                         {
                             RoleId = cm.RoleId,
@@ -262,6 +270,13 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 if (existingCampaignMember.Debt != 0)
                 {
                     throw new Exception("Cannot deactivate CampaignMember with debt greater than 0.");
+                }
+                var campaignOwner = await campaignService.GetCampaignByUserIdAndCampaignIdAsync(updateCampaignMemberStatusDTO.PmUserId, updateCampaignMemberStatusDTO.CampaignId);
+                bool checkAdmin = await authServices.CheckUserInRole(updateCampaignMemberStatusDTO.PmUserId, AppRole.Admin, new StringBuilder());
+                bool checkPMB = await authServices.CheckUserInRole(updateCampaignMemberStatusDTO.PmUserId, AppRole.ProjectManagementBoard, new StringBuilder());
+                if ((campaignOwner == null && !checkPMB && !checkAdmin) || (campaignOwner != null && !campaignOwner.IsActive))
+                {
+                    throw new Exception("You don't have permission to update campaign!");
                 }
                 UpdateCampaignMemberStatusDTOToEntity(existingCampaignMember, updateCampaignMemberStatusDTO);
 
@@ -369,7 +384,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 var checkPMB = await authServices.CheckUserInRoleId(pmUserId, AppRole.ProjectManagementBoard, message);
                 var checkAdmin = await authServices.CheckUserInRoleId(pmUserId, AppRole.Admin, message);
                 // người dùng không tạo ra chiến dịch, hoặc tạo ra nhưng bị vô hiệu hóa hoặc không phải là pmb hoặc admin
-                if ((pmUser == null && !checkPMB && !checkAdmin) || !pmUser.IsActive)
+                if ((pmUser == null && !checkPMB && !checkAdmin) || (pmUser != null && !pmUser.IsActive))
                 {
                     throw new Exception("You do not have permission to add members to this campaign.");
                 }

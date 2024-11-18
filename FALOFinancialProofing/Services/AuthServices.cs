@@ -265,9 +265,8 @@ namespace FALOFinancialProofing.Services
 
         public async Task<List<UserInformation>> GetUserNotInCampaignById(int CampaignId)
         {
-
-            var Users = await userManager.Users.Where(u => !u.CampaignMembers.Any(cm => cm.CampaignId == CampaignId) && !u.UserRoles.Any(ur => ur.RoleId == AppRole.DonorRoleId)).ToListAsync();
-
+            //var Users = await userManager.Users.Where(u => !u.CampaignMembers.Any(cm => cm.CampaignId == CampaignId) && !u.UserRoles.Any(ur => ur.RoleId == AppRole.DonorRoleId)).ToListAsync();
+            var Users = await userManager.Users.Where(u => !u.CampaignMembers.Any(cm => cm.CampaignId == CampaignId)).ToListAsync();
             List<UserInformation> data = new List<UserInformation>();
             try
             {
@@ -282,6 +281,8 @@ namespace FALOFinancialProofing.Services
 
                     foreach (var roleName in roles)
                     {
+                        if (roleName.Equals(AppRole.Donor) || roleName.Equals(AppRole.ProjectManager) || roleName.Equals(AppRole.ProjectManagementBoard) || roleName.Equals(AppRole.Admin))
+                            continue;
                         var role = await roleManager.FindByNameAsync(roleName);
                         if (role != null)
                         {
@@ -351,6 +352,39 @@ namespace FALOFinancialProofing.Services
             {
                 //var    users = await userManager.Users.ToListAsync();
                 data = await userManager.Users.Select(u => new UserInformation_Admin()
+                {
+                    Id = u.Id,
+                    Email = u.Email,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    BirthDate = u.BirthDate,
+                    Roles = u.UserRoles.Select(ur => new RoleInformation
+                    {
+                        RoleId = ur.RoleId,
+                        RoleName = roleManager.Roles.FirstOrDefault(r => r.Id == ur.RoleId).Name
+                    }).ToList(),
+                    SocialNetworkRequests = u.SocialNetworks.Select(snr => new SocialNetworkRequest
+                    {
+                        Id = snr.Id,
+                        UserId = snr.UserId,
+                        SocialNetworksLink = snr.SocialNetworksLink,
+                    }).ToList()
+                }).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAccountList: {ex.Message}");
+            }
+
+            return data;
+        }
+
+        public async Task<List<UserInformation_Admin>> GetPMBAccountList()
+        {
+            var data = new List<UserInformation_Admin>();
+            try
+            {
+                data = await userManager.Users.Where(u => u.UserRoles.Any(ur => ur.RoleId.Equals("205d4496-4ac8-40d9-84b9-e09e1ada7a49"))).Select(u => new UserInformation_Admin()
                 {
                     Id = u.Id,
                     Email = u.Email,
@@ -677,7 +711,7 @@ Click vào link này để đặt lại mật khẩu: {resetPasswordLink}";
                 message.Append(ex.Message);
                 await Console.Out.WriteLineAsync($"ValidateResetPassword: {ex.Message}");
             }
-            
+
             return IsValid;
         }
 
@@ -752,8 +786,8 @@ Click vào link này để đặt lại mật khẩu: {resetPasswordLink}";
                 {
                     throw new Exception("User not found");
                 }
-                long MaxFileSize = 5 * 1024 * 1024;
-                if (updateUserProfileRequest.LogoFile != null && updateUserProfileRequest.LogoFile.Length > MaxFileSize)
+                //long MaxFileSize = 5 * 1024 * 1024;
+                if (updateUserProfileRequest.LogoFile != null && updateUserProfileRequest.LogoFile.Length > FileHelper.UserImageMaxFileSize)
                 {
                     throw new Exception("Logo is too large");
                 }
@@ -789,7 +823,7 @@ Click vào link này để đặt lại mật khẩu: {resetPasswordLink}";
                         Address = u.Address,
                         WorkPlace = u.WorkPlace,
                         Bio = u.Bio,
-                        Image = UrlHelper.GetImageUrl(request, u.Image),
+                        Image = UrlHelper.GetImageUrl(request, u.Image, FolderImage.UserImageUpload),
                         Education = u.Education,
                         Skill = u.Skill,
                         Hobby = u.Hobby,
@@ -987,7 +1021,7 @@ Click vào link này để đặt lại mật khẩu: {resetPasswordLink}";
                     Email = userInfo.Email,
                     UserName = userInfo.Email,
                     TwoFactorEnabled = true,
-                    Gender = userInfo.Gender != null && userInfo.Gender.Equals("Male", StringComparison.OrdinalIgnoreCase) ? true : false,
+                    Gender = userInfo.Gender != null ? false : true,
                     Image = userInfo.Picture,
                 };
                 var result = await userManager.CreateAsync(newUser);
