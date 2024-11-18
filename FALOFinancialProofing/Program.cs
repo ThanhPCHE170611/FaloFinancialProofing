@@ -38,6 +38,23 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using FALOFinancialProofing.Services.RequestFormServices;
+using FALOFinancialProofing.Services.AttachmentFIleServices;
+using FALOFinancialProofing.Services.ApproveProcessServices;
+using FALOFinancialProofing.Services.VoucherServices;
+using Example;
+using Microsoft.AspNetCore.Http.Features;
+using FALOFinancialProofing.Services.OrganizationServices;
+using FALOFinancialProofing.Services.CreateProjectRequestServices;
+using FALOFinancialProofing.Services.CreateProjectFileServices;
+using FALOFinancialProofing.Services.CreateCampaignFileServices;
+using FALOFinancialProofing.Services.CreateCampaignRequestServices;
+using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices;
+using FALOFinancialProofing.Services.ProjectServices;
+using FALOFinancialProofing.Services.CampaignService;
+using FALOFinancialProofing.Services.CampaignMemberService;
+using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestHistoryService;
+using FALOFinancialProofing.Services.DebManagementServices;
 
 namespace FALOFinancialProofing
 {
@@ -82,6 +99,7 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped<IOrganizationMemberService, OrganizationMemberService>();
             builder.Services.AddScoped<ICreateProjectRequestApproveHistoryService, CreateProjectRequestApproveHistoryService>();
             builder.Services.AddScoped<ICampaignRequestApproveHistoryService, CampaignRequestApproveHistoryService>();
+            builder.Services.AddScoped<IDebManagementServices, DebManagementServices>();
             builder.Services.AddHttpClient("MyHttpClient", client =>
             {
                 //client.DefaultRequestHeaders.Add("Accept", "application/json");
@@ -89,10 +107,6 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped(typeof(BankService1));
             builder.Services.AddScoped(typeof(WebHookService));
             builder.Services.AddDistributedMemoryCache(); // Sử dụng bộ nhớ trong để lưu trữ session
-            builder.Services.Configure<FormOptions>(options =>
-            {
-                options.MultipartBodyLengthLimit = 10485760; // Giới hạn kích thước tệp là 10 MB
-            });
             builder.Services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(30); // Thiết lập thời gian timeout cho session
@@ -107,10 +121,10 @@ namespace FALOFinancialProofing
 
             //builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddControllers();
-            //builder.Services.Configure<FormOptions>(options =>
-            //{
-            //    options.MultipartBodyLengthLimit = 102400; // Giới hạn 100kb chẳng hạn
-            //});
+            builder.Services.Configure<FormOptions>(options =>
+            {
+                options.MultipartBodyLengthLimit = 52428800; // Giới hạn 50Mb chẳng hạn
+            });
             builder.Services.AddSwaggerGen(c =>
             {
                 c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
