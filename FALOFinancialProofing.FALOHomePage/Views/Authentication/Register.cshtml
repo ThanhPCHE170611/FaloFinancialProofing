@@ -8,7 +8,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register Page</title>
+    <link rel="shortcut icon" href="~/images/favicon.png">
+    <title>Trang Đăng Ký</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -27,35 +28,35 @@
             <h3 class="text-center mb-4">Register</h3>
             <form id="registerForm">
                 <div class="mb-3">
-                    <label for="firstname" class="form-label">First Name</label>
-                    <input type="text" class="form-control" id="firstname" placeholder="Enter your first name" required>
+                    <label for="firstname" class="form-label">Tên</label>
+                    <input type="text" class="form-control" id="firstname" placeholder="Hãy nhập tên của bạn" required>
                 </div>
                 <div class="mb-3">
-                    <label for="lastname" class="form-label">Last Name</label>
-                    <input type="text" class="form-control" id="lastname" placeholder="Enter your last name" required>
+                    <label for="lastname" class="form-label">Họ</label>
+                    <input type="text" class="form-control" id="lastname" placeholder="Hãy nhập họ của bạn" required>
                 </div>
                 <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" placeholder="Enter your username" required>
+                    <label for="username" class="form-label">Tên người dùng</label>
+                    <input type="text" class="form-control" id="username" placeholder="Hãy nhập tên người dùng" required>
                 </div>
                 <div class="mb-3">
-                    <label for="email" class="form-label">Email address</label>
-                    <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" placeholder="Hãy nhập địa chỉ email" required>
                 </div>
                 <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                    <label for="password" class="form-label">Mật Khẩu</label>
+                    <input type="password" class="form-control" id="password" placeholder="Hãy nhập mật khẩu" required>
                 </div>
                 <div class="mb-3">
-                    <label for="confirmPassword" class="form-label">Confirm Password</label>
-                    <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm your password" required>
+                    <label for="confirmPassword" class="form-label">Xác nhận mật khẩu</label>
+                    <input type="password" class="form-control" id="confirmPassword" placeholder="Hãy nhập lại mật khẩu" required>
                 </div>
                 <div class="d-grid">
-                    <button type="submit" class="btn btn-primary">Register</button>
+                    <button type="submit" class="btn btn-primary">Đăng ký</button>
                 </div>
                 <div class="text-center mt-3">
                     <hr>
-                    <a asp-area="" asp-controller="Authentication" asp-action="Login" class="btn btn-link">Already have an account? Login</a>
+                    <a asp-area="" asp-controller="Authentication" asp-action="Login" class="btn btn-link">Đăng Nhập</a>
                 </div>
             </form>
             <div id="registerMessage" class="mt-3 text-center"></div>
@@ -67,7 +68,7 @@
     <script>
         $(document).ready(function () {
             $('#registerForm').submit(function (event) {
-                event.preventDefault();
+                event.preventDefault(); // Prevent the default form submission
 
                 $('#registerMessage').text('');
 
@@ -78,6 +79,7 @@
                     $('#registerMessage').html('<span class="text-danger">Passwords do not match. Please try again.</span>');
                     return;
                 }
+
                 const registerData = {
                     FirstName: $('#firstname').val(),
                     LastName: $('#lastname').val(),
@@ -93,12 +95,15 @@
                     data: JSON.stringify(registerData),
                     success: function (response) {
                         if (response.Success) {
-                            $('#registerMessage').html('<span class="text-success">Register Success</span>');
-                            setTimeout(() => {
-                                window.location.href = './Login';
-                            }, 1000);
-                        } else {
                             $('#registerMessage').html('<span class="text-danger">' + response.message + '</span>');
+                        } else {
+                            $('#registerMessage').html('<span class="text-success">Register Success. Redirecting to Login...</span>');
+                            console.log("Redirecting to: " + '@Url.Action("Login", "Authentication")'); // Debug log for the redirect URL
+
+                            // Redirect after a short delay (2 seconds)
+                            setTimeout(function () {
+                                window.location.replace('@Url.Action("Login", "Authentication")');
+                            }, 2000);
                         }
                     },
                     error: function () {

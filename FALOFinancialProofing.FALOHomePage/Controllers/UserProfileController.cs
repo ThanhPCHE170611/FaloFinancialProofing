@@ -77,6 +77,11 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
             return RedirectToAction("Index", "Homepage");
         }
 
+        public ActionResult ChangePassword()
+        {
+            return View();
+        }
+
         // GET: UserProfileController/Details/5
         public ActionResult Details(int id)
         {
