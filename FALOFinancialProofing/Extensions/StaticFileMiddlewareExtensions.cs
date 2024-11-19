@@ -12,6 +12,8 @@ namespace FALOFinancialProofing.Extensions
                 ($"{FolderImage.UserImageUpload}", $"/{FolderImage.UserImageUpload}"),
                 ($"{FolderImage.ProjectImageUpload}", $"/{FolderImage.ProjectImageUpload}"),
                 ($"{FolderImage.CampaignImageUpload}", $"/{FolderImage.CampaignImageUpload}"),
+                ($"{FolderImage.OrganizationImageUpload}", $"/{FolderImage.OrganizationImageUpload}"),
+
             };
             foreach (var (directory, requestPath) in staticFileDirectories)
             {
