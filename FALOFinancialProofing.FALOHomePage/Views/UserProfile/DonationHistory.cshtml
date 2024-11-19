@@ -1,80 +1,133 @@
-﻿@using FALOFinancialProofing.FALOHomePage.Services
-
-@{
+﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var transactions = ViewBag.Transactions as List<TransactionDTO.TransactionLog>;
-    var errorMessage = ViewBag.ErrorMessage as string;
-    var currentPage = ViewBag.CurrentPage;
-    var totalPages = ViewBag.TotalPages;
-    var dataCount = ViewBag.DataCount;
+    var userId = Context.Session.GetString("UserId");  // Get the userId from session
 }
-
-<style>
-    .table {
-        margin: 10px auto; /* Space on top and bottom */
-        width: 100%; /* Adjust width as needed */
-    }
-
-        .table th, .table td {
-            padding: 10px; /* Space inside the cells */
-        }
-</style>
 
 <div class="container">
     <h2>Lịch sử từ thiện</h2>
+    <!-- Search Bar -->
     <div class="blog-single__right-item">
         <div class="item shadow mb-30">
             <h5 class="title">Search</h5>
             <div class="serach-bar">
-                <input type="text" placeholder="Search here">
-                <button><i class="fa-regular fa-magnifying-glass"></i></button>
+                <input type="text" id="searchInput" placeholder="Search here">
+                <button id="searchButton"><i class="fa-regular fa-magnifying-glass"></i></button>
             </div>
         </div>
     </div>
-    @if (!string.IsNullOrEmpty(errorMessage))
-    {
-        <div class="alert alert-danger">
-            @errorMessage
-        </div>
-    }
 
-    @if (transactions != null && transactions.Any())
-    {
-        <table class="table table-bordered table-hover" id="transactions-table">
-            <thead>
-                <tr>
-                    <th scope="col">Mã Giao Dịch</th>
-                    <th scope="col">Thời Điểm Giao Dịch</th>
-                    <th scope="col">Số Tiền</th>
-                    <th scope="col">Nội Dung Giao Dịch</th>
-                    <th scope="col">Tên Chiến Dịch</th>
+    <!-- Error Message -->
+    <div id="errorMessage" class="alert alert-danger" style="display:none;"></div>
 
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var log in transactions)
-                {
-                    <tr>
-                        <td>@log.Tid</td>
-                        <td>@log.TransactionDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                        <td>@log.Amount</td>
-                        <td>@log.Description</td>
-                        <td>@log.CampaignName</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-        @if (currentPage > 1)
-        {
-            <a href="@Url.Action("Index", new { id = ViewBag.CampaignId, currentPage = currentPage - 1 })">Previous</a>
-        }
+    <!-- Table to display transactions -->
+    <table class="table table-bordered table-hover" id="transactions-table" style="display:none;">
+        <thead>
+            <tr>
+                <th scope="col">Mã Giao Dịch</th>
+                <th scope="col">Thời Điểm Giao Dịch</th>
+                <th scope="col">Số Tiền</th>
+                <th scope="col">Nội Dung Giao Dịch</th>
+                <th scope="col">Tên Chiến Dịch</th>
+            </tr>
+        </thead>
+        <tbody id="transactionLogs"></tbody>
+    </table>
 
-        @if (currentPage < totalPages)
-        {
-            <a href="@Url.Action("Index", new { id = ViewBag.CampaignId, currentPage = currentPage + 1 })">Next</a>
-        }
-    }
+    <!-- Pagination Controls -->
+    <div id="paginationControls" class="text-center"></div>
 </div>
 
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // JavaScript to handle fetching transaction logs, pagination, and search functionality
+    $(document).ready(function () {
+        // Initial load
+        loadTransactions(1, "");
+
+        // Search functionality
+        $('#searchButton').click(function () {
+            var searchInput = $('#searchInput').val();
+            loadTransactions(1, searchInput);  // Reload with search query
+        });
+
+        // Allow pressing Enter to trigger the search
+        $('#searchInput').keypress(function (e) {
+            if (e.which === 13) {  // Enter key
+                var searchInput = $('#searchInput').val();
+                loadTransactions(1, searchInput);  // Reload with search query
+            }
+        });
+    });
+
+    // Function to load transactions
+    function loadTransactions(currentPage, searchInput) {
+        var userId = '@userId';
+        var apiUrl = `https://localhost:7294/api/TransactionLogs/GetUserTransactionLogs/${userId}?searchInput=${searchInput}&currentPage=${currentPage}`;
+
+        $.ajax({
+            url: apiUrl,
+            type: 'GET',
+            success: function (response) {
+                if (response && response.data && response.data.data) {
+                    renderTransactionLogs(response.data.data);
+                    renderPagination(response.data.dataCount, currentPage, searchInput);
+                } else {
+                    showError("No transaction logs available.");
+                }
+            },
+            error: function () {
+                showError("Failed to fetch transaction logs.");
+            }
+        });
+    }
+
+    // Function to display the transaction logs in a table
+    function renderTransactionLogs(transactions) {
+        $('#transactions-table').show();  // Show the table if there are results
+        $('#transactionLogs').empty();  // Clear any existing data
+
+        transactions.forEach(function (transaction) {
+            var rowHtml = `<tr>
+                        <td>${transaction.tid}</td>
+                        <td>${new Date(transaction.transactionDate).toLocaleString()}</td>
+                        <td>${transaction.amount}</td>
+                        <td>${transaction.description}</td>
+                        <td>${transaction.campaignName}</td>
+                    </tr>`;
+            $('#transactionLogs').append(rowHtml);
+        });
+
+        $('#errorMessage').hide();  // Hide error message if data is found
+    }
+
+    // Function to render pagination controls
+    function renderPagination(totalRecords, currentPage, searchInput) {
+        var pageSize = 10;  // Assuming page size of 10
+        var totalPages = Math.ceil(totalRecords / pageSize);
+        var paginationHtml = '';
+
+        if (currentPage > 1) {
+            paginationHtml += `<button onclick="loadTransactions(${currentPage - 1}, '${searchInput}')">Previous</button>`;
+        }
+
+        for (var i = 1; i <= totalPages; i++) {
+            if (i === currentPage) {
+                paginationHtml += `<button class="active" disabled>${i}</button>`;
+            } else {
+                paginationHtml += `<button onclick="loadTransactions(${i}, '${searchInput}')">${i}</button>`;
+            }
+        }
+
+        if (currentPage < totalPages) {
+            paginationHtml += `<button onclick="loadTransactions(${currentPage + 1}, '${searchInput}')">Next</button>`;
+        }
+
+        $('#paginationControls').html(paginationHtml);  // Add pagination controls
+    }
+
+    // Function to show error message
+    function showError(message) {
+        $('#errorMessage').text(message).show();
+        $('#transactions-table').hide();  // Hide the table if no data is found
+    }
+</script>

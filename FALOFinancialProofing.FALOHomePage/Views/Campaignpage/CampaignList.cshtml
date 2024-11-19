@@ -24,8 +24,8 @@
         <div class="item shadow mb-30">
             <h5 class="title">Search</h5>
             <div class="serach-bar">
-                <input type="text" placeholder="Search here">
-                <button><i class="fa-regular fa-magnifying-glass"></i></button>
+                <input type="text" id="searchInput" placeholder="Search here">
+                <button id="searchButton"><i class="fa-regular fa-magnifying-glass"></i></button>
             </div>
         </div>
     </div>
@@ -43,22 +43,32 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
-        loadCampaigns(1);
+        // Initially load campaigns with an empty search query
+        loadCampaigns(1, "");
+
+        // Set up the search button to trigger the search when clicked
+        $('#searchButton').click(function () {
+            var searchInput = $('#searchInput').val();
+            loadCampaigns(1, searchInput);  // Load campaigns based on the search input
+        });
+
+        // Allow pressing Enter key for search
+        $('#searchInput').keypress(function (e) {
+            if (e.which === 13) {  // Enter key code
+                var searchInput = $('#searchInput').val();
+                loadCampaigns(1, searchInput);  // Load campaigns based on the search input
+            }
+        });
     });
 
-    // Function to load campaigns with pagination
-    function loadCampaigns(pageNumber = 1) {
+    function loadCampaigns(pageNumber = 1, searchInput = "") {
         $.ajax({
-            url: `https://localhost:7294/api/Campaign/GetAllCampaignInSystem?IsActive=true&currentPage=${pageNumber}`,  // Adjust URL if necessary, e.g., for a specific controller
+            url: `https://localhost:7294/api/Campaign/GetAllCampaignInSystem?title=${searchInput}&IsActive=true&currentPage=${pageNumber}`,  // Adjust URL for the search query
             type: 'GET',
-            data: {
-                status: null,  // You can set the status filter if needed
-                currentPage: pageNumber
-            },
             success: function (response) {
                 if (response.success) {
                     renderCampaigns(response.data);
-                    renderPagination(response.data.dataCount, pageNumber);
+                    renderPagination(response.data.dataCount, pageNumber, searchInput);  // Pass search input to pagination
                 } else {
                     alert(response.message);
                 }
@@ -69,7 +79,6 @@
         });
     }
 
-    // Function to render the campaigns data as cards
     function renderCampaigns(data) {
         var campaignsContainer = $('#campaignsContainer');
         campaignsContainer.empty();  // Clear existing data
@@ -85,12 +94,10 @@
             });
 
             var percentage = Math.round((campaign.totalMoneyEarned / campaign.fundTarget) * 100);
-
             var url = '/Campaignpage/Index/' + campaign.campaignId;
-
             var shortenedDescription = campaign.description.length > 100 ? campaign.description.substring(0, 100) + '....' : campaign.description;
 
-            var cardHtml = `<div class="col-lg-8 order-2 order-lg-1" >
+            var cardHtml = `<div class="col-lg-8 order-2 order-lg-1">
                                 <div class="cause__item cause-list__item mb-30">
                                     <div class="cause__image image" style="width:100%; height:auto;overflow:hidden;">
                                         <img src="/images/cause/CampaignImages.jpg" style="width:100%; height:auto;object-fit:cover" alt="image">
@@ -99,7 +106,7 @@
                                     <div class="cause__content">
                                         <h4 class="mb-2">
                                             <a href="${url}" class="btn-inner">
-                                                 ${campaign.title}
+                                                ${campaign.title}
                                             </a>
                                         </h4>
                                         <p class="mb-3">
@@ -110,47 +117,44 @@
                                                 <div class="progress__content" style="width: ${percentage}%;"><span>${percentage}%</span></div>
                                             </div>
                                             <div class="progress__goal mt-15">
-                                                    <h6>Goal : <span>${campaign.fundTarget} VND</span></h6>
-                                                    <h6>Raised : <span>${campaign.totalMoneyEarned} VND</span></h6>
+                                                <h6>Goal : <span>${campaign.fundTarget} VND</span></h6>
+                                                <h6>Raised : <span>${campaign.totalMoneyEarned} VND</span></h6>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            `;
+                            </div>`;
             campaignsContainer.append(cardHtml);
         });
     }
 
-    // Function to render pagination controls
-    function renderPagination(totalRecords, currentPage) {
+    function renderPagination(totalRecords, currentPage, searchInput) {
         var pageSize = 6;
         var totalPages = Math.ceil(totalRecords / pageSize);
-        console.log('Total Records:', totalRecords);  // Debugging line
-        console.log('Current Page:', currentPage);    // Debugging line
         var paginationControls = $('#paginationControls');
         paginationControls.empty();  // Clear existing pagination buttons
 
         // Render "Previous" button
         if (currentPage > 1) {
-            paginationControls.append(`<button onclick="loadCampaigns(${currentPage - 1})"><i class="fa-solid fa-arrow-left-long primary-color transition"></i></button>`);
+            paginationControls.append(`<button onclick="loadCampaigns(${currentPage - 1}, '${searchInput}')"><i class="fa-solid fa-arrow-left-long primary-color transition"></i></button>`);
         }
 
-        // Render page number buttons with some optimization
+        // Render page number buttons
         var startPage = Math.max(1, currentPage - 2);  // Show 2 pages before current
         var endPage = Math.min(totalPages, currentPage + 2);  // Show 2 pages after current
 
         for (var i = startPage; i <= endPage; i++) {
             if (i === currentPage) {
-                paginationControls.append(`<button class="active" disabled>${i}</button>`);  // Disabled button for current page
+                paginationControls.append(`<button class="active" disabled>${i}</button>`);
             } else {
-                paginationControls.append(`<button onclick="loadCampaigns(${i})">${i}</button>`);
+                paginationControls.append(`<button onclick="loadCampaigns(${i}, '${searchInput}')">${i}</button>`);
             }
         }
 
         // Render "Next" button
         if (currentPage < totalPages) {
-            paginationControls.append(`<button onclick="loadCampaigns(${currentPage + 1})"><i class="fa-solid fa-arrow-right-long primary-color transition"></i></button>`);
+            paginationControls.append(`<button onclick="loadCampaigns(${currentPage + 1}, '${searchInput}')"><i class="fa-solid fa-arrow-right-long primary-color transition"></i></button>`);
         }
     }
+
 </script>

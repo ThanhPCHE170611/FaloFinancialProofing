@@ -53,7 +53,7 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
             }
         }
 
-        public async Task<IActionResult> CampaignActivity(int? id, int page = 1)
+        public async Task<IActionResult> CampaignActivity(int? id)
         {
             if (id == null)
             {
@@ -61,41 +61,43 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
             }
             else
             {
-                try
-                {
-                    var client = _httpClientFactory.CreateClient();
+                ViewBag.campaignId = id;
+                return View();
+                //try
+                //{
+                //    var client = _httpClientFactory.CreateClient();
 
-                    // Make a GET request to the API
-                    HttpResponseMessage response = await client.GetAsync($"https://localhost:7294/api/AttachmentFile/getallpaymentattachmentincampaignwithrequest/{id}?page={page}");
+                //    // Make a GET request to the API
+                //    HttpResponseMessage response = await client.GetAsync($"https://localhost:7294/api/AttachmentFile/getallpaymentattachmentincampaignwithrequest/{id}?page={page}");
 
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string jsonResponse = await response.Content.ReadAsStringAsync();
+                //    if (response.IsSuccessStatusCode)
+                //    {
+                //        string jsonResponse = await response.Content.ReadAsStringAsync();
 
-                        var attachmentFileResponse = JsonConvert.DeserializeObject<AttachmentFileResponse>(jsonResponse);
+                //        var attachmentFileResponse = JsonConvert.DeserializeObject<AttachmentFileResponse>(jsonResponse);
 
-                        if (attachmentFileResponse != null && attachmentFileResponse.Success && attachmentFileResponse.Data != null && attachmentFileResponse.Data.Data.Any())
-                        {
-                            ViewBag.Attachments = attachmentFileResponse.Data.Data;
-                            ViewBag.Message = attachmentFileResponse.Message;
-                        }
-                        else
-                        {
-                            ViewBag.ErrorMessage = attachmentFileResponse?.Message ?? "Attachment files not found";
-                        }
-                    }
-                    else
-                    {
-                        // API call failed
-                        ViewBag.ErrorMessage = "Failed to fetch attachment files.";
-                    }
-                }
-                catch (Exception ex)
-                {
-                    return RedirectToAction("Error404", "Error");
-                }
+                //        if (attachmentFileResponse != null && attachmentFileResponse.Success && attachmentFileResponse.Data != null && attachmentFileResponse.Data.Data.Any())
+                //        {
+                //            ViewBag.Attachments = attachmentFileResponse.Data.Data;
+                //            ViewBag.Message = attachmentFileResponse.Message;
+                //        }
+                //        else
+                //        {
+                //            ViewBag.ErrorMessage = attachmentFileResponse?.Message ?? "Attachment files not found";
+                //        }
+                //    }
+                //    else
+                //    {
+                //        // API call failed
+                //        ViewBag.ErrorMessage = "Failed to fetch attachment files.";
+                //    }
+                //}
+                //catch (Exception ex)
+                //{
+                //    return RedirectToAction("Error404", "Error");
+                //}
             }
-            return View();
+            
         }
 
 

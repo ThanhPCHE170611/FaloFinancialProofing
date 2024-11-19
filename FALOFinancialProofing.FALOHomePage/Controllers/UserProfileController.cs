@@ -23,50 +23,50 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
             return View();
         }
 
-        public async Task<IActionResult> DonationHistory(int currentPage = 1)
+        public async Task<IActionResult> DonationHistory()
         {
-            try
-            {
-                // Get HttpClient from the factory
-                var client = _httpClientFactory.CreateClient();
+            //try
+            //{
+            //    // Get HttpClient from the factory
+            //    var client = _httpClientFactory.CreateClient();
 
-                string userId = HttpContext.Session.GetString("UserId");
-                if (userId == null)
-                {
-                    return RedirectToAction("Login", "Authentication");
-                }
+            //    string userId = HttpContext.Session.GetString("UserId");
+            //    if (userId == null)
+            //    {
+            //        return RedirectToAction("Login", "Authentication");
+            //    }
 
-                // Make a GET request to the API
-                HttpResponseMessage response = await client.GetAsync($"https://localhost:7294/api/TransactionLogs/GetUserTransactionLogs/{userId}?currentPage=1");
+            //    // Make a GET request to the API
+            //    HttpResponseMessage response = await client.GetAsync($"https://localhost:7294/api/TransactionLogs/GetUserTransactionLogs/{userId}?currentPage=1");
 
-                if (response.IsSuccessStatusCode)
-                {
-                    string jsonResponse = await response.Content.ReadAsStringAsync();
+            //    if (response.IsSuccessStatusCode)
+            //    {
+            //        string jsonResponse = await response.Content.ReadAsStringAsync();
 
-                    var transactionLogsResponse = JsonConvert.DeserializeObject<TransactionLogResponse>(jsonResponse);
+            //        var transactionLogsResponse = JsonConvert.DeserializeObject<TransactionLogResponse>(jsonResponse);
 
-                    if (transactionLogsResponse?.Data?.Data != null)
-                    {
-                        ViewBag.Transactions = transactionLogsResponse.Data.Data;
-                        ViewBag.CurrentPage = transactionLogsResponse.Data.CurrentPage;
-                        ViewBag.TotalPages = (int)Math.Ceiling((double)transactionLogsResponse.Data.DataCount / 10);  // Assuming page size of 10
-                        ViewBag.DataCount = transactionLogsResponse.Data.DataCount;
-                        ViewBag.PageSize = 10;
-                    }
-                    else
-                    {
-                        ViewBag.ErrorMessage = "No transaction logs available.";
-                    }
-                }
-                else
-                {
-                    ViewBag.ErrorMessage = "Failed to fetch transaction logs.";
-                }
-            }
-            catch (Exception ex)
-            {
-                return RedirectToAction("Error404", "Error");
-            }
+            //        if (transactionLogsResponse?.Data?.Data != null)
+            //        {
+            //            ViewBag.Transactions = transactionLogsResponse.Data.Data;
+            //            ViewBag.CurrentPage = transactionLogsResponse.Data.CurrentPage;
+            //            ViewBag.TotalPages = (int)Math.Ceiling((double)transactionLogsResponse.Data.DataCount / 10);  // Assuming page size of 10
+            //            ViewBag.DataCount = transactionLogsResponse.Data.DataCount;
+            //            ViewBag.PageSize = 10;
+            //        }
+            //        else
+            //        {
+            //            ViewBag.ErrorMessage = "No transaction logs available.";
+            //        }
+            //    }
+            //    else
+            //    {
+            //        ViewBag.ErrorMessage = "Failed to fetch transaction logs.";
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    return RedirectToAction("Error404", "Error");
+            //}
 
             return View();
         }
