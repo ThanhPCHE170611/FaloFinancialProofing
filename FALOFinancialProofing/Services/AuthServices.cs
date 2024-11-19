@@ -359,15 +359,16 @@ namespace FALOFinancialProofing.Services
                             });
                         }
                     }
-                    data.Add(new UserInformation()
-                    {
-                        Id = user.Id,
-                        Email = user.Email,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        BirthDate = user.BirthDate,
-                        Roles = roleDetails
-                    });
+                    if (roleDetails.Count != 0)
+                        data.Add(new UserInformation()
+                        {
+                            Id = user.Id,
+                            Email = user.Email,
+                            FirstName = user.FirstName,
+                            LastName = user.LastName,
+                            BirthDate = user.BirthDate,
+                            Roles = roleDetails
+                        });
                 }
             }
             catch (Exception ex)
