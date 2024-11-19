@@ -286,7 +286,7 @@ namespace FALOFinancialProofing.Controllers
             filterPagingData.CurrentPage = currentPage;
             try
             {
-                data = await authServices.GetAccountList();
+                data = await authServices.GetAccountList(Request);
                 if (data == null || data.Count == 0)
                 {
                     return Ok(new ApiResponse()
@@ -326,7 +326,7 @@ namespace FALOFinancialProofing.Controllers
             filterPagingData.CurrentPage = currentPage;
             try
             {
-                data = await authServices.GetPMBAccountList();
+                data = await authServices.GetPMBAccountList(Request);
                 if (data == null || data.Count == 0)
                 {
                     return Ok(new ApiResponse()

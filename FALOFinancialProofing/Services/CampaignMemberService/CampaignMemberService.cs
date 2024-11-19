@@ -95,7 +95,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                         roleInformation = new RoleInformation()
                         {
                             RoleId = cm.RoleId,
-                            RoleName = cm.IdentityRole.Name
+                            RoleName = cm.Role.Name
                         }
                     }).ToListAsync();
             }
@@ -129,7 +129,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                     roleInformation = new RoleInformation()
                     {
                         RoleId = cm.RoleId,
-                        RoleName = cm.IdentityRole.Name
+                        RoleName = cm.Role.Name
                     }
                 }).ToListAsync();
             }
@@ -165,7 +165,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                         roleInformation = new RoleInformation()
                         {
                             RoleId = cm.RoleId,
-                            RoleName = cm.IdentityRole.Name
+                            RoleName = cm.Role.Name
                         }
                     }).ToListAsync();
             }
@@ -197,7 +197,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                         roleInformation = new RoleInformation()
                         {
                             RoleId = cm.RoleId,
-                            RoleName = cm.IdentityRole.Name
+                            RoleName = cm.Role.Name
                         }
                     }).SingleOrDefaultAsync();
                 }
@@ -234,7 +234,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                         roleInformation = new RoleInformation()
                         {
                             RoleId = cm.RoleId,
-                            RoleName = cm.IdentityRole.Name
+                            RoleName = cm.Role.Name
                         }
                     }).ToListAsync();
             }
@@ -392,7 +392,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 {
                     throw new Exception("You do not have permission to add members to this campaign.");
                 }
-                var DbData = await cmRepository.GetAll().Include(cm => cm.IdentityRole)
+                var DbData = await cmRepository.GetAll().Include(cm => cm.Role)
                     .Where(x => x.CampaignId == campaignId)
                     .ToListAsync(); //**
                                     //var isExist = DbData.Any(cm => createManyCampaignMemberDTOs.Any(cmd => cmd.UserId == cm.UserId));
@@ -400,7 +400,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 foreach (var item in createManyCampaignMemberDTOs)
                 {
                     // phải check ở đây vì kiểm tra trong từng lần add
-                    var checkExistActiveAccounting = DbData.Any(cm => cm.IdentityRole.Name.Equals(AppRole.Accounting) && cm.IsActive);
+                    var checkExistActiveAccounting = DbData.Any(cm => cm.Role.Name.Equals(AppRole.Accounting) && cm.IsActive);
                     var checkUserInRole = await authServices.CheckUserInRoleId(item.UserId, item.RoleId, new StringBuilder());
                     if (!checkUserInRole)
                     {

@@ -365,10 +365,10 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                 }
                 // get all the campaign that userid is a Volunteer Leader
                 var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid
-                        && cm.IdentityRole.Name.Equals(Resource.VolunteerLeaderRoleName)
+                        && cm.Role.Name.Equals(Resource.VolunteerLeaderRoleName)
                         && cm.IsActive)
                     .Include(cm => cm.Campaign)
-                    .Include(cm => cm.IdentityRole)
+                    .Include(cm => cm.Role)
                     .Select(cm => new Campaign
                     {
                         Id = cm.Campaign.Id,
@@ -425,10 +425,10 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                 }
                 // get all the campaign that userid is a Volunteer Leader
                 var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid
-                        && cm.IdentityRole.Name.Equals(Resource.VolunteerLeaderRoleName)
+                        && cm.Role.Name.Equals(Resource.VolunteerLeaderRoleName)
                         && cm.IsActive)
                     .Include(cm => cm.Campaign)
-                    .Include(cm => cm.IdentityRole)
+                    .Include(cm => cm.Role)
                     .Select(cm => new Campaign
                     {
                         Id = cm.Campaign.Id,
@@ -485,10 +485,10 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                 }
                 // get all the campaign that userid is a Accounting
                 var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid
-                        && cm.IdentityRole.Name.Equals(Resource.AccountingRoleName)
+                        && cm.Role.Name.Equals(Resource.AccountingRoleName)
                         && cm.IsActive)
                     .Include(cm => cm.Campaign)
-                    .Include(cm => cm.IdentityRole)
+                    .Include(cm => cm.Role)
                     .Select(cm => new Campaign
                     {
                         Id = cm.Campaign.Id,
@@ -544,10 +544,10 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                 }
                 // get all the campaign that userid is a Accounting
                 var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid
-                        && cm.IdentityRole.Name.Equals(Resource.AccountingRoleName)
+                        && cm.Role.Name.Equals(Resource.AccountingRoleName)
                         && cm.IsActive)
                     .Include(cm => cm.Campaign)
-                    .Include(cm => cm.IdentityRole)
+                    .Include(cm => cm.Role)
                     .Select(cm => new Campaign
                     {
                         Id = cm.Campaign.Id,
@@ -604,10 +604,10 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                 }
                 // get all the campaign that userid is a PM
                 var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid
-                        && cm.IdentityRole.Name.Equals(Resource.ProjectManagerRoleName)
+                        && cm.Role.Name.Equals(Resource.ProjectManagerRoleName)
                         && cm.IsActive)
                     .Include(cm => cm.Campaign)
-                    .Include(cm => cm.IdentityRole)
+                    .Include(cm => cm.Role)
                     .Select(cm => new Campaign
                     {
                         Id = cm.Campaign.Id,
@@ -665,10 +665,10 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                 }
                 // get all the campaign that userid is a PM
                 var campaigns = await campaignMemberRepository.GetAll(cm => cm.UserId == userid
-                        && cm.IdentityRole.Name.Equals(Resource.ProjectManagerRoleName)
+                        && cm.Role.Name.Equals(Resource.ProjectManagerRoleName)
                         && cm.IsActive)
                     .Include(cm => cm.Campaign)
-                    .Include(cm => cm.IdentityRole)
+                    .Include(cm => cm.Role)
                     .Select(cm => new Campaign
                     {
                         Id = cm.Campaign.Id,

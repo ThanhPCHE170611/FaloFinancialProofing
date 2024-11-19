@@ -36,7 +36,7 @@ namespace FALOFinancialProofing.Services
     {
         private readonly AppSetting appSetting;
         private readonly IEmailService emailService;
-        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly RoleManager<Role> roleManager;
         public readonly UserManager<User> userManager;
         private readonly SignInManager<User> signInManager;
         private readonly IRepository<CampaignMember, int> campaignMemberRepository;
@@ -48,7 +48,7 @@ namespace FALOFinancialProofing.Services
 
 
         public AuthServices(UserManager<User> userManager, SignInManager<User> signInManager,
-            IOptionsMonitor<AppSetting> optionsMonitor, RoleManager<IdentityRole> roleManager,
+            IOptionsMonitor<AppSetting> optionsMonitor, RoleManager<Role> roleManager,
             IEmailService emailService,
             LinkGenerator linkGenerator, IRepository<CampaignMember, int> campaignMemberRepository, ISocialNetworkService socialNetworkService, RoleService roleService, IUserSDGService userSDGService)
         {
@@ -387,7 +387,7 @@ namespace FALOFinancialProofing.Services
             return data;
         }
 
-        public async Task<List<UserInformation_Admin>> GetAccountList()
+        public async Task<List<UserInformation_Admin>> GetAccountList(HttpRequest request)
         {
             var data = new List<UserInformation_Admin>();
             try
@@ -400,6 +400,7 @@ namespace FALOFinancialProofing.Services
                     FirstName = u.FirstName,
                     LastName = u.LastName,
                     BirthDate = u.BirthDate,
+                    Image = UrlHelper.GetImageUrl(request, u.Image, FolderImage.UserImageUpload),
                     Roles = u.UserRoles.Select(ur => new RoleInformation
                     {
                         RoleId = ur.RoleId,
@@ -421,30 +422,32 @@ namespace FALOFinancialProofing.Services
             return data;
         }
 
-        public async Task<List<UserInformation_Admin>> GetPMBAccountList()
+        public async Task<List<UserInformation_Admin>> GetPMBAccountList(HttpRequest request)
         {
             var data = new List<UserInformation_Admin>();
             try
             {
-                data = await userManager.Users.Where(u => u.UserRoles.Any(ur => ur.RoleId.Equals("205d4496-4ac8-40d9-84b9-e09e1ada7a49"))).Select(u => new UserInformation_Admin()
-                {
-                    Id = u.Id,
-                    Email = u.Email,
-                    FirstName = u.FirstName,
-                    LastName = u.LastName,
-                    BirthDate = u.BirthDate,
-                    Roles = u.UserRoles.Select(ur => new RoleInformation
+                data = await userManager.Users.Where(u => u.UserRoles.Any(ur => ur.Role.Name.Equals(AppRole.ProjectManagementBoard)))
+                    .Select(u => new UserInformation_Admin()
                     {
-                        RoleId = ur.RoleId,
-                        RoleName = roleManager.Roles.FirstOrDefault(r => r.Id == ur.RoleId).Name
-                    }).ToList(),
-                    SocialNetworkRequests = u.SocialNetworks.Select(snr => new SocialNetworkRequest
-                    {
-                        Id = snr.Id,
-                        UserId = snr.UserId,
-                        SocialNetworksLink = snr.SocialNetworksLink,
-                    }).ToList()
-                }).ToListAsync();
+                        Id = u.Id,
+                        Email = u.Email,
+                        FirstName = u.FirstName,
+                        LastName = u.LastName,
+                        BirthDate = u.BirthDate,
+                        Image = UrlHelper.GetImageUrl(request, u.Image, FolderImage.UserImageUpload),
+                        Roles = u.UserRoles.Where(usr => usr.Role.Name.Equals(AppRole.ProjectManagementBoard)).Select(ur => new RoleInformation
+                        {
+                            RoleId = ur.RoleId,
+                            RoleName = roleManager.Roles.FirstOrDefault(r => r.Id == ur.RoleId).Name
+                        }).ToList(),
+                        SocialNetworkRequests = u.SocialNetworks.Select(snr => new SocialNetworkRequest
+                        {
+                            Id = snr.Id,
+                            UserId = snr.UserId,
+                            SocialNetworksLink = snr.SocialNetworksLink,
+                        }).ToList()
+                    }).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -546,27 +549,38 @@ namespace FALOFinancialProofing.Services
         }
         public async Task<IdentityResult?> AdminRegisterUser(SignUpAdminRequest registerRequest)
         {
-            var validatedInformationRequest = await ValidatedInformationRequest(registerRequest);
-            if (validatedInformationRequest == null)
+            try
             {
-                return null;
-            }
-            else
-            {
-                var newUser = new User
+                var validatedInformationRequest = await ValidatedInformationRequest(registerRequest);
+                if (validatedInformationRequest == null)
                 {
-                    FirstName = validatedInformationRequest.FirstName,
-                    LastName = validatedInformationRequest.LastName,
-                    Email = validatedInformationRequest.Email,
-                    UserName = validatedInformationRequest.UserName,
-                    TwoFactorEnabled = true,
-                };
-                var result = await userManager.CreateAsync(newUser, registerRequest.Password);
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRolesAsync(newUser, registerRequest.Roles);
-                    return result;
+                    return null;
                 }
+                else
+                {
+                    var newUser = new User
+                    {
+                        FirstName = validatedInformationRequest.FirstName,
+                        LastName = validatedInformationRequest.LastName,
+                        Email = validatedInformationRequest.Email,
+                        UserName = validatedInformationRequest.UserName,
+                        BirthDate = validatedInformationRequest.BirthDate,
+                        Gender = validatedInformationRequest.Gender,
+                        Address = validatedInformationRequest.Address,
+                        PhoneNumber = validatedInformationRequest.PhoneNumber,
+                        TwoFactorEnabled = true,
+                    };
+                    var result = await userManager.CreateAsync(newUser, registerRequest.Password);
+                    if (result.Succeeded)
+                    {
+                        result = await userManager.AddToRolesAsync(newUser, registerRequest.Roles);
+                        return result;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"AdminRegisterUser: {ex.Message}");
             }
             return null;
         }
