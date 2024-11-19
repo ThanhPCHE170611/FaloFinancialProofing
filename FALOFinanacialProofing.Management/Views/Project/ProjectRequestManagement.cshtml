@@ -463,8 +463,7 @@
                         if(request.status === "Rejected" || request.status === "Pending" || request.status === "Cancel") {
                             actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>`;
                         } else {
-                            actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>
-                                    <a class="btn btn-primary btn-sm" href="/Campaign/CampaignCreate?projectId=${request.projectId}">Campaign</a>`;
+                            actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>`;
                         }
                     } else {
                         actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>`;

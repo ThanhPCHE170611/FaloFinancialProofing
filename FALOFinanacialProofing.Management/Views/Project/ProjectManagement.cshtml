@@ -211,6 +211,16 @@
                     ? `<span class="badge badge-approved">Running</span>`
                     : `<span class="badge badge-declined">Close</span>`;
 
+                let actionButtons = `
+                    <a class="btn btn-info btn-sm" href="/Project/ProjectDetail?requestId=${project.id}">Detail</a>
+                `;
+                if (checkrole !== "Project Management Board") {
+                    if(checkrole === "Project Manager") {
+                        actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>
+                                    <a class="btn btn-primary btn-sm" href="/Campaign/CampaignCreate?projectId=${request.id}">Campaign</a>`;
+
+                }
+
                 const row = `
                     <tr>
                         <td class="align-middle text-center text-sm">${index + 1 + (currentPage - 1) * pageSize}</td>
