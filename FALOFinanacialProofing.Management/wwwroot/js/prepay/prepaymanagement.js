@@ -465,7 +465,7 @@ function submitMissingFile(requestId) {
     });
 }
 $(document).ready(function () {
-    const userId = localStorage.getItem('userId');
+        
     // const campaignId = new URLSearchParams(window.location.search).get('campaignid');
     const campaignId = localStorage.getItem('campaignId');
     const checkrole = localStorage.getItem('loggingRole');

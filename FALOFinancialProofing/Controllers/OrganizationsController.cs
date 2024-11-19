@@ -81,7 +81,7 @@ namespace FALOFinancialProofing.Controllers
         // POST: api/Organizations
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("CreateOrganization", Name = "CreateOrganization")]
-        public async Task<ActionResult> PostOrganization([FromBody] CreateOrganization createOrganization)
+        public async Task<ActionResult> PostOrganization([FromForm] CreateOrganization createOrganization)
         {
             StringBuilder statusMessage = new StringBuilder();
             Organization createOrganizationResult = null!;
