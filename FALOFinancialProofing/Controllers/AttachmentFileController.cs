@@ -95,7 +95,7 @@ namespace FALOFinancialProofing.Controllers
                 }
                 filteredAttachmentFiles = filteredAttachmentFiles.Where(x => x.RequestForm.TypeId == typeInt).ToList();
             }
-            if (String.IsNullOrEmpty(name))
+            if (!String.IsNullOrEmpty(name))
             {
                 filteredAttachmentFiles = filteredAttachmentFiles
                     .Where(x => x.FilePath.ToLower().Contains(name.ToLower()));
@@ -178,7 +178,7 @@ namespace FALOFinancialProofing.Controllers
             }
 
             var filteredAttachmentFiles = attachmentFiles.AsEnumerable();
-            if (String.IsNullOrEmpty(name))
+            if (!String.IsNullOrEmpty(name))
             {
                 filteredAttachmentFiles = filteredAttachmentFiles
                     .Where(x => x.AttachmentFilePath != null && x.AttachmentFilePath.ToLower().Contains(name.ToLower()));
