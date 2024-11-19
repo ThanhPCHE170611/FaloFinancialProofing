@@ -125,6 +125,8 @@
                 },
                 success: function (response) {
                     if (response.success) {
+                        console.log(userId);
+                        console.log(roleId);
                         renderTable(response.data.data);
                         setupPagination(response.data.dataCount);
                     } else {
@@ -144,7 +146,9 @@
                 tableBody.append('<tr><td colspan="5">No results found</td></tr>');
                 return;
             }
+            
             data.forEach((item, index) => {
+                console.log(item.campaignId);
                 let actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId})" class="btn btn-info btn-sm detail-btn">Detail</button>`;
                 if(checkrole === "Project Manager") {
                     actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId})" class="btn btn-info btn-sm detail-btn">Detail</button>
