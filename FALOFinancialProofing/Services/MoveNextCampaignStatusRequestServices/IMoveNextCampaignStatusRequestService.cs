@@ -9,7 +9,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
     public interface IMoveNextCampaignStatusRequestService
     {
         Task<List<MoveNextCampaignStatusRequest>> GetAllMoveNextCampaignStatusRequestAsync();
-        Task<MoveNextCampaignStatusRequest?> GetMoveNextCampaignStatusRequestByIdAsync(int id);
+        Task<MoveNextCampaignStatusRequest?> GetMoveNextCampaignStatusRequestByIdAsync1(int id);
         Task<MoveNextCampaignStatusRequest> CreateMoveNextCampaignStatusRequestAsync(CreateMoveNextCampaignStatusRequestDTO requestDto, StringBuilder message);
         Task<CreateMoveNextCampaignStatusRequestDTO?> MapToDto(MoveNextCampaignStatusRequest request);
         Task<bool> ApproveOrRejectRequestAsync(int requestId, bool isApproved);
@@ -21,5 +21,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
         Task<IEnumerable<MoveNextCampaignStatusRequestInformation>> GetAllMoveNextCampaignStatusRequestsByUserIdAsync(string userId, StringBuilder message);
         Task<bool> UpdateMoveNextCampaignStatusRequestAsync(MoveNextCampaignStatusRequest updateMoveNextCampaignStatusRequest);
         Task<bool> CancelMoveNextCampaignStatusRequestAsync(int requestId, string senderId, StringBuilder message);
+        Task<MoveNextCampaignStatusRequestInformation> GetMoveNextCampaignStatusRequestByIdAsync(int id);
+
     }
 }
