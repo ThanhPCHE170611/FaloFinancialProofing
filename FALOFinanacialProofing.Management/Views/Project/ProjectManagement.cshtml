@@ -216,9 +216,9 @@
                 `;
                 if (checkrole !== "Project Management Board") {
                     if(checkrole === "Project Manager") {
-                        actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>
-                                    <a class="btn btn-primary btn-sm" href="/Campaign/CampaignCreate?projectId=${request.id}">Campaign</a>`;
-
+                        actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${project.id}">Detail</a>
+                                    <a class="btn btn-primary btn-sm" href="/Campaign/CampaignCreate?projectId=${project.id}">Campaign</a>`;
+                    }
                 }
 
                 const row = `

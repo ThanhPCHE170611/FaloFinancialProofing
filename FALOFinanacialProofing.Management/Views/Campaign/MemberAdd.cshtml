@@ -238,8 +238,9 @@
         }
 
         function fetchAvailableVolunteers() {
+            const searchInput = $('#volunteerSearchBox').val().trim();
             $.ajax({
-                url: `https://localhost:7294/api/Users/GetUserNotInCampaignById/${campaignId}`,
+                url: `https://localhost:7294/api/Users/GetUserNotInCampaignById/${campaignId}?searchInput=${searchInput}`,
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`
@@ -257,6 +258,10 @@
                 }
             });
         }
+        $('#volunteerSearchBox').on('keyup', function () {
+            currentPage = 1;
+            fetchAvailableVolunteers();
+        });
 
         function renderVolunteerTable(users) {
             const tableBody = $('#volunteerList');
@@ -365,6 +370,7 @@
                     location.reload(); 
                 } else {
                     alert('Failed to add members: ' + response.message);
+                    location.reload();
                 }
             },
             error: function () {
