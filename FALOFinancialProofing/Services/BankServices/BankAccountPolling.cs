@@ -11,46 +11,38 @@ namespace FALOFinancialProofing.Services.BankServices
         private static string APIKey;
         private const string API_GET = "https://oauth.casso.vn/v2/accounts";
         private static IBankService _bankService;
-        private static IServiceScopeFactory _serviceScopeFactory;
-        //public BankAccountPolling(IConfiguration configuration, IBankService bankService)
-        //{
-        //    APIKey = configuration.GetSection("Authentication:Casso:Apikey").Value;
-        //    _bankService = bankService;
-        //}
-        public BankAccountPolling(IConfiguration configuration, IServiceScopeFactory serviceScopeFactory)
+        //private static IServiceScopeFactory _serviceScopeFactory; có thể sử dụng 
+        public BankAccountPolling(IConfiguration configuration, IBankService bankService)
         {
             APIKey = configuration.GetSection("Authentication:Casso:Apikey").Value;
-            _serviceScopeFactory = serviceScopeFactory;
+            _bankService = bankService;
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                await CheckPaid(stoppingToken);
+                await SyncAccountFromCasso(stoppingToken);
                 await Task.Delay(PollingInterval, stoppingToken);
             }
         }
 
-        private static async Task CheckPaid(CancellationToken stoppingToken)
+        private async Task SyncAccountFromCasso(CancellationToken stoppingToken)
         {
             using (var httpClient = new HttpClient())
             {
-                using (var scope = _serviceScopeFactory.CreateScope())
-                {
-                    _bankService = scope.ServiceProvider.GetRequiredService<IBankService>();
-                    _bankService.GetBankByIdAsync(1);
-                    // Sử dụng bankService để thực hiện công việc
-                }
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Apikey", APIKey);
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
                 try
                 {
                     var response = await httpClient.GetAsync(API_GET, stoppingToken);
                     response.EnsureSuccessStatusCode();
-
                     var jsonResponse = await response.Content.ReadAsStringAsync();
-                    var data = JsonConvert.DeserializeObject<AccountResponse>(jsonResponse);
+                    var dataResponse = JsonConvert.DeserializeObject<AccountResponse>(jsonResponse);
+                    if (dataResponse != null)
+                    {
+                        List<CassoBankAccount> cassoBankAccounts = dataResponse.data;
+                        await _bankService.SyncBankAccountsToBankDb(cassoBankAccounts);
+                    }
                 }
                 catch (HttpRequestException e)
                 {
@@ -60,7 +52,6 @@ namespace FALOFinancialProofing.Services.BankServices
         }
     }
 
-    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
     public class CassoBankAccount
     {
         public int id { get; set; }

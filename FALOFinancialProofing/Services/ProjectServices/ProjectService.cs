@@ -1,7 +1,9 @@
-﻿using FALOFinancialProofing.DTOs.ProjectDTOs;
+﻿using FALOFinancialProofing.DTOs.CampaignDTO;
+using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
+using FALOFinancialProofing.Services.BankServices;
 using Microsoft.AspNetCore.Identity;
 //using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
@@ -331,6 +333,14 @@ namespace FALOFinancialProofing.Services.ProjectServices
                 project.ProjectName = updateProjectRequest.ProjectName;
                 project.Description = updateProjectRequest.Description;
                 project.Image = await FileHelper.SaveImageAndReturnShortPathAsync(updateProjectRequest.LogoFile, FolderImage.ProjectImageUpload, project.Image) ?? project.Image;
+                bool checkAdmin = await _authServices.CheckUserInRole(updateProjectRequest.UserId, AppRole.Admin, new StringBuilder());
+                bool checkPMB = await _authServices.CheckUserInRole(updateProjectRequest.UserId, AppRole.ProjectManagementBoard, new StringBuilder());
+                if (checkAdmin || checkPMB)
+                {
+                    project.IsActive = updateProjectRequest.IsActive ?? project.IsActive;
+                    project.Status = updateProjectRequest.Status ?? project.Status;
+                }
+
                 checkValid = await _projectRepository.UpdateAsync(project);
             }
             catch (Exception ex)

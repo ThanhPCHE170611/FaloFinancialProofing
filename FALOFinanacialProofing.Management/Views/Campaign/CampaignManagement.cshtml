@@ -108,10 +108,17 @@
         const checkrole = localStorage.getItem('loggingRole');
         const pageSize = 5;
         function fetchCampaignData(searchInput = '', isActive = null, page = 1) {
-            const jwtToken = localStorage.getItem('jwtToken');
+        const jwtToken = localStorage.getItem('jwtToken');
+
+        let apiUrl;
+        if(checkrole === "Project Management Board") {
+            apiUrl = `https://localhost:7294/api/Campaign/GetAllCampaignInSystem`
+        } else {
+            apiUrl = `https://localhost:7294/api/CampaignMember/GetAllCampaignMembersByUserIdAndRoleId`
+        }
 
             $.ajax({
-                url: `https://localhost:7294/api/CampaignMember/GetAllCampaignMembersByUserIdAndRoleId`,
+                url: apiUrl,
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`
@@ -150,15 +157,18 @@
             data.forEach((item, index) => {
                 console.log(item.campaignId);
                 let actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId})" class="btn btn-info btn-sm detail-btn">Detail</button>`;
+                let campaignName =`${item.title}`;
                 if(checkrole === "Project Manager") {
                     actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId})" class="btn btn-info btn-sm detail-btn">Detail</button>
                                         <button class="btn btn-primary btn-sm" onclick="changeCampaignUpdateProcess(this, ${item.campaignId})">Update Process</a>
                     `;
+                    campaignName = `${item.campaignTitle}`;
                 }
+                
                 const row = `
                     <tr>
                         <td class="align-middle text-center text-sm">${index + 1}</td>
-                        <td class="align-middle text-center text-sm">${item.campaignTitle}</td>
+                        <td class="align-middle text-center text-sm">${campaignName}</td>
                         <td class="align-middle text-center text-sm">${item.projectName}</td>
                         <td class="align-middle text-center text-sm">${item.fundTarget.toLocaleString()}</td>
                         <td class="align-middle text-center text-sm">${item.status}</td>
