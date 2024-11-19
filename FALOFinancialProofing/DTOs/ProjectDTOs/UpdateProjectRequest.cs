@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FALOFinancialProofing.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace FALOFinancialProofing.DTOs.ProjectDTOs
 {
@@ -12,6 +13,7 @@ namespace FALOFinancialProofing.DTOs.ProjectDTOs
         [Required]
         [MinLength(8, ErrorMessage = "Description must be at least 8 characters")]
         public string Description { get; set; }
+        [ImageFile]
         public IFormFile? LogoFile { get; set; }
     }
 }

@@ -138,7 +138,7 @@ namespace FALOFinancialProofing
                     }
                 });
             });
-            builder.Services.AddIdentity<User, IdentityRole>(options =>
+            builder.Services.AddIdentity<User, Role>(options =>
             {
                 // Cấu hình thời gian hết hạn token
                 options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultProvider;

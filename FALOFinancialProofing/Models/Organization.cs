@@ -10,7 +10,7 @@ namespace FALOFinancialProofing.Models
         public int Representative { get; set; }
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
-        public string Logo { get; set; }
+        public string? Logo { get; set; }
         public string Description { get; set; }
         public string Vision { get; set; }
         public string Mission { get; set; }
@@ -19,7 +19,7 @@ namespace FALOFinancialProofing.Models
         public string Interests { get; set; }
         public string VolunteerExperience { get; set; }
         public string VolunteerObjectives { get; set; }
-        public string Attachments { get; set; }
+        //public string? Attachments { get; set; }
         public string Bio { get; set; }
         [JsonIgnore]
         public ICollection<Project> Projects { get; set; } = new List<Project>();
