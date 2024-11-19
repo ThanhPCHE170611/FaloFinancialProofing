@@ -31,7 +31,7 @@ namespace FALOFinancialProofing.Services.BankServices
             }
         }
 
-        private static async Task CheckPaid(CancellationToken stoppingToken)
+        private async Task CheckPaid(CancellationToken stoppingToken)
         {
             using (var httpClient = new HttpClient())
             {
@@ -60,7 +60,6 @@ namespace FALOFinancialProofing.Services.BankServices
         }
     }
 
-    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
     public class CassoBankAccount
     {
         public int id { get; set; }

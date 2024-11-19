@@ -210,6 +210,7 @@ namespace FALOFinancialProofing.Services
                 message.Append("Account is locked out");
                 return true;
             }
+
             return false;
         }
         public async Task<UserDto?> LoginUser(SignInModel userLogin, StringBuilder message)
@@ -218,10 +219,12 @@ namespace FALOFinancialProofing.Services
             var checkPassword = await userManager.CheckPasswordAsync(user, userLogin.Password);
             if (user == null || !checkPassword)
             {
+                message.Append("Invalid Username/Password");
                 return null;
             }
             if (checkLockoutAccount(user, message))
             {
+
                 return null;
             }
 
@@ -1152,6 +1155,55 @@ Click vào link này để đặt lại mật khẩu: {resetPasswordLink}";
 
             return result;
         }
+
+        //public async Task AssignRoleToUserAsync(AddUserRole addUserRole)
+        //{
+        //    var user = await userManager.FindByIdAsync(addUserRole.UserId);
+        //    if (user != null)
+        //    {
+        //        var roleExists = await roleManager.RoleExistsAsync(addUserRole.RoleName);
+        //        if (roleExists)
+        //        {
+        //            await userManager.AddToRoleAsync(user, addUserRole.RoleName);
+        //        }
+        //    }
+        //}
+
+        public async Task<bool> AssignRoleToUserAsync(AddUserRole addUserRole, StringBuilder message)
+        {
+            User user = null!;
+            bool result = false;
+            try
+            {
+                user = await userManager.FindByIdAsync(addUserRole.UserId);
+                if (user == null)
+                {
+                    throw new Exception("User not found in system!");
+                }
+                var role = await roleManager.FindByNameAsync(addUserRole.RoleName);
+                if (role == null)
+                {
+                    throw new Exception("Role not found in system!");
+                }
+                result = await userManager.AddToRoleAsync(user, role.Name) == IdentityResult.Success;
+                if (result)
+                {
+                    message.Append("Assign Role successfully");
+                }
+                else
+                {
+                    message.Append("Assign Role failed");
+                }
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"UpdateUserRoleAsync: {ex.Message}");
+            }
+
+            return result;
+        }
+
     }
 
 
