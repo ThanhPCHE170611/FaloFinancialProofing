@@ -1,0 +1,210 @@
+﻿@{
+    ViewData["Title"] = "Campaign Request Detail";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <style>
+        .form-control {
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+        }
+
+        #approver-section {
+            display: none;
+        }
+
+        #feedback-section {
+            display: none;
+        }
+
+        #save-btn {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        #docList li {
+            margin-bottom: 5px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Campaign Request Detail</h6>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="title" class="form-label">Title</label>
+                                <input type="text" class="form-control" id="title" readonly>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="senderName" class="form-label">Sender</label>
+                                <input type="text" class="form-control" id="senderName" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="createdAt" class="form-label">Created Date</label>
+                                <input type="text" class="form-control" id="createdAt" readonly>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="status" class="form-label">Status</label>
+                                <input type="text" class="form-control" id="status" readonly>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="status" class="form-label">Fund Target</label>
+                                <input type="text" class="form-control" id="fundTaget" readonly>
+                            </div>
+                        </div>
+                        <div class="row mb-3" id="approver-section">
+                            <div class="col-md-12">
+                                <label for="receiverName" class="form-label">Approver</label>
+                                <input type="text" class="form-control" id="receiverName" readonly>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" rows="8" readonly></textarea>
+                        </div>
+                        <div class="mb-3" id="feedback-section">
+                            <label for="feedback" class="form-label">Feedback</label>
+                            <textarea class="form-control" id="feedback" rows="2" readonly></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Attached Files</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul id="docList" class="list-group mt-3"></ul>
+                    </div>
+                </div>
+
+                <div id="save-btn">
+                    <a href="/Campaign/CampaignRequestManagement" class="btn btn-success btn-lg" style="margin-left:10px">Back to List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+</body>
+
+</html>
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function formatDateTime(dateString) {
+        if (!dateString) return 'N/A';
+
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+            return 'Invalid Date';
+        }
+
+        const formattedDate = date.getDate().toString().padStart(2, '0') + '-' +
+            (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
+            date.getFullYear();
+
+        const formattedTime = date.getHours().toString().padStart(2, '0') + ':' +
+            date.getMinutes().toString().padStart(2, '0') + ':' +
+            date.getSeconds().toString().padStart(2, '0');
+
+        return formattedDate + ' ' + formattedTime;
+    }
+    $(document).ready(function () {
+        const campaignId = new URLSearchParams(window.location.search).get('requestId');
+        const jwtToken = localStorage.getItem('jwtToken');
+        const userId = localStorage.getItem('userId');
+        $.ajax({
+            url: `https://localhost:7294/api/CreateCampaignRequests/GetCreateCampaignRequest/${campaignId}`,
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            },
+            success: function (data) {
+                $('#title').val(data.title);
+                $('#senderName').val(data.senderName);
+                $('#createdAt').val(formatDateTime(data.createdAt));
+                $('#status').val(data.status);
+                $('#description').val(data.description);
+                $('#fundTaget').val(data.fundTarget);
+                if (data.receiverName !== ' ') {
+                    $('#receiverName').val(data.receiverName);
+                    $('#approver-section').show();
+                }
+
+                if (data.status.toLowerCase() === 'rejected') {
+                    $('#feedback-section').show();
+                    $('#feedback').val(data.feedback);
+                }
+
+                console.log('senderid = ' + data.senderId);
+                console.log('userid = ' + userId);
+                if (data.status.toLowerCase() === 'pending' && data.senderId === userId) {
+                    console.log('status = ' + data.status.toLowerCase());
+                    const cancelButton = $('<button>')
+                    .attr('id', 'cancelButton')
+                    .addClass('btn btn-danger btn-lg')
+                    .css('margin-left', '10px')
+                    .text('Cancel Request')
+                    .click(function () {
+                        $.ajax({
+                            url: `https://localhost:7294/api/CreateCampaignRequests/CancelCreateCampaignRequest/${userId}/${campaignId}`,
+                            method: 'PUT',
+                            headers: {
+                                'Authorization': `Bearer ${jwtToken}`
+                            },
+                            success: function (response) {
+                                alert(response.message);
+                                if (response.success) {
+                                    location.reload();
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                alert('Error: ' + (xhr.responseText || status));
+                            }
+                        });
+                    });
+                    $('#save-btn').append(cancelButton);
+                }
+
+                data.createCampaignFiles.forEach(function (file) {
+                    $('#docList').append(`<li class="list-group-item">${file.filePath}</li>`);
+                });
+            },
+            error: function (err) {
+                console.error('Error fetching campaign request details:', err);
+            }
+        });
+    });
+</script>

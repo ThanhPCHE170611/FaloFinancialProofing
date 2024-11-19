@@ -129,7 +129,7 @@ namespace FALOFinancialProofing.Controllers
                         {
                             CreateQrCodeId = createQrCode.Id,
                             Amount = transaction.amount,
-                            CampaignId = campaign.CampaignId,
+                            CampaignId = campaign.Id,
                             Description = description,
                             TransactionDate = DateTime.ParseExact(transaction.when, format, CultureInfo.InvariantCulture),
                             CassoTransactionId = transaction.id,

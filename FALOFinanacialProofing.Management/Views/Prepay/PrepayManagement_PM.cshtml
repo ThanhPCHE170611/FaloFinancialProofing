@@ -60,13 +60,13 @@
                                 <a asp-controller="Accounting" asp-action="AccountingBookCampaign">Accounting Book</a>
                                 <a asp-controller="Campaign" asp-action="Member">Member</a>
                                 <a asp-controller="Prepay" asp-action="PrepayManagement_PM" class="active">Prepay Created Request</a>
-                                <a asp-controller="Payment" asp-action="PaymentManagement_PM" >Payment Created Request</a>
+                                <a asp-controller="Payment" asp-action="PaymentManagement_PM" >Created Payment Request</a>
                             </nav>
                         </div>
                     </div>
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
-                            <h6 class="text-white text-capitalize ps-3 mb-0">Prepay Request List</h6>
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Prepay Created Request List</h6>
                             <a class="btn btn-dark mb-0 me-3" href="/Prepay/PrepayCreate_PM">Create Prepay Request</a>
                         </div>
                     </div>
@@ -86,13 +86,13 @@
                             <table class="table align-items-center mb-0" id="prepayTable">
                                 <thead>
                                     <tr>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 5%;">STT</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 15%;">Sender</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 15%;">Expected Money</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 15%;">Assign From</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 10%;">File</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 10%;">Voucher</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 10%;">Status</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7" style="width: 5%;">STT</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7" style="width: 15%;">Sender</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-center" style="width: 15%;">Expected Money</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-center" style="width: 15%;">Email</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-center" style="width: 10%;">File</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-center" style="width: 10%;">Voucher</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-center" style="width: 10%;">Status</th>
 
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="width: 15%;">Created Date</th>
                                         <th class="text-secondary opacity-7 text-center" style="width: 10%;">Action</th>
@@ -129,15 +129,16 @@
         </div>
     </div>
     </div>
-    <script src="../assets/js/core/popper.min.js"></script>
-    <script src="../assets/js/core/bootstrap.min.js"></script>
-    <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
-    <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
-    <script src="~/js/prepay/prepaycreatedmanagement.js"></script>
+
 </body>
 
 </html>
 
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+<script src="~/js/prepay/prepaycreatedmanagement.js"></script>

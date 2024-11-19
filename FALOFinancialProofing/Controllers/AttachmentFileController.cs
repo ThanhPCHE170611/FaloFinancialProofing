@@ -1,5 +1,6 @@
 ﻿using FALOFinancialProofing.Constant;
 using FALOFinancialProofing.Services.AttachmentFIleServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ namespace FALOFinancialProofing.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AttachmentFileController : ControllerBase
     {
         private readonly IAttachmentFileServices attachmentFileServices;

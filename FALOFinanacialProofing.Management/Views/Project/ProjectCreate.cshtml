@@ -12,7 +12,6 @@
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
     <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
     <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
@@ -63,7 +62,7 @@
                         <div class="row mb-3">
                             <div class="col-md-12">
                                 <label for="projectName" class="form-label">Project Name</label>
-                                <input type="text" class="form-control" id="projectName" value="Nhà Hạnh Phúc 130">
+                                <input type="text" class="form-control" id="projectName" placeholder="Enter Project Name">
                             </div>
                         </div>
 
@@ -73,17 +72,6 @@
                         </div>
                     </div>
                 </div>
-
-@*              <div class="card mb-4">
-                    <div class="card-header">
-                        <h5>Project Picture</h5>
-                    </div>
-                    <div class="card-body">
-                        <button class="btn btn-primary mb-3" onclick="document.getElementById('projectImages').click()">Choose file</button>
-                        <input type="file" id="projectImages" class="form-control d-none" accept="image/*" multiple>
-                        <div id="imagePreview" class="mt-3 row"></div>
-                    </div>
-                </div> *@
 
                 <div class="card mb-4">
                     <div class="card-header">
@@ -97,6 +85,17 @@
                     </div>
                 </div>
 
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Project Picture</h5>
+                    </div>
+                    <div class="card-body">
+                        <button class="btn btn-primary mb-3" onclick="document.getElementById('projectImages').click()">Choose file</button>
+                        <input type="file" id="projectImages" class="form-control d-none" accept="image/*" multiple>
+                        <div id="imagePreview" class="mt-3 row"></div>
+                    </div>
+                </div>
+
                 <div id="save-btn">
                     <button class="btn btn-warning btn-lg" style="margin-left:10px">Create</button>
                     <div>
@@ -106,115 +105,116 @@
             </div>
         </div>
     </div>
-    <script src="../assets/js/core/popper.min.js"></script>
-    <script src="../assets/js/core/bootstrap.min.js"></script>
-    <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
-    <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
-    <script>
-        var quill = new Quill('#editor-container', {
-          theme: 'snow'
-        });
-
-        // document.getElementById('projectImages').addEventListener('change', function(event) {
-        //   const imagePreview = document.getElementById('imagePreview');
-        //   imagePreview.innerHTML = '';
-        //   const files = event.target.files;
-        //   Array.from(files).forEach(file => {
-        //     const reader = new FileReader();
-        //     reader.onload = function(e) {
-        //       const colDiv = document.createElement('div');
-        //       colDiv.classList.add('col-md-4', 'mb-3');
-        //       const img = document.createElement('img');
-        //       img.src = e.target.result;
-        //       img.classList.add('img-fluid', 'rounded');
-        //       colDiv.appendChild(img);
-        //       imagePreview.appendChild(colDiv);
-        //     }
-        //     reader.readAsDataURL(file);
-        //   });
-        // });
-
-        document.getElementById('attachments').addEventListener('change', function (e) {
-            const fileList = document.getElementById('fileList');
-            fileList.innerHTML = '';
-            Array.from(e.target.files).forEach(file => {
-                const li = document.createElement('li');
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(file);
-                a.textContent = file.name;
-                a.download = file.name;
-                li.appendChild(a);
-                fileList.appendChild(li);
-            });
-        });
-
-
-
-        var win = navigator.platform.indexOf('Win') > -1;
-        if (win && document.querySelector('#sidenav-scrollbar')) {
-          var options = {
-            damping: '0.5'
-          }
-          Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
-        }
-        $(document).ready(function () {
-            $('#save-btn button').on('click', function (event) {
-                event.preventDefault(); 
-
-                const jwtToken = localStorage.getItem('jwtToken');
-                const userId = localStorage.getItem('userId');
-
-                const today = new Date();
-                const year = today.getFullYear();
-                const month = String(today.getMonth() + 1).padStart(2, '0');
-                const day = String(today.getDate()).padStart(2, '0');
-                const hours = String(today.getHours()).padStart(2, '0');
-                const minutes = String(today.getMinutes()).padStart(2, '0');
-                const seconds = String(today.getSeconds()).padStart(2, '0');
-                const dateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
-
-                const projectName = $('#projectName').val();
-                const projectDescription = quill.getText();
-                const files = $('#attachments')[0].files;
-
-                const formData = new FormData();
-                formData.append('ProjectName', projectName);
-                formData.append('Description', projectDescription);
-                formData.append('DateOfCreation', dateTime);
-                formData.append('IsActive', false);
-                formData.append('CreatedBy', userId);
-                formData.append('OrganizationId', 0);
-
-                Array.from(files).forEach(file => {
-                    formData.append('UploadFiles', file);
-                });
-
-                $.ajax({
-                    url: 'https://localhost:7294/api/Projects/CreateProject',
-                    type: 'POST',
-                    data: formData,
-                    processData: false, 
-                    contentType: false, 
-                    headers: {
-                        'Authorization': `Bearer ${jwtToken}`
-                    },
-                    success: function (response) {
-                        alert(response.Message || 'Project created successfully!');
-                        window.location.href = `/Project/ProjectManagement`;
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Error creating project:', error);
-                        alert('Failed to create project. Please try again.');
-                    }
-                });
-            });
-        });
-
-    </script>
 </body>
 </html>
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+<script>
+    var quill = new Quill('#editor-container', {
+      theme: 'snow'
+    });
+
+    document.getElementById('projectImages').addEventListener('change', function(event) {
+      const imagePreview = document.getElementById('imagePreview');
+      imagePreview.innerHTML = '';
+      const files = event.target.files;
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const colDiv = document.createElement('div');
+          colDiv.classList.add('col-md-4', 'mb-3');
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.classList.add('img-fluid', 'rounded');
+          colDiv.appendChild(img);
+          imagePreview.appendChild(colDiv);
+        }
+        reader.readAsDataURL(file);
+      });
+    });
+
+    document.getElementById('attachments').addEventListener('change', function (e) {
+        const fileList = document.getElementById('fileList');
+        fileList.innerHTML = '';
+        Array.from(e.target.files).forEach(file => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(file);
+            a.textContent = file.name;
+            a.download = file.name;
+            li.appendChild(a);
+            fileList.appendChild(li);
+        });
+    });
+
+
+
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+      var options = {
+        damping: '0.5'
+      }
+      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+    $(document).ready(function () {
+        $('#save-btn button').on('click', function (event) {
+            event.preventDefault();
+
+            const jwtToken = localStorage.getItem('jwtToken');
+            const userId = localStorage.getItem('userId');
+
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const hours = String(today.getHours()).padStart(2, '0');
+            const minutes = String(today.getMinutes()).padStart(2, '0');
+            const seconds = String(today.getSeconds()).padStart(2, '0');
+            const dateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+
+            const projectName = $('#projectName').val();
+            const projectDescription = quill.getText();
+            const files = $('#attachments')[0].files;
+
+            const formData = new FormData();
+            formData.append('ProjectName', projectName);
+            formData.append('Description', projectDescription);
+            formData.append('CreatedBy', userId);
+            formData.append('OrganizationId', 0);
+            var logoFile = $('#projectImages')[0].files[0];
+            if (logoFile) {
+                formData.append('LogoFile', logoFile);
+            }
+            Array.from(files).forEach(file => {
+                formData.append('FormFiles', file);
+            });
+
+            $.ajax({
+                url: 'https://localhost:7294/api/Projects/CreateProject',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                success: function (response) {
+                    alert(response.message || 'Project created successfully!');
+                    window.location.href = `/Project/ProjectManagement`;
+                },
+                error: function (xhr, status, error) {
+                    alert('Error: ' + xhr.responseText || status);
+                }
+            });
+        });
+    });
+
+</script>

@@ -5,6 +5,10 @@ namespace FALOFinanacialProofing.Management.Controllers
 {
     public class CampaignController : Controller
     {
+        public ActionResult CampaignRequestManagement()
+        {
+            return View();
+        }
         public ActionResult CampaignManagement()
         {
             return View();
@@ -29,7 +33,18 @@ namespace FALOFinanacialProofing.Management.Controllers
         {
             return View();
         }
-
+        public ActionResult CampaignRequestDetail()
+        {
+            return View();
+        }
+        public ActionResult CampaignUpdateProcessManagement()
+        {
+            return View();
+        }
+        public ActionResult CampaignUpdateProcessRequestDetail()
+        {
+            return View();
+        }
 
 
         // GET: CampaignController/Details/5

@@ -9,9 +9,9 @@ namespace FALOFinancialProofing.DTOs.UserDTOs
     {
         public string Id { get; set; }
         //không cho đổi email
-        [MaxLength(30)]
+        [MaxLength(40)]
         public string FirstName { get; set; } = null!;
-        [MaxLength(30)]
+        [MaxLength(40)]
         public string LastName { get; set; } = null!;
         public DateOnly? BirthDate { get; set; }
         // không truyền vào logoFile thì không update logo

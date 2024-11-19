@@ -21881,9 +21881,10 @@ body.dark-version {
     height: 100%;
   }
 
-  .dropdown:not(.dropdown-hover) .dropdown-menu.show {
-    margin-top: 2.8125rem !important;
-  }
+    .dropdown:not(.dropdown-hover) .dropdown-menu.show {
+        margin-left: 0.8rem;
+        margin-top: 2.8125rem !important;
+    }
 
   .dropdown .dropdown-menu:before {
     font-family: "FontAwesome";

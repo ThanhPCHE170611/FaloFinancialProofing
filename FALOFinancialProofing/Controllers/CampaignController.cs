@@ -1,6 +1,7 @@
 ﻿using FALOFinancialProofing.Attributes.RoleAttributes;
 using FALOFinancialProofing.Constant;
 using FALOFinancialProofing.DTOs.CampaignDTO;
+using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services;
@@ -33,28 +34,7 @@ namespace FALOFinancialProofing.Controllers
             this.roleManager = roleManager;
             _campaignMemberService = campaignMemberService;
         }
-
-        //[HttpGet("GetAllCampaign")]
-        //public async Task<IActionResult> GetAllCampaign()
-        //{
-        //    var campaigns = await _campaignService.GetAllCampaignsAsync();
-        //    if (campaigns == null || campaigns.Count == 0)
-        //    {
-        //        return Ok(new
-        //        {
-        //            Success = false,
-        //            Message = "No Campaigns found."
-        //        });
-        //    }
-
-        //    return Ok(new
-        //    {
-        //        Success = true,
-        //        Message = "Campaigns retrieved successfully.",
-        //        Data = campaigns
-        //    });
-        //}
-
+        // những campaign không ở trạng thái pending và rejected
         [HttpGet("GetAllCampaignInSystem")]
         public async Task<IActionResult> GetAllCampaignInSystem(string? title, string? status, bool? IsActive, int currentPage = IntConstant.PageNumberDefault)
         {
@@ -62,7 +42,7 @@ namespace FALOFinancialProofing.Controllers
             FilterPagingData filterPagingData = new FilterPagingData();
             try
             {
-                data = await _campaignService.GetAllCampaignsAsync();
+                data = await _campaignService.GetAllCampaignsAsync(Request);
                 if (data == null || data.Count == 0)
                 {
                     return Ok(new ApiResponse()
@@ -102,14 +82,14 @@ namespace FALOFinancialProofing.Controllers
             });
         }
         //[RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
-        [HttpGet("GetAllCampaignByProjectId/{ProjectId}")]
+        [HttpGet("GetAllCampaignByProjectId/{ProjectId}")]// search theo title
         public async Task<IActionResult> GetAllCampaignByProjectId(string? title, int ProjectId, string? status, int currentPage = IntConstant.PageNumberDefault)
         {
             List<CampaignInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
             try
             {
-                data = await _campaignService.GetAllCampaignsByProjectIdAsync(ProjectId);
+                data = await _campaignService.GetAllCampaignsByProjectIdAsync(ProjectId, Request);
                 if (data == null || data.Count == 0)
                 {
                     return Ok(new ApiResponse()
@@ -153,8 +133,7 @@ namespace FALOFinancialProofing.Controllers
             List<CampaignInformation> data = null;
             try
             {
-                data = await _campaignService.GetAllCampaignsAsync();
-                data = data.Take(numOfElements).ToList();
+                data = await _campaignService.GetAllCampaignsAsync(Request);
                 if (data == null || data.Count == 0)
                 {
                     return Ok(new ApiResponse()
@@ -176,6 +155,7 @@ namespace FALOFinancialProofing.Controllers
                 {
                     data = data.OrderByDescending(o => o.DateOfCreation).ToList();
                 }
+                data = data.Take(numOfElements).ToList();
 
             }
             catch (Exception ex)
@@ -193,7 +173,7 @@ namespace FALOFinancialProofing.Controllers
         [HttpGet("GetCampaignDetailsById/{id}")]
         public async Task<IActionResult> GetCampaignDetailsById(int id)
         {
-            var campaign = await _campaignService.GetCampaignByCampaignIdAsync(id);
+            var campaign = await _campaignService.GetCampaignByCampaignIdAsync(id, Request);
             if (campaign == null)
             {
                 return Ok(new
@@ -296,9 +276,6 @@ namespace FALOFinancialProofing.Controllers
                     //}
                 }
                 stringBuilderMessage.Append("Create Campaign Successfully!");
-                //statusMessage = await _projectService.CreateProjectAsync(createProject)
-                //    != false ? "Create Project Successfully!" : throw new Exception();
-
             }
             catch (Exception ex)
             {
@@ -310,23 +287,34 @@ namespace FALOFinancialProofing.Controllers
         }
         [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
         [HttpPut("UpdateCampaign")]
-        public async Task<IActionResult> UpdateCampaign([FromBody] UpdateCampaignDTO updateCampaignDTO)
+        public async Task<IActionResult> UpdateCampaign([FromForm] UpdateCampaignDTO updateCampaignDTO)
         {
-
-            var canUpdateCampaign = await _campaignService.UpdateCampaignAsync(updateCampaignDTO);
-            if (!canUpdateCampaign)
+            StringBuilder message = new StringBuilder();
+            bool checkValid = false;
+            try
             {
-                return Ok(new
+                checkValid = await _campaignService.ValidateCampaignUpdateAsync(updateCampaignDTO, message);
+                if (!checkValid)
                 {
-                    Success = false,
-                    Message = $"Campaign with Id = {updateCampaignDTO.Id} not found or could not be updated."
-                });
+                    return Ok(new ApiResponse()
+                    {
+                        Message = message.ToString(),
+                        Success = checkValid
+                    });
+                }
+                checkValid = await _campaignService.UpdateCampaignAsync(updateCampaignDTO, message);
+                if (checkValid)
+                    message.Append("Campaign updated successfully!");
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"UpdateCampaign: Error {ex.Message}");
             }
 
-            return Ok(new
+            return Ok(new ApiResponse()
             {
-                Success = true,
-                Message = "Campaign updated successfully."
+                Message = message.ToString(),
+                Success = checkValid
             });
         }
         [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.Admin)]
@@ -370,6 +358,7 @@ namespace FALOFinancialProofing.Controllers
                 Data = campaigns
             });
         }
+
 
         [HttpPost("updateenddateforprojectmanager")]
         public async Task<IActionResult> UpdateEndDateForProjectManager(int campaignId, string userId, string currentRole, DateTime newDateTime)

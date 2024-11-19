@@ -3,8 +3,14 @@ using NuGet.Packaging.Signing;
 
 namespace FALOFinancialProofing.Helpers
 {
+
     public class FileHelper
     {
+        public const int UserImageMaxFileSize = 5 * 1024 * 1024;
+        public const int OrganizationImageMaxFileSize = 5 * 1024 * 1024;
+        public const int CampaignImageMaxFileSize = 10 * 1024 * 1024;
+        public const int ProjectImageMaxFileSize = 10 * 1024 * 1024;
+
         public static async Task<string> ConvertIFormFileToStringAsync(IFormFile file)
         {
             if (file == null || file.Length == 0)
@@ -20,6 +26,7 @@ namespace FALOFinancialProofing.Helpers
             }
         }
 
+        // áp dụng cho updateProfile
         public static async Task<string> SaveImageAndReturnShortPathAsync(IFormFile file, string folderName, string fileShortPath)
         {
             //fileShortPath include folderName and filename
@@ -37,7 +44,7 @@ namespace FALOFinancialProofing.Helpers
                 }
             }
             var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), folderName);
-            if (!Directory.Exists(uploadFolder))
+            if (!Directory.Exists(uploadFolder)) // không cần dùng cũng được khi đã tạo folder trong startup
             {
                 Directory.CreateDirectory(uploadFolder);
             }
@@ -49,36 +56,6 @@ namespace FALOFinancialProofing.Helpers
                 await file.CopyToAsync(stream);
             }
             return $"{folderName}/{fileName}";
-            //using (var memoryStream = new MemoryStream())
-            //{
-            //    await file.CopyToAsync(memoryStream);
-            //    byte[] fileBytes = memoryStream.ToArray();
-            //    return Convert.ToBase64String(fileBytes);
-            //}
         }
-
-        //public static async Task<string> RemovePrefixStringUrlAsync(string imagePath)
-        //{
-        //    string currentPath = Directory.GetCurrentDirectory();
-        //    imagePath = imagePath.Substring(currentPath.Length);
-        //    //if ()
-        //    //{
-
-        //    //}
-
-
-        //}
-
-        //public static async Task<string> AddPrefixStringUrlAsync(string dbImagePath)
-        //{
-        //    string currentPath = Directory.GetCurrentDirectory();
-        //    imagePath = imagePath.Substring(currentPath.Length);
-        //    if ()
-        //    {
-
-        //    }
-
-
-        //}
     }
 }

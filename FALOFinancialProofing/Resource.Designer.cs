@@ -115,7 +115,7 @@ namespace FALOFinancialProofing {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Fund Raising.
+        ///   Looks up a localized string similar to Fund-Raising.
         /// </summary>
         public static string CampaignStatus_FundRaising {
             get {

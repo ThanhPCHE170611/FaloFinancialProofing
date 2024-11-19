@@ -12,7 +12,9 @@
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
     <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
     <style>
         .form-control {
             border: 1px solid #ced4da;
@@ -97,134 +99,103 @@
 
                         <div class="mb-3">
                             <label for="fullName" class="form-label">Full Name</label>
-                            <input type="text" class="form-control" id="fullName" placeholder="Nhập họ và tên" value="Nguyễn Văn A">
+                            <input type="text" class="form-control" id="fullName" placeholder="Nhập họ và tên" >
                         </div>
 
                         <div class="mb-3">
                             <label for="dob" class="form-label">Date Of Birth</label>
-                            <input type="date" class="form-control" id="dob" value="1990-01-01">
+                            <input type="date" class="form-control" id="dob">
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Gender</label>
                             <div class="gender-radio-group">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="gender" id="male" value="male" checked>
+                                    <input class="form-check-input" type="radio" name="gender" id="male" value="true" >
                                     <label class="form-check-label" for="male">Male</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="gender" id="female" value="female">
+                                    <input class="form-check-input" type="radio" name="gender" id="female" value="false">
                                     <label class="form-check-label" for="female">Female</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="gender" id="other" value="other">
-                                    <label class="form-check-label" for="other">Other</label>
                                 </div>
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label for="address" class="form-label">Address</label>
-                            <textarea class="form-control" id="address" rows="2" placeholder="Nhập địa chỉ">123 Đường ABC, Quận X, TP. Hồ Chí Minh</textarea>
+                            <textarea class="form-control" id="address" rows="2" placeholder="Nhập địa chỉ"></textarea>
                         </div>
 
                         <div class="mb-3">
-                            <label for="workplace" class="form-label">Ưorkplace</label>
-                            <input type="text" class="form-control" id="workplace" placeholder="Nhập nơi học tập hoặc làm việc" value="Công ty XYZ">
+                            <label for="workplace" class="form-label">Workplace</label>
+                            <input type="text" class="form-control" id="workplace" placeholder="Nhập nơi học tập hoặc làm việc" >
                         </div>
 
                         <div class="mb-3">
                             <label for="phone" class="form-label">Phone Number</label>
-                            <input type="number" class="form-control" id="phone" placeholder="Nhập số điện thoại" value="0123456789">
+                            <input type="tel" class="form-control" id="phone" placeholder="Nhập số điện thoại">
                         </div>
 
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" placeholder="Nhập email" value="email@example.com">
+                            <input type="email" class="form-control" id="email" readonly>
                         </div>
 
                         <div class="mb-3">
                             <label for="socialMedia" class="form-label">Social Media</label>
-                            <input type="url" class="form-control" id="socialMedia" placeholder="Nhập link trang mạng xã hội" value="https://facebook.com/nguyenvana">
+                            <div id="socialMediaContainer">
+                                <div class="input-group mb-2">
+                                    <input id="urlsocial" type="url" class="form-control social-media-input" placeholder="Enter social media link">
+                                    @* <button type="button" class="btn btn-primary add-social-btn">+</button> *@
+                                </div>
+                            </div>
                         </div>
-
-
                         <div class="mb-3">
                             <label for="bio" class="form-label">Bio</label>
-                            <textarea class="form-control" id="bio" rows="3" placeholder="Giới thiệu về bản thân">Tôi là một lập trình viên với 5 năm kinh nghiệm...</textarea>
+                            <textarea class="form-control" id="bio" rows="3" placeholder="Giới thiệu về bản thân"></textarea>
                         </div>
 
                         <h5>Thông tin chi tiết</h5>
 
                         <div class="mb-3">
                             <label for="education" class="form-label">Education</label>
-                            <input type="text" class="form-control" id="education" placeholder="Nhập trình độ học vấn" value="Đại học Công nghệ Thông tin">
+                            <input type="text" class="form-control" id="education" placeholder="Nhập trình độ học vấn" >
                         </div>
 
                         <div class="mb-3">
                             <label for="skills" class="form-label">Skills</label>
-                            <input type="text" class="form-control" id="skills" placeholder="Nhập kỹ năng" value="Java, Python, Web Development">
+                            <input type="text" class="form-control" id="skills" placeholder="Nhập kỹ năng" >
                         </div>
 
                         <div class="mb-3">
                             <label for="hobbies" class="form-label">Hobbies</label>
-                            <input type="text" class="form-control" id="hobbies" placeholder="Nhập sở thích" value="Chơi cờ vua, Đọc sách, Thể thao">
+                            <input type="text" class="form-control" id="hobbies" placeholder="Nhập sở thích" >
                         </div>
 
                         <div class="mb-3">
                             <label for="strengths" class="form-label">Strengths</label>
-                            <textarea class="form-control" id="strengths" rows="3" placeholder="Nhập thế mạnh">Giải quyết vấn đề, Quản lý thời gian</textarea>
+                            <textarea class="form-control" id="strengths" rows="3" placeholder="Nhập thế mạnh"></textarea>
                         </div>
 
                         <div class="mb-3">
                             <label for="sdgInterests" class="form-label">SDG Interests (17 SDGs)</label>
-                            <div class="sdg-tags" id="sdg-tags">
-                                <span data-value="1" class="active">No Poverty</span>
-                                <span data-value="2" class="active">Zero Hunger</span>
-                                <span data-value="3">Good Health And Well-Being</span>
-                                <span data-value="4">Quality Education</span>
-                                <span data-value="5">Gender Equality</span>
-                                <span data-value="6">Clean Water And Sanitation</span>
-                                <span data-value="7">Không đói</span>
-                                <span data-value="8">Sức khỏe tốt</span>
-                                <span data-value="9">Giáo dục chất lượng</span>
-                                <span data-value="10">Bình đẳng giới</span>
-                                <span data-value="11">Không nghèo</span>
-                                <span data-value="12">Không đói</span>
-                                <span data-value="13">Sức khỏe tốt</span>
-                                <span data-value="14">Giáo dục chất lượng</span>
-                                <span data-value="15">Bình đẳng giới</span>
-                                <span data-value="16">Giáo dục chất lượng</span>
-                                <span data-value="17">Bình đẳng giới</span>
+                            <div class="sdg-tags" id="sdgList">
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label for="volunteerExperience" class="form-label">Volunteer Experience</label>
-                            <textarea class="form-control" id="volunteerExperience" rows="3" placeholder="Nhập kinh nghiệm tình nguyện">Tôi đã tham gia nhiều hoạt động tình nguyện...</textarea>
+                            <textarea class="form-control" id="volunteerExperience" rows="3" placeholder="Nhập kinh nghiệm tình nguyện"></textarea>
                         </div>
 
                         <div class="mb-3">
                             <label for="volunteerGoals" class="form-label">Volunteer Goals</label>
-                            <textarea class="form-control" id="volunteerGoals" rows="3" placeholder="Nhập mục tiêu tình nguyện">Mong muốn đóng góp cho cộng đồng...</textarea>
-                        </div>
-
-                        <h5>Attachments File</h5>
-                        <label for="fileInput" class="form-label">Attachments</label>
-                        <div class="mb-3" id="attachments">
-                            <input class="form-control" type="file" id="fileInput" multiple>
-                            <ul id="fileList"></ul>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="attachments" class="form-label">Activity Plan</label>
-                            <input type="file" class="form-control" id="attachments2" multiple>
-                            <ul id="fileList2"></ul>
+                            <textarea class="form-control" id="volunteerGoals" rows="3" placeholder="Nhập mục tiêu tình nguyện"></textarea>
                         </div>
 
                         <a class="btn btn-warning" href="changepassword">Change Password</a>
                         <div id="save-btn">
-                            <button type="submit" class="btn btn-success">Save</button>
+                            <button type="button" class="btn btn-primary" id="updateProfileBtn" disabled>Update Profile</button>
                         </div>
 
                     </div>
@@ -233,43 +204,279 @@
         </div>
     </div>
 
-    <script>
-        function previewImage() {
-            var fileInput = document.getElementById('profilePicture');
-            var imagePreview = document.getElementById('imagePreview');
-            var file = fileInput.files[0];
-            var reader = new FileReader();
 
-            reader.onload = function(e) {
-                var img = document.createElement('img');
-                img.src = e.target.result;
-                imagePreview.innerHTML = '';
-                imagePreview.appendChild(img);
-            }
-
-            if (file) {
-                reader.readAsDataURL(file);
-            }
-        }
-        document.getElementById('attachments').addEventListener('change', function (e) {
-            const fileList = document.getElementById('fileList');
-            fileList.innerHTML = '';
-            Array.from(e.target.files).forEach(file => {
-                const li = document.createElement('li');
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(file);
-                a.textContent = file.name;
-                a.download = file.name;
-                li.appendChild(a);
-                fileList.appendChild(li);
-            });
-        });
-        document.querySelectorAll('.sdg-tags span').forEach(function (tag) {
-            tag.addEventListener('click', function () {
-                this.classList.toggle('active');
-            });
-        });
-    </script>
 </body>
 
 </html>
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function previewImage() {
+        var fileInput = document.getElementById('profilePicture');
+        var imagePreview = document.getElementById('imagePreview');
+        var file = fileInput.files[0];
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+            var img = document.createElement('img');
+            img.src = e.target.result;
+            imagePreview.innerHTML = '';
+            imagePreview.appendChild(img);
+        }
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    }
+    document.querySelectorAll('.sdg-tags span').forEach(function (tag) {
+        tag.addEventListener('click', function () {
+            this.classList.toggle('active');
+        });
+    });
+    function loadSDGs() {
+        $.ajax({
+            url: 'https://localhost:7294/api/SDG/GetAllSDGs',
+            type: 'GET',
+            success: function (response) {
+                if (response.success && response.data.length > 0) {
+                    const sdgList = $('#sdgList');
+                    response.data.forEach(sdg => {
+                        const sdgItem = $('<span></span>')
+                            .text(sdg.sdgName)
+                            .attr('data-id', sdg.id)
+                            .on('click', function () {
+                                $(this).toggleClass('active');
+                                $('#updateProfileBtn').prop('disabled', false);
+                            });
+                        sdgList.append(sdgItem);
+                    });
+                } else {
+                    alert(response.message || 'Failed to load SDGs.');
+                }
+            },
+            error: function (err) {
+                console.error('Error loading SDGs:', err);
+            }
+        });
+    }
+    $(document).ready(function () {
+        const userId = localStorage.getItem('userId');
+        const jwtToken = localStorage.getItem('jwtToken');
+        loadSDGs()
+        loadUserProfile(userId);
+
+
+        $('#socialMediaContainer').on('click', '.add-social-btn', function () {
+            const newInput = `<div class="input-group mb-2">
+                <input type="url" class="form-control social-media-input" data-id="0" placeholder="Enter social media link">
+                <button type="button" class="btn btn-outline-danger remove-social-btn">-</button>
+            </div>`;
+            $('#socialMediaContainer').append(newInput);
+        });
+
+        $('#socialMediaContainer').on('click', '.remove-social-btn', function () {
+            $(this).closest('.input-group').remove();
+        });
+
+        function loadUserProfile(userId) {
+            $.ajax({
+                url: `https://localhost:7294/api/Users/GetUserProfile/${userId}`,
+                type: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                success: function (response) {
+                    if (response.success) {
+                        const data = response.data;
+                        $('#fullName').val(`${data.firstName} ${data.lastName}`);
+                        $('#dob').val(data.birthDate);
+                        if (data.gender === true) {
+                            $('#male').prop('checked', true);
+                        } else if (data.gender === false) {
+                            $('#female').prop('checked', true);
+                        }
+                        $('#address').val(data.address);
+                        $('#workplace').val(data.workPlace);
+                        $('#bio').val(data.bio);
+                        $('#education').val(data.education);
+                        $('#skills').val(data.skill);
+                        $('#hobbies').val(data.hobby);
+                        $('#strengths').val(data.strength);
+                        $('#email').val(data.email);
+                        $('#phone').val(data.phoneNumber);
+                        const socialMediaContainer = $('#socialMediaContainer');
+                        socialMediaContainer.empty();
+                        if (data.socialNetworkRequests && data.socialNetworkRequests.length > 0) {
+                            data.socialNetworkRequests.forEach(social => {
+                                const socialInput = `<div class="input-group mb-2">
+                                    <input type="url" class="form-control social-media-input" data-id="${social.id}" value="${social.socialNetworksLink}" placeholder="Enter social media link">
+                                </div>`;
+                                socialMediaContainer.append(socialInput);
+                            });
+                        } else {
+                            const blankInput = `<div class="input-group mb-2">
+                            <input type="url" class="form-control social-media-input" data-id="0" placeholder="Enter social media link">
+                            </div>`;
+                            socialMediaContainer.append(blankInput);
+                        }
+                        $('#volunteerExperience').val(data.volunteerExperience);
+                        $('#volunteerGoals').val(data.volunteerGoal);
+                        const activeSDGIds = data.userSDGInformations.map(item => item.sDGInformation.id);
+                        $('#sdgList span').each(function () {
+                            const sdgId = $(this).data('id');
+                            if (activeSDGIds.includes(sdgId)) {
+                            $(this).addClass('active');
+                            }
+                        });
+                        if (data.image) {
+                            $('#imagePreview').html(`<img src="${data.image}" alt="Profile Picture">`);
+                        }
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function (err) {
+                    console.error('Error loading profile:', err);
+                }
+            });
+        }
+
+
+        $('#profilePicture').on('change', function () {
+            var file = this.files[0];
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var img = document.createElement('img');
+                img.src = e.target.result;
+                $('#imagePreview').html(img);
+            }
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        });
+
+        $(document).on('input change', 'input, textarea, select', function () {
+            $('#updateProfileBtn').prop('disabled', false);
+        });
+
+        $('#updateProfileBtn').on('click', function () {
+            const socialNetworkRequests = [];
+            $('.social-media-input').each(function () {
+                const socialLink = $(this).val();
+                const socialId = $(this).data('id') || 0;
+                 if (socialLink) {
+                    socialNetworkRequests.push({
+                        id: socialId,
+                        socialNetworksLink: socialLink,
+                        userId: userId
+                    });
+                }
+            });
+            console.log('SocialNetworkRequestJsons:', JSON.stringify(socialNetworkRequests));
+
+            const sdgUserRequests = [];
+            $('#sdgList span').each(function () {
+                sdgUserRequests.push({
+                    userId: userId,
+                    sdgId: $(this).data('id'),
+                    isActive: $(this).hasClass('active')
+                });
+            });
+            console.log('SDGUserRequestJsons:', JSON.stringify(sdgUserRequests));
+
+
+            const gender = $('input[name="gender"]:checked').val();
+            const dob = $('#dob').val();
+            const phoneNumber = $('#phone').val();
+            let validationErrors = [];
+
+            if (!gender) {
+                validationErrors.push('Gender field cannot be empty.');
+            }
+            if (!dob) {
+                validationErrors.push('Date of Birth cannot be empty.');
+            } else {
+                const dobDate = new Date(dob);
+                const currentDate = new Date();
+                if (dobDate > currentDate) {
+                    validationErrors.push('Date of Birth must be in the past.');
+                }
+            }
+            const phonePattern = /^[0-9]{10}$/;
+            if (!phoneNumber) {
+                validationErrors.push('Phone Number cannot be empty.');
+            } else if (!phonePattern.test(phoneNumber)) {
+                validationErrors.push('Phone Number must be 10 digits.');
+            }
+
+            if (validationErrors.length > 0) {
+                alert('Validation errors:\n' + validationErrors.join('\n'));
+                return;
+            }
+
+            var formData = new FormData();
+            formData.append('Id', userId);
+            formData.append('FirstName', $('#fullName').val().split(' ')[0]);
+            formData.append('LastName', $('#fullName').val().split(' ').slice(1).join(' '));
+            formData.append('BirthDate', dob);
+            formData.append('Gender', gender);
+            formData.append('Address', $('#address').val());
+            formData.append('WorkPlace', $('#workplace').val());
+            formData.append('Bio', $('#bio').val());
+            formData.append('Education', $('#education').val());
+            formData.append('Skill', $('#skills').val());
+            formData.append('Hobby', $('#hobbies').val());
+            formData.append('Strength', $('#strengths').val());
+            formData.append('VolunteerExperience', $('#volunteerExperience').val());
+            formData.append('VolunteerGoal', $('#volunteerGoals').val());
+            formData.append('PhoneNumber', phoneNumber);
+            formData.append('SocialNetworkRequestJsons', JSON.stringify(socialNetworkRequests));
+            formData.append('SDGUserRequestJsons', JSON.stringify(sdgUserRequests));
+            console.log('Final formData:', socialNetworkRequests, sdgUserRequests);
+            var logoFile = $('#profilePicture')[0].files[0];
+            if (logoFile) {
+                formData.append('LogoFile', logoFile);
+            }
+
+            $.ajax({
+                url: 'https://localhost:7294/api/Users/UpdateUserProfile',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                success: function (response) {
+                    if (response.success) {
+                        alert('Profile updated successfully!');
+                        console.log($('#fullName').val());
+                        localStorage.setItem('fullname', $('#fullName').val());
+                        location.reload();
+                    } else {
+                    alert('Failed to update profile: ' + response.message);
+                    }
+                },
+                error: function (errors) {
+                    if (errors.responseJSON && errors.responseJSON.errors) {
+                        console.error('Detailed Validation Errors:');
+                        for (const [field, messages] of Object.entries(errors.responseJSON.errors)) {
+                            console.group(`Field: ${field}`);
+                            messages.forEach(message => console.error(`Error: ${message}`));
+                            console.groupEnd();
+                        }
+                        alert('Validation errors occurred. Check console for details.');
+                    } else {
+                        console.error('Unexpected error:', errors);
+                        alert('An unexpected error occurred. Check console for details.');
+                    }
+                }
+            });
+        });
+    });
+</script>

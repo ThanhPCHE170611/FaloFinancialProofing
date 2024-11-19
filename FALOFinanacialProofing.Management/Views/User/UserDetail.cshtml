@@ -232,44 +232,51 @@
         </div>
     </div>
 
-    <script>
-        function previewImage() {
-            var fileInput = document.getElementById('profilePicture');
-            var imagePreview = document.getElementById('imagePreview');
-            var file = fileInput.files[0];
-            var reader = new FileReader();
-
-            reader.onload = function(e) {
-                var img = document.createElement('img');
-                img.src = e.target.result;
-                imagePreview.innerHTML = '';
-                imagePreview.appendChild(img);
-            }
-
-            if (file) {
-                reader.readAsDataURL(file);
-            }
-        }
-        document.getElementById('attachments').addEventListener('change', function (e) {
-            const fileList = document.getElementById('fileList');
-            fileList.innerHTML = '';
-            Array.from(e.target.files).forEach(file => {
-                const li = document.createElement('li');
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(file);
-                a.textContent = file.name;
-                a.download = file.name;
-                li.appendChild(a);
-                fileList.appendChild(li);
-            });
-        });
-        document.querySelectorAll('.sdg-tags span').forEach(function (tag) {
-            tag.addEventListener('click', function () {
-                this.classList.toggle('active');
-            });
-        });
-    </script>
+    
 </body>
 
 </html>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function previewImage() {
+        var fileInput = document.getElementById('profilePicture');
+        var imagePreview = document.getElementById('imagePreview');
+        var file = fileInput.files[0];
+        var reader = new FileReader();
 
+        reader.onload = function(e) {
+            var img = document.createElement('img');
+            img.src = e.target.result;
+            imagePreview.innerHTML = '';
+            imagePreview.appendChild(img);
+        }
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    }
+    document.getElementById('attachments').addEventListener('change', function (e) {
+        const fileList = document.getElementById('fileList');
+        fileList.innerHTML = '';
+        Array.from(e.target.files).forEach(file => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(file);
+            a.textContent = file.name;
+            a.download = file.name;
+            li.appendChild(a);
+            fileList.appendChild(li);
+        });
+    });
+    document.querySelectorAll('.sdg-tags span').forEach(function (tag) {
+        tag.addEventListener('click', function () {
+            this.classList.toggle('active');
+        });
+    });
+</script>

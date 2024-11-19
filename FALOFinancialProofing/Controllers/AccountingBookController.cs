@@ -1,7 +1,10 @@
-﻿using FALOFinancialProofing.Constant;
+﻿using FALOFinancialProofing.Attributes.RoleAttributes;
+using FALOFinancialProofing.Constant;
 using FALOFinancialProofing.DTOs;
+using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Services.AccountingBookServices;
 using FALOFinancialProofing.Services.AttachmentFIleServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
@@ -10,6 +13,7 @@ namespace FALOFinancialProofing.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AccountingBookController : ControllerBase
     {
         private readonly IAcccountingBookServices accountingBookServices;
@@ -20,6 +24,7 @@ namespace FALOFinancialProofing.Controllers
         }
 
         [HttpPost("uploadaccountingbook")]
+        [RoleAttribute(AppRole.Accounting)]
         public async Task<IActionResult> UploadAccountingBook([FromForm]CreateAccountingBookRequest request)
         {
             var errorMessages = new StringBuilder();
@@ -101,7 +106,6 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
-
         [HttpGet("downloadaccountingbook/{fileName}")]
         public async Task<IActionResult> DownloadAccountingBookByFileName(string fileName)
         {
@@ -116,6 +120,27 @@ namespace FALOFinancialProofing.Controllers
             }
 
             return File(fileBytes, contentType, downloadFileName);
+        }
+
+        [HttpDelete("deleteaccountingbook/{fileName}")]
+        [RoleAttribute(AppRole.Accounting)]
+        public async Task<IActionResult> DeleteAccountingBookInCampaign(string fileName)
+        {
+            var message = new StringBuilder();
+            var canDeleteAccountingBook = await accountingBookServices.DeleteAccountingBook(fileName, message);
+            if (!canDeleteAccountingBook)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "Delete Accounting Book failed: " + message
+                });
+            }
+            return Ok(new
+            {
+                Success = true,
+                Message = "Accounting book deleted successfully"
+            });
         }
     }
 }

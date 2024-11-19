@@ -13,6 +13,7 @@ namespace FALOFinancialProofing.DTOs.CampaignMemberDTO
         public string CampaignTitle { get; set; }
         public string UserId { get; set; } = null!;
         public string UserName { get; set; } = null!;
+        public string Email { get; set; } = null!;
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
         public double FundTarget { get; set; }
@@ -20,5 +21,6 @@ namespace FALOFinancialProofing.DTOs.CampaignMemberDTO
         public double Debt { get; set; } = 0;
         public RoleInformation roleInformation { get; set; } = null!;
         public bool IsActive { get; set; }
+        public string? Status { get; set; }// campaign
     }
 }

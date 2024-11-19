@@ -10,6 +10,11 @@ using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services.EmailService;
 using FALOFinancialProofing.Services.SocialNetworkService;
 using FALOFinancialProofing.Services.UserSDGServices;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Oauth2.v2;
+using Google.Apis.Oauth2.v2.Data;
+using Google.Apis.Services;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -20,6 +25,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 //using System.Security.Policy;
 using System.Text;
+using System.Text.RegularExpressions;
 
 
 
@@ -160,7 +166,7 @@ namespace FALOFinancialProofing.Services
             {
                 return null;
             }
-            var result = await signInManager.PasswordSignInAsync(userLogin.UserName, userLogin.Password, true, false);
+            var result = await signInManager.PasswordSignInAsync(userLogin.UserName, userLogin.Password, false, false);
             if (result.Succeeded)
             {
                 var userDTO = new UserDto
@@ -178,7 +184,30 @@ namespace FALOFinancialProofing.Services
             }
             return null;
         }
-
+        public async Task<UserDto> GetUserDto(Userinfo userinfo)
+        {
+            var user = await userManager.FindByEmailAsync(userinfo.Email);
+            var userDTO = new UserDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                UserName = user.UserName,
+                BirthDate = user.BirthDate,
+                RoleInformations = await _roleService.GetRoleInformationsByUserId(user.Id)
+            };
+            return userDTO;
+        }
+        public async Task<bool> CheckGoogleExistAccount(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return false;
+            }
+            return true;
+        }
 
         //public async Task<User?> RegisterUser(SignUpRequest registerRequest)
         //{
@@ -236,9 +265,8 @@ namespace FALOFinancialProofing.Services
 
         public async Task<List<UserInformation>> GetUserNotInCampaignById(int CampaignId)
         {
-
-            var Users = await userManager.Users.Where(u => !u.CampaignMembers.Any(cm => cm.CampaignId == CampaignId) && !u.UserRoles.Any(ur => ur.RoleId == AppRole.DonorRoleId)).ToListAsync();
-
+            //var Users = await userManager.Users.Where(u => !u.CampaignMembers.Any(cm => cm.CampaignId == CampaignId) && !u.UserRoles.Any(ur => ur.RoleId == AppRole.DonorRoleId)).ToListAsync();
+            var Users = await userManager.Users.Where(u => !u.CampaignMembers.Any(cm => cm.CampaignId == CampaignId)).ToListAsync();
             List<UserInformation> data = new List<UserInformation>();
             try
             {
@@ -253,6 +281,8 @@ namespace FALOFinancialProofing.Services
 
                     foreach (var roleName in roles)
                     {
+                        if (roleName.Equals(AppRole.Donor) || roleName.Equals(AppRole.ProjectManager) || roleName.Equals(AppRole.ProjectManagementBoard) || roleName.Equals(AppRole.Admin))
+                            continue;
                         var role = await roleManager.FindByNameAsync(roleName);
                         if (role != null)
                         {
@@ -322,6 +352,39 @@ namespace FALOFinancialProofing.Services
             {
                 //var    users = await userManager.Users.ToListAsync();
                 data = await userManager.Users.Select(u => new UserInformation_Admin()
+                {
+                    Id = u.Id,
+                    Email = u.Email,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    BirthDate = u.BirthDate,
+                    Roles = u.UserRoles.Select(ur => new RoleInformation
+                    {
+                        RoleId = ur.RoleId,
+                        RoleName = roleManager.Roles.FirstOrDefault(r => r.Id == ur.RoleId).Name
+                    }).ToList(),
+                    SocialNetworkRequests = u.SocialNetworks.Select(snr => new SocialNetworkRequest
+                    {
+                        Id = snr.Id,
+                        UserId = snr.UserId,
+                        SocialNetworksLink = snr.SocialNetworksLink,
+                    }).ToList()
+                }).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAccountList: {ex.Message}");
+            }
+
+            return data;
+        }
+
+        public async Task<List<UserInformation_Admin>> GetPMBAccountList()
+        {
+            var data = new List<UserInformation_Admin>();
+            try
+            {
+                data = await userManager.Users.Where(u => u.UserRoles.Any(ur => ur.RoleId.Equals("205d4496-4ac8-40d9-84b9-e09e1ada7a49"))).Select(u => new UserInformation_Admin()
                 {
                     Id = u.Id,
                     Email = u.Email,
@@ -496,7 +559,7 @@ namespace FALOFinancialProofing.Services
                 new Claim(ClaimTypes.Name,User.LastName),
                 new Claim(ClaimTypes.DateOfBirth,User.BirthDate.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, User.Email),
-                new Claim(JwtRegisteredClaimNames.Sub, User.Email),
+                new Claim(JwtRegisteredClaimNames.Sub,  User.FirstName +" "+ User.LastName),
                 //tokenId
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.NameId, User.Id),
@@ -556,11 +619,29 @@ namespace FALOFinancialProofing.Services
             var user = await userManager.FindByEmailAsync(email);
             if (user != null)
             {
-                var token = await userManager.GeneratePasswordResetTokenAsync(user);
-                var forgotPasswordLink = GenerateForgotPasswordLink(httpContext, token, email);
-                var message = new Message(new string[] { user.Email! }, "Forgot Password link", forgotPasswordLink!);
-                emailService.SendEmail(message);
+                //var token = await userManager.GeneratePasswordResetTokenAsync(user);
+                //var forgotPasswordLink = GenerateForgotPasswordLink(httpContext, token, email);
+                //var message = new Message(new string[] { user.Email! }, "Forgot Password link", forgotPasswordLink!);
+                //emailService.SendEmail(message);
 
+                var token = await userManager.GeneratePasswordResetTokenAsync(user);
+
+                // Tạo nội dung email
+                string resetPasswordLink = "https://localhost:7109"; // Đường dẫn cố định
+                string emailContent = $@"
+Mã token của bạn: {token}
+Mã token này sẽ bị vô hiệu hóa sau 10 phút.
+
+Click vào link này để đặt lại mật khẩu: {resetPasswordLink}";
+
+                // Create the email message
+                var message = new Message(
+                    new string[] { user.Email! },
+                    "Forgot Password",
+                    emailContent
+                );
+
+                emailService.SendEmail(message);
                 return "Password reset email sent successfully.";
             };
             return null;
@@ -581,9 +662,60 @@ namespace FALOFinancialProofing.Services
                 return resetPassResult;
             }
             return null; // tam thoi
-
-
         }
+        public async Task<bool> ValidateResetPasswordAsync(ResetPassword resetPassword, StringBuilder message)
+        {
+            bool IsValid = false;
+            try
+            {
+                var user = await userManager.FindByEmailAsync(resetPassword.Email);
+                if (user == null)
+                {
+                    throw new Exception($"Email: {resetPassword.Email} is not registered in the system!");
+                }
+                else
+                {
+                    var isValidToken = await userManager.VerifyUserTokenAsync(user, userManager.Options.Tokens.PasswordResetTokenProvider, "ResetPassword", resetPassword.Token);
+                    if (!isValidToken)
+                    {
+                        throw new Exception("Incorrect Token!");
+                    }
+
+                    if (string.IsNullOrEmpty(resetPassword.Password))
+                    {
+                        throw new Exception("Password cannot be null");
+                    }
+                    else
+                    {
+                        if (resetPassword.Password.Length < 8
+                        || !Regex.IsMatch(resetPassword.Password, "[a-z]")
+                        || !Regex.IsMatch(resetPassword.Password, "[A-Z]")
+                        || !Regex.IsMatch(resetPassword.Password, "[0-9]")
+                        || !Regex.IsMatch(resetPassword.Password, @"[@$!%*?&]"))
+                        {
+                            throw new Exception("Password must be at least 8 characters, including letters, uppercase letters, numbers, and special characters.");
+                        }
+                        else
+                        {
+                            if (!resetPassword.Password.Equals(resetPassword.ConfirmPassword))
+                            {
+                                throw new Exception("The password and confirmation password do not match.");
+                            }
+                        }
+                    }
+                }
+                IsValid = true;
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"ValidateResetPassword: {ex.Message}");
+            }
+
+            return IsValid;
+        }
+
+
         public string GenerateForgotPasswordLink(HttpContext httpContext, string token, string email)
         {
             // Sử dụng LinkGenerator để tạo URL tương tự như Url.Action
@@ -654,8 +786,8 @@ namespace FALOFinancialProofing.Services
                 {
                     throw new Exception("User not found");
                 }
-                long MaxFileSize = 5 * 1024 * 1024;
-                if (updateUserProfileRequest.LogoFile != null && updateUserProfileRequest.LogoFile.Length > MaxFileSize)
+                //long MaxFileSize = 5 * 1024 * 1024;
+                if (updateUserProfileRequest.LogoFile != null && updateUserProfileRequest.LogoFile.Length > FileHelper.UserImageMaxFileSize)
                 {
                     throw new Exception("Logo is too large");
                 }
@@ -691,7 +823,7 @@ namespace FALOFinancialProofing.Services
                         Address = u.Address,
                         WorkPlace = u.WorkPlace,
                         Bio = u.Bio,
-                        Image = UrlHelper.GetImageUrl(request, u.Image),
+                        Image = UrlHelper.GetImageUrl(request, u.Image, FolderImage.UserImageUpload),
                         Education = u.Education,
                         Skill = u.Skill,
                         Hobby = u.Hobby,
@@ -853,6 +985,79 @@ namespace FALOFinancialProofing.Services
             }
 
             return user;
+        }
+
+        public async Task<bool> CheckValidExternalRegister(string roleName, StringBuilder message)
+        {
+            bool checkValid = false;
+            try
+            {
+                userManager.AddLoginAsync(null, null);
+                if (roleName == null)
+                {
+                    throw new Exception("Role Name is null");
+                }
+                if (!roleName.Equals(AppRole.Volunteer) && !roleName.Equals(AppRole.Donor))
+                {
+                    throw new Exception("Not Allowed To Register Other Roles Except Donor And Volunteer!");
+                }
+                checkValid = true;
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"CheckValidExternalRegister: {ex.Message}");
+            }
+            return checkValid;
+        }
+        public async Task<IdentityResult?> ExternalRegisterUser(Userinfo userInfo, string roleName)
+        {
+            try
+            {
+                var newUser = new User
+                {
+                    FirstName = userInfo.GivenName ?? string.Empty,
+                    LastName = userInfo.FamilyName ?? string.Empty,
+                    Email = userInfo.Email,
+                    UserName = userInfo.Email,
+                    TwoFactorEnabled = true,
+                    Gender = userInfo.Gender != null ? false : true,
+                    Image = userInfo.Picture,
+                };
+                var result = await userManager.CreateAsync(newUser);
+                if (result.Succeeded)
+                {
+                    result = await userManager.AddToRoleAsync(newUser, roleName);
+                    if (result.Succeeded)
+                    {
+                        var info = new UserLoginInfo(GoogleDefaults.AuthenticationScheme, userInfo.Id, userInfo.Name);
+                        result = await userManager.AddLoginAsync(newUser, info);
+                        return result;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"ExternalRegisterUser: {ex.Message}");
+            }
+
+
+            return null;
+        }
+        public async Task<Userinfo> GetUserInfoAsync(string accessToken)
+        {
+            // Tạo credential từ access token
+            var credential = GoogleCredential.FromAccessToken(accessToken);
+
+            // Tạo dịch vụ OAuth2
+            var oauth2Service = new Oauth2Service(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = credential,
+                //ApplicationName = "FALO"
+            });
+            // Lấy thông tin người dùng
+            Userinfo userInfo = await oauth2Service.Userinfo.Get().ExecuteAsync();
+            return userInfo;
         }
     }
 
