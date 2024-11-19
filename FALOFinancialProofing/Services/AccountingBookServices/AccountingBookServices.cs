@@ -189,6 +189,19 @@ namespace FALOFinancialProofing.Services.AccountingBookServices
             {
                 accountingBooks = await repository.GetAll(x => x.Campaign.ProjectId == projectId)
                     .Include(x => x.Campaign)
+                    .Select(c => new AccountingBook
+                    {
+                        Id = c.Id,
+                        CampaignId = c.CampaignId,
+                        FilePath = c.FilePath,
+                        Campaign = new Campaign
+                        {
+                            Id = c.Campaign.Id,
+                            ProjectId = c.Campaign.ProjectId,
+                            Description = c.Campaign.Description,
+                            IsActive = c.Campaign.IsActive
+                        }
+                    })
                     .ToListAsync();
                 return accountingBooks;
             }
