@@ -131,7 +131,6 @@
                                         <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2" style="width: 25%;">Project</th>
                                         <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7" style="width: 20%;">Created By</th>
                                         <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7" style="width: 15%;">Created Date</th>
-                                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7" style="width: 25%;">description</th>
                                         <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7" style="width: 15%;">Status</th>
                                         <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7" style="width: 15%;">Action</th>
                                     </tr>
@@ -212,11 +211,13 @@
                     : `<span class="badge badge-declined">Close</span>`;
 
                 let actionButtons = `
-                    <a class="btn btn-info btn-sm" href="/Project/ProjectDetail?requestId=${project.id}">Detail</a>
+                    <button onclick="changeProject(this, ${project.id})" class="btn btn-info btn-sm">Detail</button>
+
                 `;
                 if (checkrole !== "Project Management Board") {
                     if(checkrole === "Project Manager") {
-                        actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${project.id}">Detail</a>
+                        actionButtons = `
+                                    <button onclick="changeProject(this, ${project.id})" class="btn btn-info btn-sm">Detail</button>
                                     <a class="btn btn-primary btn-sm" href="/Campaign/CampaignCreate?projectId=${project.id}">Campaign</a>`;
                     }
                 }
@@ -227,10 +228,9 @@
                         <td class="align-middle text-center text-sm">${project.projectName}</td>
                         <td class="align-middle text-center text-sm">${project.lastName} ${project.firstName}</td>
                         <td class="align-middle text-center text-sm">${new Date(project.dateOfCreation).toLocaleDateString()}</td>
-                        <td class="align-middle text-center text-sm">${project.description}</td>
                         <td class="align-middle text-center text-sm">${statusBadge}</td>
                         <td class="align-middle text-center text-sm">
-                            <a class="btn btn-info btn-sm" href="/Project/ProjectDetail?requestId=${project.id}">Detail</a>
+                            <button onclick="changeProject(this, ${project.id})" class="btn btn-info btn-sm">Detail</button>
                         </td>
                     </tr>
                 `;
@@ -249,10 +249,7 @@
             }
         }
 
-        function goToPage(page) {
-            currentPage = page;
-            loadProjects();
-        }
+        
 
         $('#searchInput').on('keyup', function () {
             currentPage = 1; 
@@ -266,8 +263,14 @@
 
         loadProjects();
     });
+    function goToPage(page) {
+        currentPage = page;
+        loadProjects();
+    }
 
-
-
+    function changeProject(button, Id) {
+        localStorage.setItem('projectId', Id);
+        window.location.href = '/Project/ProjectDetail';
+    }
 </script>
 

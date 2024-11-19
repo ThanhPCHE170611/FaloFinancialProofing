@@ -46,6 +46,31 @@
                 border-radius: 5px;
                 list-style: none;
             }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+            .nav-tabs a {
+                padding: 10px 20px;
+                text-decoration: none;
+                color: #000;
+                background-color: #f1f1f1;
+                border-radius: 5px;
+            }
+
+                .nav-tabs a.active {
+                    background-color: #EC407A;
+                    color: #fff;
+                }
+
+                .nav-tabs a:hover {
+                    background-color: #007bff;
+                    color: #fff;
+                }
     </style>
 </head>
 <body>
@@ -54,16 +79,20 @@
             <div class="col-12">
                 <div class="card my-4">
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class=" pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <nav class="nav-tabs" id="navTabs">
+                                <a asp-controller="Project" asp-action="ProjectDetail" class="active">Project Detail</a>
+                                <a asp-controller="Accounting" asp-action="AccountingBookProject">Accounting Book</a>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
                             <h6 class="text-white text-capitalize ps-3 mb-0">Project Detail</h6>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="row mb-3">
-                            @* <div class="col-md-6">
-                                <label for="projectId" class="form-label">Project Id</label>
-                                <input type="text" class="form-control" id="projectId" value="DA032" disabled>
-                            </div> *@
                             <div class="col-md-12">
                                 <label for="projectName" class="form-label">Project Name</label>
                                 <input type="text" class="form-control" id="projectName" >
@@ -162,8 +191,7 @@
     }
     document.addEventListener('DOMContentLoaded', function () {
         const jwtToken = localStorage.getItem('jwtToken');
-        const projectId = new URLSearchParams(window.location.search).get('requestId');
-
+        const projectId = localStorage.getItem('projectId');
         function loadProjectDetails() {
             $.ajax({
                 url: `https://localhost:7294/api/Projects/GetProjectDetailsById/${projectId}`,

@@ -13,7 +13,6 @@
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
     <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
     <style>
@@ -108,6 +107,26 @@
             border-radius: 4px;
             cursor: pointer;
         }
+
+        .search-filter-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .search-box {
+            width: 70%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .filter-box {
+            width: 25%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
     </style>
 </head>
 
@@ -119,7 +138,7 @@
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="pt-4 pb-3 d-flex justify-content-between align-items-center">
                             <nav class="nav-tabs" id="navTabs">
-                                <a asp-controller="Campaign" asp-action="CampaignDetail" >Campaign Detail</a>
+                                <a asp-controller="Project" asp-action="ProjectDetail" >Project Detail</a>
                                 <a asp-controller="Accounting" asp-action="AccountingBookProject" class="active">Accounting Book</a>
 
                             </nav>
@@ -127,8 +146,11 @@
                     </div>
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
-                            <h6 class="text-white text-capitalize ps-3 mb-0">Accounting Book</h6>
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Accounting Book Project</h6>
                         </div>
+                    </div>
+                    <div class="search-filter-container px-3">
+                        <input type="text" id="searchInput" placeholder="Search by Name" class="search-box" />
                     </div>
                     <div class="card-body px-0 pb-2">
                         <div class="table-responsive p-0">
@@ -146,6 +168,9 @@
                         </div>
                     </div>
 
+                </div>
+                <div class="pagination-container text-center mt-4">
+                    <div id="pagination"></div>
                 </div>
             </div>
         </div>
@@ -183,38 +208,11 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     const checkrole = localStorage.getItem('loggingRole');
-    const campaignId = localStorage.getItem('campaignId');
+    const projectId = localStorage.getItem('projectId');
     const navTabs = document.getElementById('navTabs');
     const userId = localStorage.getItem('userId');
     const jwtToken = localStorage.getItem('jwtToken');
-    console.log(campaignId);
-
-    if(checkrole === "Accounting") {
-        const upload = document.getElementById('btnupload');
-        upload.style.display = 'none';
-    }
-
-    if (checkrole && checkrole !== 'Volunteer') {
-        const newLink = document.createElement('a');
-        newLink.setAttribute('asp-controller', 'Prepay');
-        newLink.setAttribute('asp-action', 'PrepayManagement_PM');
-        newLink.textContent = 'Prepay Created Request';
-
-        const newLink2 = document.createElement('a');
-        newLink2.setAttribute('asp-controller', 'Payment');
-        newLink2.setAttribute('asp-action', 'PaymentManagement_PM');
-        newLink2.textContent = 'Payment Created Request';
-
-        const url = new URL(`/Prepay/PrepayManagement_PM`, window.location.origin);
-
-
-        const url2 = new URL(`/Payment/PaymentManagement_PM`, window.location.origin);
-
-        newLink.href = url.toString();
-        newLink2.href = url2.toString();
-        navTabs.appendChild(newLink);
-        navTabs.appendChild(newLink2);
-    }
+    console.log(projectId);
     function showCreateVoucherPopup() {
         document.getElementById('createVoucherModal').style.display = 'block';
     }
@@ -268,10 +266,11 @@
             </tr>
         `;
     }
-
+    let currentPage = 1;
+    let searchInput = '';
     function fetchAccountingBooks() {
         $.ajax({
-            url: `https://localhost:7294/api/AccountingBook/getallaccountingbookinproject?projectId=${campaignId}`,
+            url: `https://localhost:7294/api/AccountingBook/getallaccountingbookinproject?projectId=${projectId}&name=${searchInput}&page=${currentPage}`,
             type: 'GET',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -281,6 +280,7 @@
                 if (response.success) {
                     console.log('Data:', response.data);
                     populateTable(response.data);
+                    setupPagination(response.data.TotalRecords, response.data.Page);
                 } else {
                     const tableBody = $('#voucherTableBody');
                     tableBody.empty();
@@ -344,6 +344,30 @@
             closeModal('detailModal');
         }
     };
+    function setupPagination(totalRecords, currentPage) {
+        const totalPages = Math.ceil(totalRecords / IntConstant.PageSize);
+        const paginationContainer = $('#pagination');
+        paginationContainer.empty();
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = `
+                <button class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-light'}"
+                        onclick="goToPage(${i})">${i}</button>
+            `;
+            paginationContainer.append(pageButton);
+        }
+    }
+
+    function goToPage(page) {
+        currentPage = page;
+        fetchAccountingBooks();
+    }
+
+    $('#searchInput').on('keyup', function () {
+        searchInput = $(this).val().trim();
+        currentPage = 1; 
+        fetchAccountingBooks();
+    });
 
     fetchAccountingBooks();
 </script>

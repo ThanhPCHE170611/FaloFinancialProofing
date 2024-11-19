@@ -45,6 +45,10 @@ namespace FALOFinanacialProofing.Management.Controllers
         {
             return View();
         }
+        public ActionResult MemberDetail()
+        {
+            return View();
+        }
 
 
         // GET: CampaignController/Details/5
