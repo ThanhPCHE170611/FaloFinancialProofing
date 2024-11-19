@@ -15,5 +15,7 @@ namespace FALOFinancialProofing.DTOs.ProjectDTOs
         public string Description { get; set; }
         [ImageFile]
         public IFormFile? LogoFile { get; set; }
+        public string? Status { get; set; }
+        public bool? IsActive { get; set; }
     }
 }

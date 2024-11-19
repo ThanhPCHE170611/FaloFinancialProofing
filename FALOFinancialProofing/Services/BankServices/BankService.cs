@@ -189,7 +189,6 @@ namespace FALOFinancialProofing.Services.BankServices
                         checkValid = await CreateBankAsync(newBank);
                     }
                 }
-
             }
             catch (Exception ex)
             {
