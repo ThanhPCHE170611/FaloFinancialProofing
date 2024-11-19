@@ -164,5 +164,40 @@ namespace FALOFinancialProofing.Services.BankServices
             return bank;
         }
 
+        public async Task<bool> SyncBankAccountsToBankDb(List<CassoBankAccount> cassoBankAccounts)
+        {
+            bool checkValid = false;
+            try
+            {
+                var bankList = await GetAllBanksAsync(); //db
+                foreach (var item in cassoBankAccounts)
+                {
+                    if (bankList.Any(b => b.CassoAccountID == item.id))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        Bank newBank = new Bank
+                        {
+                            OwnerName = item.accountName,
+                            AccountNumber = item.accountNumber,
+                            BankCodeName = item.bankCodeName,
+                            acqId = item.BIN,
+                            CassoAccountID = item.id
+                        };
+                        checkValid = await CreateBankAsync(newBank);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"SyncBankAccountsToBankDb: {ex.Message}");
+            }
+
+            return checkValid;
+        }
+
     }
 }

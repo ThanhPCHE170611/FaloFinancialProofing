@@ -142,7 +142,7 @@ namespace FALOFinancialProofing.Controllers
             if (!string.IsNullOrEmpty(searchInput))
             {
                 searchInput = searchInput.Trim();
-                users = users.FindAll(x => ($"{x.FirstName} {x.LastName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.Email}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
+                users = users.FindAll(x => ($"{x.FirstName} {x.LastName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
             }
             return Ok(new ApiResponse()
             {
