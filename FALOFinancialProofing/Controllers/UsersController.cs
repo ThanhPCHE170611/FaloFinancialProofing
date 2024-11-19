@@ -32,13 +32,14 @@ namespace FALOFinancialProofing.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Post([FromBody] SignInModel userLogin)
         {
-            var user = await authServices.LoginUser(userLogin);
+            StringBuilder message = new StringBuilder();
+            var user = await authServices.LoginUser(userLogin, message);
             if (user == null)
             {
                 return Ok(new
                 {
                     Success = false,
-                    Message = "Invalid Username/Password"
+                    Message = message.ToString()
                 });
             }
             else
@@ -89,11 +90,18 @@ namespace FALOFinancialProofing.Controllers
                 }
             }
             UserDto userDto = await authServices.GetUserDto(userInfo);
+            var user = await authServices.GetUserById(userDto.Id);
+            var checkIsLockout = authServices.checkLockoutAccount(user, message);
+            if (!checkIsLockout)
+            {
+                message.Append("Google Authentication Success!");
+            }
+
             return Ok(new ApiResponse
             {
-                Success = true,
-                Message = "Google Authentication Success",
-                Data = await authServices.GenerateToken(userDto)
+                Success = !checkIsLockout,
+                Message = message.ToString(),
+                Data = !checkIsLockout ? await authServices.GenerateToken(userDto) : null
             });
         }
         [RoleAttribute(AppRole.Admin)]
@@ -276,6 +284,30 @@ namespace FALOFinancialProofing.Controllers
                     Message = "Register Success",
                 });
             }
+        }
+        [RoleAttribute(AppRole.Admin)]
+        [HttpPost("Admin-AccountLockout/{userId}")]
+        public async Task<IActionResult> AdminAccountLockout(string userId, DateTime? lockoutDate)
+        {
+            var userResult = await authServices.LockUserAccountAsync(userId, lockoutDate);
+            if (userResult != null)
+            {
+                if (userResult.Succeeded)
+                {
+                    return Ok(new
+                    {
+                        Success = true,
+                        Message = "Lockout Account Success!",
+                    });
+                }
+            }
+
+            return Ok(new
+            {
+                Success = false,
+                Message = "Lockout Account Failed!"
+            });
+
         }
         [RoleAttribute(AppRole.Admin)]
         [HttpGet("GetAccountList")]

@@ -1,4 +1,5 @@
-﻿using FALOFinancialProofing.DTOs.RoleDTOs;
+﻿using FALOFinancialProofing.Attributes;
+using FALOFinancialProofing.DTOs.RoleDTOs;
 using FALOFinancialProofing.DTOs.SDGDTOs;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
@@ -19,6 +20,7 @@ namespace FALOFinancialProofing.DTOs.UserDTOs
         public string? Address { get; set; }
         public string? WorkPlace { get; set; }
         public string? Bio { get; set; }
+        [ImageFile]
         public IFormFile? LogoFile { get; set; }
         public string? Education { get; set; }
         public string? Skill { get; set; }

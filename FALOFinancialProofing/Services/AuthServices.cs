@@ -200,7 +200,19 @@ namespace FALOFinancialProofing.Services
             }
             return checkValid;
         }
-        public async Task<UserDto?> LoginUser(SignInModel userLogin)
+        public bool checkLockoutAccount(User
+             user, StringBuilder message)
+        {
+            // Check if the account is locked out
+            if (user.LockoutEnd.HasValue && user.LockoutEnd.Value > DateTime.UtcNow)
+            {
+                // Account is locked out
+                message.Append("Account is locked out");
+                return true;
+            }
+            return false;
+        }
+        public async Task<UserDto?> LoginUser(SignInModel userLogin, StringBuilder message)
         {
             var user = await userManager.FindByNameAsync(userLogin.UserName);
             var checkPassword = await userManager.CheckPasswordAsync(user, userLogin.Password);
@@ -208,6 +220,11 @@ namespace FALOFinancialProofing.Services
             {
                 return null;
             }
+            if (checkLockoutAccount(user, message))
+            {
+                return null;
+            }
+
             var result = await signInManager.PasswordSignInAsync(userLogin.UserName, userLogin.Password, false, false);
             if (result.Succeeded)
             {
@@ -224,6 +241,7 @@ namespace FALOFinancialProofing.Services
                 };
                 return userDTO;
             }
+            message.Append("Invalid Username/Password");
             return null;
         }
         public async Task<UserDto> GetUserDto(Userinfo userinfo)
@@ -240,6 +258,12 @@ namespace FALOFinancialProofing.Services
                 RoleInformations = await _roleService.GetRoleInformationsByUserId(user.Id)
             };
             return userDTO;
+        }
+
+        public async Task<User> GetUserById(string userId)
+        {
+            var user = await userManager.FindByIdAsync(userId);
+            return user;
         }
         public async Task<bool> CheckGoogleExistAccount(string email)
         {
@@ -1114,6 +1138,18 @@ Click vào link này để đặt lại mật khẩu: {resetPasswordLink}";
             // Lấy thông tin người dùng
             Userinfo userInfo = await oauth2Service.Userinfo.Get().ExecuteAsync();
             return userInfo;
+        }
+        public async Task<IdentityResult> LockUserAccountAsync(string userId, DateTime? lockoutEnd)
+        {
+            IdentityResult result = null!;
+            var user = await userManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                user.LockoutEnd = lockoutEnd;
+                result = await userManager.UpdateAsync(user);
+            }
+
+            return result;
         }
     }
 

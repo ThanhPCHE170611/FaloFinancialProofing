@@ -292,6 +292,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                 {
                     throw new Exception("Logo is too large");
                 }
+
                 IsValid = true;
             }
             catch (Exception ex)

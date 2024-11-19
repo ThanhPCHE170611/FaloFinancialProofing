@@ -1,4 +1,6 @@
-﻿using FALOFinancialProofing.DTOs.OrganizationDTO;
+﻿using FALOFinancialProofing.DTOs.CampaignDTO;
+using FALOFinancialProofing.DTOs.OrganizationDTO;
+using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +31,7 @@ namespace FALOFinancialProofing.Services.OrganizationServices
         //    SourceOrganization.CampaignId = DesOrganization.CampaignId;
         //}
         #endregion
-        private Organization ConvertToBaseEntity(CreateOrganization createOrganization)
+        private async Task<Organization> ConvertToBaseEntity(CreateOrganization createOrganization)
         {
             var organization = new Organization
             {
@@ -38,7 +40,8 @@ namespace FALOFinancialProofing.Services.OrganizationServices
                 Representative = createOrganization.Representative,
                 PhoneNumber = createOrganization.PhoneNumber,
                 Email = createOrganization.Email,
-                Logo = createOrganization.Logo,
+                Logo =
+                await FileHelper.SaveImageAndReturnShortPathAsync(createOrganization.LogoFile, FolderImage.OrganizationImageUpload, null),
                 Description = createOrganization.Description,
                 Vision = createOrganization.Vision,
                 Mission = createOrganization.Mission,
@@ -47,7 +50,7 @@ namespace FALOFinancialProofing.Services.OrganizationServices
                 Interests = createOrganization.Interests,
                 VolunteerExperience = createOrganization.VolunteerExperience,
                 VolunteerObjectives = createOrganization.VolunteerObjectives,
-                Attachments = createOrganization.Attachments,
+                //Attachments = createOrganization.Attachments,
                 Bio = createOrganization.Bio,
             };
             return organization;
@@ -61,7 +64,7 @@ namespace FALOFinancialProofing.Services.OrganizationServices
                 {
                     throw new Exception("Organization is null");
                 }
-                var Organization = ConvertToBaseEntity(createOrganization);
+                var Organization = await ConvertToBaseEntity(createOrganization);
                 organization = await _organizationRepository.InsertAsync(Organization);
                 message.Append("Create Organization Successfully!");
             }
