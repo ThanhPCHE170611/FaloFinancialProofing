@@ -104,20 +104,32 @@ namespace FALOFinancialProofing.Controllers
                 Data = !checkIsLockout ? await authServices.GenerateToken(userDto) : null
             });
         }
+        //[RoleAttribute(AppRole.Admin)]
+        //[HttpPut("Update-User-Role")]
+        //public async Task<IActionResult> UpdateUserRole([FromBody] UpdateUserRole updateUserRole)
+        //{
+
+        //    StringBuilder message = new StringBuilder();
+        //    var isValid = await authServices.UpdateUserRoleAsync(updateUserRole, message);
+        //    return Ok(new
+        //    {
+        //        Success = isValid,
+        //        Message = message.ToString()
+        //    });
+        //}
+
         [RoleAttribute(AppRole.Admin)]
-        [HttpPut("Update-User-Role")]
-        public async Task<IActionResult> UpdateUserRole([FromBody] UpdateUserRole updateUserRole)
+        [HttpPost("AssignRoleToUser")]
+        public async Task<IActionResult> AddUserRole([FromBody] AddUserRole addUserRole)
         {
 
             StringBuilder message = new StringBuilder();
-            var isValid = await authServices.UpdateUserRoleAsync(updateUserRole, message);
-            return Ok(new
+            var isValid = await authServices.AssignRoleToUserAsync(addUserRole, message);
+            return Ok(new ApiResponse()
             {
                 Success = isValid,
                 Message = message.ToString()
             });
-
-
         }
 
 
@@ -130,7 +142,7 @@ namespace FALOFinancialProofing.Controllers
             if (!string.IsNullOrEmpty(searchInput))
             {
                 searchInput = searchInput.Trim();
-                users = users.FindAll(x => ($"{x.FirstName} {x.LastName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.Email}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
+                users = users.FindAll(x => ($"{x.FirstName} {x.LastName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
             }
             return Ok(new ApiResponse()
             {
