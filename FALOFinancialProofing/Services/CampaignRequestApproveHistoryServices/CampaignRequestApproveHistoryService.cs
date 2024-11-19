@@ -18,9 +18,9 @@ namespace FALOFinancialProofing.Services.CampaignRequestApproveHistoryServices
         private readonly IRepository<Campaign, int> _campaignRepository;
         private readonly IBankService _bankService;
         private readonly ICampaignMemberService _campaignMemberService;
-        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly RoleManager<Role> roleManager;
 
-        public CampaignRequestApproveHistoryService(IRepository<CampaignRequestApproveHistory, int> createCampaignRequestApproveHistoriesRepository, AuthServices authServices, IRepository<CreateCampaignRequest, int> createCampaignRequestRepository, IRepository<Campaign, int> campaignRepository, IBankService bankService, ICampaignMemberService campaignMemberService, RoleManager<IdentityRole> roleManager)
+        public CampaignRequestApproveHistoryService(IRepository<CampaignRequestApproveHistory, int> createCampaignRequestApproveHistoriesRepository, AuthServices authServices, IRepository<CreateCampaignRequest, int> createCampaignRequestRepository, IRepository<Campaign, int> campaignRepository, IBankService bankService, ICampaignMemberService campaignMemberService, RoleManager<Role> roleManager)
         {
             _campaignRequestApproveHistoriesRepository = createCampaignRequestApproveHistoriesRepository;
             _authServices = authServices;
