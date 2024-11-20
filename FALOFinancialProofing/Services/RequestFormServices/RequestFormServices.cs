@@ -318,7 +318,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 return false;
             }
 
-            if (requestForm.ExpectedMoney < 0)
+            if (requestForm.ExpectedMoney <= 0)
             {
                 message.Append("Expected money must be greater than 0");
                 return false;

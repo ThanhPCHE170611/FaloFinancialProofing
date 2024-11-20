@@ -8,7 +8,7 @@ namespace FALOFinancialProofing.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    
     public class AttachmentFileController : ControllerBase
     {
         private readonly IAttachmentFileServices attachmentFileServices;
