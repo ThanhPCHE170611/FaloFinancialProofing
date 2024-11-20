@@ -35,7 +35,9 @@
                         <span>Password</span>
                         <input type="password" id="password" placeholder="Enter Password" />
                     </label>
-                    <p class="forgot-pass">Forgot password?</p>
+                    <a asp-area="" asp-controller="Authentication" asp-action="ForgotPassword" style="Text-decoration:none;"> 
+                        <p class="forgot-pass" style="color:rgba(0, 0, 0, 0.4);">Forgot password?</p>
+                    </a>
                     <button id="loginBtn" class="submit">Sign In</button>
                     <div class="text-center mt-3">
                         <hr>
