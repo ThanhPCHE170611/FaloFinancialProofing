@@ -60,3 +60,8 @@ Pre-PayVouchers
 PaymentVouchers
 PaymentUploads
 AccountingBook
+
+UserImageUpload
+ProjectImageUpload
+CampaignImageUpload
+OrganizationImageUpload
