@@ -134,7 +134,7 @@ namespace FALOFinancialProofing.Services.OrganizationServices
                     Representative = o.Representative,
                     PhoneNumber = o.PhoneNumber,
                     Email = o.Email,
-                    Logo = UrlHelper.GetImageUrl(request, o.Logo, FolderImage.CampaignImageUpload), //*
+                    Logo = UrlHelper.GetImageUrl(request, o.Logo, FolderImage.OrganizationImageUpload), //*
                     Description = o.Description,
                     Vision = o.Vision,
                     Mission = o.Mission,

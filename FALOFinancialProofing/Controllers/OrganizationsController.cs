@@ -66,7 +66,7 @@ namespace FALOFinancialProofing.Controllers
         }
 
         [HttpGet("GetOrganizationById/{id}")]
-        public async Task<IActionResult> GetCampaignDetailsById(int id)
+        public async Task<IActionResult> GetOrganizationDetailsById(int id)
         {
             var organization = await _organizationService.GetOrganizationsByIdAsync(id, Request);
             if (organization == null)
@@ -146,11 +146,11 @@ namespace FALOFinancialProofing.Controllers
                 }
                 checkValid = await _organizationService.UpdateOrganizationAsync(updateOrganization, message);
                 if (checkValid)
-                    message.Append("Campaign updated successfully!");
+                    message.Append("Organization updated successfully!");
             }
             catch (Exception ex)
             {
-                await Console.Out.WriteLineAsync($"UpdateCampaign: Error {ex.Message}");
+                await Console.Out.WriteLineAsync($"UpdateOrganization: Error {ex.Message}");
             }
 
             return Ok(new ApiResponse()
