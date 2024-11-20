@@ -111,7 +111,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             var campaignMembers = new List<CampaignMemberInformation>();
             try
             {
-                campaignMembers = await cmRepository.GetAll().Where(cm => cm.UserId.Equals(userId) && roleId.Equals(roleId)).Select(cm => new CampaignMemberInformation()
+                campaignMembers = await cmRepository.GetAll().Where(cm => cm.UserId.Equals(userId) && roleId.Equals(roleId)).OrderBy(cm => cm.Id).Select(cm => new CampaignMemberInformation()
                 {
                     id = cm.Id,
                     UserId = cm.UserId,

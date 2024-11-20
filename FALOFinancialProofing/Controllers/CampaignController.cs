@@ -34,7 +34,9 @@ namespace FALOFinancialProofing.Controllers
             this.roleManager = roleManager;
             _campaignMemberService = campaignMemberService;
         }
+
         // những campaign không ở trạng thái pending và rejected
+        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.Admin)]
         [HttpGet("GetAllCampaignInSystem")]
         public async Task<IActionResult> GetAllCampaignInSystem(string? title, string? status, bool? IsActive, int currentPage = IntConstant.PageNumberDefault)
         {

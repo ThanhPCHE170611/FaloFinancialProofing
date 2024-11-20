@@ -1,11 +1,10 @@
 ﻿using FALOFinancialProofing.Attributes;
-using System.ComponentModel.DataAnnotations;
 
 namespace FALOFinancialProofing.DTOs.OrganizationDTO
 {
-    public class CreateOrganization
+    public class UpdateOrganization
     {
-        [Required]
+        public int Id { get; set; }
         public string UserId { get; set; }
         public string Name { get; set; }
         public string Main_office { get; set; }
@@ -23,6 +22,5 @@ namespace FALOFinancialProofing.DTOs.OrganizationDTO
         public string VolunteerExperience { get; set; }
         public string VolunteerObjectives { get; set; }
         public string Bio { get; set; }
-
     }
 }
