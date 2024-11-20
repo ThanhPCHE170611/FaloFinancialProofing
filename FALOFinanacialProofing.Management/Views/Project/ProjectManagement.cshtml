@@ -230,7 +230,7 @@
                         <td class="align-middle text-center text-sm">${new Date(project.dateOfCreation).toLocaleDateString()}</td>
                         <td class="align-middle text-center text-sm">${statusBadge}</td>
                         <td class="align-middle text-center text-sm">
-                            <button onclick="changeProject(this, ${project.id})" class="btn btn-info btn-sm">Detail</button>
+                            ${actionButtons}
                         </td>
                     </tr>
                 `;

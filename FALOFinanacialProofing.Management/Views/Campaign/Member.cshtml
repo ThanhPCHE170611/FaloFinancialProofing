@@ -332,7 +332,7 @@
             `;
             const actionButton = checkrole === 'Project Manager' ? `
                 ${detailButton}
-                <button class="btn ${actionButtonColor} btn-sm" onclick="confirmStatusChange('${member.userId}', ${!member.isActive})">
+                <button class="btn ${actionButtonColor} btn-sm" onclick="confirmStatusChange('${member.id}', ${!member.isActive})">
                     ${actionButtonText}
                 </button>` : detailButton;
             const row = `
@@ -373,12 +373,18 @@
         }
     }
 
-    function updateMemberStatus(userId, isActive) {
+    function updateMemberStatus(id, isActive) {
+        const payload = {
+            id: id,
+            pmUserId: userId,
+            campaignId: campaignId,
+            isActive: isActive
+        };
         $.ajax({
             url: `https://localhost:7294/api/CampaignMember/UpdateCampaignMemberStatus`,
             method: 'PUT',
             contentType: 'application/json',
-            data: JSON.stringify({ userId, isActive }),
+            data: JSON.stringify(payload),
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
             },

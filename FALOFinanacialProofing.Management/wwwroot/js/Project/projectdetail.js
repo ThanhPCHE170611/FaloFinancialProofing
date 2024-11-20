@@ -95,6 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('constructionInfo').value = `${project.lastName} ${project.firstName}`;
         document.getElementById('unit').value = new Date(project.dateOfCreation).toISOString().split('T')[0];
         document.getElementById('projectProcess').value = project.status;
+        document.getElementById('projectStatus').value = project.isActive;
 
         quill.setText(project.description);
 
@@ -111,28 +112,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-    function displayFiles(files) {
-        const docList = document.getElementById('docList');
-        docList.innerHTML = '';
-
-        files.forEach(file => {
-            const listItem = document.createElement('li');
-            listItem.classList.add('list-group-item');
-            listItem.textContent = file;
-            listItem.style.cursor = 'pointer';
-
-            listItem.addEventListener('click', function () {
-                downloadFile(file);
-            });
-
-            docList.appendChild(listItem);
-        });
-    }
-
-    function downloadFile(fileName) {
-        window.location.href = `https://localhost:7294/api/Projects/downloadattachmentfilewithnotypebyfilename/${fileName}`;
-    }
-
     loadProjectDetails();
 });
 function prepareUpdateData() {
@@ -145,7 +124,7 @@ function prepareUpdateData() {
         formData.append('LogoFile', uploadedImage);
     }
     formData.append('Status', document.getElementById('projectProcess').value);
-    formData.append('isActive', document.getElementById('projectStatus').value === 'true');
+    formData.append('isActive', document.getElementById('projectStatus').value);
     
 
     return formData;
@@ -161,3 +140,25 @@ projectImageInput.addEventListener('change', function (event) {
                         </div>`;
     }
 });
+
+function displayFiles(files) {
+    const docList = document.getElementById('docList');
+    docList.innerHTML = '';
+
+    files.forEach(file => {
+        const listItem = document.createElement('li');
+        listItem.classList.add('list-group-item');
+        listItem.textContent = file;
+        listItem.style.cursor = 'pointer';
+
+        listItem.addEventListener('click', function () {
+            downloadFile(file);
+        });
+
+        docList.appendChild(listItem);
+    });
+}
+
+function downloadFile(fileName) {
+    window.location.href = `https://localhost:7294/api/Projects/downloadattachmentfilewithnotypebyfilename/${fileName}`;
+}

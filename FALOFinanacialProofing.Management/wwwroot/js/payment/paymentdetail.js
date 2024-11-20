@@ -10,12 +10,12 @@ $(document).ready(function () {
         const newLink = document.createElement('a');
         newLink.setAttribute('asp-controller', 'Prepay');
         newLink.setAttribute('asp-action', 'PrepayManagement_PM');
-        newLink.textContent = 'Prepay Created Request';
+        newLink.textContent = 'Appoval Prepay Request';
 
         const newLink2 = document.createElement('a');
         newLink2.setAttribute('asp-controller', 'Payment');
         newLink2.setAttribute('asp-action', 'PaymentManagement_PM');
-        newLink2.textContent = 'Payment Created Request';
+        newLink2.textContent = 'Approval Payment Request';
 
         const url = new URL(`/Prepay/PrepayManagement_PM`, window.location.origin);
         if (campaignId) {

@@ -99,7 +99,7 @@
                 <div id="save-btn">
                     <button class="btn btn-warning btn-lg" style="margin-left:10px">Create</button>
                     <div>
-                        <a href="/Project/ProjectManagement" class="btn btn-success btn-lg" style="margin-left:10px">Cancel</a>
+                        <a href="/Project/ProjectRequestManagement" class="btn btn-success btn-lg" style="margin-left:10px">Cancel</a>
                     </div>
                 </div>
             </div>
@@ -208,7 +208,7 @@
                 },
                 success: function (response) {
                     alert(response.message || 'Project created successfully!');
-                    window.location.href = `/Project/ProjectManagement`;
+                    window.location.href = `/Project/ProjectRequestManagement`;
                 },
                 error: function (xhr, status, error) {
                     alert('Error: ' + xhr.responseText || status);
