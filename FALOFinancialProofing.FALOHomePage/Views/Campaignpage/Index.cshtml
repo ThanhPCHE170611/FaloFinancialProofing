@@ -27,7 +27,13 @@
                 <div class="col-lg-8 order-2 order-lg-1">
                     <div class="blog__item blog-single__left-item shadow-none">
                         <div class="image">
-                            <img src="/images/cause/CampaignImages.jpg" alt="image">
+                            @if(campaignDetails.Image == null)
+                            {
+                                <img src="/images/cause/CampaignImages.jpg" alt="image">
+                            }
+                            else{
+                                <img src="@campaignDetails.Image" alt="image">
+                            }
                         </div>
                         <div class="progress-area px-4 pb-4 pt-35 bor border-top-0">
                             <div class="progress__item">

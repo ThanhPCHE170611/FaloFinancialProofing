@@ -380,6 +380,8 @@
                     year: 'numeric'  // "2024"
                 });
 
+            var campaignImage = campaign.image || '/images/event/Project_image.jpg';
+
             var percentage = Math.round((campaign.totalMoneyEarned / campaign.fundTarget) * 100);
 
                 var url = '/Campaignpage/Index/' + campaign.campaignId;
@@ -387,7 +389,7 @@
                 var cardHtml = `<div class="swiper-slide">
                                 <div class="cause__item">
                                     <div class="cause__image image">
-                                        <img src="/images/cause/CampaignImages.jpg" alt="image">
+                                        <img src="${campaignImage}" alt="image">
                                         <span class="cause-tag">Education</span>
                                     </div>
                                     <div class="cause__content">
@@ -470,10 +472,12 @@
 
             var shortenedDescription = project.description.length > 150 ? project.description.substring(0, 150) + '...' : project.description;
 
+            var projectImage = project.image || '/images/event/Project_image.jpg';
+
             var cardHtml = `<div class="col-xl-6 wow fadeInUp" data-wow-delay="200ms" data-wow-duration="1500ms">
                         <div class="event__item h-100">
                             <div class="image h-100">
-                                <img class="h-100" src="/images/event/Project_image.jpg" style="height:100%; object-fit:cover" alt="image">
+                                <img class="h-100" src="${projectImage}" style="height:100%; object-fit:cover" alt="image">
                             </div>
                             <div class="event__content">
                                 <ul class="mb-4">

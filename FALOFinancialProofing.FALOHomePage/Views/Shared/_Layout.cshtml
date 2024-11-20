@@ -101,7 +101,7 @@
                 }
                 else{
                     <div class="dropdown">
-                        <span>
+                        <span id="user-image">
                             <img src="/images/project/user.png" alt="image" style="max-height=50px; max-width:50px; border-radius: 100%">
                         </span>
                         <div class="dropdown-content">
@@ -226,12 +226,29 @@
     <script src="/js/magnific-popup.min.js"></script>
     <!-- Nice select min Js -->
     <script src="/js/nice-select.min.js"></script>
-    <!-- Isotope pkgd min Js
-         <script src="~/js/isotope.pkgd.min.js"></script>
-     -->
     <!-- Waypoints Js -->
     <script src="/js/jquery.waypoints.js"></script>
     <!-- Script Js -->
     <script src="/js/script.js"></script>
+
+    <script>
+        const userId = '@userId';  
+
+        if (userId) {
+            fetch(`https://localhost:7294/api/Users/GetUserProfile/${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.data.image) {
+                        const imageUrl = data.data.image;
+                        const userImageElement = document.getElementById('user-image').getElementsByTagName('img')[0];
+                        userImageElement.src = imageUrl;  
+                    } else {
+                        console.log('User profile image not found.');
+                    }
+                })
+                .catch(error => console.error('Error fetching user profile image:', error));
+        }
+    </script>
 </body>
 </html>
+

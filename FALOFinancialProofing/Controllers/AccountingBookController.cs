@@ -45,8 +45,9 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
-        [AllowAnonymous]
+        
         [HttpGet("getaccountingbookincampaign")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAccountingBookInCampaign(int campaignId)
         {
             var accountingBook = await accountingBookServices.GetAccountingBookInCampaign(campaignId);
@@ -107,8 +108,8 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
-        [AllowAnonymous]
         [HttpGet("downloadaccountingbook/{fileName}")]
+        [AllowAnonymous]
         public async Task<IActionResult> DownloadAccountingBookByFileName(string fileName)
         {
             var (fileBytes, contentType, downloadFileName) = await accountingBookServices.DownloadAccountingBookFileByFileName(fileName);

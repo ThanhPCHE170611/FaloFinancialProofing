@@ -53,8 +53,15 @@
                     <div class="col-lg-8 order-2 order-lg-1">
                         <div class="blog__item blog-single__left-item shadow-none">
                             <div class="image">
-                            <img src="/images/event/Project_image.jpg" alt="image" style="object-fit:cover; object-position:center">
-                                <span class="blog-tag">@projectDetails.DateOfCreation.ToString("MMM dd, yyyy")</span>
+                            @if (projectDetails.Image == null)
+                            {
+                                <img src="/images/event/Project_image.jpg" alt="image" style="object-fit:cover; object-position:center">
+                            }
+                            else
+                            {
+                                <img src="@projectDetails.Image" alt="image" style="object-fit:cover; object-position:center">
+                            }
+                            <span class="blog-tag">@projectDetails.DateOfCreation.ToString("MMM dd, yyyy")</span>
                             </div>
                             <div class="blog__content p-0">
                                 <h4 class="mt-40 mb-30 fs-30">
@@ -69,8 +76,24 @@
                     <div class="col-lg-4 order-1 order-lg-2">
                         <div class="event-single__right-item">
                         <div class="item shadow mb-30 text-center">
+                            @if (projectDetails.UserImage == null)
+                            {
                                 <img src="/images/project/user.png" alt="image" class="image-fluid">
+                            }
+                            else
+                            {
+                                <img src="@projectDetails.UserImage" alt="image" class="image-fluid">
+                            }
+
+                            @if(projectDetails.OrganizationId == null || projectDetails.OrganizationName == null)
+                            {
                                 <h5 class="mt-20">@projectDetails.FirstName @projectDetails.LastName</h5>
+                            }
+                            else
+                            {
+                            <h5 class="mt-20">@projectDetails.OrganizationName</h5>
+                            }
+
                             </div>
                         </div>
                     </div>
@@ -111,7 +134,13 @@
                             <div class="swiper-slide">
                                 <div class="cause__item">
                                     <div class="cause__image image">
-                                        <img src="/images/cause/CampaignImages.jpg" alt="image">
+                                        @if(campaign.Image == null)
+                                        {
+                                            <img src="/images/cause/CampaignImages.jpg" alt="image">
+                                        }else{
+                                            <img src="@campaign.Image" alt="image">
+                                        }
+                                        
                                         <span class="cause-tag">@campaign.EndDate.ToString("MMMM dd, yyyy")</span>
                                     </div>
                                     <div class="cause__content">

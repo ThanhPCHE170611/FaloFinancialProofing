@@ -4,11 +4,9 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
 <main>
     <!-- Page banner area start here -->
-    <section class="banner__inner-page bg-image pt-160 pb-160 bg-image"
-             data-background="/images/banner/banner_2.jpg">
+    <section class="banner__inner-page bg-image pt-160 pb-160 bg-image" data-background="/images/banner/banner_2.jpg">
         <div class="container">
             <h2 class="wow fadeInUp" data-wow-delay="00ms" data-wow-duration="1500ms">Danh Sách Chiến Dịch</h2>
             <div class="breadcrumb-list wow fadeInUp" data-wow-delay="200ms" data-wow-duration="1500ms">
@@ -32,8 +30,10 @@
     <section class="cause-list-area pt-120 pb-120">
         <div class="container">
             <div class="row g-4" id="campaignsContainer">
-             </div>
+                <!-- Campaigns will be dynamically loaded here -->
+            </div>
             <div class="pegi justify-content-center mt-80 pagination" id="paginationControls">
+                <!-- Pagination controls will be dynamically loaded here -->
             </div>
         </div>
     </section>
@@ -97,33 +97,36 @@
             var url = '/Campaignpage/Index/' + campaign.campaignId;
             var shortenedDescription = campaign.description.length > 100 ? campaign.description.substring(0, 100) + '....' : campaign.description;
 
+            // Now we set the campaign image dynamically from the API response
+            var campaignImage = campaign.image || '/images/cause/CampaignImages.jpg';  // Fallback image if none exists
+
             var cardHtml = `<div class="col-lg-8 order-2 order-lg-1">
-                                <div class="cause__item cause-list__item mb-30">
-                                    <div class="cause__image image" style="width:100%; height:auto;overflow:hidden;">
-                                        <img src="/images/cause/CampaignImages.jpg" style="width:100%; height:auto;object-fit:cover" alt="image">
-                                        <span class="cause-tag">${formattedDate}</span>
-                                    </div>
-                                    <div class="cause__content">
-                                        <h4 class="mb-2">
-                                            <a href="${url}" class="btn-inner">
-                                                ${campaign.title}
-                                            </a>
-                                        </h4>
-                                        <p class="mb-3">
-                                            ${shortenedDescription}
-                                        </p>
-                                        <div class="progress-area">
-                                            <div class="progress__item">
-                                                <div class="progress__content" style="width: ${percentage}%;"><span>${percentage}%</span></div>
-                                            </div>
-                                            <div class="progress__goal mt-15">
-                                                <h6>Goal : <span>${campaign.fundTarget} VND</span></h6>
-                                                <h6>Raised : <span>${campaign.totalMoneyEarned} VND</span></h6>
+                                    <div class="cause__item cause-list__item mb-30">
+                                        <div class="cause__image image" style="width:100%; height:auto;overflow:hidden;">
+                                            <img src="${campaignImage}" style="width:100%; height:auto;object-fit:cover" alt="image">
+                                            <span class="cause-tag">${formattedDate}</span>
+                                        </div>
+                                        <div class="cause__content">
+                                            <h4 class="mb-2">
+                                                <a href="${url}" class="btn-inner">
+                                                    ${campaign.title}
+                                                </a>
+                                            </h4>
+                                            <p class="mb-3">
+                                                ${shortenedDescription}
+                                            </p>
+                                            <div class="progress-area">
+                                                <div class="progress__item">
+                                                    <div class="progress__content" style="width: ${percentage}%;"><span>${percentage}%</span></div>
+                                                </div>
+                                                <div class="progress__goal mt-15">
+                                                    <h6>Goal : <span>${campaign.fundTarget} VND</span></h6>
+                                                    <h6>Raised : <span>${campaign.totalMoneyEarned} VND</span></h6>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>`;
+                                </div>`;
             campaignsContainer.append(cardHtml);
         });
     }
@@ -156,5 +159,4 @@
             paginationControls.append(`<button onclick="loadCampaigns(${currentPage + 1}, '${searchInput}')"><i class="fa-solid fa-arrow-right-long primary-color transition"></i></button>`);
         }
     }
-
 </script>

@@ -96,10 +96,12 @@
             var creator = project.firstName + ' ' + project.lastName;
             var shortenedDescription = project.description.length > 150 ? project.description.substring(0, 150) + '...' : project.description;
 
+            var projectImage = project.image || '/images/event/Project_image.jpg';
+
             var cardHtml = `<div class="col-xl-4 col-md-6 wow fadeInUp" data-wow-delay="200ms" data-wow-duration="1500ms">
                                 <div class="event__inner-item">
                                     <div class="image">
-                                        <img src="/images/event/Project_image.jpg" alt="image">
+                                        <img src="${projectImage}" alt="image">
                                                 <span class="blog-tag">${formattedDate || 'Date'}</span>
                                     </div>
                                     <div class="blog__content pt-4">
