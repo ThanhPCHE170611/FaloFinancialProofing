@@ -55,11 +55,11 @@
                             <div class="image">
                             @if (projectDetails.Image == null)
                             {
-                                <img src="/images/event/Project_image.jpg" alt="image" style="object-fit:cover; object-position:center">
+                                <img src="/images/event/Project_image.jpg" alt="image" style="object-fit:cover; object-position:center;">
                             }
                             else
                             {
-                                <img src="@projectDetails.Image" alt="image" style="object-fit:cover; object-position:center">
+                                <img src="@projectDetails.Image" alt="image" style="object-fit:cover; object-position:center; max-height: 373px; max-width:770px">
                             }
                             <span class="blog-tag">@projectDetails.DateOfCreation.ToString("MMM dd, yyyy")</span>
                             </div>
@@ -78,23 +78,24 @@
                         <div class="item shadow mb-30 text-center">
                             @if (projectDetails.UserImage == null)
                             {
-                                <img src="/images/project/user.png" alt="image" class="image-fluid">
+                                <img src="/images/project/user.png" alt="image" class="image-fluid" style="object-position:center; height: 120px; width: 120px">
                             }
                             else
                             {
-                                <img src="@projectDetails.UserImage" alt="image" class="image-fluid">
+                                <img src="@projectDetails.UserImage" alt="image" class="image-fluid" style="object-position:center; height: 120px; width: 120px">
                             }
-
-                            @if(projectDetails.OrganizationId == null || projectDetails.OrganizationName == null)
+                            @if (projectDetails.OrganizationId == null || projectDetails.OrganizationName == null)
                             {
                                 <h5 class="mt-20">@projectDetails.FirstName @projectDetails.LastName</h5>
+                                <span>Người quản lý dự án</span>
                             }
                             else
                             {
-                            <h5 class="mt-20">@projectDetails.OrganizationName</h5>
+                                <h7 style="font: italic"> Tổ chức</h7>
+                                <h5 class="mt-20">@projectDetails.OrganizationName</h5>
+                                <span>Tổ chức</span>
                             }
-
-                            </div>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -151,7 +152,11 @@
                                         </h4>
                                         <div class="progress-area">
                                             <div class="progress__item">
-                                                <div class="progress__content" style="width: @percentage%;"><span>@percentage%</span></div>
+                                                @if(percentage >100){
+                                                    <div class="progress__content" style="width: 100%;"><span>@percentage%</span></div>
+                                                }else{
+                                                    <div class="progress__content" style="width: @percentage%;"><span>@percentage%</span></div>
+                                                }
                                             </div>
                                             <div class="progress__goal mt-15">
                                                 <h6>Goal : <span>@campaign.FundTarget VND</span></h6>
