@@ -48,7 +48,10 @@ namespace FALOFinancialProofing.Controllers
             }
 
             return File(fileBytes, contentType, downloadFileName);
-        } 
+        }
+
+
+        [AllowAnonymous]
         [HttpGet("downloadattachmentfilewithnotypebyfilename/{fileName}")]
         public async Task<IActionResult> DownloadAttachmentFileWithNoTypeByFileName(string fileName)
         {
@@ -162,6 +165,8 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
+
+        [AllowAnonymous]
         [HttpGet("getallpaymentattachmentincampaignwithrequest/{campaignId}")]
         public async Task<IActionResult> GetAllPaymentAttachmentInCampaignWithRequest(int campaignId,
             string? name,
