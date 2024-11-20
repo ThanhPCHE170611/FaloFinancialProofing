@@ -161,6 +161,10 @@ namespace FALOFinancialProofing.Services.CreateProjectRequestApproveHistoryServi
                 {
                     throw new Exception("CreateProjectRequest not found");
                 }
+                if (checkRequestId.Status.Equals(RequestStatus.Cancel))
+                {
+                    throw new Exception("Project Request has been cancel before");
+                }
                 // kiểm tra thời điểm gửi yêu cầu phê duyệt
                 if (createProjectRequestApproveHistoryClientRequest.DateOfApproval > DateTime.Now)
                 {

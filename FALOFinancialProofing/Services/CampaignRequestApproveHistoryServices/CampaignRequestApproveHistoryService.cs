@@ -187,6 +187,10 @@ namespace FALOFinancialProofing.Services.CampaignRequestApproveHistoryServices
                 {
                     throw new Exception("CampaignRequest not found");
                 }
+                if (checkRequestId.Status.Equals(RequestStatus.Cancel))
+                {
+                    throw new Exception("Campaign Request has been cancel before");
+                }
                 // kiểm tra thời điểm gửi yêu cầu phê duyệt
                 if (createCampaignRequestApproveHistoryClientRequest.DateOfApproval > DateTime.Now)
                 {
