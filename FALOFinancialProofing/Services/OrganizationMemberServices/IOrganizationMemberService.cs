@@ -9,5 +9,6 @@ namespace FALOFinancialProofing.Services.OrganizationMemberServices
         Task<IEnumerable<OrganizationMember>> GetAllOrganizationMembersAsync();
         Task<bool> UpdateOrganizationMemberAsync(OrganizationMember updateOrganizationMember);
         Task<bool> DeleteOrganizationMemberAsync(int id);
+        Task<OrganizationMember> GetOrganizationMemberByUserIdAndOrganizationIdAsync(string userId, int organizationId);
     }
 }

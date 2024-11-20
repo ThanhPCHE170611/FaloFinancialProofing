@@ -7,7 +7,7 @@ namespace FALOFinancialProofing.Models
     {
         public string Name { get; set; }
         public string Main_office { get; set; }
-        public int Representative { get; set; }
+        public string Representative { get; set; }
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
         public string? Logo { get; set; }
