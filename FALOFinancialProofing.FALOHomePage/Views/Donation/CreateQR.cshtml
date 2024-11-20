@@ -16,7 +16,7 @@
                     <!-- Input Field with space below it -->
                     <div class="input-box pb-3 mb-4 bor-bottom">
                         <span class="me-2">₫</span>
-                        <input class="addAmount-value form-control" type="text" value="50000">
+                        <input class="addAmount-value form-control" type="number" max="10000000">
                     </div>
 
                     <!-- Amount Buttons with more space between them -->
@@ -88,6 +88,9 @@
             if (isNaN(amount) || amount < 2000) {
                 alert('Xin hãy nhập số tiền từ 2000đ trở lên');
                 return;
+            } else if (amount > 10000000) {
+                alert('Xin hãy nhập số tiền dưới 10000000đ trở xuống');
+                return; 
             }
 
             const data = {
