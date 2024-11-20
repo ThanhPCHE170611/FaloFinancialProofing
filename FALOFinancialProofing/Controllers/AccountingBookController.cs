@@ -81,7 +81,7 @@ namespace FALOFinancialProofing.Controllers
 
             var filteredAttachmentFiles = accountingBooks.AsQueryable();
 
-            if (String.IsNullOrEmpty(name))
+            if (!String.IsNullOrEmpty(name))
             {
                 filteredAttachmentFiles = filteredAttachmentFiles
                     .Where(x => x.FilePath.ToLower().Contains(name.ToLower()));

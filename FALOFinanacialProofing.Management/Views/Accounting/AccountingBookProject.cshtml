@@ -8,8 +8,6 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
-    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
     <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
@@ -157,9 +155,9 @@
                             <table class="table align-items-center mb-0">
                                 <thead class="text-center">
                                     <tr>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STT</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">File</th>                                    
-                                        <th class="text-secondary text-secondary text-xxs font-weight-bolder opacity-7 text-center">Action</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-center">STT</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-center">File</th>                                    
+                                        <th class="text-secondary text-secondary text-xs font-weight-bolder opacity-7 text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="voucherTableBody" class="text-center">
@@ -205,7 +203,8 @@
 <script src="../assets/js/core/bootstrap.min.js"></script>
 <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
 <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
 <script>
     const checkrole = localStorage.getItem('loggingRole');
     const projectId = localStorage.getItem('projectId');
@@ -253,19 +252,6 @@
         });
     }
 
-            function createTableRow(accountingBook, index) {
-        return `
-            <tr>
-                <td>${index + 1}</td>
-                <td>${accountingBook.filePath}</td>
-                <td>
-                    <button class="btn btn-success btn-sm" onclick="downloadFile(this,'${accountingBook.filePath}')">Download</button>
-                    <button class="btn btn-info btn-sm" onclick="showDetail(this)">Detail</button>
-                    <button class="btn btn-danger btn-sm" onclick="deleteRow(this)">Delete</button>
-                </td>
-            </tr>
-        `;
-    }
     let currentPage = 1;
     let searchInput = '';
     function fetchAccountingBooks() {
@@ -279,8 +265,8 @@
                 console.log('API Response:', response);
                 if (response.success) {
                     console.log('Data:', response.data);
-                    populateTable(response.data);
-                    setupPagination(response.data.TotalRecords, response.data.Page);
+                    populateTable(response.data.data);
+                    setupPagination(response.data.totalRecords, response.data.page);
                 } else {
                     const tableBody = $('#voucherTableBody');
                     tableBody.empty();
@@ -298,36 +284,49 @@
         const tableBody = $('#voucherTableBody');
         tableBody.empty();
 
-        if (typeof data === 'object' && data !== null) {
-            tableBody.append(createTableRow(data, 0));
-        } else {
-            tableBody.append('<tr><td colspan="3" class="text-center">No accounting books found</td></tr>');
-        }
+        data.forEach((accountingBook, index) => {
+            const row = `
+                <tr>
+                    <td class="align-middle text-center">${index + 1}</td>
+                    <td class="align-middle text-center">${accountingBook.filePath}</td>
+                    <td class="align-middle text-center">
+                        <button class="btn btn-success btn-sm" onclick="downloadFile(this, '${accountingBook.filePath}')">Download</button>
+                    </td>
+                </tr>
+            `;
+            tableBody.append(row);
+        });
     }
 
+
     function downloadFile(button, fileName) {
+        console.log(jwtToken);  
         $.ajax({
             url: `https://localhost:7294/api/AccountingBook/downloadaccountingbook/${fileName}`,
             type: 'GET',
+            xhrFields: {
+                responseType: 'blob' 
+            },
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
             },
-            xhrFields: {
-                responseType: 'blob'
-            },
             success: function (data, status, xhr) {
-                const downloadUrl = window.URL.createObjectURL(data);
+                const downloadUrl = window.URL.createObjectURL(data); 
                 const a = document.createElement('a');
                 a.href = downloadUrl;
-                a.download = fileName;
+                a.download = fileName; 
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
                 window.URL.revokeObjectURL(downloadUrl);
             },
             error: function (xhr, status, error) {
-                alert('An error occurred while downloading the file.');
-                console.error('Error:', error);
+                if (xhr.status === 401) {
+                    alert('Unauthorized: Please log in again.');
+                } else {
+                    alert('An error occurred while downloading the file.');
+                    console.error('Error:', error);
+                }
             }
         });
     }
@@ -345,13 +344,13 @@
         }
     };
     function setupPagination(totalRecords, currentPage) {
-        const totalPages = Math.ceil(totalRecords / IntConstant.PageSize);
+        const totalPages = Math.ceil(totalRecords / 5);
         const paginationContainer = $('#pagination');
         paginationContainer.empty();
 
         for (let i = 1; i <= totalPages; i++) {
             const pageButton = `
-                <button class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-light'}"
+                <button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}"
                         onclick="goToPage(${i})">${i}</button>
             `;
             paginationContainer.append(pageButton);

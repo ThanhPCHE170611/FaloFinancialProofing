@@ -356,7 +356,7 @@
         paginationContainer.empty();
 
         for (let i = 1; i <= totalPages; i++) {
-            const pageButton = `<button class="btn ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}" onclick="goToPage(${i})">${i}</button>`;
+            const pageButton = `<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}" onclick="goToPage(${i})">${i}</button>`;
             paginationContainer.append(pageButton);
         }
     }
