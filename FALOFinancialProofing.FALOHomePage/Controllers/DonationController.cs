@@ -23,7 +23,7 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
             bankAccountService = bankData;
             _httpClientFactory = httpClientFactory;
         }
-        public async Task<IActionResult> Index(int id, int currentPage = 1)
+        public async Task<IActionResult> Index(int id)
         {
             //var transactions = await _transactionPollingDirect.GetTransactionAsync(id);
             //return View(transactions);
@@ -34,39 +34,40 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
             }
             else
             {
-                try
-                {
-                    var client = _httpClientFactory.CreateClient();
+                ViewBag.campaignId = id;
+                //try
+                //{
+                //    var client = _httpClientFactory.CreateClient();
 
-                    // Make a GET request to the API
-                    HttpResponseMessage response = await client.GetAsync($"https://localhost:7294/api/TransactionLogs/GetCampaignTransactionLogs/{id}?currentPage={currentPage}");
+                //    // Make a GET request to the API
+                //    HttpResponseMessage response = await client.GetAsync($"https://localhost:7294/api/TransactionLogs/GetCampaignTransactionLogs/{id}?currentPage={currentPage}");
 
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string jsonResponse = await response.Content.ReadAsStringAsync();
+                //    if (response.IsSuccessStatusCode)
+                //    {
+                //        string jsonResponse = await response.Content.ReadAsStringAsync();
 
-                        // Deserialize the JSON response into our model
-                        var transactionLogsResponse = JsonConvert.DeserializeObject<TransactionLogResponse>(jsonResponse);
+                //        // Deserialize the JSON response into our model
+                //        var transactionLogsResponse = JsonConvert.DeserializeObject<TransactionLogResponse>(jsonResponse);
 
-                        // Ensure the response is not null and contains data
-                        if (transactionLogsResponse?.Data?.Data != null)
-                        {
-                            ViewBag.Transactions = transactionLogsResponse.Data.Data;
-                            ViewBag.CurrentPage = transactionLogsResponse.Data.CurrentPage;
-                            ViewBag.TotalPages = (int)Math.Ceiling((double)transactionLogsResponse.Data.DataCount / 10);  // Assuming page size of 10
-                            ViewBag.DataCount = transactionLogsResponse.Data.DataCount;
-                            ViewBag.PageSize = 10;
-                        }
-                        else
-                        {
-                            ViewBag.ErrorMessage = "No transaction logs available.";
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    return RedirectToAction("Error404", "Error");
-                }
+                //        // Ensure the response is not null and contains data
+                //        if (transactionLogsResponse?.Data?.Data != null)
+                //        {
+                //            ViewBag.Transactions = transactionLogsResponse.Data.Data;
+                //            ViewBag.CurrentPage = transactionLogsResponse.Data.CurrentPage;
+                //            ViewBag.TotalPages = (int)Math.Ceiling((double)transactionLogsResponse.Data.DataCount / 10);  // Assuming page size of 10
+                //            ViewBag.DataCount = transactionLogsResponse.Data.DataCount;
+                //            ViewBag.PageSize = 10;
+                //        }
+                //        else
+                //        {
+                //            ViewBag.ErrorMessage = "No transaction logs available.";
+                //        }
+                //    }
+                //}
+                //catch (Exception ex)
+                //{
+                //    return RedirectToAction("Error404", "Error");
+                //}
 
                 return View();
              }

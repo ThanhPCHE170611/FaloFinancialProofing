@@ -1,12 +1,6 @@
-﻿@using FALOFinancialProofing.FALOHomePage.Services
-
-@{
+﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var transactions = ViewBag.Transactions as List<TransactionDTO.TransactionLog>;
-    var errorMessage = ViewBag.ErrorMessage as string;
-    var currentPage = ViewBag.CurrentPage;
-    var totalPages = ViewBag.TotalPages;
-    var dataCount = ViewBag.DataCount;
+    var campaignId = ViewBag.CampaignId;
 }
 
 <style>
@@ -18,60 +12,171 @@
         .table th, .table td {
             padding: 10px; /* Space inside the cells */
         }
+
+    .pagination {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+    }
+
+        .pagination a {
+            margin: 0 5px;
+            padding: 5px 10px;
+            text-decoration: none;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+            .pagination a.active {
+                color: black;
+            }
 </style>
 
 <div class="container">
     <h2>Sao Kê</h2>
+
+    <!-- Search Bar -->
     <div class="blog-single__right-item">
         <div class="item shadow mb-30">
             <h5 class="title">Search</h5>
-            <div class="serach-bar">
-                <input type="text" placeholder="Search here">
-                <button><i class="fa-regular fa-magnifying-glass"></i></button>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search here" />
             </div>
         </div>
     </div>
-    @if (!string.IsNullOrEmpty(errorMessage))
-    {
-        <div class="alert alert-danger">
-            @errorMessage
-        </div>
-    }
-    
-     @if (transactions != null && transactions.Any())
-    {
-    <table class="table table-bordered table-hover" id="transactions-table">
-        <thead>
-            <tr>
-                <th scope="col">Mã Giao Dịch</th>
-                <th scope="col">Thời Điểm Giao Dịch</th>
-                <th scope="col">Số Tiền</th>
-                <th scope="col">Nội Dung Giao Dịch</th>
-            </tr>
-        </thead>
-        <tbody>
-                @foreach (var log in transactions)
-                {
-                    <tr>
-                        <td>@log.Tid</td>
-                        <td>@log.TransactionDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                        <td>@log.Amount</td>                        
-                        <td>@log.Description</td>
-                    </tr>
-                }
-            </tbody>
-    </table>
-        @if (currentPage > 1)
-        {
-            <a href="@Url.Action("Index", new { id = ViewBag.CampaignId, currentPage = currentPage - 1 })">Previous</a>
-        }
 
-        @if (currentPage < totalPages)
-        {
-            <a href="@Url.Action("Index", new { id = ViewBag.CampaignId, currentPage = currentPage + 1 })">Next</a>
-        }
-    }
+    <!-- Error Message -->
+    <div id="errorMessage" class="alert alert-danger" style="display: none;"></div>
+
+    <!-- Table for Transactions -->
+    <div id="transactionsContainer">
+        <!-- Data will be populated here using JavaScript -->
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="pegi justify-content-center mt-80 pagination" id="paginationContainer">
+        <!-- Pagination links will be populated here using JavaScript -->
+    </div>
 </div>
 
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    const campaignId = @campaignId;
+    const pageSize = 5;
+
+    let currentPage = 1;
+    let totalPages = 1;
+    let totalDataCount = 0;
+
+    // Function to fetch transaction logs from the API
+    function fetchTransactions(page = 1, searchQuery = "") {
+        const url = `https://localhost:7294/api/TransactionLogs/GetCampaignTransactionLogs/${campaignId}?currentPage=${page}&searchQuery=${encodeURIComponent(searchQuery)}`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data?.data?.data) {
+                    displayTransactions(data.data.data);
+                    totalPages = Math.ceil(data.data.dataCount / pageSize);
+                    totalDataCount = data.data.dataCount;
+                    updatePagination();
+                } else {
+                    displayError("No transaction logs available.");
+                }
+            })
+            .catch(error => {
+                displayError("An error occurred while fetching the data.");
+                console.error("Error fetching transaction logs:", error);
+            });
+    }
+
+    // Function to display transaction logs in the table
+    function displayTransactions(transactions) {
+        const tableContainer = document.getElementById('transactionsContainer');
+        let tableHtml = `<table class="table table-bordered table-hover" id="transactions-table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Mã Giao Dịch</th>
+                                                <th scope="col">Thời Điểm Giao Dịch</th>
+                                                <th scope="col">Số Tiền</th>
+                                                <th scope="col">Nội Dung Giao Dịch</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>`;
+
+        transactions.forEach(log => {
+            tableHtml += `<tr>
+                                        <td>${log.tid}</td>
+                                        <td>${new Date(log.transactionDate).toLocaleString()}</td>
+                                        <td>${log.amount}</td>
+                                        <td>${log.description}</td>
+                                      </tr>`;
+        });
+
+        tableHtml += `</tbody></table>`;
+        tableContainer.innerHTML = tableHtml;
+    }
+
+    // Function to display error messages
+    function displayError(message) {
+        const errorMessage = document.getElementById('errorMessage');
+        errorMessage.textContent = message;
+        errorMessage.style.display = 'block';
+    }
+
+    // Function to update pagination links
+    function updatePagination() {
+        const paginationContainer = document.getElementById('paginationContainer');
+        paginationContainer.innerHTML = '';
+
+        // Previous button
+        if (currentPage > 1) {
+            const prevPage = document.createElement('a');
+            prevPage.textContent = 'Previous';
+            prevPage.href = '#';
+            prevPage.onclick = () => changePage(currentPage - 1);
+            paginationContainer.appendChild(prevPage);
+        }
+
+        // Page numbers
+        for (let page = 1; page <= totalPages; page++) {
+            const pageLink = document.createElement('a');
+            pageLink.textContent = page;
+            pageLink.href = '#';
+            pageLink.classList.toggle('active', page === currentPage);
+            pageLink.onclick = () => changePage(page);
+            paginationContainer.appendChild(pageLink);
+        }
+
+        // Next button
+        if (currentPage < totalPages) {
+            const nextPage = document.createElement('a');
+            nextPage.textContent = 'Next';
+            nextPage.href = '#';
+            nextPage.onclick = () => changePage(currentPage + 1);
+            paginationContainer.appendChild(nextPage);
+        }
+    }
+
+    // Function to handle page change
+    function changePage(page) {
+        if (page >= 1 && page <= totalPages) {
+            currentPage = page;
+            const searchQuery = document.getElementById('searchInput').value;
+            fetchTransactions(currentPage, searchQuery);
+        }
+    }
+
+    // Listen for Enter key press in the search bar
+    document.getElementById('searchInput').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+            const searchQuery = e.target.value;
+            currentPage = 1;  // Reset to the first page on search
+            fetchTransactions(currentPage, searchQuery);
+        }
+    });
+
+    // Initial fetch
+    fetchTransactions(currentPage);
+</script>

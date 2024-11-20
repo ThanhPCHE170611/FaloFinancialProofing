@@ -37,7 +37,14 @@
                         </div>
                         <div class="progress-area px-4 pb-4 pt-35 bor border-top-0">
                             <div class="progress__item">
-                                <div class="progress__content" style="width: @percentage%;"><span>@percentage%</span></div>
+                                @if (percentage > 100)
+                                {
+                                    <div class="progress__content" style="width: 100%;"><span>@percentage%</span></div>
+                                }
+                                else
+                                {
+                                    <div class="progress__content" style="width: @percentage%;"><span>@percentage%</span></div>
+                                }
                             </div>
                             <div class="progress__goal mt-15">
                                 <h6>Goal : <span>@campaignDetails.FundTarget</span></h6>
@@ -49,7 +56,7 @@
                                 @campaignDetails.Title
                             </h4>
                             <p class="mb-20 mt-20">
-                                @campaignDetails.Description
+                                @Html.Raw(campaignDetails.Description.Replace("\n", "<br />"))
                             </p>
                         </div>
                     </div>

@@ -62,25 +62,25 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
-        var campaignId = '@ViewBag.campaignId'; 
-        loadActivityLogs(1, "", campaignId);
+        var campaignId = '@ViewBag.campaignId';
+        loadActivityLogs(1, "", campaignId);  // Initial load for page 1
 
         // Search functionality
         $('#searchButton').click(function () {
             var searchInput = $('#searchInput').val();
-            loadActivityLogs(1, searchInput, campaignId); 
+            loadActivityLogs(1, searchInput, campaignId);
         });
 
         // Allow pressing Enter to trigger search
         $('#searchInput').keypress(function (e) {
             if (e.which === 13) {  // Enter key
                 var searchInput = $('#searchInput').val();
-                loadActivityLogs(1, searchInput, campaignId); 
+                loadActivityLogs(1, searchInput, campaignId);
             }
         });
     });
 
-    // Function to load activity logs
+    // Function to load activity logs with pagination
     function loadActivityLogs(currentPage, searchInput, campaignId) {
         const apiUrl = `https://localhost:7294/api/AttachmentFile/getallpaymentattachmentincampaignwithrequest/${campaignId}?name=${searchInput}&page=${currentPage}`;
 
@@ -104,38 +104,43 @@
     // Function to render the activity logs in the table
     function renderActivityLogs(activities) {
         $('#activityTable').show();
-        $('#activityLogs').empty(); 
+        $('#activityLogs').empty();
 
         activities.forEach(function (activity) {
             var rowHtml = `<tr>
-                        <td>${new Date(activity.createAt).toLocaleString()}</td>
-                        <td>${activity.description}</td>
-                        <td>${activity.expectedMoney}</td>
-                        <td>${activity.createByName} (${activity.createByEmail})</td>
-                        <td>
-                            ${activity.attachmentFilePath ?
+                            <td>${new Date(activity.createAt).toLocaleString()}</td>
+                            <td>${activity.description}</td>
+                            <td>${activity.expectedMoney}</td>
+                            <td>${activity.createByName} (${activity.createByEmail})</td>
+                            <td>
+                                ${activity.attachmentFilePath ?
                     `<a href="javascript:void(0);" onclick="downloadAttachmentFile('${activity.attachmentFilePath}')">${activity.attachmentFilePath}</a>` :
                     '<span class="text-danger">Thiếu</span>'
                 }
-                        </td>
-                    </tr>`;
+                            </td>
+                        </tr>`;
             $('#activityLogs').append(rowHtml);
         });
 
-        $('#errorMessage').hide(); 
+        $('#errorMessage').hide();
     }
 
     // Function to render pagination controls
     function renderPagination(totalRecords, currentPage, searchInput, campaignId) {
         const pageSize = 5;
-        const totalPages = Math.ceil(totalRecords / pageSize);
+        const totalPages = Math.ceil(totalRecords / pageSize);  // Total pages calculation
         let paginationHtml = '';
 
+        // Render "Previous" button
         if (currentPage > 1) {
             paginationHtml += `<button onclick="loadActivityLogs(${currentPage - 1}, '${searchInput}', ${campaignId})">Previous</button>`;
         }
 
-        for (let i = 1; i <= totalPages; i++) {
+        // Render page number buttons
+        const startPage = Math.max(1, currentPage - 2);  // Show pages 2 before and after current
+        const endPage = Math.min(totalPages, currentPage + 2);  // Adjust the last page
+
+        for (let i = startPage; i <= endPage; i++) {
             if (i === currentPage) {
                 paginationHtml += `<button class="active" disabled>${i}</button>`;
             } else {
@@ -143,11 +148,12 @@
             }
         }
 
+        // Render "Next" button
         if (currentPage < totalPages) {
             paginationHtml += `<button onclick="loadActivityLogs(${currentPage + 1}, '${searchInput}', ${campaignId})">Next</button>`;
         }
 
-        $('#paginationControls').html(paginationHtml);
+        $('#paginationControls').html(paginationHtml);  // Inject pagination controls
     }
 
     // Function to show error message
@@ -186,5 +192,6 @@
                 alert('Error downloading file: ' + error.message);
             });
     }
+
 </script>
 

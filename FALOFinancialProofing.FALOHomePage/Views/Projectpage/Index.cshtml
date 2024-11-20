@@ -68,7 +68,7 @@
                                     @projectDetails.ProjectName
                                 </h4>
                                 <p class="mb-20 mt-30">
-                                    @projectDetails.Description
+                                @Html.Raw(projectDetails.Description.Replace("\n", "<br />"))
                                 </p>
                             </div>
                         </div>
