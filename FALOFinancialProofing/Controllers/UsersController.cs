@@ -32,13 +32,14 @@ namespace FALOFinancialProofing.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Post([FromBody] SignInModel userLogin)
         {
-            var user = await authServices.LoginUser(userLogin);
+            StringBuilder message = new StringBuilder();
+            var user = await authServices.LoginUser(userLogin, message);
             if (user == null)
             {
                 return Ok(new
                 {
                     Success = false,
-                    Message = "Invalid Username/Password"
+                    Message = message.ToString()
                 });
             }
             else
@@ -89,27 +90,46 @@ namespace FALOFinancialProofing.Controllers
                 }
             }
             UserDto userDto = await authServices.GetUserDto(userInfo);
+            var user = await authServices.GetUserById(userDto.Id);
+            var checkIsLockout = authServices.checkLockoutAccount(user, message);
+            if (!checkIsLockout)
+            {
+                message.Append("Google Authentication Success!");
+            }
+
             return Ok(new ApiResponse
             {
-                Success = true,
-                Message = "Google Authentication Success",
-                Data = await authServices.GenerateToken(userDto)
+                Success = !checkIsLockout,
+                Message = message.ToString(),
+                Data = !checkIsLockout ? await authServices.GenerateToken(userDto) : null
             });
         }
+        //[RoleAttribute(AppRole.Admin)]
+        //[HttpPut("Update-User-Role")]
+        //public async Task<IActionResult> UpdateUserRole([FromBody] UpdateUserRole updateUserRole)
+        //{
+
+        //    StringBuilder message = new StringBuilder();
+        //    var isValid = await authServices.UpdateUserRoleAsync(updateUserRole, message);
+        //    return Ok(new
+        //    {
+        //        Success = isValid,
+        //        Message = message.ToString()
+        //    });
+        //}
+
         [RoleAttribute(AppRole.Admin)]
-        [HttpPut("Update-User-Role")]
-        public async Task<IActionResult> UpdateUserRole([FromBody] UpdateUserRole updateUserRole)
+        [HttpPost("AssignRoleToUser")]
+        public async Task<IActionResult> AddUserRole([FromBody] AddUserRole addUserRole)
         {
 
             StringBuilder message = new StringBuilder();
-            var isValid = await authServices.UpdateUserRoleAsync(updateUserRole, message);
-            return Ok(new
+            var isValid = await authServices.AssignRoleToUserAsync(addUserRole, message);
+            return Ok(new ApiResponse()
             {
                 Success = isValid,
                 Message = message.ToString()
             });
-
-
         }
 
 
@@ -122,7 +142,7 @@ namespace FALOFinancialProofing.Controllers
             if (!string.IsNullOrEmpty(searchInput))
             {
                 searchInput = searchInput.Trim();
-                users = users.FindAll(x => ($"{x.FirstName} {x.LastName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.Email}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
+                users = users.FindAll(x => ($"{x.FirstName} {x.LastName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
             }
             return Ok(new ApiResponse()
             {
@@ -278,6 +298,30 @@ namespace FALOFinancialProofing.Controllers
             }
         }
         [RoleAttribute(AppRole.Admin)]
+        [HttpPost("Admin-AccountLockout/{userId}")]
+        public async Task<IActionResult> AdminAccountLockout(string userId, DateTime? lockoutDate)
+        {
+            var userResult = await authServices.LockUserAccountAsync(userId, lockoutDate);
+            if (userResult != null)
+            {
+                if (userResult.Succeeded)
+                {
+                    return Ok(new
+                    {
+                        Success = true,
+                        Message = "Lockout Account Success!",
+                    });
+                }
+            }
+
+            return Ok(new
+            {
+                Success = false,
+                Message = "Lockout Account Failed!"
+            });
+
+        }
+        [RoleAttribute(AppRole.Admin)]
         [HttpGet("GetAccountList")]
         public async Task<IActionResult> GetAllAccountInSystem(string? searchInput, int currentPage = IntConstant.PageNumberDefault)
         {
@@ -286,7 +330,7 @@ namespace FALOFinancialProofing.Controllers
             filterPagingData.CurrentPage = currentPage;
             try
             {
-                data = await authServices.GetAccountList();
+                data = await authServices.GetAccountList(Request);
                 if (data == null || data.Count == 0)
                 {
                     return Ok(new ApiResponse()
@@ -326,7 +370,7 @@ namespace FALOFinancialProofing.Controllers
             filterPagingData.CurrentPage = currentPage;
             try
             {
-                data = await authServices.GetPMBAccountList();
+                data = await authServices.GetPMBAccountList(Request);
                 if (data == null || data.Count == 0)
                 {
                     return Ok(new ApiResponse()

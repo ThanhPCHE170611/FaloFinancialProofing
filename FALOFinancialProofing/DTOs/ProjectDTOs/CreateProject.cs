@@ -1,4 +1,5 @@
-﻿using FALOFinancialProofing.Models;
+﻿using FALOFinancialProofing.Attributes;
+using FALOFinancialProofing.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace FALOFinancialProofing.DTOs.ProjectDTOs
@@ -19,7 +20,7 @@ namespace FALOFinancialProofing.DTOs.ProjectDTOs
         // tệp đính kèm
         //[Required(ErrorMessage = "Please select a file.")]
         public List<IFormFile>? FormFiles { get; set; }
-
+        [ImageFile]
         public IFormFile? LogoFile { get; set; }
     }
 }

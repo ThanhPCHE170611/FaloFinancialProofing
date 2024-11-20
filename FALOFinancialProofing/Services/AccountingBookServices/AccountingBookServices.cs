@@ -103,9 +103,9 @@ namespace FALOFinancialProofing.Services.AccountingBookServices
             // check if UserId and role is valid with the campaign ID
             var accountanceValid = await campaignMemberRepository.GetAll(x => x.IsActive 
                                                 && x.UserId.Equals(request.UserId) 
-                                                && x.IdentityRole.Name.Equals(Resource.AccountingRoleName)
+                                                && x.Role.Name.Equals(Resource.AccountingRoleName)
                                                 && x.CampaignId == campaignIdInt)
-                .Include(x => x.IdentityRole)
+                .Include(x => x.Role)
                 .FirstOrDefaultAsync();
             if(accountanceValid == null)
             {

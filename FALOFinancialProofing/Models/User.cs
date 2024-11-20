@@ -42,7 +42,7 @@ namespace FALOFinancialProofing.Models
         public ICollection<OrganizationMember> OrganizationMembers { get; set; } = new List<OrganizationMember>();
         public ICollection<CreateProjectRequestApproveHistory> CreateProjectRequestApproveHistories { get; set; } = new List<CreateProjectRequestApproveHistory>();
         public ICollection<CampaignRequestApproveHistory> CampaignRequestApproveHistories { get; set; } = new List<CampaignRequestApproveHistory>();
-        public virtual ICollection<IdentityUserRole<string>> UserRoles { get; set; } = new List<IdentityUserRole<string>>();
+        public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
         public virtual ICollection<CreateQrCode> CreateQrCodes { get; set; } = new List<CreateQrCode>();
         //public string? Gender { get; set; }
         //public string? Address { get; set; }
