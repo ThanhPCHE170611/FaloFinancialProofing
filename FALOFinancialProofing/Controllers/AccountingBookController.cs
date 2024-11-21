@@ -13,7 +13,6 @@ namespace FALOFinancialProofing.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class AccountingBookController : ControllerBase
     {
         private readonly IAcccountingBookServices accountingBookServices;
@@ -24,6 +23,7 @@ namespace FALOFinancialProofing.Controllers
         }
 
         [HttpPost("uploadaccountingbook")]
+        [Authorize]
         [RoleAttribute(AppRole.Accounting)]
         public async Task<IActionResult> UploadAccountingBook([FromForm]CreateAccountingBookRequest request)
         {
@@ -127,6 +127,7 @@ namespace FALOFinancialProofing.Controllers
 
         [HttpDelete("deleteaccountingbook/{fileName}")]
         [RoleAttribute(AppRole.Accounting)]
+        [Authorize]
         public async Task<IActionResult> DeleteAccountingBookInCampaign(string fileName)
         {
             var message = new StringBuilder();
