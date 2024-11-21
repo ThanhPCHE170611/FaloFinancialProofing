@@ -1,7 +1,9 @@
-﻿using FALOFinancialProofing.Models;
+﻿using FALOFinancialProofing.Helpers;
+using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.CreateCampaignFileServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -105,5 +107,34 @@ namespace FALOFinancialProofing.Controllers
 
             return Content(statusMessage);
         }
+
+
+        [HttpGet("DownloadCampaignFile")]
+        public async Task<IActionResult> DownloadFile(string fileName)
+        {
+            var fileDownLoaded = (fileStream: Stream.Null, fileName: string.Empty, contentType: string.Empty);
+            try
+            {
+                fileDownLoaded = await FileHelper.DownLoadFile(fileName);
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"DownloadFile: {ex.Message}");
+            }
+            if (string.IsNullOrEmpty(fileDownLoaded.fileName))
+            {
+                return Ok(new ApiResponse()
+                {
+
+                });
+            }
+
+
+
+
+            return File(fileDownLoaded.fileStream, fileDownLoaded.contentType, fileDownLoaded.fileName);
+        }
+
+
     }
 }

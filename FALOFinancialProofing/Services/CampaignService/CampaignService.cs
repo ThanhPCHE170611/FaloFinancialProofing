@@ -90,7 +90,9 @@ namespace FALOFinancialProofing.Services.CampaignService
                         BankId = p.BankId,
                         Status = p.Status,
                         UpdateLog = p.UpdateLog,
-                        TotalMoneyEarned = p.TransactionLogs.Sum(x => (double)x.Amount)
+                        TotalMoneyEarned = p.TransactionLogs
+                            .Where(t => t.Amount > 0)
+                            .Sum(x => (double)x.Amount),
                     }).ToListAsync();
             }
             catch (Exception ex)
@@ -124,7 +126,9 @@ namespace FALOFinancialProofing.Services.CampaignService
                         IsActive = p.IsActive,
                         BankId = p.BankId,
                         Status = p.Status,
-                        TotalMoneyEarned = p.TransactionLogs.Sum(x => (double)x.Amount),
+                        TotalMoneyEarned = p.TransactionLogs
+                            .Where(t => t.Amount > 0)
+                            .Sum(x => (double)x.Amount),
                         UpdateLog = p.UpdateLog,
                     }).ToListAsync();
             }
@@ -137,6 +141,20 @@ namespace FALOFinancialProofing.Services.CampaignService
         }
 
 
+        public async Task<List<Campaign>> GetAllCampaignsByProjectIdAsync(int ProjectId)
+        {
+            List<Campaign> data = null!;
+            try
+            {
+                data = await campaignRepository.GetAll().Where(p => p.ProjectId == ProjectId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAllCampaignsByProjectIdAsync: {ex.Message}");
+            }
+
+            return data;
+        }
 
         public async Task<CampaignInformation> GetCampaignByCampaignIdAsync(int CampaignId, HttpRequest request)
         {
@@ -164,7 +182,9 @@ namespace FALOFinancialProofing.Services.CampaignService
                         BankId = p.BankId,
                         Status = p.Status,
                         UpdateLog = p.UpdateLog,
-                        TotalMoneyEarned = p.TransactionLogs.Sum(x => (double)x.Amount),
+                        TotalMoneyEarned = p.TransactionLogs
+                            .Where(t => t.Amount > 0)
+                            .Sum(x => (double)x.Amount),
                         CreateCampaignFiles = p.CreateCampaignRequests.SelectMany(ccr => ccr.CreateCampaignFiles).Select(f => new CreateCampaignFileInformation()
                         {
                             Id = f.Id,
@@ -216,8 +236,8 @@ namespace FALOFinancialProofing.Services.CampaignService
                 campaign.Description = updateCampaignDTO.Description;
                 campaign.Address = updateCampaignDTO.Address;
                 campaign.Image = await FileHelper.SaveImageAndReturnShortPathAsync(updateCampaignDTO.LogoFile, FolderImage.CampaignImageUpload, campaign.Image) ?? campaign.Image;
-                bool checkAdmin = await _authServices.CheckUserInRole(updateCampaignDTO.UserId, AppRole.Admin, new StringBuilder());
-                bool checkPMB = await _authServices.CheckUserInRole(updateCampaignDTO.UserId, AppRole.ProjectManagementBoard, new StringBuilder());
+                bool checkAdmin = await _authServices.CheckRole(updateCampaignDTO.UserId, updateCampaignDTO.RoleId, AppRole.Admin, new StringBuilder());
+                bool checkPMB = await _authServices.CheckRole(updateCampaignDTO.UserId, updateCampaignDTO.RoleId, AppRole.ProjectManagementBoard, new StringBuilder());
                 if (checkAdmin || checkPMB)
                 {
                     var GetBank = await bankService.GetBankByIdAsync(updateCampaignDTO.BankId ?? 0);
@@ -234,6 +254,21 @@ namespace FALOFinancialProofing.Services.CampaignService
             {
                 message.Append(ex.Message);
                 await Console.Out.WriteLineAsync($"UpdateCampaignAsync: {ex.Message}");
+            }
+
+            return checkValid;
+        }
+
+        public async Task<bool> UpdateManyCampaignAsync(List<Campaign> campaigns)
+        {
+            bool checkValid = false;
+            try
+            {
+                checkValid = await campaignRepository.UpdateManyAsync(campaigns);
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"UpdateManyCampaignAsync: {ex.Message}");
             }
 
             return checkValid;
@@ -464,9 +499,9 @@ namespace FALOFinancialProofing.Services.CampaignService
                     throw new Exception("Campaign not found!");
                 }
                 var campaignOwner = await GetCampaignByUserIdAndCampaignIdAsync(updateCampaignDTO.UserId, updateCampaignDTO.Id);
-                bool checkAdmin = await _authServices.CheckUserInRole(updateCampaignDTO.UserId, AppRole.Admin, new StringBuilder());
-                bool checkPMB = await _authServices.CheckUserInRole(updateCampaignDTO.UserId, AppRole.ProjectManagementBoard, new StringBuilder());
-                if ((campaignOwner == null && !checkPMB && !checkAdmin) || (campaignOwner != null && !campaignOwner.IsActive))
+                bool checkAdmin = await _authServices.CheckRole(updateCampaignDTO.UserId, updateCampaignDTO.RoleId, AppRole.Admin, new StringBuilder());
+                bool checkPMB = await _authServices.CheckRole(updateCampaignDTO.UserId, updateCampaignDTO.RoleId, AppRole.ProjectManagementBoard, new StringBuilder());
+                if ((campaignOwner == null && !checkPMB && !checkAdmin) || (!checkPMB && !checkAdmin && campaignOwner != null && !campaignOwner.IsActive))
                 {
                     throw new Exception("You don't have permission to update campaign!");
                 }

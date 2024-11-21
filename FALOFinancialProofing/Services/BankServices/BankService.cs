@@ -1,6 +1,7 @@
 ﻿using FALOFinancialProofing.DTOs.BankDTO;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
+using FALOFinancialProofing.Services.CampaignService;
 using Microsoft.EntityFrameworkCore;
 
 namespace FALOFinancialProofing.Services.BankServices
@@ -8,6 +9,7 @@ namespace FALOFinancialProofing.Services.BankServices
     public class BankService : IBankService
     {
         private readonly IRepository<Bank, int> _bankRepository;
+        private readonly ICampaignService _campaignService;
 
         public BankService(IRepository<Bank, int> bankRepository)
         {
@@ -79,7 +81,8 @@ namespace FALOFinancialProofing.Services.BankServices
             List<Bank> data = null!;
             try
             {
-                data = await _bankRepository.GetAll().ToListAsync();
+                //.Include(bank => bank.Campaigns)
+                data = await _bankRepository.GetAll().Where(bank => !bank.Campaigns.Any(c => c.BankId == bank.Id)).ToListAsync();
             }
             catch (Exception ex)
             {

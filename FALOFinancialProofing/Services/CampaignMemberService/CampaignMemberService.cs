@@ -111,7 +111,11 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             var campaignMembers = new List<CampaignMemberInformation>();
             try
             {
-                campaignMembers = await cmRepository.GetAll().Where(cm => cm.UserId.Equals(userId) && roleId.Equals(roleId)).OrderBy(cm => cm.Id).Select(cm => new CampaignMemberInformation()
+
+                bool checkPM = (await authServices.CheckRole(userId, roleId, AppRole.ProjectManager, new StringBuilder())).Equals(AppRole.ProjectManager);
+                bool checkPMB = (await authServices.CheckRole(userId, roleId, AppRole.ProjectManagementBoard, new StringBuilder())).Equals(AppRole.ProjectManager);
+
+                campaignMembers = await cmRepository.GetAll().Where(cm => cm.UserId.Equals(userId) && cm.RoleId.Equals(roleId) && (!(checkPM || checkPMB) ? cm.Campaign.IsActive : true)).OrderBy(cm => cm.Id).Select(cm => new CampaignMemberInformation()
                 {
                     id = cm.Id,
                     UserId = cm.UserId,
@@ -146,6 +150,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             var campaignMembers = new List<CampaignMemberInformation>();
             try
             {
+
                 campaignMembers = await cmRepository.GetAll()
                     .Where(cm => cm.UserId.Equals(userId) && !string.IsNullOrEmpty(cm.Campaign.Status) && !cm.Campaign.Status.Equals(RequestStatus.Rejected))
                     .Select(cm => new CampaignMemberInformation()
