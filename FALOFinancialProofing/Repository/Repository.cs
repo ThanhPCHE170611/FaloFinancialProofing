@@ -65,7 +65,7 @@ namespace FALOFinancialProofing.Repository
             var query = _dbContext.Set<T>();
             return await query.Where(filter).FirstOrDefaultAsync();
         }
-      
+
         public async Task<T> InsertAsync(T entity)
         {
             await _dbContext.Set<T>().AddAsync(entity);
@@ -83,16 +83,14 @@ namespace FALOFinancialProofing.Repository
             return rowCount > 0;
         }
 
-        //public async Task<bool> UpdateAsync(T entity)
-        //{
-        //    var dbEntity = await _dbContext.Set<T>().FindAsync(entity.Id);
-        //    if (dbEntity == null)
-        //        return false;
+        public async Task<bool> UpdateManyAsync(IEnumerable<T> entities)
+        {
+            entities.ToList();
 
-        //    _dbContext.Entry(dbEntity).CurrentValues.SetValues(entity);
-        //    var rowCount = await _dbContext.SaveChangesAsync();
-        //    return rowCount > 0;
-        //}
+            _dbContext.Set<T>().UpdateRange(entities);
+            var rowCount = await _dbContext.SaveChangesAsync();
+            return rowCount > 0;
+        }
 
         public async Task<bool> UpdateAsync(T entity)
         {

@@ -126,10 +126,29 @@ $(document).ready(function () {
         const description = $('#description').val();
         const files = $('#attachments')[0].files;
 
-        if (!expectedMoney || !assignFrom || !description) {
+        if (!expectedMoney || !description) {
             alert('Please fill in all required fields.');
             return;
         }
+        if (!expectedMoney || isNaN(expectedMoney) || Number(expectedMoney) <= 0) {
+            alert('Expected Money is required and must be a valid number greater than 0.');
+            $('#expectedMoney').focus();
+            return;
+        }
+
+        if (!description || description.length < 10) {
+            alert('Description is required and must be at least 10 characters long.');
+            $('#description').focus();
+            return;
+        }
+
+        if (!assignFrom) {
+            alert('Assign From is required.');
+            $('#assignFrom').focus();
+            return;
+        }
+
+
 
         const formData = new FormData();
         formData.append('CreatedBy', userId);

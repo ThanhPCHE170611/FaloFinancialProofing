@@ -9,6 +9,8 @@ namespace FALOFinancialProofing.DTOs.CampaignDTO
         [JsonPropertyOrder(2)]
         public string UserId { get; set; } // của pm (k update)
         [JsonPropertyOrder(3)]
+        public string RoleId { get; set; } // của pm (k update)
+        [JsonPropertyOrder(4)]
         public int? BankId { get; set; } // check valid
         public string Title { get; set; } // pm
         [MinLength(8, ErrorMessage = "Description must be at least 8 characters")]
@@ -19,6 +21,7 @@ namespace FALOFinancialProofing.DTOs.CampaignDTO
         public string? Address { get; set; } // pm
         public bool? IsActive { get; set; }
         public string? Status { get; set; }
+
 
 
     }

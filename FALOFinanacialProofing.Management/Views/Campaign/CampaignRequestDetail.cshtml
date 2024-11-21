@@ -73,9 +73,15 @@
                                 <label for="status" class="form-label">Status</label>
                                 <input type="text" class="form-control" id="status" readonly>
                             </div>
-                            <div class="col-md-12">
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="status" class="form-label">Account Number</label>
+                                <input type="text" class="form-control" id="accountNumber" readonly>
+                            </div>
+                            <div class="col-md-6">
                                 <label for="status" class="form-label">Fund Target</label>
-                                <input type="text" class="form-control" id="fundTaget" readonly>
+                                <input type="text" class="form-control" id="fundTarget" readonly>
                             </div>
                         </div>
                         <div class="row mb-3" id="approver-section">
@@ -141,6 +147,10 @@
 
         return formattedDate + ' ' + formattedTime;
     }
+    function safeValue(value, defaultValue = 'N/A') {
+        return value ? value : defaultValue;
+    }
+
     $(document).ready(function () {
         const campaignId = new URLSearchParams(window.location.search).get('requestId');
         const jwtToken = localStorage.getItem('jwtToken');
@@ -152,12 +162,15 @@
                 'Authorization': `Bearer ${jwtToken}`
             },
             success: function (data) {
-                $('#title').val(data.title);
-                $('#senderName').val(data.senderName);
-                $('#createdAt').val(formatDateTime(data.createdAt));
-                $('#status').val(data.status);
-                $('#description').val(data.description);
-                $('#fundTaget').val(data.fundTarget);
+                $('#title').val(safeValue(data.title));
+                $('#senderName').val(safeValue(data.senderName));
+                $('#createdAt').val(safeValue(data.createdAt ? formatDateTime(data.createdAt) : null));
+                $('#status').val(safeValue(data.status));
+                $('#accountNumber').val(safeValue(data.accountNumber));
+                $('#description').val(safeValue(data.description));
+                $('#fundTarget').val(safeValue(data.fundTarget));
+
+
                 if (data.receiverName !== ' ') {
                     $('#receiverName').val(data.receiverName);
                     $('#approver-section').show();

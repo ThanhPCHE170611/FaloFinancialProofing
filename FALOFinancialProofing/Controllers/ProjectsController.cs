@@ -177,7 +177,7 @@ namespace FALOFinancialProofing.Controllers
         }
         // POST: api/Projects
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)] // mở nếu làm thật
+        [RoleAttribute(AppRole.ProjectManager)] // mở nếu làm thật
         [HttpPost("CreateProject", Name = "CreateProject")]
         public async Task<ActionResult<Project>> PostProject([FromForm] CreateProject createProject)
         {

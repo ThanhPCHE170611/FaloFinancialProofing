@@ -59,12 +59,12 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped(typeof(RoleService));
             builder.Services.AddScoped<ITransactionLogService, TransactionLogService>();
 
-            builder.Services.AddHostedService<BankAccountPolling>(serviceProvider =>
-            {
-                var iServiceScopeFactory = serviceProvider.GetRequiredService<IServiceScopeFactory>();
-                var bankService = iServiceScopeFactory.CreateAsyncScope().ServiceProvider.GetRequiredService<IBankService>();
-                return new BankAccountPolling(configuration, bankService);
-            });
+            //builder.Services.AddHostedService<BankAccountPolling>(serviceProvider =>
+            //{
+            //    var iServiceScopeFactory = serviceProvider.GetRequiredService<IServiceScopeFactory>();
+            //    var bankService = iServiceScopeFactory.CreateAsyncScope().ServiceProvider.GetRequiredService<IBankService>();
+            //    return new BankAccountPolling(configuration, bankService);
+            //});
 
             builder.Services.AddScoped<ICreateQrCodeService, CreateQrCodeService>();
             builder.Services.AddScoped<IBankService, BankService>();

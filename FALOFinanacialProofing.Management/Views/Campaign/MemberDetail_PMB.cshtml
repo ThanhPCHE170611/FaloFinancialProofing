@@ -106,15 +106,15 @@
         }
 
         .add-social-btn, .remove-social-btn {
-            display: none; 
+            display: none;
         }
 
         .sdg-tags span {
-            pointer-events: none; 
+            pointer-events: none;
         }
 
         input[readonly], textarea[readonly] {
-            pointer-events: none; 
+            pointer-events: none;
         }
 
         input[disabled], textarea[disabled], select[disabled] {
@@ -132,10 +132,9 @@
                         <div class=" pt-4 pb-3 d-flex justify-content-between align-items-center">
                             <nav class="nav-tabs" id="navTabs">
                                 <a asp-controller="Campaign" asp-action="CampaignDetail">Campaign Detail</a>
-                                <a asp-controller="Prepay" asp-action="PrepayManagement">Created Prepay Request</a>
-                                <a asp-controller="Payment" asp-action="PaymentManagement">Created Payment Request</a>
                                 <a asp-controller="Accounting" asp-action="AccountingBookCampaign">Accounting Book</a>
                                 <a asp-controller="Campaign" asp-action="Member" class="active">Member</a>
+                                <a asp-controller="Accounting" asp-action="DebtManagement">Debt</a>
                             </nav>
                         </div>
                     </div>
@@ -164,7 +163,7 @@
 
                         <div class="mb-3">
                             <label class="form-label">Gender</label>
-                            <div class="gender-radio-group" >
+                            <div class="gender-radio-group">
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="gender" id="male" value="true" disabled>
                                     <label class="form-check-label" for="male">Male</label>
@@ -196,7 +195,7 @@
                             <input type="email" class="form-control" id="email" readonly>
                         </div>
 
-                        <div class="mb-3" >
+                        <div class="mb-3">
                             <label for="socialMedia" class="form-label">Social Media</label>
                             <div id="socialMediaContainer">
                                 <div class="input-group mb-2" readonly>
@@ -234,7 +233,7 @@
 
                         <div class="mb-3">
                             <label for="sdgInterests" class="form-label">SDG Interests (17 SDGs)</label>
-                            <div class="sdg-tags" id="sdgList" >
+                            <div class="sdg-tags" id="sdgList">
                             </div>
                         </div>
 

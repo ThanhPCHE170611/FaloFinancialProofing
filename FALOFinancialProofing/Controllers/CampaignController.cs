@@ -171,7 +171,6 @@ namespace FALOFinancialProofing.Controllers
                 Data = data
             });
         }
-        //[RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
         [HttpGet("GetCampaignDetailsById/{id}")]
         public async Task<IActionResult> GetCampaignDetailsById(int id)
         {
@@ -193,29 +192,7 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
-        [HttpPost("CreateCampaign")]
-        public async Task<IActionResult> CreateCampaign([FromBody] CreateCampaignDTO createCampaignDTO)
-        {
-            var createCampaign = await _campaignService.CreateCampaignAsync(createCampaignDTO);
-            if (createCampaign == null)
-            {
-                return Ok(new
-                {
-                    Success = false,
-                    Message = "Unable to create Campaign."
-                });
-            }
-
-            return Ok(new
-            {
-                Success = true,
-                Message = "Campaign created successfully.",
-                Data = createCampaign
-            });
-        }
-
-
-        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]// mở nếu làm thật
+        [RoleAttribute(AppRole.ProjectManager)]// mở nếu làm thật
         [HttpPost("CreateCampaignClient", Name = "CreateCampaignClient")]
         public async Task<ActionResult<Campaign>> PostCampaign([FromForm] CreateCampaignClientRequest createCampaignClientRequest)
         {

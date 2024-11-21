@@ -20,8 +20,9 @@ namespace FALOFinancialProofing.Repository
         Task<bool> InsertManyAsync(IEnumerable<T> entities);
 
         Task<bool> UpdateAsync(T entity);
-
+        Task<bool> UpdateManyAsync(IEnumerable<T> entities);
         Task<bool> DeleteAsync(TPrimaryKey id);
         Task<bool> DeleteAsync(T entity);
+
     }
 }

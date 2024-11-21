@@ -6,7 +6,7 @@ namespace FALOFinancialProofing.Models
     public class TransactionLog : Entity<int>
     {
         [JsonPropertyOrder(2)]
-        public int CreateQrCodeId { get; set; }
+        public int? CreateQrCodeId { get; set; }
         public CreateQrCode CreateQrCode { get; set; }
         [JsonPropertyOrder(3)]
         public int Amount { get; set; }

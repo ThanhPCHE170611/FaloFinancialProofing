@@ -91,6 +91,18 @@
         const title = document.getElementById('title').value;
         const description = document.getElementById('description').value;
 
+        if (!title || title.length < 8) {
+            alert('Title is required and must be at least 8 characters long.');
+            document.getElementById('title').focus();
+            return;
+        }
+
+        if (!description || description.length < 8) {
+            alert('Description must be at least 8 characters long.');
+            document.getElementById('description').focus();
+            return;
+        }
+
         var today = new Date();
         var year = today.getFullYear();
         var month = String(today.getMonth() + 1).padStart(2, '0');
