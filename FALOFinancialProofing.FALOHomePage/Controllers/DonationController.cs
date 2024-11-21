@@ -8,7 +8,7 @@ using static FALOFinancialProofing.FALOHomePage.Models.TransactionDTO;
 
 namespace FALOFinancialProofing.FALOHomePage.Controllers
 {
-    
+
     public class DonationController : Controller
     {
         // GET: DonationController
@@ -70,7 +70,7 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
                 //}
 
                 return View();
-             }
+            }
         }
 
         public async Task<IActionResult> ViewAccounts()
@@ -111,7 +111,7 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
                         return RedirectToAction("Error404", "Error");
                     }
 
-                    if(campaignDetails.Data.FundTarget <= campaignDetails.Data.TotalMoneyEarned)
+                    if (campaignDetails.Data.FundTarget <= campaignDetails.Data.TotalMoneyEarned)
                     {
                         return RedirectToAction("Error404", "Error");
                     }
@@ -157,7 +157,7 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
                 if (secondApiResponse.IsSuccessStatusCode)
                 {
                     var fileContent = await secondApiResponse.Content.ReadAsByteArrayAsync();
-                    var fileName = filePath; 
+                    var fileName = filePath;
 
                     return File(fileContent, "application/octet-stream", fileName);
                 }
