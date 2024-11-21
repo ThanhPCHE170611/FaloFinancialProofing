@@ -275,7 +275,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             var campainInDb = campaignRepository.GetAll(cp => cp.Id == StringExtension.ParseStringToInt(requestForm.CampaignId)
             && cp.IsActive)
                 .Include(cp => cp.CampaignMembers)
-                .ThenInclude(cm => cm.IdentityRole)
+                .ThenInclude(cm => cm.Role)
                 .FirstOrDefault();
             if (campainInDb == null)
             {
@@ -284,7 +284,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             }
             //check createBy id exist, in campaign
             var createByValidate = campainInDb.CampaignMembers.Any(cm => cm.UserId == requestForm.CreatedBy && cm.IsActive);
-            if(!createByValidate)
+            if (!createByValidate)
             {
                 message.Append("CreateBy is not exist or maybe in wrong campaign or disable");
                 return false;
@@ -311,14 +311,14 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             }
 
             // if createByRole is Accounting => Voucher should not be null
-            var createByRole = campainInDb.CampaignMembers.FirstOrDefault(cm => cm.UserId == requestForm.CreatedBy && cm.IsActive).IdentityRole.Name;
-            if(createByRole.Equals(Resource.AccountingRoleName) && requestForm.VoucherFile == null)
+            var createByRole = campainInDb.CampaignMembers.FirstOrDefault(cm => cm.UserId == requestForm.CreatedBy && cm.IsActive).Role.Name;
+            if (createByRole.Equals(Resource.AccountingRoleName) && requestForm.VoucherFile == null)
             {
                 message.Append("Voucher file cannot be null");
                 return false;
             }
 
-            if (requestForm.ExpectedMoney < 0)
+            if (requestForm.ExpectedMoney <= 0)
             {
                 message.Append("Expected money must be greater than 0");
                 return false;
@@ -331,15 +331,15 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             // 2 case that (volunteer, leader, accounting) and PM
             var createByRole = campaignRepository.GetAll(cp => cp.CampaignMembers.Any(cm => cm.UserId == createdBy))
                 .Include(cp => cp.CampaignMembers)
-                .ThenInclude(x => x.IdentityRole)
+                .ThenInclude(x => x.Role)
                 .FirstOrDefault()
                 .CampaignMembers
                 .FirstOrDefault(cm => cm.UserId == createdBy && cm.IsActive)
-                .IdentityRole.Name;
+                .Role.Name;
             var approverRole = campaignMemberRepository.GetAll(x => x.UserId == approverId && x.IsActive)
-                    .Include(x => x.IdentityRole)
+                    .Include(x => x.Role)
                     .FirstOrDefault()
-                    .IdentityRole.Name;
+                    .Role.Name;
             if (createByRole.Equals(Resource.ProjectManagerRoleName))
             {
                 // check approveId role is accoungting
@@ -355,15 +355,15 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             else
             {
                 // check approveId role is greater than createBy
-                if(createByRole.Equals(Resource.VolunteerRoleName) && approverRole.Equals(Resource.VolunteerLeaderRoleName))
+                if (createByRole.Equals(Resource.VolunteerRoleName) && approverRole.Equals(Resource.VolunteerLeaderRoleName))
                 {
                     return true;
                 }
-                if(createByRole.Equals(Resource.VolunteerLeaderRoleName) && approverRole.Equals(Resource.AccountingRoleName))
+                if (createByRole.Equals(Resource.VolunteerLeaderRoleName) && approverRole.Equals(Resource.AccountingRoleName))
                 {
                     return true;
                 }
-                if(createByRole.Equals(Resource.AccountingRoleName) && approverRole.Equals(Resource.ProjectManagerRoleName))
+                if (createByRole.Equals(Resource.AccountingRoleName) && approverRole.Equals(Resource.ProjectManagerRoleName))
                 {
                     return true;
                 }
@@ -377,7 +377,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             var folderName = typeId == IntConstant.PrePayRequestType ? "PrePayUploads" : "PaymentUploads";
             try
             {
-                
+
                 if (uploadFiles != null && uploadFiles.Any())
                 {
                     var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), folderName);
@@ -400,7 +400,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
 
                         var attachmentFileDTO = new AttachmentFileRequest
                         {
-                            FilePath = uniqueFileName,  
+                            FilePath = uniqueFileName,
                             RequestId = requestId
                         };
                         attachmentFiles.Add(attachmentFileDTO);
@@ -422,14 +422,14 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             {
                 approverList = await campaignMemberRepository.GetAll(x => x.CampaignId == campaignId)
                     .Include(x => x.User)
-                    .Include(x => x.IdentityRole)
-                    .Where(x => x.IdentityRole.Name == Resource.VolunteerLeaderRoleName && x.IsActive)
+                    .Include(x => x.Role)
+                    .Where(x => x.Role.Name == Resource.VolunteerLeaderRoleName && x.IsActive)
                     .Select(x => new UserWithRole
                     {
                         UserId = x.UserId,
                         FullName = $"{x.User.FirstName} {x.User.LastName}",
                         RoleId = x.RoleId,
-                        RoleName = x.IdentityRole.Name,
+                        RoleName = x.Role.Name,
                         Email = x.User.Email
                     })
                     .ToListAsync();
@@ -447,14 +447,14 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             {
                 var approverForLeader = await campaignMemberRepository.GetAll(x => x.CampaignId == campaignId)
                     .Include(x => x.User)
-                    .Include(x => x.IdentityRole)
-                    .Where(x => x.IdentityRole.Name == Resource.AccountingRoleName && x.IsActive)
+                    .Include(x => x.Role)
+                    .Where(x => x.Role.Name == Resource.AccountingRoleName && x.IsActive)
                     .Select(x => new UserWithRole
                     {
                         UserId = x.UserId,
                         FullName = $"{x.User.FirstName} {x.User.LastName}",
                         RoleId = x.RoleId,
-                        RoleName = x.IdentityRole.Name,
+                        RoleName = x.Role.Name,
                         Email = x.User.Email
                     })
                     .FirstOrDefaultAsync();
@@ -472,14 +472,14 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             {
                 var approverForLeader = await campaignMemberRepository.GetAll(x => x.CampaignId == campaignId)
                     .Include(x => x.User)
-                    .Include(x => x.IdentityRole)
-                    .Where(x => x.IdentityRole.Name == Resource.ProjectManagerRoleName && x.IsActive)
+                    .Include(x => x.Role)
+                    .Where(x => x.Role.Name == Resource.ProjectManagerRoleName && x.IsActive)
                     .Select(x => new UserWithRole
                     {
                         UserId = x.UserId,
                         FullName = $"{x.User.FirstName} {x.User.LastName}",
                         RoleId = x.RoleId,
-                        RoleName = x.IdentityRole.Name,
+                        RoleName = x.Role.Name,
                         Email = x.User.Email
                     })
                     .FirstOrDefaultAsync();
@@ -498,14 +498,14 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             {
                 approverList = await campaignMemberRepository.GetAll(x => x.CampaignId == campaignId)
                     .Include(x => x.User)
-                    .Include(x => x.IdentityRole)
-                    .Where(x => x.IdentityRole.Name == Resource.VolunteerLeaderRoleName && x.IsActive)
+                    .Include(x => x.Role)
+                    .Where(x => x.Role.Name == Resource.VolunteerLeaderRoleName && x.IsActive)
                     .Select(x => new UserWithRole
                     {
                         UserId = x.UserId,
                         FullName = $"{x.User.FirstName} {x.User.LastName}",
                         RoleId = x.RoleId,
-                        RoleName = x.IdentityRole.Name,
+                        RoleName = x.Role.Name,
                         Email = x.User.Email
                     })
                     .ToListAsync();
@@ -604,8 +604,8 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                                                     {
                                                         UserId = ap.ApproverId,
                                                         FullName = $"{ap.User.FirstName} {ap.User.LastName}",
-                                                        RoleId = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).IdentityRole.Id,
-                                                        RoleName = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).IdentityRole.Name,
+                                                        RoleId = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).Role.Id,
+                                                        RoleName = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).Role.Name,
                                                         Email = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).User.Email
                                                     }
                                                 }).ToList(),
@@ -664,8 +664,8 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                                                     {
                                                         UserId = ap.ApproverId,
                                                         FullName = $"{ap.User.FirstName} {ap.User.LastName}",
-                                                        RoleId = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).IdentityRole.Id,
-                                                        RoleName = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).IdentityRole.Name,
+                                                        RoleId = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).Role.Id,
+                                                        RoleName = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).Role.Name,
                                                         Email = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).User.Email
                                                     }
                                                 }).ToList(),
@@ -690,9 +690,9 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             try
             {
                 var createByRole = await campaignMemberRepository.GetAll(x => x.UserId == requestForm.CreatedBy)
-                    .Include(x => x.IdentityRole)
+                    .Include(x => x.Role)
                     .FirstOrDefaultAsync();
-                if (createByRole.IdentityRole.Name == Resource.ProjectManagerRoleName) return true;
+                if (createByRole.Role.Name == Resource.ProjectManagerRoleName) return true;
                 return false;
 
             }
@@ -700,57 +700,57 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             {
                 return false;
             }
-            
+
         }
 
         public async Task<RequestFormWithAttachmentApprovementVoucher?> GetRequestDetailByRequestId(int requestId)
         {
             try
             {
-               var requestForm =  await repository.GetAll(r => r.Id == requestId)
-                                            .Include(rf => rf.User)
-                                            .Include(r => r.AttachmentFiles)
-                                            .Include(r => r.ApproveProcesses)
-                                            .ThenInclude(ap => ap.Vouchers)
-                                            .Include(r => r.ApproveProcesses)
-                                            .ThenInclude(ap => ap.User)
-                                            .Include(r => r.Campaign)
-                                            .ThenInclude(c => c.CampaignMembers)
-                                            .Select(r => new RequestFormWithAttachmentApprovementVoucher
-                                            {
-                                                Id = r.Id,
-                                                CreateAt = r.CreateAt,
-                                                Description = r.Description,
-                                                ExpectedMoney = r.ExpectedMoney,
-                                                Status = r.Status,
-                                                CreatedBy = r.CreatedBy,
-                                                CreateByName = r.User.FirstName + " " + r.User.LastName,
-                                                CampaignId = r.CampaignId,
-                                                TypeId = r.TypeId,
-                                                AttachmentFiles = r.AttachmentFiles.ToList(),
-                                                ApproveProcesses = r.ApproveProcesses.Select(ap => new ApproveProcessWithUser
-                                                {
-                                                    Id = ap.Id,
-                                                    ApproveNumber = ap.ApproveNumber,
-                                                    ApproveStatus = ap.ApproveStatus,
-                                                    RequestId = ap.RequestId,
-                                                    ApproverId = ap.ApproverId,
-                                                    UserWithRole = new UserWithRole
-                                                    {
-                                                        UserId = ap.ApproverId,
-                                                        FullName = $"{ap.User.FirstName} {ap.User.LastName}",
-                                                        RoleId = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).IdentityRole.Id,
-                                                        RoleName = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).IdentityRole.Name,
-                                                        Email = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).User.Email
-                                                    }
-                                                }).ToList(),
-                                                FeedBack = r.Feedback,
-                                                VoucherFiles = r.ApproveProcesses.Select(ap => new VoucherRequest
-                                                {
-                                                    Id = ap.Vouchers.FirstOrDefault().Id,
-                                                    FilePath = ap.Vouchers.FirstOrDefault().FilePath,
-                                                }).ToList()
-                                            }).FirstOrDefaultAsync();
+                var requestForm = await repository.GetAll(r => r.Id == requestId)
+                                             .Include(rf => rf.User)
+                                             .Include(r => r.AttachmentFiles)
+                                             .Include(r => r.ApproveProcesses)
+                                             .ThenInclude(ap => ap.Vouchers)
+                                             .Include(r => r.ApproveProcesses)
+                                             .ThenInclude(ap => ap.User)
+                                             .Include(r => r.Campaign)
+                                             .ThenInclude(c => c.CampaignMembers)
+                                             .Select(r => new RequestFormWithAttachmentApprovementVoucher
+                                             {
+                                                 Id = r.Id,
+                                                 CreateAt = r.CreateAt,
+                                                 Description = r.Description,
+                                                 ExpectedMoney = r.ExpectedMoney,
+                                                 Status = r.Status,
+                                                 CreatedBy = r.CreatedBy,
+                                                 CreateByName = r.User.FirstName + " " + r.User.LastName,
+                                                 CampaignId = r.CampaignId,
+                                                 TypeId = r.TypeId,
+                                                 AttachmentFiles = r.AttachmentFiles.ToList(),
+                                                 ApproveProcesses = r.ApproveProcesses.Select(ap => new ApproveProcessWithUser
+                                                 {
+                                                     Id = ap.Id,
+                                                     ApproveNumber = ap.ApproveNumber,
+                                                     ApproveStatus = ap.ApproveStatus,
+                                                     RequestId = ap.RequestId,
+                                                     ApproverId = ap.ApproverId,
+                                                     UserWithRole = new UserWithRole
+                                                     {
+                                                         UserId = ap.ApproverId,
+                                                         FullName = $"{ap.User.FirstName} {ap.User.LastName}",
+                                                         RoleId = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).Role.Id,
+                                                         RoleName = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).Role.Name,
+                                                         Email = r.Campaign.CampaignMembers.FirstOrDefault(cm => cm.UserId == ap.ApproverId).User.Email
+                                                     }
+                                                 }).ToList(),
+                                                 FeedBack = r.Feedback,
+                                                 VoucherFiles = r.ApproveProcesses.Select(ap => new VoucherRequest
+                                                 {
+                                                     Id = ap.Vouchers.FirstOrDefault().Id,
+                                                     FilePath = ap.Vouchers.FirstOrDefault().FilePath,
+                                                 }).ToList()
+                                             }).FirstOrDefaultAsync();
 
                 return requestForm;
             }
@@ -804,7 +804,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
         {
             try
             {
-                if(requestWithApprove == null)
+                if (requestWithApprove == null)
                 {
                     msg.Append("Request is not exist");
                     return false;
@@ -827,21 +827,21 @@ namespace FALOFinancialProofing.Services.RequestFormServices
 
         public async Task<bool> AddMissingAttachmentFileForRequestAsync(int requestId, StringBuilder message, IFormFile attachment)
         {
-            if(attachment == null)
+            if (attachment == null)
             {
                 message.Append("Attachment is null");
                 return false;
             }
-            
+
             var requestWithAttachment = await repository.GetAll(x => x.Id == requestId)
                 .Include(x => x.AttachmentFiles)
                 .FirstOrDefaultAsync();
-            var campaignIsActiveAndNotClose = await campaignRepository.GetAll(x => x.Id == requestWithAttachment.CampaignId 
+            var campaignIsActiveAndNotClose = await campaignRepository.GetAll(x => x.Id == requestWithAttachment.CampaignId
                             && x.IsActive
                             && !x.Status.Equals(Resource.CampaignStatus_Close))
                 .Include(x => x.RequestForms)
                 .FirstOrDefaultAsync();
-            if(campaignIsActiveAndNotClose == null)
+            if (campaignIsActiveAndNotClose == null)
             {
                 message.Append("Campaign is not active or is close");
                 return false;
@@ -851,7 +851,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 message.Append("Request is not exist");
                 return false;
             }
-            if(requestWithAttachment.AttachmentFiles != null && requestWithAttachment.AttachmentFiles.Any())
+            if (requestWithAttachment.AttachmentFiles != null && requestWithAttachment.AttachmentFiles.Any())
             {
                 message.Append("Request already have attachment file");
                 return false;

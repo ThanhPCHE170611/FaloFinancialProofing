@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FALOFinancialProofing.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace FALOFinancialProofing.DTOs.CampaignDTO
 {
@@ -17,11 +18,12 @@ namespace FALOFinancialProofing.DTOs.CampaignDTO
         [Required]
         public double FundTarget { get; set; }
         //public string? Image { get; set; } // sẽ xóa
+        [ImageFile]
         public IFormFile? LogoFile { get; set; }
         public DateTime? EndDate { get; set; }
         public string? Address { get; set; }
         public List<IFormFile>? FormFiles { get; set; }
-        public int? BankId { get; set; }
+        //public int? BankId { get; set; }
 
     }
 }

@@ -36,6 +36,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -58,7 +59,13 @@ namespace FALOFinancialProofing
             builder.Services.AddScoped(typeof(RoleService));
             builder.Services.AddScoped<ITransactionLogService, TransactionLogService>();
 
-            //builder.Services.AddHostedService<BankAccountPolling>();
+            builder.Services.AddHostedService<BankAccountPolling>(serviceProvider =>
+            {
+                var iServiceScopeFactory = serviceProvider.GetRequiredService<IServiceScopeFactory>();
+                var bankService = iServiceScopeFactory.CreateAsyncScope().ServiceProvider.GetRequiredService<IBankService>();
+                return new BankAccountPolling(configuration, bankService);
+            });
+
             builder.Services.AddScoped<ICreateQrCodeService, CreateQrCodeService>();
             builder.Services.AddScoped<IBankService, BankService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
@@ -138,7 +145,7 @@ namespace FALOFinancialProofing
                     }
                 });
             });
-            builder.Services.AddIdentity<User, IdentityRole>(options =>
+            builder.Services.AddIdentity<User, Role>(options =>
             {
                 // Cấu hình thời gian hết hạn token
                 options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultProvider;

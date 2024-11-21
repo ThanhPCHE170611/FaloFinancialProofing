@@ -103,9 +103,9 @@ namespace FALOFinancialProofing.Services.AccountingBookServices
             // check if UserId and role is valid with the campaign ID
             var accountanceValid = await campaignMemberRepository.GetAll(x => x.IsActive 
                                                 && x.UserId.Equals(request.UserId) 
-                                                && x.IdentityRole.Name.Equals(Resource.AccountingRoleName)
+                                                && x.Role.Name.Equals(Resource.AccountingRoleName)
                                                 && x.CampaignId == campaignIdInt)
-                .Include(x => x.IdentityRole)
+                .Include(x => x.Role)
                 .FirstOrDefaultAsync();
             if(accountanceValid == null)
             {
@@ -189,6 +189,19 @@ namespace FALOFinancialProofing.Services.AccountingBookServices
             {
                 accountingBooks = await repository.GetAll(x => x.Campaign.ProjectId == projectId)
                     .Include(x => x.Campaign)
+                    .Select(c => new AccountingBook
+                    {
+                        Id = c.Id,
+                        CampaignId = c.CampaignId,
+                        FilePath = c.FilePath,
+                        Campaign = new Campaign
+                        {
+                            Id = c.Campaign.Id,
+                            ProjectId = c.Campaign.ProjectId,
+                            Description = c.Campaign.Description,
+                            IsActive = c.Campaign.IsActive
+                        }
+                    })
                     .ToListAsync();
                 return accountingBooks;
             }

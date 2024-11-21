@@ -1,7 +1,9 @@
-﻿using FALOFinancialProofing.DTOs.ProjectDTOs;
+﻿using FALOFinancialProofing.DTOs.CampaignDTO;
+using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
+using FALOFinancialProofing.Services.BankServices;
 using Microsoft.AspNetCore.Identity;
 //using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
@@ -14,12 +16,12 @@ namespace FALOFinancialProofing.Services.ProjectServices
     {
         private readonly IRepository<Project, int> _projectRepository;
         private readonly IRepository<Organization, int> _organizationRepository;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<Role> _roleManager;
         private readonly UserManager<User> _userManager;
         private readonly AuthServices _authServices;
 
 
-        public ProjectService(IRepository<Project, int> projectRepository, IRepository<Organization, int> organizationRepository, RoleManager<IdentityRole> roleManager, UserManager<User> userManager, AuthServices authServices)
+        public ProjectService(IRepository<Project, int> projectRepository, IRepository<Organization, int> organizationRepository, RoleManager<Role> roleManager, UserManager<User> userManager, AuthServices authServices)
         {
             _projectRepository = projectRepository;
             _organizationRepository = organizationRepository;
@@ -176,7 +178,7 @@ namespace FALOFinancialProofing.Services.ProjectServices
             List<ProjectInformation> data = null!;
             try
             {
-                data = await _projectRepository.GetAll().Where(p => p.CreatedBy.Equals(UserId))
+                data = await _projectRepository.GetAll().Where(p => p.CreatedBy.Equals(UserId) && p.Status != null && !p.Status.Equals(RequestStatus.Rejected))
                     .Select(p => new ProjectInformation()
                     {
                         id = p.Id,
@@ -208,7 +210,7 @@ namespace FALOFinancialProofing.Services.ProjectServices
             try
             {
                 data = await _projectRepository.GetAll()
-                      .Where(p => p.Status != null)
+                      .Where(p => p.Status != null && !p.Status.Equals(RequestStatus.Rejected))
                     .Select(p => new ProjectInformation()
                     {
                         id = p.Id,
@@ -331,6 +333,14 @@ namespace FALOFinancialProofing.Services.ProjectServices
                 project.ProjectName = updateProjectRequest.ProjectName;
                 project.Description = updateProjectRequest.Description;
                 project.Image = await FileHelper.SaveImageAndReturnShortPathAsync(updateProjectRequest.LogoFile, FolderImage.ProjectImageUpload, project.Image) ?? project.Image;
+                bool checkAdmin = await _authServices.CheckUserInRole(updateProjectRequest.UserId, AppRole.Admin, new StringBuilder());
+                bool checkPMB = await _authServices.CheckUserInRole(updateProjectRequest.UserId, AppRole.ProjectManagementBoard, new StringBuilder());
+                if (checkAdmin || checkPMB)
+                {
+                    project.IsActive = updateProjectRequest.IsActive ?? project.IsActive;
+                    project.Status = updateProjectRequest.Status ?? project.Status;
+                }
+
                 checkValid = await _projectRepository.UpdateAsync(project);
             }
             catch (Exception ex)

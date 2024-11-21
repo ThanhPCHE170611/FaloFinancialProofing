@@ -8,7 +8,7 @@ using System.Reflection.Emit;
 
 namespace FALOFinancialProofing.Models
 {
-    public class FALOFinancialProofingDbContext : IdentityDbContext<User>
+    public class FALOFinancialProofingDbContext : IdentityDbContext<User, Role, string, IdentityUserClaim<string>, UserRole, IdentityUserLogin<string>, IdentityRoleClaim<string>, IdentityUserToken<string>>
     {
         #region DBSet
 
@@ -50,6 +50,24 @@ namespace FALOFinancialProofing.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<UserRole>(entity =>
+            {
+                //entity.HasKey(ur => new { ur.UserId, ur.RoleId });
+
+                // Cấu hình quan hệ giữa ApplicationUserRole và ApplicationUser
+                entity.HasOne(ur => ur.User)
+                    .WithMany(u => u.UserRoles)
+                    .HasForeignKey(ur => ur.UserId)
+                    .IsRequired();
+
+                // Cấu hình quan hệ giữa ApplicationUserRole và ApplicationRole
+                entity.HasOne(ur => ur.Role)
+                    .WithMany(r => r.UserRoles)
+                    .HasForeignKey(ur => ur.RoleId)
+                    .IsRequired();
+            });
+
+
             modelBuilder.Entity<AttachmentFile>()
                 .HasOne(a => a.RequestForm)
                 .WithMany(r => r.AttachmentFiles)
@@ -218,9 +236,9 @@ namespace FALOFinancialProofing.Models
                   .WithOne(u => u.Approver)
                   .HasForeignKey(c => c.ApproverId);
 
-                entity.HasMany(c => c.UserRoles)
-                  .WithOne()
-                  .HasForeignKey(c => c.UserId);
+                //entity.HasMany(c => c.UserRoles)
+                //  .WithOne()
+                //  .HasForeignKey(c => c.UserId);
 
                 entity.HasMany(c => c.CreateQrCodes)
                .WithOne(u => u.User)
@@ -321,14 +339,14 @@ namespace FALOFinancialProofing.Models
         public void RoleSeedData(ModelBuilder modelBuilder)
         {
             // Seed roles
-            modelBuilder.Entity<IdentityRole>().HasData(
-                new IdentityRole { Id = "205d4496-4ac8-40d9-84b9-e09e1ada7a49", Name = AppRole.ProjectManager, NormalizedName = AppRole.ProjectManager.ToUpper(), ConcurrencyStamp = "acccef8b-20f3-4de0-8ee9-5a3690f094ed" },
-                new IdentityRole { Id = "4e7b2c09-e0b0-4ddd-9694-ebf3e21e2472", Name = AppRole.VolunteerLeader, NormalizedName = AppRole.VolunteerLeader.ToUpper(), ConcurrencyStamp = "1a777fbf-24db-4247-bd76-db376d703ea9" },
-                new IdentityRole { Id = "83292e2c-6c86-4153-bdc5-760d05ec2293", Name = AppRole.Accounting, NormalizedName = AppRole.Accounting.ToUpper(), ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85f" },
-                new IdentityRole { Id = "83292e2c-6c86-4153-bdc5-760d05ec2295", Name = AppRole.Volunteer, NormalizedName = AppRole.Volunteer.ToUpper(), ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85g" },
-                 new IdentityRole { Id = "83292e2c-6c86-4153-bdc5-760d05ec2299", Name = AppRole.ProjectManagementBoard, NormalizedName = AppRole.ProjectManagementBoard.ToUpper(), ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85h" },
-                 new IdentityRole { Id = "15db7f37-5dbc-4035-9b00-a0af4c3fe8bb", Name = AppRole.Admin, NormalizedName = AppRole.Admin.ToUpper(), ConcurrencyStamp = "ba58588f-f626-41a0-8fca-b74481367335" },
-                 new IdentityRole { Id = "15db7f37-5dbc-4035-9b00-a0af4c3fe8bd", Name = AppRole.Donor, NormalizedName = AppRole.Donor.ToUpper(), ConcurrencyStamp = "ba58588f-f626-41a0-8fca-b74481367337" }
+            modelBuilder.Entity<Role>().HasData(
+                new Role { Id = "205d4496-4ac8-40d9-84b9-e09e1ada7a49", Name = AppRole.ProjectManager, NormalizedName = AppRole.ProjectManager.ToUpper(), ConcurrencyStamp = "acccef8b-20f3-4de0-8ee9-5a3690f094ed" },
+                new Role { Id = "4e7b2c09-e0b0-4ddd-9694-ebf3e21e2472", Name = AppRole.VolunteerLeader, NormalizedName = AppRole.VolunteerLeader.ToUpper(), ConcurrencyStamp = "1a777fbf-24db-4247-bd76-db376d703ea9" },
+                new Role { Id = "83292e2c-6c86-4153-bdc5-760d05ec2293", Name = AppRole.Accounting, NormalizedName = AppRole.Accounting.ToUpper(), ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85f" },
+                new Role { Id = "83292e2c-6c86-4153-bdc5-760d05ec2295", Name = AppRole.Volunteer, NormalizedName = AppRole.Volunteer.ToUpper(), ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85g" },
+                 new Role { Id = "83292e2c-6c86-4153-bdc5-760d05ec2299", Name = AppRole.ProjectManagementBoard, NormalizedName = AppRole.ProjectManagementBoard.ToUpper(), ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85h" },
+                 new Role { Id = "15db7f37-5dbc-4035-9b00-a0af4c3fe8bb", Name = AppRole.Admin, NormalizedName = AppRole.Admin.ToUpper(), ConcurrencyStamp = "ba58588f-f626-41a0-8fca-b74481367335" },
+                 new Role { Id = "15db7f37-5dbc-4035-9b00-a0af4c3fe8bd", Name = AppRole.Donor, NormalizedName = AppRole.Donor.ToUpper(), ConcurrencyStamp = "ba58588f-f626-41a0-8fca-b74481367337" }
             );
 
             modelBuilder.Entity<RequestType>().HasData(
