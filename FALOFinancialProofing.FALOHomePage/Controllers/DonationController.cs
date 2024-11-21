@@ -111,8 +111,12 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
                         return RedirectToAction("Error404", "Error");
                     }
 
-                    ViewBag.campaignDetails = campaignDetails.Data;
+                    if(campaignDetails.Data.FundTarget <= campaignDetails.Data.TotalMoneyEarned)
+                    {
+                        return RedirectToAction("Error404", "Error");
+                    }
 
+                    ViewBag.campaignDetails = campaignDetails.Data;
 
                     //Create ViewBag for CampaignId, BankID and user id
                     ViewBag.donationDetails = new QRDTO(userId, 0, campaignDetails.Data.BankId, campaignId);

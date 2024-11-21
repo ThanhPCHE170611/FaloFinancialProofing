@@ -20,6 +20,11 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
 
         public async Task<IActionResult> Profile()
         {
+            string id = HttpContext.Session.GetString("UserId");
+            if (id == null)
+            {
+                return RedirectToAction("Error404", "Error");
+            }
             return View();
         }
 
@@ -67,6 +72,12 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
             //{
             //    return RedirectToAction("Error404", "Error");
             //}
+
+            string id = HttpContext.Session.GetString("UserId");
+            if (id == null)
+            {
+                return RedirectToAction("Error404", "Error");
+            }
 
             return View();
         }

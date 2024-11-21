@@ -65,20 +65,31 @@
                     <div class="blog-single__right-item">
                         <div class="item shadow mb-30">
                             <h5 class="title">Đóng Góp</h5>
-                            <div class="btn-two d-none d-lg-inline-block">
-                                <span class=" btn-circle">
-                                </span>
-                                <a asp-controller="Donation" asp-action="CreateQR" asp-route-campaignId="@campaignDetails.CampaignId" spot class="btn-inner">
-                                    <span class="btn-text">
-                                        Ủng Hộ
+                            @if (campaignDetails.FundTarget > campaignDetails.TotalMoneyEarned)
+                            {
+                                <div class="btn-two d-none d-lg-inline-block">
+
+                                    <span class=" btn-circle">
                                     </span>
-                                </a>
-                            </div>
+
+                                    <a asp-controller="Donation" asp-action="CreateQR" asp-route-campaignId="@campaignDetails.CampaignId" spot class="btn-inner">
+                                        <span class="btn-text">
+                                            Ủng Hộ
+                                        </span>
+                                    </a>
+                                    
+                                </div>
+                            }
+                            
+                            else
+                            {
+                            <p class="text-danger"> Chiến dịch đã đóng ủng hộ</p>
+                            }
                         </div>
                         <div class="item shadow mb-30">
                             <h5 class="title">Chứng Thực</h5>
                             <ul class="category">
-                                <li><a <a href="javascript:void(0);" onclick="downloadAccountingBook(@campaignDetails.CampaignId)">Báo Cáo Tài Chính</a></li>
+                                <li><a <a href="javascript:void(0);" onclick="downloadAccountingBook(@campaignDetails.CampaignId)">Tải Báo Cáo Tài Chính</a></li>
                                 <li><a href="@Url.Action("Index", "Donation", new {id=campaignDetails.BankId})">Sao Kê</a></li>
                                 <li><a href="@Url.Action("CampaignActivity", "Campaignpage", new {id=campaignDetails.CampaignId})">Hoạt Động</a></li>
                             </ul>
