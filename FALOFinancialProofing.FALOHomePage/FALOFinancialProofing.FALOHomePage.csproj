@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 	  <EnableDefaultContentItems>false</EnableDefaultContentItems>
+    <UserSecretsId>93b1abda-2b72-4922-8be3-20bc74e4b0c1</UserSecretsId>
   </PropertyGroup>
 
 	<ItemGroup>
@@ -84,7 +85,15 @@
 	  <None Remove="Views\UserProfile\Profile.cshtml" />
 	  <None Remove="Views\_ViewImports.cshtml" />
 	  <None Remove="Views\_ViewStart.cshtml" />
+	  <None Remove="wwwroot\js\Authentication\forgotpassword.js" />
 	  <None Remove="wwwroot\js\CassoBankList.js" />
+	  <None Remove="wwwroot\js\Donation\campaignDonation.js" />
+	  <None Remove="wwwroot\js\Donation\createQR.js" />
+	  <None Remove="wwwroot\js\Homepage\homepage.js" />
+	  <None Remove="wwwroot\js\Projectpage\projectList.js" />
+	  <None Remove="wwwroot\js\UserProfile\changePassword.js" />
+	  <None Remove="wwwroot\js\UserProfile\donationHistory.js" />
+	  <None Remove="wwwroot\js\UserProfile\profile.js" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -216,6 +225,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.0" />
   </ItemGroup>
@@ -590,6 +600,10 @@
     <Content Update="wwwroot\images\video\video-right-image.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Update="wwwroot\js\Authentication\forgotpassword.js">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Update="wwwroot\webfonts\fa-brands-400.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -674,6 +688,10 @@
     <None Update="wwwroot\webfonts\fa-v4compatibility.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\js\Campaignpage\" />
   </ItemGroup>
 
 </Project>

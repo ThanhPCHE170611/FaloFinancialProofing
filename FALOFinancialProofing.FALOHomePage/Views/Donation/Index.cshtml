@@ -12,24 +12,6 @@
         .table th, .table td {
             padding: 10px; /* Space inside the cells */
         }
-
-    .pagination {
-        margin-top: 20px;
-        display: flex;
-        justify-content: center;
-    }
-
-        .pagination a {
-            margin: 0 5px;
-            padding: 5px 10px;
-            text-decoration: none;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-        }
-
-            .pagination a.active {
-                color: black;
-            }
 </style>
 
 <div class="container">
@@ -39,8 +21,9 @@
     <div class="blog-single__right-item">
         <div class="item shadow mb-30">
             <h5 class="title">Search</h5>
-            <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="Search here" />
+            <div class="serach-bar">
+                <input type="text" id="searchInput" placeholder="Search here">
+                <button id="searchButton"><i class="fa-regular fa-magnifying-glass"></i></button>
             </div>
         </div>
     </div>
@@ -94,29 +77,31 @@
     // Function to display transaction logs in the table
     function displayTransactions(transactions) {
         const tableContainer = document.getElementById('transactionsContainer');
+        tableContainer.innerHTML = '';  // Clear any existing table content
         let tableHtml = `<table class="table table-bordered table-hover" id="transactions-table">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">Mã Giao Dịch</th>
-                                                <th scope="col">Thời Điểm Giao Dịch</th>
-                                                <th scope="col">Số Tiền</th>
-                                                <th scope="col">Nội Dung Giao Dịch</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>`;
+                                         <thead>
+                                             <tr>
+                                                 <th scope="col">Mã Giao Dịch</th>
+                                                 <th scope="col">Thời Điểm Giao Dịch</th>
+                                                 <th scope="col">Số Tiền</th>
+                                                 <th scope="col">Nội Dung Giao Dịch</th>
+                                             </tr>
+                                         </thead>
+                                         <tbody>`;
 
         transactions.forEach(log => {
             tableHtml += `<tr>
-                                        <td>${log.tid}</td>
-                                        <td>${new Date(log.transactionDate).toLocaleString()}</td>
-                                        <td>${log.amount}</td>
-                                        <td>${log.description}</td>
-                                      </tr>`;
+                                         <td>${log.tid}</td>
+                                         <td>${new Date(log.transactionDate).toLocaleString()}</td>
+                                         <td>${log.amount}</td>
+                                         <td>${log.description}</td>
+                                       </tr>`;
         });
 
         tableHtml += `</tbody></table>`;
         tableContainer.innerHTML = tableHtml;
     }
+
 
     // Function to display error messages
     function displayError(message) {
@@ -128,34 +113,37 @@
     // Function to update pagination links
     function updatePagination() {
         const paginationContainer = document.getElementById('paginationContainer');
-        paginationContainer.innerHTML = '';
+        paginationContainer.innerHTML = '';  // Clear existing pagination buttons
 
         // Previous button
         if (currentPage > 1) {
-            const prevPage = document.createElement('a');
-            prevPage.textContent = 'Previous';
-            prevPage.href = '#';
-            prevPage.onclick = () => changePage(currentPage - 1);
-            paginationContainer.appendChild(prevPage);
+            const prevPageButton = document.createElement('button');
+            prevPageButton.innerHTML = `<i class="fa-solid fa-arrow-left-long primary-color transition"></i> `;
+            prevPageButton.onclick = () => changePage(currentPage - 1);
+            paginationContainer.appendChild(prevPageButton);
         }
 
-        // Page numbers
-        for (let page = 1; page <= totalPages; page++) {
-            const pageLink = document.createElement('a');
-            pageLink.textContent = page;
-            pageLink.href = '#';
-            pageLink.classList.toggle('active', page === currentPage);
-            pageLink.onclick = () => changePage(page);
-            paginationContainer.appendChild(pageLink);
+        // Page number buttons
+        const startPage = Math.max(1, currentPage - 2);  // Show pages before current
+        const endPage = Math.min(totalPages, currentPage + 2);  // Show pages after current
+
+        for (let page = startPage; page <= endPage; page++) {
+            const pageButton = document.createElement('button');
+            pageButton.textContent = page;
+            if (page === currentPage) {
+                pageButton.classList.add('active');  // Add 'active' class to current page
+                pageButton.disabled = true;  // Disable the button for the current page
+            }
+            pageButton.onclick = () => changePage(page);
+            paginationContainer.appendChild(pageButton);
         }
 
         // Next button
         if (currentPage < totalPages) {
-            const nextPage = document.createElement('a');
-            nextPage.textContent = 'Next';
-            nextPage.href = '#';
-            nextPage.onclick = () => changePage(currentPage + 1);
-            paginationContainer.appendChild(nextPage);
+            const nextPageButton = document.createElement('button');
+            nextPageButton.innerHTML = ` <i class="fa-solid fa-arrow-right-long primary-color transition"></i>`;
+            nextPageButton.onclick = () => changePage(currentPage + 1);
+            paginationContainer.appendChild(nextPageButton);
         }
     }
 
@@ -163,8 +151,8 @@
     function changePage(page) {
         if (page >= 1 && page <= totalPages) {
             currentPage = page;
-            const searchQuery = document.getElementById('searchInput').value;
-            fetchTransactions(currentPage, searchQuery);
+            const searchQuery = document.getElementById('searchInput').value;  // Get search input if needed
+            fetchTransactions(currentPage, searchQuery);  // Call the function to fetch data for the new page
         }
     }
 
@@ -172,6 +160,7 @@
     document.getElementById('searchInput').addEventListener('keydown', function (e) {
         if (e.key === 'Enter') {
             const searchQuery = e.target.value;
+            console.log("Search Query:", searchQuery); // Log the search query to check
             currentPage = 1;  // Reset to the first page on search
             fetchTransactions(currentPage, searchQuery);
         }
@@ -179,4 +168,5 @@
 
     // Initial fetch
     fetchTransactions(currentPage);
+
 </script>

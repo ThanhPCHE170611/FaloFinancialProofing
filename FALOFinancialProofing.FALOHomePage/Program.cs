@@ -1,4 +1,6 @@
 using FALOFinancialProofing.FALOHomePage.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 
 namespace FALOFinancialProofing.FALOHomePage
 {
@@ -13,6 +15,24 @@ namespace FALOFinancialProofing.FALOHomePage
             builder.Services.AddRazorPages();
             builder.Services.AddSession();
             builder.Services.AddHttpClient();
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+            }).AddCookie()
+              .AddGoogle(options =>
+              {
+
+                  options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+                  options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+                  options.SaveTokens = true;
+                  options.Scope.Add("openid");
+                  options.Scope.Add("profile");
+                  options.Scope.Add("email");
+              });
+            builder.Services.AddAuthorization();
 
             //Build Session Service
             builder.Services.AddSession(options =>

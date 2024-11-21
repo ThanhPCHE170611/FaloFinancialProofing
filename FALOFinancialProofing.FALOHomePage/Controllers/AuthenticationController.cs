@@ -1,8 +1,11 @@
 ﻿using FALOFinancialProofing.FALOHomePage.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace FALOFinancialProofing.FALOHomePage.Controllers
@@ -60,6 +63,40 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
             // If API call fails
             ViewBag.ErrorMessage = "An error occurred while contacting the server. Please try again.";
             return View("Login");
+        }
+
+        public async Task LoginGoogle()
+        {
+            await HttpContext.ChallengeAsync(GoogleDefaults.AuthenticationScheme, new AuthenticationProperties() { RedirectUri = Url.Action("GoogleResponse") });
+        }
+        public async Task<IActionResult> GoogleResponse()
+        {
+            var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+            var accessToken = result.Properties.GetTokenValue("access_token");
+            if (accessToken == null)
+                return BadRequest("accessToken is null");
+            var claims = result.Principal.Identities.FirstOrDefault().Claims.Select(claim => new { claim.Issuer, claim.OriginalIssuer, claim.Type, claim.Value });
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("AccessToken", accessToken);
+            var response = await client.PostAsync("https://localhost:7294/api/Users/Login-Google/Volunteer", null);
+            var responseString = await response.Content.ReadAsStringAsync();
+            var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseString);
+            //ViewData["serverAccessToken"] = apiResponse != null ? apiResponse.Data.AccessToken : null;
+            if (apiResponse == null || apiResponse.Success == false)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+            return RedirectToAction("Index", "Homepage");
+        }
+
+        public Dictionary<string, List<string>> DecodeJwtToken(string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+            var tokenClaims = jsonToken.Claims
+                .GroupBy(claim => claim.Type)
+                .ToDictionary(group => group.Key, group => group.Select(claim => claim.Value).ToList());
+            return tokenClaims;
         }
 
         public ActionResult Index()
@@ -151,5 +188,16 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
                 return View();
             }
         }
+    }
+    public class ApiResponse
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; }
+        public TokenModel Data { get; set; }
+    }
+    public class TokenModel
+    {
+        public string AccessToken { get; set; }
+        public string RefeshToken { get; set; }
     }
 }

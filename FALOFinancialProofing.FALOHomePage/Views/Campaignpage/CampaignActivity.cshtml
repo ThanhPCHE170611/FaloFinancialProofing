@@ -56,7 +56,7 @@
     </table>
 
     <!-- Pagination controls -->
-    <div id="paginationControls" class="pagination"></div>
+    <div id="paginationControls" class="pegi justify-content-center mt-80 pagination"></div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -125,36 +125,32 @@
         $('#errorMessage').hide();
     }
 
-    // Function to render pagination controls
     function renderPagination(totalRecords, currentPage, searchInput, campaignId) {
-        const pageSize = 5;
-        const totalPages = Math.ceil(totalRecords / pageSize);  // Total pages calculation
-        let paginationHtml = '';
+        const pageSize = 5;  
+        const totalPages = Math.ceil(totalRecords / pageSize);  
+        const paginationControls = $('#paginationControls');
+        paginationControls.empty();  
 
-        // Render "Previous" button
         if (currentPage > 1) {
-            paginationHtml += `<button onclick="loadActivityLogs(${currentPage - 1}, '${searchInput}', ${campaignId})">Previous</button>`;
+            paginationControls.append(`<button onclick="loadActivityLogs(${currentPage - 1}, '${searchInput}', ${campaignId})"><i class="fa-solid fa-arrow-left-long primary-color transition"></i></button>`);
         }
 
-        // Render page number buttons
-        const startPage = Math.max(1, currentPage - 2);  // Show pages 2 before and after current
-        const endPage = Math.min(totalPages, currentPage + 2);  // Adjust the last page
+        const startPage = Math.max(1, currentPage - 2);  
+        const endPage = Math.min(totalPages, currentPage + 2);  
 
         for (let i = startPage; i <= endPage; i++) {
             if (i === currentPage) {
-                paginationHtml += `<button class="active" disabled>${i}</button>`;
+                paginationControls.append(`<button class="active" disabled>${i}</button>`);
             } else {
-                paginationHtml += `<button onclick="loadActivityLogs(${i}, '${searchInput}', ${campaignId})">${i}</button>`;
+                paginationControls.append(`<button onclick="loadActivityLogs(${i}, '${searchInput}', ${campaignId})">${i}</button>`);
             }
         }
 
-        // Render "Next" button
         if (currentPage < totalPages) {
-            paginationHtml += `<button onclick="loadActivityLogs(${currentPage + 1}, '${searchInput}', ${campaignId})">Next</button>`;
+            paginationControls.append(`<button onclick="loadActivityLogs(${currentPage + 1}, '${searchInput}', ${campaignId})"><i class="fa-solid fa-arrow-right-long primary-color transition"></i></button>`);
         }
-
-        $('#paginationControls').html(paginationHtml);  // Inject pagination controls
     }
+
 
     // Function to show error message
     function showError(message) {
@@ -192,6 +188,6 @@
                 alert('Error downloading file: ' + error.message);
             });
     }
-
+    
 </script>
 

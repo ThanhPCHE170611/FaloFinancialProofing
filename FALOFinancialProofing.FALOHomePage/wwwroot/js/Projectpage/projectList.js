@@ -1,0 +1,123 @@
+﻿$(document).ready(function () {
+        // Initially load projects with an empty search query
+        loadProjects(1, "");
+
+        // Set up the search button to trigger the search when clicked
+        $('#searchButton').click(function () {
+            var searchInput = $('#searchInput').val();
+            loadProjects(1, searchInput);  // Load projects based on the search input
+        });
+
+        // Allow pressing Enter key for search
+        $('#searchInput').keypress(function (e) {
+            if (e.which === 13) {  // Enter key code
+                var searchInput = $('#searchInput').val();
+                loadProjects(1, searchInput);  // Load projects based on the search input
+            }
+        });
+    });
+
+    function loadProjects(pageNumber = 1, searchInput = "") {
+        // Construct the API URL with the search input and other parameters
+        var apiUrl = `https://localhost:7294/api/Projects/GetAllProjectInSystem?searchInput=${searchInput}&IsActive=true&currentPage=${pageNumber}`;
+
+        $.ajax({
+            url: apiUrl,
+            type: 'GET',
+            success: function (response) {
+                if (response.success) {
+                    renderProjects(response.data);
+                    renderPagination(response.data.dataCount, pageNumber, searchInput);
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function (error) {
+                console.error("Error loading projects:", error);
+            }
+        });
+    }
+
+    // Function to render the projects data as cards
+    function renderProjects(data) {
+        var projectsContainer = $('#projectsContainer');
+        projectsContainer.empty();  // Clear existing data
+
+        data.data.forEach(function (project) {
+            var date = new Date(project.dateOfCreation);
+            var formattedDate = date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+            var url = '/Projectpage/Index/' + project.id;
+            var creator = project.firstName + ' ' + project.lastName;
+            var shortenedDescription = project.description.length > 150 ? project.description.substring(0, 150) + '...' : project.description;
+
+            var projectImage = project.image || '/images/event/Project_image.jpg';
+
+            var cardHtml = `<div class="col-xl-4 col-md-6 wow fadeInUp" data-wow-delay="200ms" data-wow-duration="1500ms">
+                                <div class="event__inner-item">
+                                    <div class="image">
+                                        <img src="${projectImage}" alt="image">
+                                                <span class="blog-tag">${formattedDate || 'Date'}</span>
+                                    </div>
+                                    <div class="blog__content pt-4">
+                                        <ul>
+                                            <li>
+                                               <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                                     xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M14.5435 5.19275C14.5435 7.69093 12.4989 9.7355 10.0008 9.7355C7.50262 9.7355 5.45804 7.69093 5.45804 5.19275C5.45804 2.69457 7.50258 0.65 10.0008 0.65C12.4989 0.65 14.5435 2.69458 14.5435 5.19275Z"
+                                                          stroke="#F74F22" stroke-width="1.3" />
+                                                    <path d="M18.2644 14.6706C18.1052 14.9458 17.9241 15.2073 17.7169 15.4766L17.7168 15.4765L17.7089 15.4873C17.4203 15.8788 17.0845 16.2373 16.7294 16.5924C16.4326 16.8892 16.0932 17.186 15.7567 17.4385C14.0794 18.6911 12.0621 19.3499 9.97814 19.3499C7.89836 19.3499 5.88506 18.6938 4.20976 17.4461C3.84588 17.1504 3.51367 16.8792 3.22686 16.5924L3.2199 16.5854L3.21272 16.5787C2.85663 16.2436 2.54238 15.8877 2.24745 15.4874L2.24747 15.4873L2.24414 15.4829C2.06192 15.24 1.8732 14.9756 1.71919 14.7169C1.83618 14.4559 1.98455 14.1847 2.14521 13.9526L2.14533 13.9527L2.15284 13.9413C3.06984 12.5556 4.53705 11.6388 6.16642 11.4148L6.186 11.4121L6.20538 11.4082C6.23087 11.4031 6.29494 11.4117 6.34548 11.4496L6.34546 11.4496L6.34947 11.4525C7.41651 12.2401 8.68629 12.6453 10.0008 12.6453C11.3153 12.6453 12.5851 12.2401 13.6521 11.4525L13.6521 11.4525L13.6561 11.4496C13.6715 11.438 13.7403 11.408 13.8492 11.4167C15.4688 11.6435 16.9121 12.5568 17.8524 13.9468L17.8524 13.9469L17.8564 13.9526C18.0165 14.1839 18.1557 14.4231 18.2644 14.6706Z"
+                                                          stroke="#F74F22" stroke-width="1.3" />
+                                                </svg>
+                                                <a href="${url}">
+                                                    <span class="primary-hover transition">${creator}</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                        <h4 class="mt-15 mb-15">
+                                                <a href="${url}">${project.projectName || 'Project Title'}</a>
+                                        </h4>
+                                        <p>${shortenedDescription || 'No description available.'}</p>
+                                            <a class="mt-4 read-more fw-bold transition" href="${url}">
+                                            KHÁM PHÁ <i class="fa-solid fa-arrow-right ms-1"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                    `;
+            projectsContainer.append(cardHtml);
+        });
+    }
+
+    // Function to render pagination controls
+    function renderPagination(totalRecords, currentPage, searchInput) {
+        var pageSize = 6;
+        var totalPages = Math.ceil(totalRecords / pageSize);
+        var paginationControls = $('#paginationControls');
+        paginationControls.empty();  // Clear existing pagination buttons
+
+        // Render "Previous" button
+        if (currentPage > 1) {
+            paginationControls.append(`<button onclick="loadProjects(${currentPage - 1}, '${searchInput}')"><i class="fa-solid fa-arrow-left-long primary-color transition"></i></button>`);
+        }
+
+        // Render page number buttons
+        var startPage = Math.max(1, currentPage - 2);
+        var endPage = Math.min(totalPages, currentPage + 2);
+
+        for (var i = startPage; i <= endPage; i++) {
+            if (i === currentPage) {
+                paginationControls.append(`<button class="active" disabled>${i}</button>`);
+            } else {
+                paginationControls.append(`<button onclick="loadProjects(${i}, '${searchInput}')">${i}</button>`);
+            }
+        }
+
+        // Render "Next" button
+        if (currentPage < totalPages) {
+            paginationControls.append(`<button onclick="loadProjects(${currentPage + 1}, '${searchInput}')"><i class="fa-solid fa-arrow-right-long primary-color transition"></i></button>`);
+        }
+    }

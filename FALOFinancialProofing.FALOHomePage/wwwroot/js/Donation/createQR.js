@@ -1,68 +1,4 @@
-﻿@page "/MakeDonation"
-
-@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    // Serialize the ViewBag.DonationDetails object into a JSON string
-    var donationDetailsJson = Json.Serialize(ViewBag.DonationDetails);
-}
-
-<main>
-    <div class="container vh-100 d-flex justify-content-center align-items-center">
-        <!-- Larger Box with increased padding and space between elements -->
-        <div class="blog-single__review shadow p-5 rounded">
-            <div class="box p-5 border shadow rounded">
-                <h2 class="text-center mb-4">ĐÓNG GÓP</h2>
-                <div class="donation-amount-area">
-                    <!-- Input Field with space below it -->
-                    <div class="input-box pb-3 mb-4 bor-bottom">
-                        <span class="me-2">₫</span>
-                        <input class="addAmount-value form-control" type="number" max="10000000">
-                    </div>
-
-                    <!-- Amount Buttons with more space between them -->
-                    <div class="amount-group mb-4">
-                        <button class="active amount-btn w-100 mb-2">50000</button>
-                        <button class="amount-btn w-100 mb-2">100000</button>
-                        <button class="amount-btn w-100 mb-2">200000</button>
-                        <button class="amount-btn w-100">500000</button>
-                    </div>
-
-                    <!-- Donation Button -->
-                    <div class="btn-two text-center mt-4">
-                        <span class="btn-circle"></span>
-                        <a href="#" class="btn-inner" id="donateButton">
-                            <span class="btn-text">
-                                Ủng Hộ
-                            </span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal (Popup) for QR Code -->
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <img id="qrCodeImage" src="" alt="QR Code" style="max-width: 50%; height: auto; margin: 0 auto; display: block;" />
-            <h10 style="font-style:italic; text-align: center">*Hãy nhấn nút dưới sau khi bạn đã chuyển tiền nhé*</h10>
-            <div class="btn-two text-center mt-4">
-                <span class="btn-circle"></span>
-                <a href="#" class="btn-inner" id="syncButton">
-                    <span class="btn-text">
-                        Đồng Bộ Giao Dịch
-                    </span>
-                </a>
-            </div> 
-        </div>
-    </div>
-
-</main>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
+﻿document.addEventListener("DOMContentLoaded", function () {
         var QRDetails = @Html.Raw(donationDetailsJson); 
 
         console.log("QRDetails:", QRDetails); 
@@ -73,17 +9,18 @@
         }
 
         donateButton.addEventListener('click', function (e) {
-            e.preventDefault();  
-            console.log("Donate button clicked!"); 
+            e.preventDefault();  // Prevent the default link behavior
+            console.log("Donate button clicked!"); // Log message when button clicked
 
             if (!QRDetails.userId) {
                 alert('User ID is missing.');
-                return; 
+                return; // Exit early if UserId is not present
             }
 
             const amountInput = document.querySelector('.addAmount-value');
             const amount = parseFloat(amountInput.value);
 
+            // Validate the amount input
             if (isNaN(amount) || amount < 2000) {
                 alert('Xin hãy nhập số tiền từ 2000đ trở lên');
                 return;
@@ -99,8 +36,9 @@
                 campaignId: QRDetails.campaignId
             };
 
-            console.log("Data being sent:", data); 
+            console.log("Data being sent:", data); // Log data object
 
+            // Make the API call to generate the QR code
             fetch('https://localhost:7294/api/CreateQrCodes/CreateQrCode', {
                 method: 'POST',
                 headers: {
@@ -109,19 +47,20 @@
                 body: JSON.stringify(data)
             })
                 .then(response => {
-                    console.log('API Response:', response);  
-                    return response.blob(); 
+                    console.log('API Response:', response);  // Log API response
+                    return response.blob(); // Expecting image (blob)
                 })
                 .then(blob => {
-                    console.log('Received blob:', blob);  
+                    console.log('Received blob:', blob);  // Log received blob
                     const reader = new FileReader();
                     reader.onloadend = function () {
                         const base64Image = reader.result;
-                        console.log('Base64 Image:', base64Image);  
+                        console.log('Base64 Image:', base64Image);  // Log base64 image string
 
+                        // Show the image in a popup
                         showQRCodePopUp(base64Image);
                     };
-                    reader.readAsDataURL(blob);  
+                    reader.readAsDataURL(blob);  // Convert blob to base64
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -130,24 +69,28 @@
         });
     });
 
+    // Function to show the QR code popup
     function showQRCodePopUp(imageData) {
         const modal = document.getElementById("myModal");
         const qrCodeImage = document.getElementById("qrCodeImage");
 
         if (imageData && imageData.startsWith('data:image')) {
-            qrCodeImage.src = imageData;  
+            qrCodeImage.src = imageData;  // Set the image source to the received base64 image data
         } else {
-            console.error('Invalid image data:', imageData); 
+            console.error('Invalid image data:', imageData);  // Log error if the data is invalid
             return;
         }
 
+        // Display the modal
         modal.style.display = "block";
 
+        // Close the modal when the user clicks on <span> (x)
         const closeButton = document.getElementsByClassName("close")[0];
         closeButton.onclick = function () {
-            modal.style.display = "none"; 
+            modal.style.display = "none"; // Close the modal
         }
 
+        // Close the modal when the user clicks anywhere outside the modal
         window.onclick = function (event) {
             if (event.target == modal) {
                 modal.style.display = "none";
@@ -155,6 +98,7 @@
         }
     }
 
+    //Sync Transaction
     document.addEventListener("DOMContentLoaded", function () {
         var donateButton = document.getElementById('syncButton');
         var QRDetails = @Html.Raw(donationDetailsJson);
@@ -166,24 +110,28 @@
         }
 
         donateButton.addEventListener('click', function (e) {
-            e.preventDefault();
-            var bankId = QRDetails.bankId;  
+            e.preventDefault(); // Prevent the default link behavior
+
+            // Assuming you have QRDetails available from your previous code
+            var bankId = QRDetails.bankId;  // Assuming QRDetails is available from your previous code
 
             if (!bankId) {
                 alert('Bank ID is missing.');
                 return;
             }
 
+            // Step 1: Fetch bank details using the first API
             fetch(`https://localhost:7294/api/Banks/GetBankById/${bankId}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Failed to fetch bank details');
                     }
-                    return response.json();  
+                    return response.json();  // Parse the response as JSON
                 })
                 .then(bankDetails => {
                     console.log("Bank details:", bankDetails);
 
+                    // Extract account number from bank details
                     var accountNumber = bankDetails.accountNumber;
 
                     if (!accountNumber) {
@@ -191,17 +139,21 @@
                         return;
                     }
 
+                    // Step 2: Call the second API using the account number
+
                     fetch(`https://localhost:7294/api/WebHooks/SyncTransaction/${accountNumber}`, {
-                        method: 'POST',  
+                        method: 'POST',  // POST request
                         headers: {
                             'Content-Type': 'application/json'
                         }
                     })
                         .then(response => {
                             if (response.status === 204) {
+                                // No content in response, but the request was successful
                                 console.log("Transaction successfully synced with no content in response.");
                                 alert('Transaction successfully synced!');
                             } else {
+                                // Handle other non-204 responses (if any)
                                 throw new Error(`Unexpected response status: ${response.status}`);
                             }
                         })
@@ -216,44 +168,3 @@
                 });
         });
     });
-
-</script>
-
-<style>
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1; 
-        left: 0;
-        top: 0;
-        width: 100%; 
-        height: 100%; 
-        overflow: auto; 
-        background-color: rgb(0,0,0); 
-        background-color: rgba(0,0,0,0.4);
-        padding-top: 60px; 
-    }
-
-    .modal-content {
-        background-color: #fefefe;
-        margin: 5% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%; 
-        max-width: 600px;
-    }
-
-    .close {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-    }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-</style>

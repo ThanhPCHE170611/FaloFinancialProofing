@@ -63,15 +63,17 @@
                 </div>
                 <div class="text-center mt-3">
                     <hr>
-                    <button type="button" class="btn btn-danger btn-block" onclick="alert('Login with Google')">
-                        <i class="fab fa-google"></i> Đăng nhập với Gmail
-                    </button>
+                    <a asp-area="" asp-controller="Authentication" asp-action="LoginGoogle" asp-route-GoogleClick="true" class="gg btn btn btn-outline-danger">
+                        <i class="fab fa-google"></i> 
+                        Login with Google</a>
                 </div>
                 <div class="text-center mt-3">
                     <a asp-area="" asp-controller="Authentication" asp-action="Register" class="btn btn-link">Đăng ký tài khoản</a>
                 </div>
                 <div class="text-center mt-3">
-                    <a asp-area="" asp-controller="Authentication" asp-action="ForgotPassword">Quên Mật Khẩu?</a>
+                     <a asp-area="" asp-controller="Authentication" asp-action="ForgotPassword" style="Text-decoration:none;"> 
+                        <p class="forgot-pass" style="color:rgba(0, 0, 0, 0.4);">Quên Mật Khẩu?</p>
+                    </a>
                 </div>
             </form>
             @if (ViewBag.ErrorMessage != null)

@@ -34,36 +34,36 @@
     </table>
 
     <!-- Pagination Controls -->
-    <div id="paginationControls" class="text-center"></div>
+    <div id="paginationControls" class="pegi justify-content-center mt-80 pagination"></div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    // JavaScript to handle fetching transaction logs, pagination, and search functionality
     $(document).ready(function () {
-        // Initial load
+        // Load transactions on page load
         loadTransactions(1, "");
 
-        // Search functionality
+        // Event handler for search button click
         $('#searchButton').click(function () {
             var searchInput = $('#searchInput').val();
-            loadTransactions(1, searchInput);  // Reload with search query
+            loadTransactions(1, searchInput);
         });
 
-        // Allow pressing Enter to trigger the search
+        // Event handler for pressing 'Enter' in the search input field
         $('#searchInput').keypress(function (e) {
             if (e.which === 13) {  // Enter key
                 var searchInput = $('#searchInput').val();
-                loadTransactions(1, searchInput);  // Reload with search query
+                loadTransactions(1, searchInput);
             }
         });
     });
 
-    // Function to load transactions
+    // Function to load transactions with pagination and search
     function loadTransactions(currentPage, searchInput) {
-        var userId = '@userId';
+        var userId = '@userId';  // Get userId from session
         var apiUrl = `https://localhost:7294/api/TransactionLogs/GetUserTransactionLogs/${userId}?searchInput=${searchInput}&currentPage=${currentPage}`;
 
+        // Make AJAX call to fetch transactions
         $.ajax({
             url: apiUrl,
             type: 'GET',
@@ -81,53 +81,62 @@
         });
     }
 
-    // Function to display the transaction logs in a table
+    // Function to render the transaction logs in the table
     function renderTransactionLogs(transactions) {
-        $('#transactions-table').show();  // Show the table if there are results
-        $('#transactionLogs').empty();  // Clear any existing data
+        $('#transactions-table').show();
+        $('#transactionLogs').empty();
 
         transactions.forEach(function (transaction) {
             var rowHtml = `<tr>
-                        <td>${transaction.tid}</td>
-                        <td>${new Date(transaction.transactionDate).toLocaleString()}</td>
-                        <td>${transaction.amount}</td>
-                        <td>${transaction.description}</td>
-                        <td>${transaction.campaignName}</td>
-                    </tr>`;
+                            <td>${transaction.tid}</td>
+                            <td>${new Date(transaction.transactionDate).toLocaleString()}</td>
+                            <td>${transaction.amount}</td>
+                            <td>${transaction.description}</td>
+                            <td>${transaction.campaignName}</td>
+                        </tr>`;
             $('#transactionLogs').append(rowHtml);
         });
 
-        $('#errorMessage').hide();  // Hide error message if data is found
+        $('#errorMessage').hide();
     }
 
     // Function to render pagination controls
     function renderPagination(totalRecords, currentPage, searchInput) {
-        var pageSize = 5;  // Assuming page size of 10
-        var totalPages = Math.ceil(totalRecords / pageSize);
-        var paginationHtml = '';
+        var pageSize = 5;  // Set the number of items per page
+        var totalPages = Math.ceil(totalRecords / pageSize);  // Calculate the total number of pages
+        var paginationControls = $('#paginationControls');
+        paginationControls.empty();  // Clear any existing pagination buttons
 
+        // Render "Previous" button
         if (currentPage > 1) {
-            paginationHtml += `<button onclick="loadTransactions(${currentPage - 1}, '${searchInput}')">Previous</button>`;
+            paginationControls.append(`<button onclick="loadTransactions(${currentPage - 1}, '${searchInput}')">
+                <i class="fa-solid fa-arrow-left-long primary-color transition"></i>
+            </button>`);
         }
 
-        for (var i = 1; i <= totalPages; i++) {
+        // Render page number buttons
+        var startPage = Math.max(1, currentPage - 2);  // Ensure the start page does not go below 1
+        var endPage = Math.min(totalPages, currentPage + 2);  // Ensure the end page does not exceed total pages
+
+        for (var i = startPage; i <= endPage; i++) {
             if (i === currentPage) {
-                paginationHtml += `<button class="active" disabled>${i}</button>`;
+                paginationControls.append(`<button class="active" disabled> ${i} </button>`);
             } else {
-                paginationHtml += `<button onclick="loadTransactions(${i}, '${searchInput}')">${i}</button>`;
+                paginationControls.append(`<button onclick="loadTransactions(${i}, '${searchInput}')"> ${i} </button>`);
             }
         }
 
+        // Render "Next" button
         if (currentPage < totalPages) {
-            paginationHtml += `<button onclick="loadTransactions(${currentPage + 1}, '${searchInput}')">Next</button>`;
+            paginationControls.append(`<button onclick="loadTransactions(${currentPage + 1}, '${searchInput}')">
+                <i class="fa-solid fa-arrow-right-long primary-color transition"></i>
+            </button>`);
         }
-
-        $('#paginationControls').html(paginationHtml);  // Add pagination controls
     }
 
     // Function to show error message
     function showError(message) {
         $('#errorMessage').text(message).show();
-        $('#transactions-table').hide();  // Hide the table if no data is found
+        $('#transactions-table').hide();
     }
 </script>
