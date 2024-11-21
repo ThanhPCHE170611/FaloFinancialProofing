@@ -76,6 +76,7 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
                 }
                 catch (JsonException jsonEx)
                 {
+                    Console.WriteLine($"Campaign Title: {jsonEx.Message}");
                     ViewBag.campaigns = new List<CampaignData>();
                     return View();
                 }

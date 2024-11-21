@@ -118,8 +118,6 @@
                     data: JSON.stringify(registerData),
                     success: function (response) {
                         if (response.Success) {
-                            $('#registerMessage').html('<span class="text-danger">' + response.message + '</span>');
-                        } else {
                             $('#registerMessage').html('<span class="text-success">Register Success. Redirecting to Login...</span>');
                             console.log("Redirecting to: " + '@Url.Action("Login", "Authentication")'); // Debug log for the redirect URL
 
@@ -127,6 +125,9 @@
                             setTimeout(function () {
                                 window.location.replace('@Url.Action("Login", "Authentication")');
                             }, 2000);
+                            
+                        } else {
+                            $('#registerMessage').html('<span class="text-danger">' + response.message + '</span>');
                         }
                     },
                     error: function () {
