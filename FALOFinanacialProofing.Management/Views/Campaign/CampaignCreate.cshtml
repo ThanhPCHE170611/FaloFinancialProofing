@@ -70,7 +70,7 @@
 
                         <div class="mb-3">
                             <label for="totalAmount" class="form-label">Fund Target</label>
-                            <input type="number" class="form-control" id="totalAmount" placeholder="Enter total amount" min="0" step="0.01">
+                            <input type="number" class="form-control" id="totalAmount" placeholder="Enter total amount" min="0" step="1000">
                         </div>
 
                         <div class="mb-3">
@@ -186,21 +186,55 @@
 
             const campaignName = $('#campaignName').val();
             const location = $('#location').val();
-            const totalAmount = $('#totalAmount').val();
+            const totalAmount = parseFloat($('#totalAmount').val());
             let endDate = $('#endDate').val();
             const description = quill.getText();;
             const files = $('#attachments')[0].files;
 
-            if (!campaignName || !location || !totalAmount || !endDate || !description) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); 
+            const selectedEndDate = new Date(endDate);
+
+            if (!campaignName || !totalAmount || !endDate) {
                 alert('Please fill in all required fields.');
                 return;
             }
+            if (!campaignName || campaignName.length < 8) {
+                alert('Campaign Name is required and must be at least 8 characters long.');
+                $('#campaignName').focus();
+                return;
+            }
+
+            if (!location) {
+                alert('Location is required and cannot be empty.');
+                $('#location').focus();
+                return;
+            }
+
+            if (!totalAmount || totalAmount <1000) {
+                alert('Fund Target is required and must be at least 1000.');
+                $('#totalAmount').focus();
+                return;
+            }
+
+            if (!endDate || selectedEndDate <= today) {
+                alert('Expected End Date must be after today.');
+                $('#endDate').focus();
+                return;
+            }
+
+            if (!description || description.length < 8) {
+                alert('Campaign Description is required and must be at least 8 characters long.');
+                $('#description').focus();
+                return;
+            }
+
 
             endDate = formatDateToMMDDYYYY(endDate);
             console.log("EndDate" + endDate);
 
 
-            const today = new Date();
+            
             const year = today.getFullYear();
             const month = String(today.getMonth() + 1).padStart(2, '0');
             const day = String(today.getDate()).padStart(2, '0');

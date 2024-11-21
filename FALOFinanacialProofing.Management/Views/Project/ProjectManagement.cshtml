@@ -136,7 +136,6 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    
                                 </tbody>
                             </table>
                         </div>
@@ -160,14 +159,17 @@
 <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).ready(function () {
-        const jwtToken = localStorage.getItem('jwtToken');
-        const checkrole = localStorage.getItem('loggingRole');
-        const userId = localStorage.getItem('userId');
-        let currentPage = 1;
-        const pageSize = 5;
+    const jwtToken = localStorage.getItem('jwtToken');
+    const checkrole = localStorage.getItem('loggingRole');
+    const userId = localStorage.getItem('userId');
+    let currentPage = 1;
+    const pageSize = 5;
 
-        function loadProjects() {
+    $(document).ready(function () {
+        loadProjects();
+    });
+
+    function loadProjects() {
             const searchInput = $('#searchInput').val().trim();
             const statusFilter = $('#statusFilter').val();
             let apiUrl;
@@ -249,20 +251,17 @@
             }
         }
 
-        
+
 
         $('#searchInput').on('keyup', function () {
-            currentPage = 1; 
+            currentPage = 1;
             loadProjects();
         });
 
         $('#statusFilter').on('change', function () {
-            currentPage = 1; 
+            currentPage = 1;
             loadProjects();
         });
-
-        loadProjects();
-    });
     function goToPage(page) {
         currentPage = page;
         loadProjects();
