@@ -56,9 +56,12 @@
     function fetchTransactions(page = 1, searchQuery = "") {
         const url = `https://localhost:7294/api/TransactionLogs/GetCampaignTransactionLogs/${campaignId}?currentPage=${page}&searchQuery=${encodeURIComponent(searchQuery)}`;
 
+        console.log("Fetching URL:", url); // Log the request URL for debugging
+
         fetch(url)
             .then(response => response.json())
             .then(data => {
+                console.log("API Response:", data); // Log the API response
                 if (data?.data?.data) {
                     displayTransactions(data.data.data);
                     totalPages = Math.ceil(data.data.dataCount / pageSize);
@@ -78,30 +81,34 @@
     function displayTransactions(transactions) {
         const tableContainer = document.getElementById('transactionsContainer');
         tableContainer.innerHTML = '';  // Clear any existing table content
+        if (transactions.length === 0) {
+            displayError("No matching transactions found.");
+            return;
+        }
+
         let tableHtml = `<table class="table table-bordered table-hover" id="transactions-table">
-                                         <thead>
-                                             <tr>
-                                                 <th scope="col">Mã Giao Dịch</th>
-                                                 <th scope="col">Thời Điểm Giao Dịch</th>
-                                                 <th scope="col">Số Tiền</th>
-                                                 <th scope="col">Nội Dung Giao Dịch</th>
-                                             </tr>
-                                         </thead>
-                                         <tbody>`;
+                                                 <thead>
+                                                     <tr>
+                                                         <th scope="col">Mã Giao Dịch</th>
+                                                         <th scope="col">Thời Điểm Giao Dịch</th>
+                                                         <th scope="col">Số Tiền</th>
+                                                         <th scope="col">Nội Dung Giao Dịch</th>
+                                                     </tr>
+                                                 </thead>
+                                                 <tbody>`;
 
         transactions.forEach(log => {
             tableHtml += `<tr>
-                                         <td>${log.tid}</td>
-                                         <td>${new Date(log.transactionDate).toLocaleString()}</td>
-                                         <td>${log.amount}</td>
-                                         <td>${log.description}</td>
-                                       </tr>`;
+                                                 <td>${log.tid}</td>
+                                                 <td>${new Date(log.transactionDate).toLocaleString()}</td>
+                                                 <td>${log.amount}</td>
+                                                 <td>${log.description}</td>
+                                               </tr>`;
         });
 
         tableHtml += `</tbody></table>`;
         tableContainer.innerHTML = tableHtml;
     }
-
 
     // Function to display error messages
     function displayError(message) {
@@ -118,7 +125,7 @@
         // Previous button
         if (currentPage > 1) {
             const prevPageButton = document.createElement('button');
-            prevPageButton.innerHTML = `<i class="fa-solid fa-arrow-left-long primary-color transition"></i> `;
+            prevPageButton.innerHTML = `<i class="fa-solid fa-arrow-left-long primary-color transition"></i>`;
             prevPageButton.onclick = () => changePage(currentPage - 1);
             paginationContainer.appendChild(prevPageButton);
         }
@@ -131,8 +138,8 @@
             const pageButton = document.createElement('button');
             pageButton.textContent = page;
             if (page === currentPage) {
-                pageButton.classList.add('active');  // Add 'active' class to current page
-                pageButton.disabled = true;  // Disable the button for the current page
+                pageButton.classList.add('active');
+                pageButton.disabled = true;
             }
             pageButton.onclick = () => changePage(page);
             paginationContainer.appendChild(pageButton);
@@ -141,7 +148,7 @@
         // Next button
         if (currentPage < totalPages) {
             const nextPageButton = document.createElement('button');
-            nextPageButton.innerHTML = ` <i class="fa-solid fa-arrow-right-long primary-color transition"></i>`;
+            nextPageButton.innerHTML = `<i class="fa-solid fa-arrow-right-long primary-color transition"></i>`;
             nextPageButton.onclick = () => changePage(currentPage + 1);
             paginationContainer.appendChild(nextPageButton);
         }
@@ -151,22 +158,29 @@
     function changePage(page) {
         if (page >= 1 && page <= totalPages) {
             currentPage = page;
-            const searchQuery = document.getElementById('searchInput').value;  // Get search input if needed
-            fetchTransactions(currentPage, searchQuery);  // Call the function to fetch data for the new page
+            const searchQuery = document.getElementById('searchInput').value;  // Get search input
+            fetchTransactions(currentPage, searchQuery);  // Fetch data for new page
         }
     }
 
-    // Listen for Enter key press in the search bar
+    // Listen for Enter key press or click on search button
     document.getElementById('searchInput').addEventListener('keydown', function (e) {
         if (e.key === 'Enter') {
             const searchQuery = e.target.value;
-            console.log("Search Query:", searchQuery); // Log the search query to check
-            currentPage = 1;  // Reset to the first page on search
+            console.log("Search Query:", searchQuery);
+            currentPage = 1;
             fetchTransactions(currentPage, searchQuery);
         }
     });
 
+    document.getElementById('searchButton').addEventListener('click', function () {
+        const searchQuery = document.getElementById('searchInput').value;
+        console.log("Search Query:", searchQuery);
+        currentPage = 1;
+        fetchTransactions(currentPage, searchQuery);
+    });
+
     // Initial fetch
     fetchTransactions(currentPage);
-
 </script>
+
