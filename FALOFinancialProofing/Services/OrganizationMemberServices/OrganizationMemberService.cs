@@ -54,6 +54,25 @@ namespace FALOFinancialProofing.Services.OrganizationMemberServices
             return organization;
         }
 
+        public async Task<OrganizationMember> GetOrganizationMemberByUserIdAndOrganizationIdAsync(string userId, int organizationId)
+        {
+            OrganizationMember organization = null!;
+            try
+            {
+                organization = await _organizationMemberRepository.Get(o => o.UserId.Equals(userId) && o.OrganizationId == organizationId);
+                if (organization == null)
+                {
+                    throw new Exception("OrganizationMember not found");
+                }
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetOrganizationMemberByUserIdAndOrganizationIdAsync: {ex.Message}");
+            }
+
+            return organization;
+        }
+
         public async Task<IEnumerable<OrganizationMember>> GetAllOrganizationMembersAsync()
         {
             List<OrganizationMember> data = null!;

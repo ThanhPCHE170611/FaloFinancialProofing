@@ -36,11 +36,11 @@ namespace FALOFinancialProofing.Services.DebManagementServices
                     cm => cm.CampaignId == campaignId
                     )
                     .Include(cm => cm.User)
-                    .Include(cm => cm.IdentityRole)
+                    .Include(cm => cm.Role)
                         .Select(cm => new UserWithDeb
                         {
                             UserId = cm.UserId,
-                            UserRole = cm.IdentityRole.Name,
+                            UserRole = cm.Role.Name,
                             UserEmail = cm.User.Email,
                             Debt = cm.Debt,
                             CampaignId = cm.CampaignId,
@@ -64,10 +64,10 @@ namespace FALOFinancialProofing.Services.DebManagementServices
             {
                 var accountingInCampaign = repository.GetAll()
                     .Include(cm => cm.User)
-                    .Include(cm => cm.IdentityRole)
+                    .Include(cm => cm.Role)
                     .Where(cm => cm.UserId == userId 
                         && cm.CampaignId == campaignId
-                        && cm.IdentityRole.Name == AppRole.Accounting
+                        && cm.Role.Name == AppRole.Accounting
                         && cm.IsActive)
                     .FirstOrDefault();
                 if (accountingInCampaign == null)
@@ -98,11 +98,11 @@ namespace FALOFinancialProofing.Services.DebManagementServices
                 }
                 userWithDeb = await repository.GetAll()
                     .Include(cm => cm.User)
-                    .Include(cm => cm.IdentityRole)
+                    .Include(cm => cm.Role)
                         .Select(cm => new UserWithDeb
                         {
                             UserId = cm.UserId,
-                            UserRole = cm.IdentityRole.Name,
+                            UserRole = cm.Role.Name,
                             UserEmail = cm.User.Email,
                             Debt = cm.Debt,
                             CampaignId = cm.CampaignId,

@@ -99,7 +99,7 @@ namespace FALOFinancialProofing.Controllers
                 }
                 filteredAttachmentFiles = filteredAttachmentFiles.Where(x => x.RequestForm.TypeId == typeInt).ToList();
             }
-            if (String.IsNullOrEmpty(name))
+            if (!String.IsNullOrEmpty(name))
             {
                 filteredAttachmentFiles = filteredAttachmentFiles
                     .Where(x => x.FilePath.ToLower().Contains(name.ToLower()));

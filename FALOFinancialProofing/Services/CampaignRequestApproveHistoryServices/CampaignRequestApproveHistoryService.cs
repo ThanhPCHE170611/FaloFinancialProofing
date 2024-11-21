@@ -18,9 +18,9 @@ namespace FALOFinancialProofing.Services.CampaignRequestApproveHistoryServices
         private readonly IRepository<Campaign, int> _campaignRepository;
         private readonly IBankService _bankService;
         private readonly ICampaignMemberService _campaignMemberService;
-        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly RoleManager<Role> roleManager;
 
-        public CampaignRequestApproveHistoryService(IRepository<CampaignRequestApproveHistory, int> createCampaignRequestApproveHistoriesRepository, AuthServices authServices, IRepository<CreateCampaignRequest, int> createCampaignRequestRepository, IRepository<Campaign, int> campaignRepository, IBankService bankService, ICampaignMemberService campaignMemberService, RoleManager<IdentityRole> roleManager)
+        public CampaignRequestApproveHistoryService(IRepository<CampaignRequestApproveHistory, int> createCampaignRequestApproveHistoriesRepository, AuthServices authServices, IRepository<CreateCampaignRequest, int> createCampaignRequestRepository, IRepository<Campaign, int> campaignRepository, IBankService bankService, ICampaignMemberService campaignMemberService, RoleManager<Role> roleManager)
         {
             _campaignRequestApproveHistoriesRepository = createCampaignRequestApproveHistoriesRepository;
             _authServices = authServices;
@@ -186,6 +186,10 @@ namespace FALOFinancialProofing.Services.CampaignRequestApproveHistoryServices
                 if (checkRequestId == null)
                 {
                     throw new Exception("CampaignRequest not found");
+                }
+                if (checkRequestId.Status.Equals(RequestStatus.Cancel))
+                {
+                    throw new Exception("Campaign Request has been cancel before");
                 }
                 // kiểm tra thời điểm gửi yêu cầu phê duyệt
                 if (createCampaignRequestApproveHistoryClientRequest.DateOfApproval > DateTime.Now)

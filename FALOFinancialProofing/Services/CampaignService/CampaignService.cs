@@ -292,6 +292,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                 {
                     throw new Exception("Logo is too large");
                 }
+
                 IsValid = true;
             }
             catch (Exception ex)
@@ -319,7 +320,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                     EndDate = createCampaignClientRequest.EndDate,
                     Address = createCampaignClientRequest.Address,
                     IsActive = false,
-                    BankId = createCampaignClientRequest.BankId,
+                    Description = createCampaignClientRequest.Description,
                 };
             }
             catch (Exception ex)
@@ -353,12 +354,12 @@ namespace FALOFinancialProofing.Services.CampaignService
             var campaigns = new List<Campaign>();
             try
             {
-                var allCampaigns = await campaignRepository.GetAll().Include(c => c.CampaignMembers).ThenInclude(cm => cm.IdentityRole).ToListAsync();
+                var allCampaigns = await campaignRepository.GetAll().Include(c => c.CampaignMembers).ThenInclude(cm => cm.Role).ToListAsync();
 
                 foreach (var campaign in allCampaigns)
                 {
                     if (campaign.CampaignMembers.Any(cm => cm.UserId == userId
-                        && cm.IdentityRole.Name.Equals(currentRole)
+                        && cm.Role.Name.Equals(currentRole)
                         && cm.IsActive))
                     {
                         campaigns.Add(campaign);
@@ -387,7 +388,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                                                     && !x.Status.Equals(Resource.CampaignStatus_Close)
                                                     && x.IsActive)
                     .Include(x => x.CampaignMembers)
-                    .ThenInclude(x => x.IdentityRole).FirstOrDefaultAsync();
+                    .ThenInclude(x => x.Role).FirstOrDefaultAsync();
                 if (campaignWithMemberAndRole == null)
                 {
                     message.Append("Campaign not found or is close or is not active");
@@ -397,7 +398,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                 // check if user is in campaign, is active and is Project Manager
                 var campaignMember = campaignWithMemberAndRole.CampaignMembers.FirstOrDefault(x => x.UserId == userId
                                     && x.IsActive
-                                    && x.IdentityRole.Name.Equals(Resource.ProjectManagerRoleName));
+                                    && x.Role.Name.Equals(Resource.ProjectManagerRoleName));
                 if (campaignMember == null)
                 {
                     message.Append("You are not in this campaign or is not active or is not Project Manager");

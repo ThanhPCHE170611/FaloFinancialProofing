@@ -23,10 +23,10 @@ namespace FALOFinancialProofing.Controllers
         private readonly ICampaignService _campaignService;
         private readonly ICreateCampaignRequestService _createCampaignRequestService;
         private readonly ICreateCampaignFileService _createCampaignFileService;
-        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly RoleManager<Role> roleManager;
         private readonly ICampaignMemberService _campaignMemberService;
 
-        public CampaignController(ICampaignService campaignService, ICreateCampaignRequestService createCampaignRequestService, ICreateCampaignFileService createCampaignFileService, RoleManager<IdentityRole> roleManager, ICampaignMemberService campaignMemberService)
+        public CampaignController(ICampaignService campaignService, ICreateCampaignRequestService createCampaignRequestService, ICreateCampaignFileService createCampaignFileService, RoleManager<Role> roleManager, ICampaignMemberService campaignMemberService)
         {
             _campaignService = campaignService;
             _createCampaignRequestService = createCampaignRequestService;
@@ -34,7 +34,9 @@ namespace FALOFinancialProofing.Controllers
             this.roleManager = roleManager;
             _campaignMemberService = campaignMemberService;
         }
+
         // những campaign không ở trạng thái pending và rejected
+        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.Admin)]
         [HttpGet("GetAllCampaignInSystem")]
         public async Task<IActionResult> GetAllCampaignInSystem(string? title, string? status, bool? IsActive, int currentPage = IntConstant.PageNumberDefault)
         {

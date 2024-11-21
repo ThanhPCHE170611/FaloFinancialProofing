@@ -13,5 +13,6 @@ namespace FALOFinancialProofing.Services.BankServices
         Task<bool> DeleteBankAsync(int id);
         //Task<bool> UpdateBankToSystemAsync(Bank Bank);
         Task<BankInformation> GetBankByCampaignIdAsync(int CampaignId);
+        Task<bool> SyncBankAccountsToBankDb(List<CassoBankAccount> cassoBankAccounts);
     }
 }

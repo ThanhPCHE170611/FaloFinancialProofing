@@ -1,5 +1,6 @@
 ﻿using Microsoft.Identity.Client;
 using NuGet.Packaging.Signing;
+using System.IO;
 
 namespace FALOFinancialProofing.Helpers
 {
@@ -56,6 +57,44 @@ namespace FALOFinancialProofing.Helpers
                 await file.CopyToAsync(stream);
             }
             return $"{folderName}/{fileName}";
+        }
+
+        private static string GetContentType(string path)
+        {
+            var types = new Dictionary<string, string>
+            {
+                { ".txt", "text/plain" },
+                { ".pdf", "application/pdf" },
+                { ".doc", "application/vnd.ms-word" },
+                { ".docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document" },
+                { ".xls", "application/vnd.ms-excel" },
+                { ".xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" },
+                { ".png", "image/png" },
+                { ".jpg", "image/jpeg" },
+                { ".jpeg", "image/jpeg" },
+                { ".gif", "image/gif" },
+                { ".csv", "text/csv" }
+            };
+
+            var ext = Path.GetExtension(path).ToLowerInvariant();
+            return types.ContainsKey(ext) ? types[ext] : "application/octet-stream";
+        }
+
+        public static async Task<(Stream?, string?, string?)> DownLoadFile(string shortPath)
+        {
+            if (string.IsNullOrEmpty(shortPath))
+                return (null, null, null);
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), shortPath);
+            if (!File.Exists(filePath))
+                return (null, null, null);
+            var memory = new MemoryStream();
+            using (var stream = new FileStream(filePath, FileMode.Open))
+            {
+                await stream.CopyToAsync(memory);
+            }
+            memory.Position = 0;
+
+            return (memory, GetContentType(filePath), Path.GetFileName(filePath));
         }
     }
 }

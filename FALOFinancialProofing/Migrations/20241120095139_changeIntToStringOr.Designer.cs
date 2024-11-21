@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FALOFinancialProofing.Migrations
 {
     [DbContext(typeof(FALOFinancialProofingDbContext))]
-    [Migration("20241117113045_initial")]
-    partial class initial
+    [Migration("20241120095139_changeIntToStringOr")]
+    partial class changeIntToStringOr
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -580,10 +580,6 @@ namespace FALOFinancialProofing.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Attachments")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Bio")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -605,7 +601,6 @@ namespace FALOFinancialProofing.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Logo")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MainActivity")
@@ -628,8 +623,9 @@ namespace FALOFinancialProofing.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Representative")
-                        .HasColumnType("int");
+                    b.Property<string>("Representative")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Vision")
                         .IsRequired()
@@ -793,6 +789,84 @@ namespace FALOFinancialProofing.Migrations
                         {
                             Id = 2,
                             TypeName = "Payment"
+                        });
+                });
+
+            modelBuilder.Entity("FALOFinancialProofing.Models.Role", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("Roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "205d4496-4ac8-40d9-84b9-e09e1ada7a49",
+                            ConcurrencyStamp = "acccef8b-20f3-4de0-8ee9-5a3690f094ed",
+                            Name = "Project Manager",
+                            NormalizedName = "PROJECT MANAGER"
+                        },
+                        new
+                        {
+                            Id = "4e7b2c09-e0b0-4ddd-9694-ebf3e21e2472",
+                            ConcurrencyStamp = "1a777fbf-24db-4247-bd76-db376d703ea9",
+                            Name = "Volunteer Leader",
+                            NormalizedName = "VOLUNTEER LEADER"
+                        },
+                        new
+                        {
+                            Id = "83292e2c-6c86-4153-bdc5-760d05ec2293",
+                            ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85f",
+                            Name = "Accounting",
+                            NormalizedName = "ACCOUNTING"
+                        },
+                        new
+                        {
+                            Id = "83292e2c-6c86-4153-bdc5-760d05ec2295",
+                            ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85g",
+                            Name = "Volunteer",
+                            NormalizedName = "VOLUNTEER"
+                        },
+                        new
+                        {
+                            Id = "83292e2c-6c86-4153-bdc5-760d05ec2299",
+                            ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85h",
+                            Name = "Project Management Board",
+                            NormalizedName = "PROJECT MANAGEMENT BOARD"
+                        },
+                        new
+                        {
+                            Id = "15db7f37-5dbc-4035-9b00-a0af4c3fe8bb",
+                            ConcurrencyStamp = "ba58588f-f626-41a0-8fca-b74481367335",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "15db7f37-5dbc-4035-9b00-a0af4c3fe8bd",
+                            ConcurrencyStamp = "ba58588f-f626-41a0-8fca-b74481367337",
+                            Name = "Donor",
+                            NormalizedName = "DONOR"
                         });
                 });
 
@@ -1025,6 +1099,21 @@ namespace FALOFinancialProofing.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
+            modelBuilder.Entity("FALOFinancialProofing.Models.UserRole", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("UserRoles", (string)null);
+                });
+
             modelBuilder.Entity("FALOFinancialProofing.Models.UserSDG", b =>
                 {
                     b.Property<int>("Id")
@@ -1075,85 +1164,7 @@ namespace FALOFinancialProofing.Migrations
                     b.ToTable("Vouchers");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.Role", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("Roles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "205d4496-4ac8-40d9-84b9-e09e1ada7a49",
-                            ConcurrencyStamp = "acccef8b-20f3-4de0-8ee9-5a3690f094ed",
-                            Name = "Project Manager",
-                            NormalizedName = "PROJECT MANAGER"
-                        },
-                        new
-                        {
-                            Id = "4e7b2c09-e0b0-4ddd-9694-ebf3e21e2472",
-                            ConcurrencyStamp = "1a777fbf-24db-4247-bd76-db376d703ea9",
-                            Name = "Volunteer Leader",
-                            NormalizedName = "VOLUNTEER LEADER"
-                        },
-                        new
-                        {
-                            Id = "83292e2c-6c86-4153-bdc5-760d05ec2293",
-                            ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85f",
-                            Name = "Accounting",
-                            NormalizedName = "ACCOUNTING"
-                        },
-                        new
-                        {
-                            Id = "83292e2c-6c86-4153-bdc5-760d05ec2295",
-                            ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85g",
-                            Name = "Volunteer",
-                            NormalizedName = "VOLUNTEER"
-                        },
-                        new
-                        {
-                            Id = "83292e2c-6c86-4153-bdc5-760d05ec2299",
-                            ConcurrencyStamp = "606fea67-ae89-4b3f-ac93-ccceda6fc85h",
-                            Name = "Project Management Board",
-                            NormalizedName = "PROJECT MANAGEMENT BOARD"
-                        },
-                        new
-                        {
-                            Id = "15db7f37-5dbc-4035-9b00-a0af4c3fe8bb",
-                            ConcurrencyStamp = "ba58588f-f626-41a0-8fca-b74481367335",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "15db7f37-5dbc-4035-9b00-a0af4c3fe8bd",
-                            ConcurrencyStamp = "ba58588f-f626-41a0-8fca-b74481367337",
-                            Name = "Donor",
-                            NormalizedName = "DONOR"
-                        });
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.RoleClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1223,21 +1234,6 @@ namespace FALOFinancialProofing.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserLogins", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("UserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -1333,7 +1329,7 @@ namespace FALOFinancialProofing.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.Role", "Role")
+                    b.HasOne("FALOFinancialProofing.Models.Role", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1613,6 +1609,25 @@ namespace FALOFinancialProofing.Migrations
                     b.Navigation("CreateQrCode");
                 });
 
+            modelBuilder.Entity("FALOFinancialProofing.Models.UserRole", b =>
+                {
+                    b.HasOne("FALOFinancialProofing.Models.Role", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FALOFinancialProofing.Models.User", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("FALOFinancialProofing.Models.UserSDG", b =>
                 {
                     b.HasOne("FALOFinancialProofing.Models.SDG", "SDG")
@@ -1643,9 +1658,9 @@ namespace FALOFinancialProofing.Migrations
                     b.Navigation("ApproveProcess");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.RoleClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.Role", null)
+                    b.HasOne("FALOFinancialProofing.Models.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1665,21 +1680,6 @@ namespace FALOFinancialProofing.Migrations
                 {
                     b.HasOne("FALOFinancialProofing.Models.User", null)
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.Role", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FALOFinancialProofing.Models.User", null)
-                        .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1767,6 +1767,11 @@ namespace FALOFinancialProofing.Migrations
             modelBuilder.Entity("FALOFinancialProofing.Models.RequestType", b =>
                 {
                     b.Navigation("RequestForms");
+                });
+
+            modelBuilder.Entity("FALOFinancialProofing.Models.Role", b =>
+                {
+                    b.Navigation("UserRoles");
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.SDG", b =>
