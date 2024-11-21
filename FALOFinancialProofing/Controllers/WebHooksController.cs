@@ -88,7 +88,9 @@ namespace FALOFinancialProofing.Controllers
             {
                 string format = "yyyy-MM-dd HH:mm:ss";
                 string descriptionPatern = "^(C[0-9]+CC[0-9]+Q){1}$";
-                Regex regex = new Regex(descriptionPatern);
+                string moneyOutDescriptionPatern = "^(C[0-9]+C){1}$";
+                Regex moneyInRegex = new Regex(descriptionPatern);
+                Regex moneyOutRegex = new Regex(moneyOutDescriptionPatern);
                 foreach (var transaction in item.data)
                 {
                     var transactionLogByCassoTransactionId = await _transactionLogService.GetTransactionLogByCassoTransactionIdAsync(transaction.id);
@@ -104,12 +106,19 @@ namespace FALOFinancialProofing.Controllers
                     string description = null;
                     foreach (var stringItem in stringSplit)
                     {
-                        Match match = regex.Match(stringItem);
+                        Match match = moneyInRegex.Match(stringItem);
                         if (match.Success)
                         {
                             description = stringItem;
                             break;
                         }
+                        match = moneyOutRegex.Match(stringItem);
+                        if (match.Success)
+                        {
+                            description = stringItem;
+                            break;
+                        }
+
                     }
                     if (description == null)
                     {
@@ -139,6 +148,25 @@ namespace FALOFinancialProofing.Controllers
                         // cap nhat trang thai cua qr
                         createQrCode.IsPaid = true;
                         await _createQrCodeService.UpdateCreateQrCodeAsync(createQrCode);
+                    }
+                    else if (int.TryParse(descriptionSplit[1], out int CampaignMoneyOutId))
+                    {
+                        var campaign = await _campaignService.GetCampaignByCampaignIdAsync(CampaignMoneyOutId);
+                        if (campaign == null)
+                        {
+                            continue;
+                        }
+                        // lưu vào transactionlog
+                        TransactionLog transactionLog = new TransactionLog()
+                        {
+                            Amount = transaction.amount,
+                            CampaignId = campaign.Id,
+                            Description = description,
+                            TransactionDate = DateTime.ParseExact(transaction.when, format, CultureInfo.InvariantCulture),
+                            CassoTransactionId = transaction.id,
+                            tid = transaction.tid
+                        };
+                        await _transactionLogService.CreateTransactionLogAsync(transactionLog);
                     }
                     else
                     {

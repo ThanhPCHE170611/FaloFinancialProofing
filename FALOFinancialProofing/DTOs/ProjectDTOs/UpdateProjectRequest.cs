@@ -7,6 +7,7 @@ namespace FALOFinancialProofing.DTOs.ProjectDTOs
     {
         public int ProjectId { get; set; }
         public string UserId { get; set; }
+        public string RoleId { get; set; }
         [Required]
         [StringLength(100, MinimumLength = 8, ErrorMessage = "Title must be at least 8 and max 100 characters")]
         public string ProjectName { get; set; }

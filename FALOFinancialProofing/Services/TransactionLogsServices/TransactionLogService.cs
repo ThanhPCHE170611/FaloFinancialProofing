@@ -123,7 +123,7 @@ namespace FALOFinancialProofing.Services.TransactionLogsServices
             try
             {
                 userTransaction = await _transactionLogRepository.GetAll()
-                   .Where(u => u.CampaignId == campaignId)
+                   .Where(u => u.CampaignId == campaignId && u.Amount >= 0)
                    .Select(u => new UserTransactionHistory()
                    {
                        UserId = u.CreateQrCode.UserId,
