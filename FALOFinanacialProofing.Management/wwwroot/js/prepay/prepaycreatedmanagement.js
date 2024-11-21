@@ -256,7 +256,7 @@ $(document).ready(function () {
                     prepayRequests.forEach((request, index) => {
                         const statusClass = request.status === "Approved" ? "bg-gradient-success" :
                             request.status === "Rejected" ? "bg-gradient-danger" :
-                                request.status === "Cancel" ? "bg-gradient-Cancel" :
+                                request.status === "Cancel" ? "bg-gradient-secondary" :
                                 "bg-gradient-warning";
                         const statusLabel = `<span class="badge badge-sm ${statusClass}">${request.status}</span>`;
 

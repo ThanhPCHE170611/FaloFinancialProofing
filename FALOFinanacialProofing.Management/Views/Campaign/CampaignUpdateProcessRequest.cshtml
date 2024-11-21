@@ -97,7 +97,7 @@
             return;
         }
 
-        if (isValid && (!description || description.length < 8)) {
+        if (!description || description.length < 8) {
             alert('Description must be at least 8 characters long.');
             document.getElementById('description').focus();
             return;

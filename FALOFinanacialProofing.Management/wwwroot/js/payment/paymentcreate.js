@@ -138,13 +138,13 @@ $(document).ready(function () {
             return;
         }
 
-        if (isValid && (!description || description.length < 10)) {
+        if (!description || description.length < 10) {
             alert('Description is required and must be at least 10 characters long.');
             $('#description').focus();
             return;
         }
 
-        if (isValid && !assignFrom) {
+        if (!assignFrom) {
             alert('Assign From is required.');
             $('#assignFrom').focus();
             return;
