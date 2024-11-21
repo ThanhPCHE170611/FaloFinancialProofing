@@ -55,7 +55,7 @@
                             <div id="save-btn">
                                 <button type="button" class="btn btn-warning btn-lg" onclick="sendRequest()">Send</button>
                                 <div>
-                                    <a href="/Project/ProjectRequestManagement" class="btn btn-success btn-lg" style="margin-left:10px">Cancel</a>
+                                    <a href="/Campaign/CampaignManagement" class="btn btn-success btn-lg" style="margin-left:10px">Cancel</a>
                                 </div>
                             </div>
                         </div>
@@ -126,6 +126,7 @@
                 const responseData = await response.json();
                 console.log('Request successful:', responseData);
                 alert('Request sent successfully!');
+                window.location.href = `/Campaign/CampaignUpdateProcessManagement`;
             } else {
                 const errorData = await response.json();
                 console.error('Error:', errorData);

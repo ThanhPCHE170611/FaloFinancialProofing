@@ -134,15 +134,6 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="attachments" class="form-label">Attachments</label>
-                                <input type="file" class="form-control" id="attachments" multiple>
-                                <ul id="fileList">
-                                    <li><a href="../assets/docs/company-brochure.pdf" download>company-brochure.pdf</a></li>
-                                    <li><a href="../assets/docs/annual-report.pdf" download>annual-report.pdf</a></li>
-                                </ul>
-                            </div>
-
-                            <div class="mb-3">
                                 <label for="bio" class="form-label">Bio</label>
                                 <textarea class="form-control" id="bio" rows="3">A global leader in tech innovation and digital transformation.</textarea>
                             </div>
@@ -157,7 +148,87 @@
         </form>
     </div>
 
-    <script>
+
+</body>
+
+</html>
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // function previewLogo() {
+    //     const file = document.getElementById('organizationLogo').files[0];
+    //     const preview = document.getElementById('logoPreview');
+    //     preview.innerHTML = '';
+    //     if (file) {
+    //         const reader = new FileReader();
+    //         reader.onload = function (e) {
+    //             const img = document.createElement('img');
+    //             img.src = e.target.result;
+    //             preview.appendChild(img);
+    //         };
+    //         reader.readAsDataURL(file);
+    //     }
+    // }
+    $(document).ready(function () {
+        const jwtToken = localStorage.getItem('jwtToken');
+        const orgId = new URLSearchParams(window.location.search).get('orgId');
+        const userId = localStorage.getItem('userId');
+
+        if (!jwtToken || !orgId) {
+            alert('JWT token or Organization ID is missing. Please log in again.');
+            return;
+        }
+
+        function fetchOrganizationDetails() {
+            $.ajax({
+                url: `https://localhost:7294/api/Organizations/GetOrganizationById/${orgId}`,
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                success: function (response) {
+                    if (response.success) {
+                        populateOrganizationDetails(response.data);
+                    } else {
+                        alert('Failed to fetch organization details: ' + response.message);
+                    }
+                },
+                error: function (errors) {
+                    alert('Error fetching organization details');
+                    console.error(errors);
+                }
+            });
+        }
+
+        function populateOrganizationDetails(data) {
+            $('#name').val(data.name);
+            $('#mainOffice').val(data.main_office);
+            $('#representative').val(data.representative);
+            $('#phoneNumber').val(data.phoneNumber);
+            $('#email').val(data.email);
+            $('#description').val(data.description);
+            $('#vision').val(data.vision);
+            $('#mission').val(data.mission);
+            $('#coreValue').val(data.coreValue);
+            $('#mainActivity').val(data.mainActivity);
+            $('#interests').val(data.interests);
+            $('#volunteerExperience').val(data.volunteerExperience);
+            $('#volunteerObjectives').val(data.volunteerObjectives);
+            $('#bio').val(data.bio);
+
+            const logoPreview = $('#logoPreview');
+            logoPreview.empty();
+            if (data.logo) {
+                const img = $('<img>').attr('src', data.logo).attr('alt', 'Organization Logo');
+                logoPreview.append(img);
+            }
+        }
+
         function previewLogo() {
             const file = document.getElementById('organizationLogo').files[0];
             const preview = document.getElementById('logoPreview');
@@ -172,22 +243,59 @@
                 reader.readAsDataURL(file);
             }
         }
+        $('#organizationLogo').on('change', previewLogo);
 
-        document.getElementById('attachments').addEventListener('change', function (e) {
-            const fileList = document.getElementById('fileList');
-            fileList.innerHTML = '';
-            Array.from(e.target.files).forEach(file => {
-                const li = document.createElement('li');
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(file);
-                a.textContent = file.name;
-                a.download = file.name;
-                li.appendChild(a);
-                fileList.appendChild(li);
+        $('#save-btn button').on('click', function (event) {
+            event.preventDefault();
+
+            const formData = new FormData();
+            formData.append('Id', orgId);
+            formData.append('UserId', userId);
+            formData.append('Name', $('#name').val());
+            formData.append('Main_office', $('#mainOffice').val());
+            formData.append('Representative', $('#representative').val());
+            formData.append('PhoneNumber', $('#phoneNumber').val());
+            formData.append('Email', $('#email').val());
+            formData.append('Description', $('#description').val());
+            formData.append('Vision', $('#vision').val());
+            formData.append('Mission', $('#mission').val());
+            formData.append('CoreValue', $('#coreValue').val());
+            formData.append('MainActivity', $('#mainActivity').val());
+            formData.append('Interests', $('#interests').val());
+            formData.append('VolunteerExperience', $('#volunteerExperience').val());
+            formData.append('VolunteerObjectives', $('#volunteerObjectives').val());
+            formData.append('Bio', $('#bio').val());
+            
+
+            const logoFile = document.getElementById('organizationLogo').files[0];
+            if (logoFile) {
+                formData.append('LogoFile', logoFile);
+            }
+
+            $.ajax({
+                url: `https://localhost:7294/api/Organizations/UpdateOrganization`,
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function (response) {
+                    if (response.success) {
+                        alert('Organization updated successfully!');
+                        fetchOrganizationDetails();
+                    } else {
+                        alert('Failed to update organization: ' + response.message);
+                    }
+                },
+                error: function (errors) {
+                    alert('Error updating organization');
+                    console.error(errors);
+                }
             });
         });
-    </script>
-</body>
 
-</html>
-
+        fetchOrganizationDetails();
+    });
+</script>

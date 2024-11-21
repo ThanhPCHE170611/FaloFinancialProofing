@@ -71,7 +71,7 @@
 
                 $('#registerMessage').text('');
 
-                const password = $('#password').val();
+                const password = $('#passwordRegister').val();
                 const confirmPassword = $('#confirmPassword').val();
 
                 if (password !== confirmPassword) {
@@ -81,7 +81,7 @@
                 const registerData = {
                     FirstName: $('#firstname').val(),
                     LastName: $('#lastname').val(),
-                    UserName: $('#username').val(),
+                    UserName: $('#usernameRegister').val(),
                     Email: $('#email').val(),
                     Password: password
                 };

@@ -14,7 +14,6 @@
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
     <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
     <style>
@@ -141,9 +140,9 @@
                             <table class="table align-items-center mb-0">
                                 <thead class="text-center">
                                     <tr>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STT</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">File</th>                                    
-                                        <th class="text-secondary text-secondary text-xxs font-weight-bolder opacity-7 text-center">Action</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">STT</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-center">File</th>                                    
+                                        <th class="text-secondary text-secondary text-xs font-weight-bolder opacity-7 text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="voucherTableBody" class="text-center">
@@ -251,6 +250,9 @@
                 if (response.success) {
                     document.getElementById('voucherTableBody').insertAdjacentHTML('beforeend', createTableRow(response.Data));
                     closeModal('createVoucherModal');
+                } else {
+                    closeModal('createVoucherModal');
+                    alert(response.message);
                 }
             },
             error: function (xhr, status, error) {
@@ -260,18 +262,52 @@
         });
     }
 
-            function createTableRow(accountingBook, index) {
+    function createTableRow(accountingBook, index) {
+        const showDeleteButton = checkrole === "Accounting";
         return `
             <tr>
-                <td>${index + 1}</td>
-                <td>${accountingBook.filePath}</td>
-                <td>
+                <td class="align-middle text-center">${index + 1}</td>
+                <td class="align-middle text-center">${accountingBook.filePath}</td>
+                <td class="align-middle text-center">
                     <button class="btn btn-success btn-sm" onclick="downloadFile(this,'${accountingBook.filePath}')">Download</button>
-                    <button class="btn btn-info btn-sm" onclick="showDetail(this)">Detail</button>
-                    <button class="btn btn-danger btn-sm" onclick="deleteRow(this)">Delete</button>
+                    ${showDeleteButton ? `<button class="btn btn-danger btn-sm" onclick="deleteRow(this, '${accountingBook.filePath}')">Delete</button>` : ''}
                 </td>
             </tr>
         `;
+    }
+    function deleteRow(button, fileName) {
+        const jwtToken = localStorage.getItem('jwtToken');
+        if (!jwtToken) {
+            alert('JWT token is missing. Please log in again.');
+            return;
+        }
+
+        if (confirm(`Are you sure you want to delete the accounting book: ${fileName}?`)) {
+            $.ajax({
+                url: `https://localhost:7294/api/AccountingBook/deleteaccountingbook/${fileName}`,
+                type: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                success: function (response) {
+                    if (response.success) {
+                        alert('Accounting book deleted successfully');
+                        $(button).closest('tr').remove();
+                        location.reload();
+                    } else {
+                        alert('Failed to delete accounting book: ' + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert('An error occurred while deleting the accounting book.');
+                    console.error('Error:', error);
+                }
+            });
+        }
+    }
+
+    function displayValue(value) {
+        return value ? value : 'N/A';
     }
 
     function fetchAccountingBooks() {

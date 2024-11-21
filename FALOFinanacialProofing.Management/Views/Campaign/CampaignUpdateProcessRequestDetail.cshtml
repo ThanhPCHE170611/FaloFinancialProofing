@@ -183,8 +183,11 @@
                                 'Authorization': `Bearer ${jwtToken}`
                             },
                             success: function (response) {
+                                if(response.success) {
                                     alert(response.message);
-                                    location.reload();
+                                    location.reload(); 
+                                } else {
+                                    alert(response.message);
                                 }
                             },
                             error: function (xhr, status, error) {

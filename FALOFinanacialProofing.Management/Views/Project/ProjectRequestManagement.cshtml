@@ -105,7 +105,7 @@
                 <div class="card my-4">
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
-                            <h6 class="text-white text-capitalize ps-3 mb-0">Project Management</h6>
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Project Registration Management</h6>
                             <div id="createRequestBtn">
                                 <a class="btn btn-dark mb-0 me-3" asp-area="" asp-controller="Project" asp-action="ProjectCreate">Create Project (Individual)</a>
                                 <a class="btn btn-dark mb-0 me-3" asp-area="" asp-controller="Project" asp-action="ProjectCreate">Create Project (Organization)</a>
@@ -463,8 +463,7 @@
                         if(request.status === "Rejected" || request.status === "Pending" || request.status === "Cancel") {
                             actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>`;
                         } else {
-                            actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>
-                                    <a class="btn btn-primary btn-sm" href="/Campaign/CampaignCreate?projectId=${request.projectId}">Campaign</a>`;
+                            actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>`;
                         }
                     } else {
                         actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>`;

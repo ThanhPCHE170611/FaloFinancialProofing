@@ -14,7 +14,6 @@
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
     <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
     <style>
@@ -93,8 +92,8 @@
                         <div class=" pt-4 pb-3 d-flex justify-content-between align-items-center">
                             <nav class="nav-tabs">
                                 <a asp-controller="Campaign" asp-action="CampaignDetail">Campaign Detail</a>
-                                <a asp-controller="Prepay" asp-action="PrepayManagement">Prepay Request</a>
-                                <a asp-controller="Payment" asp-action="PaymentManagement" >Payment Request</a>
+                                <a asp-controller="Prepay" asp-action="PrepayManagement">Created Prepay Request</a>
+                                <a asp-controller="Payment" asp-action="PaymentManagement">Created Payment Request</a>
                                 <a asp-controller="Prepay" asp-action="PrepayVoucher">Prepay Voucher</a>
                                 <a asp-controller="Payment" asp-action="PaymentVoucher" class="active">Payment Voucher</a>
                                 <a asp-controller="Accounting" asp-action="AccountingBookCampaign">Accounting Book</a>
@@ -182,7 +181,7 @@
 <script src="../assets/js/core/bootstrap.min.js"></script>
 <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
 <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     function showCreateVoucherPopup() {
         document.getElementById('createVoucherModal').style.display = 'block';
@@ -264,6 +263,5 @@
         }
     }
 </script>
-<script async defer src="https://buttons.github.io/buttons.js"></script>
-<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+
 

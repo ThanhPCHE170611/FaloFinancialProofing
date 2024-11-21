@@ -8,12 +8,9 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
-    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
     <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
     <style>
@@ -108,6 +105,26 @@
             border-radius: 4px;
             cursor: pointer;
         }
+
+        .search-filter-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .search-box {
+            width: 70%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .filter-box {
+            width: 25%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
     </style>
 </head>
 
@@ -119,7 +136,7 @@
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="pt-4 pb-3 d-flex justify-content-between align-items-center">
                             <nav class="nav-tabs" id="navTabs">
-                                <a asp-controller="Campaign" asp-action="CampaignDetail" >Campaign Detail</a>
+                                <a asp-controller="Project" asp-action="ProjectDetail" >Project Detail</a>
                                 <a asp-controller="Accounting" asp-action="AccountingBookProject" class="active">Accounting Book</a>
 
                             </nav>
@@ -127,17 +144,20 @@
                     </div>
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
-                            <h6 class="text-white text-capitalize ps-3 mb-0">Accounting Book</h6>
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Accounting Book Project</h6>
                         </div>
+                    </div>
+                    <div class="search-filter-container px-3">
+                        <input type="text" id="searchInput" placeholder="Search by Name" class="search-box" />
                     </div>
                     <div class="card-body px-0 pb-2">
                         <div class="table-responsive p-0">
                             <table class="table align-items-center mb-0">
                                 <thead class="text-center">
                                     <tr>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STT</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">File</th>                                    
-                                        <th class="text-secondary text-secondary text-xxs font-weight-bolder opacity-7 text-center">Action</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-center">STT</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-center">File</th>                                    
+                                        <th class="text-secondary text-secondary text-xs font-weight-bolder opacity-7 text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="voucherTableBody" class="text-center">
@@ -146,6 +166,9 @@
                         </div>
                     </div>
 
+                </div>
+                <div class="pagination-container text-center mt-4">
+                    <div id="pagination"></div>
                 </div>
             </div>
         </div>
@@ -180,41 +203,15 @@
 <script src="../assets/js/core/bootstrap.min.js"></script>
 <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
 <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
 <script>
     const checkrole = localStorage.getItem('loggingRole');
-    const campaignId = localStorage.getItem('campaignId');
+    const projectId = localStorage.getItem('projectId');
     const navTabs = document.getElementById('navTabs');
     const userId = localStorage.getItem('userId');
     const jwtToken = localStorage.getItem('jwtToken');
-    console.log(campaignId);
-
-    if(checkrole === "Accounting") {
-        const upload = document.getElementById('btnupload');
-        upload.style.display = 'none';
-    }
-
-    if (checkrole && checkrole !== 'Volunteer') {
-        const newLink = document.createElement('a');
-        newLink.setAttribute('asp-controller', 'Prepay');
-        newLink.setAttribute('asp-action', 'PrepayManagement_PM');
-        newLink.textContent = 'Prepay Created Request';
-
-        const newLink2 = document.createElement('a');
-        newLink2.setAttribute('asp-controller', 'Payment');
-        newLink2.setAttribute('asp-action', 'PaymentManagement_PM');
-        newLink2.textContent = 'Payment Created Request';
-
-        const url = new URL(`/Prepay/PrepayManagement_PM`, window.location.origin);
-
-
-        const url2 = new URL(`/Payment/PaymentManagement_PM`, window.location.origin);
-
-        newLink.href = url.toString();
-        newLink2.href = url2.toString();
-        navTabs.appendChild(newLink);
-        navTabs.appendChild(newLink2);
-    }
+    console.log(projectId);
     function showCreateVoucherPopup() {
         document.getElementById('createVoucherModal').style.display = 'block';
     }
@@ -255,23 +252,11 @@
         });
     }
 
-            function createTableRow(accountingBook, index) {
-        return `
-            <tr>
-                <td>${index + 1}</td>
-                <td>${accountingBook.filePath}</td>
-                <td>
-                    <button class="btn btn-success btn-sm" onclick="downloadFile(this,'${accountingBook.filePath}')">Download</button>
-                    <button class="btn btn-info btn-sm" onclick="showDetail(this)">Detail</button>
-                    <button class="btn btn-danger btn-sm" onclick="deleteRow(this)">Delete</button>
-                </td>
-            </tr>
-        `;
-    }
-
+    let currentPage = 1;
+    let searchInput = '';
     function fetchAccountingBooks() {
         $.ajax({
-            url: `https://localhost:7294/api/AccountingBook/getallaccountingbookinproject?projectId=${campaignId}`,
+            url: `https://localhost:7294/api/AccountingBook/getallaccountingbookinproject?projectId=${projectId}&name=${searchInput}&page=${currentPage}`,
             type: 'GET',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -280,7 +265,8 @@
                 console.log('API Response:', response);
                 if (response.success) {
                     console.log('Data:', response.data);
-                    populateTable(response.data);
+                    populateTable(response.data.data);
+                    setupPagination(response.data.totalRecords, response.data.page);
                 } else {
                     const tableBody = $('#voucherTableBody');
                     tableBody.empty();
@@ -298,36 +284,49 @@
         const tableBody = $('#voucherTableBody');
         tableBody.empty();
 
-        if (typeof data === 'object' && data !== null) {
-            tableBody.append(createTableRow(data, 0));
-        } else {
-            tableBody.append('<tr><td colspan="3" class="text-center">No accounting books found</td></tr>');
-        }
+        data.forEach((accountingBook, index) => {
+            const row = `
+                <tr>
+                    <td class="align-middle text-center">${index + 1}</td>
+                    <td class="align-middle text-center">${accountingBook.filePath}</td>
+                    <td class="align-middle text-center">
+                        <button class="btn btn-success btn-sm" onclick="downloadFile(this, '${accountingBook.filePath}')">Download</button>
+                    </td>
+                </tr>
+            `;
+            tableBody.append(row);
+        });
     }
 
+
     function downloadFile(button, fileName) {
+        console.log(jwtToken);  
         $.ajax({
             url: `https://localhost:7294/api/AccountingBook/downloadaccountingbook/${fileName}`,
             type: 'GET',
+            xhrFields: {
+                responseType: 'blob' 
+            },
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
             },
-            xhrFields: {
-                responseType: 'blob'
-            },
             success: function (data, status, xhr) {
-                const downloadUrl = window.URL.createObjectURL(data);
+                const downloadUrl = window.URL.createObjectURL(data); 
                 const a = document.createElement('a');
                 a.href = downloadUrl;
-                a.download = fileName;
+                a.download = fileName; 
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
                 window.URL.revokeObjectURL(downloadUrl);
             },
             error: function (xhr, status, error) {
-                alert('An error occurred while downloading the file.');
-                console.error('Error:', error);
+                if (xhr.status === 401) {
+                    alert('Unauthorized: Please log in again.');
+                } else {
+                    alert('An error occurred while downloading the file.');
+                    console.error('Error:', error);
+                }
             }
         });
     }
@@ -344,6 +343,30 @@
             closeModal('detailModal');
         }
     };
+    function setupPagination(totalRecords, currentPage) {
+        const totalPages = Math.ceil(totalRecords / 5);
+        const paginationContainer = $('#pagination');
+        paginationContainer.empty();
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = `
+                <button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}"
+                        onclick="goToPage(${i})">${i}</button>
+            `;
+            paginationContainer.append(pageButton);
+        }
+    }
+
+    function goToPage(page) {
+        currentPage = page;
+        fetchAccountingBooks();
+    }
+
+    $('#searchInput').on('keyup', function () {
+        searchInput = $(this).val().trim();
+        currentPage = 1; 
+        fetchAccountingBooks();
+    });
 
     fetchAccountingBooks();
 </script>

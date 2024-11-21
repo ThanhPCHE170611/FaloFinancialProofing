@@ -1,0 +1,255 @@
+﻿@{
+    ViewData["Title"] = "OrganizationManagement";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <style>
+        .search-filter-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .search-box {
+            width: 70%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .filter-box {
+            width: 25%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .table th, .table td {
+            text-align: center;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content{
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+            .close:hover,
+            .close:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Project Management Board List</h6>
+                        </div>
+                    </div>
+                    <div class="search-filter-container px-3">
+                        <input type="text" id="searchInput" placeholder="Search by Name" class="search-box" />
+                    </div>
+                    <div class="card-body px-0 pb-2">
+                        <div class="table-responsive p-0">
+                            <table class="table align-items-center mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STT</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Email</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Phone Number</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="accountList">
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="pagination-container text-center mt-4">
+                    <div id="paginationControls"></div>
+                </div>
+            </div>
+        </div>
+        <div id="detailModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h3>Project Management Board Contact</h3>
+                <div id="memberDetailContent"></div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
+
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+      var options = {
+        damping: '0.5'
+      }
+      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+
+    function displayValue(value) {
+        return value ? value : 'N/A';
+    }
+
+    function showDetail(button) {
+        const row = button.closest('tr');
+        const name = row.querySelector('h6').innerText;
+        const email = row.cells[2].innerText;
+        const phoneNumber = row.cells[3].innerText;
+
+        const detailContent = `
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Phone Number:</strong> ${phoneNumber}</p>
+        `;
+
+        document.getElementById('memberDetailContent').innerHTML = detailContent;
+        document.getElementById('detailModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('detailModal').style.display = 'none';
+    }
+
+    $(document).ready(function () {
+        const jwtToken = localStorage.getItem('jwtToken');
+        if (!jwtToken) {
+            alert('JWT token is missing. Please log in again.');
+            return;
+        }
+
+        let currentPage = 1;
+        let searchInput = '';
+
+        function fetchAccountList() {
+            $.ajax({
+                url: `https://localhost:7294/api/Users/GetPMBAccountList?searchInput=${encodeURIComponent(searchInput)}&currentPage=${currentPage}`,
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                success: function (response) {
+                    if (response.success) {
+                        renderAccountTable(response.data.data);
+                        setupPagination(response.data);
+                    } else {
+                        alert('Failed to fetch accounts: ' + response.message);
+                    }
+                },
+                error: function (errors) {
+                    alert('Error fetching account list');
+                    console.error(errors);
+                }
+            });
+        }
+
+        function renderAccountTable(accounts) {
+            const tableBody = $('#accountList');
+            tableBody.empty();
+
+
+            accounts.forEach((account, index) => {
+                
+                const row = `
+                    <tr data-user-id="${account.id}">
+                        <td class="text-center align-middle"><span class="text-xs font-weight-bold">${index + 1}</span></td>
+                        <td class="text-center align-middle">
+                            <div class="d-flex px-2 py-1">
+                                <div>
+                                    <img src="${account.image}" class="avatar avatar-sm me-3 border-radius-lg" alt="profile image" />
+                                </div>
+                                <div class="d-flex flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm">${account.firstName} ${account.lastName}</h6>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center align-middle"><p class="text-xs font-weight-bold mb-0">${displayValue(account.email)}</p></td>
+                        <td class="text-center align-middle"><p class="text-xs font-weight-bold mb-0">${displayValue(account.phoneNumber)}</p></td>
+                        <td class="text-center align-middle">
+                            <button class="btn btn-info btn-sm" onclick="showDetail(this)">Detail</button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.append(row);
+            });
+        }
+        function displayValue(value) {
+            return value ? value : 'N/A';
+        }
+        function setupPagination(data) {
+            $('#paginationControls').empty();
+            const totalPages = Math.ceil(data.dataCount / 5);
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = `<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}" onclick="goToPage(${i})">${i}</button>`;
+                $('#paginationControls').append(pageButton);
+            }
+        }
+        $('#searchInput').on('keyup', function () {
+            searchInput = $(this).val().trim();
+            currentPage = 1;
+            fetchAccountList();
+        });
+
+        fetchAccountList();
+    });
+    function goToPage(page) {
+        currentPage = page;
+        fetchAccountList();
+    }
+    window.goToPage = goToPage;
+
+</script>
