@@ -43,6 +43,7 @@ $(document).ready(function () {
     <p><strong>Create Date:</strong> ${new Date(data.createAt).toLocaleDateString()}</p>
     <p><strong>Expected Money:</strong> ${data.expectedMoney.toLocaleString()} VND</p>
     <p><strong>Description:</strong> ${data.description}</p>
+    <p><strong>Feed Back:</strong> ${safeValue(data.feedBack)}</p>
     `);
 
                 if (data.attachmentFiles && data.attachmentFiles.length > 0) {
@@ -131,3 +132,7 @@ $(document).ready(function () {
         }
     });
 });
+function safeValue(value, defaultValue = 'N/A') {
+    return value ? value : defaultValue;
+}
+

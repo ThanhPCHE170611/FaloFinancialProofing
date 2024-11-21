@@ -230,10 +230,11 @@ $(document).ready(function () {
 
         return formattedDate + ' ' + formattedTime;
     }
-
+    let searchEmail = '';
+    let filterStatus = '';
     function loadPrepayRequests(page) {
         $.ajax({
-            url: `https://localhost:7294/api/RequestForm/getallpaymentrequestincampaign/${campaignId}?userId=${userId}&page=${page}`,
+            url: `https://localhost:7294/api/RequestForm/getallpaymentrequestincampaign/${campaignId}?userId=${userId}&page=${page}&status=${filterStatus}&createdByEmail=${searchEmail}`,
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -315,7 +316,17 @@ $(document).ready(function () {
             paginationContainer.append(pageButton);
         }
     }
+    $('#searchBox').on('keyup', function () {
+        searchEmail = $(this).val().trim();
+        currentPage = 1;
+        loadPrepayRequests(currentPage);
+    });
 
+    $('#statusFilter').on('change', function () {
+        filterStatus = $(this).val();
+        currentPage = 1;
+        loadPrepayRequests(currentPage);
+    });
     window.changePage = function (page) {
         currentPage = page;
         loadPrepayRequests(page);

@@ -525,7 +525,8 @@ $(document).ready(function () {
     }
 
     
-
+    let searchEmail = ''; 
+    let filterStatus = ''; 
 
     function loadPrepayRequests(page) {
         let apiUrl;
@@ -542,7 +543,7 @@ $(document).ready(function () {
             default:
                 break;
         }
-
+        apiUrl += `&status=${filterStatus}&createdByEmail=${searchEmail}`;
         $.ajax({
             url: apiUrl,
             method: 'GET',
@@ -648,6 +649,19 @@ $(document).ready(function () {
             paginationContainer.append(pageButton);
         }
     }
+
+    $('#searchBox').on('keyup', function () {
+        searchEmail = $(this).val().trim();
+        currentPage = 1;
+        loadPrepayRequests(currentPage);
+    });
+
+    $('#statusFilter').on('change', function () {
+        filterStatus = $(this).val();
+        currentPage = 1;
+        loadPrepayRequests(currentPage);
+    });
+
 
     window.changePage = function (page) {
         currentPage = page;
