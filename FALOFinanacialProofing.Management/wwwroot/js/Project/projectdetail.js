@@ -71,26 +71,45 @@ document.addEventListener('DOMContentLoaded', function () {
         updateBtn.addEventListener('click', function () {
             const updateData = prepareUpdateData();
 
-            fetch(`https://localhost:7294/api/Projects/UpdateProject`, {
-                method: 'PUT',
+            $.ajax({
+                url: 'https://localhost:7294/api/Projects/UpdateProject',
+                type: 'PUT',
                 headers: {
-                    'Authorization': `Bearer ${jwtToken}`,
+                    'Authorization': `Bearer ${jwtToken}`
                 },
-                body: updateData
-            })
-                .then(response => response.json())
-                .then(data => {
+                data: updateData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
                     if (data.success) {
                         alert('Project updated successfully!');
                         location.reload();
                     } else {
                         alert('Failed to update project: ' + data.message);
                     }
-                })
-                .catch(() => alert('Error updating project'));
+                },
+                error: function (xhr, status, error) {
+                    alert('Error updating project: ' + xhr.responseText || status);
+                }
+            });
         });
     }
+    function prepareUpdateData() {
+        const formData = new FormData();
+        formData.append('ProjectId', projectId);
+        formData.append('UserId', userId);
+        formData.append('RoleId', roleid);
+        formData.append('projectName', document.getElementById('projectName').value);
+        formData.append('Description', quill.getText());
+        if (uploadedImage) {
+            formData.append('LogoFile', uploadedImage);
+        }
+        formData.append('Status', document.getElementById('projectProcess').value);
+        formData.append('isActive', document.getElementById('projectStatus').value);
 
+
+        return formData;
+    }
 
     function populateProjectDetails(project) {
         document.getElementById('projectName').value = project.projectName;
@@ -114,22 +133,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     loadProjectDetails();
 });
-function prepareUpdateData() {
-    const formData = new FormData();
-    formData.append('ProjectId', projectId);
-    formData.append('UserId', userId);
-    formData.append('RoleId', roleid);
-    formData.append('projectName', document.getElementById('projectName').value);
-    formData.append('Description', quill.getText());
-    if (uploadedImage) {
-        formData.append('LogoFile', uploadedImage);
-    }
-    formData.append('Status', document.getElementById('projectProcess').value);
-    formData.append('isActive', document.getElementById('projectStatus').value);
-    
 
-    return formData;
-}
 projectImageInput.addEventListener('change', function (event) {
     const file = event.target.files[0];
     if (file) {
