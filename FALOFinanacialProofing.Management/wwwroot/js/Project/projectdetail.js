@@ -27,6 +27,8 @@ const userId = localStorage.getItem('userId');
 const projectId = localStorage.getItem('projectId');
 const jwtToken = localStorage.getItem('jwtToken');
 const checkrole = localStorage.getItem('loggingRole');
+const roleid = localStorage.getItem('loggingRoleId');
+
 document.addEventListener('DOMContentLoaded', function () {
     const jwtToken = localStorage.getItem('jwtToken');
     const checkrole = localStorage.getItem('loggingRole');
@@ -59,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
         updateBtn.id = 'update-btn';
         saveBtnContainer.appendChild(updateBtn);
 
-        const fieldsToWatch = ['projectName', 'projectProcess', 'projectStatus','editor-container'];
+        const fieldsToWatch = ['projectName', 'projectProcess', 'projectStatus', 'editor-container','choseImage'];
         fieldsToWatch.forEach(id => {
             document.getElementById(id).addEventListener('input', () => {
                 updateBtn.disabled = false;
@@ -110,14 +112,13 @@ document.addEventListener('DOMContentLoaded', function () {
         //displayFiles(files);
 
     }
-
-
     loadProjectDetails();
 });
 function prepareUpdateData() {
     const formData = new FormData();
     formData.append('ProjectId', projectId);
     formData.append('UserId', userId);
+    formData.append('RoleId', roleid);
     formData.append('projectName', document.getElementById('projectName').value);
     formData.append('Description', quill.getText());
     if (uploadedImage) {

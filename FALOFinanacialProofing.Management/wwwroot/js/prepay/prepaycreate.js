@@ -125,7 +125,7 @@ $(document).ready(function () {
         const assignFrom = $('#assignFrom').val();
         const description = $('#description').val();
         const files = $('#attachments')[0].files;
-
+        const vouchers = $('#vouchers')[0].files;
         if (!expectedMoney || !description) {
             alert('Please fill in all required fields.');
             return;
@@ -161,7 +161,12 @@ $(document).ready(function () {
         Array.from(files).forEach(file => {
             formData.append('UploadFiles', file);
         });
-
+        if (checkrole === "Accounting") {
+            Array.from(vouchers).forEach(voucher => {
+                console.log("abcxy" + voucher);
+                formData.append('VoucherFile', voucher);
+            });
+        }
         console.log(assignFrom);
         console.log(userId);
         console.log(expectedMoney);

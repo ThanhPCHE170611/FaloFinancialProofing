@@ -248,8 +248,9 @@
             success: function (response) {
                 alert(response.message);
                 if (response.success) {
-                    document.getElementById('voucherTableBody').insertAdjacentHTML('beforeend', createTableRow(response.Data));
+                    // document.getElementById('voucherTableBody').insertAdjacentHTML('beforeend', createTableRow(response.Data));
                     closeModal('createVoucherModal');
+                    location.reload();
                 } else {
                     closeModal('createVoucherModal');
                     alert(response.message);

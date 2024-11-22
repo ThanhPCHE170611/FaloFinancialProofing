@@ -157,16 +157,15 @@
             data.forEach((item, index) => {
                 console.log(item.campaignId);
                 let actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId})" class="btn btn-info btn-sm detail-btn">Detail</button>`;
-                let campaignName =`${item.title}`;
+                let campaignName =`${item.campaignTitle}`;
                 if(checkrole === "Project Manager") {
                     actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId})" class="btn btn-info btn-sm detail-btn">Detail</button>
                                         <button class="btn btn-primary btn-sm" onclick="changeCampaignUpdateProcess(this, ${item.campaignId})">Update Process</a>
                     `;
-                    
-                } else {
-                    campaignName = `${item.campaignTitle}`;
                 }
-                
+                if(checkrole === "Project Management Board") {
+                    campaignName =`${item.title}`;
+                }
                 const row = `
                     <tr>
                         <td class="align-middle text-center text-sm">${index + 1}</td>

@@ -264,9 +264,15 @@
             success: function (response) {
                 console.log('API Response:', response);
                 if (response.success) {
-                    console.log('Data:', response.data);
-                    populateTable(response.data.data);
-                    setupPagination(response.data.totalRecords, response.data.page);
+                    if(response.message === 'Accounting books not found') {
+                        const tableBody = $('#voucherTableBody');
+                        tableBody.empty();
+                        tableBody.append('<tr><td colspan="3" class="text-center">No accounting books found</td></tr>');
+                    } else {
+                        console.log('Data:', response.data);
+                        populateTable(response.data.data);
+                        setupPagination(response.data.totalRecords, response.data.page);
+                    }  
                 } else {
                     const tableBody = $('#voucherTableBody');
                     tableBody.empty();
