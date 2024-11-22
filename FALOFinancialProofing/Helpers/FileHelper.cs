@@ -73,7 +73,8 @@ namespace FALOFinancialProofing.Helpers
                 { ".jpg", "image/jpeg" },
                 { ".jpeg", "image/jpeg" },
                 { ".gif", "image/gif" },
-                { ".csv", "text/csv" }
+                { ".csv", "text/csv" },
+                { ".zip", "application/zip" }
             };
 
             var ext = Path.GetExtension(path).ToLowerInvariant();
