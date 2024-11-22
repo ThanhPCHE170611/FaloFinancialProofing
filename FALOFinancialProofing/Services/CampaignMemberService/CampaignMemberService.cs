@@ -250,6 +250,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             try
             {
                 return await cmRepository.GetAll(x => x.UserId.Equals(userid))
+                    .Include(cm => cm.Role)
                     .FirstOrDefaultAsync();
             }
             catch (Exception e)
