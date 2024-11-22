@@ -254,7 +254,8 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
         {
             try
             {
-                return await cmRepository.Get(x => x.UserId.Equals(userid));
+                return await cmRepository.GetAll(x => x.UserId.Equals(userid))
+                    .FirstOrDefaultAsync();
             }
             catch (Exception e)
             {

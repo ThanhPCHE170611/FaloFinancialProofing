@@ -626,6 +626,16 @@ namespace FALOFinancialProofing.Controllers
                         Message = "Approve action cannot be done " + message.ToString()
                     });
                 }
+                // calculate debt for request user
+                var campaignMember = await campaignMemberService.GetCampaignMemberByUserIdAsync(requestForm.CreatedBy);
+                if (campaignMember == null)
+                {
+                    return Ok(new
+                    {
+                        Success = false,
+                        Message = "Campaign Member not found"
+                    });
+                }
                 var aproveProcess = await approveProcessServices.GetApproveProcessesByRequestIdAndApproveIdAsync(requestid, userid);
 
                 var updateRequestForm = new RequestFormDTO
@@ -646,16 +656,6 @@ namespace FALOFinancialProofing.Controllers
                     {
                         Success = false,
                         Message = "Cannot update Request Form"
-                    });
-                }
-                // calculate debt for request user
-                var campaignMember = await campaignMemberService.GetCampaignMemberByUserIdAsync(requestForm.CreatedBy);
-                if (campaignMember == null)
-                {
-                    return Ok(new
-                    {
-                        Success = false,
-                        Message = "Campaign Member not found"
                     });
                 }
                 var updateCampaignMember = (requestForm.TypeId == IntConstant.PrePayRequestType ?
@@ -761,8 +761,18 @@ namespace FALOFinancialProofing.Controllers
                     Message = "Approve action cannot be done " + message.ToString()
                 });
             }
-            // update status for request form
             var requestForm = await requestFormServices.GetRequestFormByIdAsync(requestid);
+            // calculate debt for request user
+            var campaignMember = await campaignMemberService.GetCampaignMemberByUserIdAsync(requestForm.CreatedBy);
+            if (campaignMember == null)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "Campaign Member not found"
+                });
+            }
+            // update status for request form
             var updateRequestForm = new RequestFormDTO
             {
                 Id = requestForm.Id,
@@ -783,16 +793,7 @@ namespace FALOFinancialProofing.Controllers
                     Message = "Cannot update Request Form"
                 });
             }
-            // calculate debt for request user
-            var campaignMember = await campaignMemberService.GetCampaignMemberByUserIdAsync(requestForm.CreatedBy);
-            if (campaignMember == null)
-            {
-                return Ok(new
-                {
-                    Success = false,
-                    Message = "Campaign Member not found"
-                });
-            }
+            
 
             var updateCampaignMember = requestForm.TypeId == IntConstant.PrePayRequestType ? new UpdateCampaignMemberDTO
             {
