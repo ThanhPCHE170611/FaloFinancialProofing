@@ -347,7 +347,7 @@ namespace FALOFinancialProofing.Services.ProjectServices
                 checkValid = await _projectRepository.UpdateAsync(project);
                 if (checkValid && !project.IsActive)
                 {
-                    var campaigns = await _campaignRepository.GetAll(c => c.ProjectId == project.Id).ToListAsync();
+                    var campaigns = await _campaignRepository.GetAll(c => c.ProjectId == project.Id && c.IsActive).ToListAsync();
                     foreach (var item in campaigns)
                     {
                         item.IsActive = false;
