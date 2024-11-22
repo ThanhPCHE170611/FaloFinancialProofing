@@ -30,6 +30,7 @@ namespace FALOFinancialProofing.Controllers
             _campaignService = campaignService;
             _createQrCodeService = createQrCodeService;
             secure_token = configuration.GetSection("Authentication:Casso:secure_token").Value;
+            secure_token = "string";
         }
         // mẫu TransactionRequest
         [HttpPost("Create-Webhook")]

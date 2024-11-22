@@ -144,6 +144,20 @@ namespace FALOFinancialProofing.Controllers
                         Success = checkValid
                     });
                 }
+                updateOrganization.Name = updateOrganization.Name.Trim();
+                updateOrganization.Main_office = updateOrganization.Main_office.Trim();
+                updateOrganization.Representative = updateOrganization.Representative.Trim();
+                updateOrganization.PhoneNumber = updateOrganization.PhoneNumber.Trim();
+                updateOrganization.Email = updateOrganization.Email.Trim();
+                updateOrganization.Description = updateOrganization.Description.Trim();
+                updateOrganization.Vision = updateOrganization.Vision.Trim();
+                updateOrganization.Mission = updateOrganization.Mission.Trim();
+                updateOrganization.CoreValue = updateOrganization.CoreValue.Trim();
+                updateOrganization.MainActivity = updateOrganization.MainActivity.Trim();
+                updateOrganization.Interests = updateOrganization.Interests.Trim();
+                updateOrganization.VolunteerExperience = updateOrganization.VolunteerExperience.Trim();
+                updateOrganization.VolunteerObjectives = updateOrganization.VolunteerObjectives.Trim();
+                updateOrganization.Bio = updateOrganization.Bio.Trim();
                 checkValid = await _organizationService.UpdateOrganizationAsync(updateOrganization, message);
                 if (checkValid)
                     message.Append("Organization updated successfully!");
@@ -180,6 +194,20 @@ namespace FALOFinancialProofing.Controllers
                         Message = statusMessage.ToString()
                     });
                 }
+                createOrganization.Name = createOrganization.Name.Trim();
+                createOrganization.Main_office = createOrganization.Main_office.Trim();
+                createOrganization.Representative = createOrganization.Representative.Trim();
+                createOrganization.PhoneNumber = createOrganization.PhoneNumber.Trim();
+                createOrganization.Email = createOrganization.Email.Trim();
+                createOrganization.Description = createOrganization.Description.Trim();
+                createOrganization.Vision = createOrganization.Vision.Trim();
+                createOrganization.Mission = createOrganization.Mission.Trim();
+                createOrganization.CoreValue = createOrganization.CoreValue.Trim();
+                createOrganization.MainActivity = createOrganization.MainActivity.Trim();
+                createOrganization.Interests = createOrganization.Interests.Trim();
+                createOrganization.VolunteerExperience = createOrganization.VolunteerExperience.Trim();
+                createOrganization.VolunteerObjectives = createOrganization.VolunteerObjectives.Trim();
+                createOrganization.Bio = createOrganization.Bio.Trim();
                 createOrganizationResult = await _organizationService.CreateOrganizationAsync(createOrganization, statusMessage);
                 if (createOrganizationResult == null)
                 {

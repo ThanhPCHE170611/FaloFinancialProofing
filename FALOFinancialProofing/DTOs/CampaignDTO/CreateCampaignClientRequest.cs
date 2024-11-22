@@ -10,7 +10,7 @@ namespace FALOFinancialProofing.DTOs.CampaignDTO
         [Required]
         public int ProjectId { get; set; }
         [Required]
-        [StringLength(100, MinimumLength = 8, ErrorMessage = "Title must be at least 8 and max 100 characters")]
+        [StringLength(200, MinimumLength = 8, ErrorMessage = "Title must be at least 8 and max 200 characters")]
         public string Title { get; set; }
         [Required]
         [MinLength(8, ErrorMessage = "Description must be at least 8 characters")]

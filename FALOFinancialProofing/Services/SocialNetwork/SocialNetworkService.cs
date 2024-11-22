@@ -22,6 +22,7 @@ namespace FALOFinancialProofing.Services.SocialNetworkService
         {
             try
             {
+                socialNetworkRequest.SocialNetworksLink = socialNetworkRequest.SocialNetworksLink?.Trim();
                 var newsocialNetwork = await SocialNetworkDTOToEntity(socialNetworkRequest);
                 return await socialNetworksRepository.InsertAsync(newsocialNetwork);
             }
@@ -122,6 +123,7 @@ namespace FALOFinancialProofing.Services.SocialNetworkService
         {
             try
             {
+                socialNetworkRequest.SocialNetworksLink = socialNetworkRequest.SocialNetworksLink?.Trim();
                 var updatedSocialNetwork = await SocialNetworkDTOToEntity(socialNetworkRequest);
                 return await socialNetworksRepository.UpdateAsync(updatedSocialNetwork);
             }

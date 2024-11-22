@@ -160,6 +160,8 @@ namespace FALOFinancialProofing.Controllers
                         Success = checkValid
                     });
                 }
+                updateProjectRequest.ProjectName = updateProjectRequest.ProjectName.Trim();
+                updateProjectRequest.Description = updateProjectRequest.Description.Trim();
                 checkValid = await _projectService.UpdateProjectAsync(updateProjectRequest, message);
                 if (checkValid)
                     message.Append("Update Project Successfully!");
@@ -193,6 +195,8 @@ namespace FALOFinancialProofing.Controllers
                         Message = stringBuilderMessage.ToString()
                     });
                 }
+                createProject.ProjectName = createProject.ProjectName.Trim();
+                createProject.Description = createProject.Description.Trim();
                 var project = await _projectService.ConvertDtoToBaseClass(createProject);
 
                 var checkProjectCreated = await _projectService.CreateProjectReturnEntityAsync(project);

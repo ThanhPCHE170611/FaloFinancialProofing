@@ -82,6 +82,7 @@ namespace FALOFinancialProofing.Controllers
                         Message = message.ToString()
                     });
                 }
+                campaignRequestApproveHistoryClientRequest.FeedBack = campaignRequestApproveHistoryClientRequest.FeedBack?.Trim();
                 checkValid = await _campaignRequestApproveHistoryService.CreateCampaignRequestApproveHistoryAsync(campaignRequestApproveHistoryClientRequest, message);
                 if (!checkValid)
                 {

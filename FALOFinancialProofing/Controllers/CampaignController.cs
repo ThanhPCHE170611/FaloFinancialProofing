@@ -207,6 +207,10 @@ namespace FALOFinancialProofing.Controllers
                         Message = stringBuilderMessage.ToString()
                     });
                 }
+                createCampaignClientRequest.CreateBy = createCampaignClientRequest.CreateBy.Trim();
+                createCampaignClientRequest.Title = createCampaignClientRequest.Title.Trim();
+                createCampaignClientRequest.Description = createCampaignClientRequest.Description.Trim();
+                createCampaignClientRequest.Address = createCampaignClientRequest.Address?.Trim();
                 var campaign = await _campaignService.ConvertDtoToBaseClass(createCampaignClientRequest);
 
                 var checkCampaignCreated = await _campaignService.CreateCampaignReturnEntityAsync(campaign);
@@ -280,6 +284,10 @@ namespace FALOFinancialProofing.Controllers
                         Success = checkValid
                     });
                 }
+                updateCampaignDTO.Title = updateCampaignDTO.Title.Trim();
+                updateCampaignDTO.Description = updateCampaignDTO.Description.Trim();
+                updateCampaignDTO.Address = updateCampaignDTO.Address?.Trim();
+                updateCampaignDTO.Status = updateCampaignDTO.Status?.Trim();
                 checkValid = await _campaignService.UpdateCampaignAsync(updateCampaignDTO, message);
                 if (checkValid)
                     message.Append("Campaign updated successfully!");

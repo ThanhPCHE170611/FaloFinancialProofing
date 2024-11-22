@@ -243,10 +243,10 @@ namespace FALOFinancialProofing.Services.CampaignService
                     var GetBank = await bankService.GetBankByIdAsync(updateCampaignDTO.BankId ?? 0);
                     if (GetBank == null)
                         throw new Exception("There no such bank in system!");
-                    campaign.FundTarget = updateCampaignDTO.FundTarget ?? campaign.FundTarget;
+                    campaign.FundTarget = updateCampaignDTO.FundTarget;
                     campaign.IsActive = updateCampaignDTO.IsActive ?? campaign.IsActive;
                     campaign.Status = updateCampaignDTO.Status ?? campaign.Status;
-                    campaign.BankId = updateCampaignDTO.BankId;
+                    campaign.BankId = updateCampaignDTO.BankId ?? campaign.BankId;
                 }
                 checkValid = await campaignRepository.UpdateAsync(campaign);
             }
@@ -315,7 +315,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                     throw new Exception("Project is not active");
                 }
                 // số tiền tạo > 0
-                if (createCampaignClientRequest.FundTarget < 0)
+                if (createCampaignClientRequest.FundTarget <= 0)
                 {
                     throw new Exception("Fund target must be greater than 0");
                 }
