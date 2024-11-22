@@ -1,5 +1,4 @@
-﻿using FALOFinancialProofing.DTOs.CampaignDTO;
-using FALOFinancialProofing.DTOs.CampaignMemberDTO;
+﻿using FALOFinancialProofing.DTOs.CampaignMemberDTO;
 using FALOFinancialProofing.Models;
 using System.Text;
 

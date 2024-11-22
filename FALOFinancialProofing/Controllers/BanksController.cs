@@ -1,6 +1,5 @@
 ﻿using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.BankServices;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FALOFinancialProofing.Controllers

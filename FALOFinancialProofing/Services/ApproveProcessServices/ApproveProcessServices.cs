@@ -2,9 +2,7 @@
 using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
-using Humanizer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 namespace FALOFinancialProofing.Services.ApproveProcessServices
@@ -143,7 +141,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                     return false;
                 }
                 // check if user have permission and process is not approved
-                var approveProcess = repository.GetAll(x => x.RequestId == requestid 
+                var approveProcess = repository.GetAll(x => x.RequestId == requestid
                     && x.ApproverId.Equals(userid)
                     && x.ApproveStatus.Equals(Resource.ProcessStatus))
                     .FirstOrDefault();
@@ -177,7 +175,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                     return false;
                 }
                 // check if user have permission and process is not approved
-                var approveProcess = repository.GetAll(x => x.RequestId == requestid 
+                var approveProcess = repository.GetAll(x => x.RequestId == requestid
                     && x.ApproverId.Equals(userid)
                     && x.ApproveStatus.Equals(Resource.ProcessStatus))
                     .FirstOrDefault();
@@ -211,7 +209,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                     return false;
                 }
                 // check if user have permission and process is not approved
-                var approveProcess = repository.GetAll(x => x.RequestId == requestid 
+                var approveProcess = repository.GetAll(x => x.RequestId == requestid
                     && x.ApproverId.Equals(userid)
                     && x.ApproveStatus.Equals(Resource.ProcessStatus))
                     .FirstOrDefault();
@@ -244,7 +242,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                     msg.Append("Feedback must not empty");
                     return false;
                 }
-                feedbackStringBuilder.Append(Resource.VolunteerLeaderFeedBackStart + " " +feedback);
+                feedbackStringBuilder.Append(Resource.VolunteerLeaderFeedBackStart + " " + feedback);
                 // validate if current logged in user is not Volunteer Leader
                 if (currentLoggingRole != Resource.VolunteerLeaderRoleName)
                 {
@@ -252,7 +250,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                     return false;
                 }
                 // check if user have permission and process is not approved
-                var approveProcess = repository.GetAll(x => x.RequestId == requestid 
+                var approveProcess = repository.GetAll(x => x.RequestId == requestid
                     && x.ApproverId.Equals(userid)
                     && x.ApproveStatus.Equals(Resource.ProcessStatus))
                     .FirstOrDefault();
@@ -287,7 +285,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                     return false;
                 }
                 // check if user have permission and process is not approved
-                var approveProcess = repository.GetAll(x => x.RequestId == requestid 
+                var approveProcess = repository.GetAll(x => x.RequestId == requestid
                     && x.ApproverId.Equals(userid)
                     && x.ApproveStatus.Equals(Resource.ProcessStatus))
                     .FirstOrDefault();
@@ -322,7 +320,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                     return false;
                 }
                 // check if user have permission and process is not approved
-                var approveProcess = repository.GetAll(x => x.RequestId == requestid 
+                var approveProcess = repository.GetAll(x => x.RequestId == requestid
                     && x.ApproverId.Equals(userid)
                     && x.ApproveStatus.Equals(Resource.ProcessStatus))
                     .FirstOrDefault();
@@ -376,7 +374,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
 
                 foreach (var campaign in campaigns)
                 {
-                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id 
+                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id
                     && x.TypeId == IntConstant.PrePayRequestType
                     && x.ApproveProcesses.Any(x => x.ApproverId.Equals(userid)))
                         .Include(x => x.AttachmentFiles)
@@ -436,7 +434,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
 
                 foreach (var campaign in campaigns)
                 {
-                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id 
+                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id
                         && x.TypeId == IntConstant.PaymentRequestType
                         && x.ApproveProcesses.Any(x => x.ApproverId.Equals(userid)))
                         .Include(x => x.AttachmentFiles)
@@ -496,7 +494,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
 
                 foreach (var campaign in campaigns)
                 {
-                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id 
+                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id
                     && x.TypeId == IntConstant.PrePayRequestType
                     && x.ApproveProcesses.Any(x => x.ApproverId.Equals(userid)))
                         .Include(x => x.AttachmentFiles)
@@ -615,7 +613,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
 
                 foreach (var campaign in campaigns)
                 {
-                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id 
+                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id
                     && x.TypeId == IntConstant.PrePayRequestType
                     && x.ApproveProcesses.Any(x => x.ApproverId.Equals(userid)))
                         .Include(x => x.User)
@@ -676,7 +674,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
 
                 foreach (var campaign in campaigns)
                 {
-                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id 
+                    var requestForms = await requestFormRepository.GetAll(x => x.CampaignId == campaign.Id
                     && x.TypeId == IntConstant.PaymentRequestType
                     && x.ApproveProcesses.Any(x => x.ApproverId.Equals(userid)))
                         .Include(x => x.User)

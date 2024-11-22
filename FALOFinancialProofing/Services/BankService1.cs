@@ -1,6 +1,5 @@
 ﻿using FALOFinancialProofing.Helpers;
 using Newtonsoft.Json;
-using System.Drawing;
 using System.Text;
 
 namespace FALOFinancialProofing.Services

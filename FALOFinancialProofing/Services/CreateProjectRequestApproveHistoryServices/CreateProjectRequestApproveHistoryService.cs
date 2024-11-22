@@ -1,9 +1,7 @@
 ﻿using FALOFinancialProofing.DTOs.CreateProjectRequestApproveHistoryDTO;
-using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
-using FALOFinancialProofing.Services.CreateProjectRequestServices;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 

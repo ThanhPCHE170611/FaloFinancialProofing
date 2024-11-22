@@ -1,8 +1,6 @@
-﻿using System.Text;
-using FALOFinancialProofing.DTOs.CampaignDTO;
-using FALOFinancialProofing.DTOs.CreateCampaignRequestDTO;
-using FALOFinancialProofing.DTOs.MoveNextCampaignStatusRequestDTO;
+﻿using FALOFinancialProofing.DTOs.MoveNextCampaignStatusRequestDTO;
 using FALOFinancialProofing.Models;
+using System.Text;
 
 namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
 {

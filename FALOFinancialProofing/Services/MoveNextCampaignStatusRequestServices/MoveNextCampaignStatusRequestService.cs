@@ -1,14 +1,10 @@
-﻿using System.Text;
-using FALOFinancialProofing.DTOs;
-using FALOFinancialProofing.DTOs.CampaignDTO;
-using FALOFinancialProofing.DTOs.CreateCampaignFileDTO;
-using FALOFinancialProofing.DTOs.CreateCampaignRequestDTO;
+﻿using FALOFinancialProofing.DTOs.CampaignDTO;
 using FALOFinancialProofing.DTOs.MoveNextCampaignStatusRequestDTO;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
 {
@@ -252,7 +248,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
             try
             {
                 var mncsrWithStatusPending = await _moveNextCampaignStatusRequestRepository.GetAll().Where(m => m.CampaignID == campaignId && m.Status == "Pending").SingleOrDefaultAsync();
-                if(mncsrWithStatusPending != null)
+                if (mncsrWithStatusPending != null)
                 {
                     IsValid = false;
                 }

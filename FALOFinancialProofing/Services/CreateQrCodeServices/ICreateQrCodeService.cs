@@ -1,5 +1,4 @@
 ﻿using FALOFinancialProofing.DTOs.CreateQrCodeDTO;
-using FALOFinancialProofing.DTOs.TransactionLogsDTOs;
 using FALOFinancialProofing.Models;
 using System.Text;
 

@@ -4,13 +4,10 @@ using FALOFinancialProofing.Services;
 using FALOFinancialProofing.Services.CampaignService;
 using FALOFinancialProofing.Services.CreateQrCodeServices;
 using FALOFinancialProofing.Services.TransactionLogsServices;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Transactions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -125,8 +122,11 @@ namespace FALOFinancialProofing.Controllers
                     {
                         continue;
                     }
-                    string[] descriptionSplit = description.Split('C', 'Q');
-                    if (int.TryParse(descriptionSplit[1], out int CampaignId) && int.TryParse(descriptionSplit[3], out int CreateQrId))
+                    string[] descriptionSplit = description.Split('C', 'Q')
+                        .Where(x => !string.IsNullOrEmpty(x))
+                        .ToArray();
+                    if (int.TryParse(descriptionSplit[0], out int CampaignId) && int.TryParse(
+                   descriptionSplit.Length >= 2 ? descriptionSplit[1] : null, out int CreateQrId))
                     {
                         var campaign = await _campaignService.GetCampaignByCampaignIdAsync(CampaignId);
                         var createQrCode = await _createQrCodeService.GetQrCodeByIdAsync(CreateQrId);
@@ -140,7 +140,7 @@ namespace FALOFinancialProofing.Controllers
                             CreateQrCodeId = createQrCode.Id,
                             Amount = transaction.amount,
                             CampaignId = campaign.Id,
-                            Description = description,
+                            Description = transaction.description,
                             TransactionDate = DateTime.ParseExact(transaction.when, format, CultureInfo.InvariantCulture),
                             CassoTransactionId = transaction.id,
                             tid = transaction.tid
@@ -150,7 +150,7 @@ namespace FALOFinancialProofing.Controllers
                         createQrCode.IsPaid = true;
                         await _createQrCodeService.UpdateCreateQrCodeAsync(createQrCode);
                     }
-                    else if (int.TryParse(descriptionSplit[1], out int CampaignMoneyOutId))
+                    else if (int.TryParse(descriptionSplit[0], out int CampaignMoneyOutId))
                     {
                         var campaign = await _campaignService.GetCampaignByCampaignIdAsync(CampaignMoneyOutId);
                         if (campaign == null)
@@ -162,7 +162,7 @@ namespace FALOFinancialProofing.Controllers
                         {
                             Amount = transaction.amount,
                             CampaignId = campaign.Id,
-                            Description = description,
+                            Description = transaction.description,
                             TransactionDate = DateTime.ParseExact(transaction.when, format, CultureInfo.InvariantCulture),
                             CassoTransactionId = transaction.id,
                             tid = transaction.tid

@@ -3,7 +3,6 @@ using FALOFinancialProofing.DTOs.CampaignRequestApproveHistoryDTO;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.CampaignRequestApproveHistoryServices;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 

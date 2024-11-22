@@ -1,21 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using FALOFinancialProofing.Constant;
+using FALOFinancialProofing.DTOs.TransactionLogsDTOs;
+using FALOFinancialProofing.DTOs.UserDTOs;
+using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.TransactionLogsServices;
-using FALOFinancialProofing.DTOs.TransactionLogsDTOs;
-using Microsoft.VisualBasic;
-using FALOFinancialProofing.Helpers;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using FALOFinancialProofing.Constant;
-using FALOFinancialProofing.DTOs.CreateCampaignRequestDTO;
 using FALOFinancialProofing.Utilities;
+using Microsoft.AspNetCore.Mvc;
 using System.Text;
-using FALOFinancialProofing.DTOs.UserDTOs;
 
 namespace FALOFinancialProofing.Controllers
 {

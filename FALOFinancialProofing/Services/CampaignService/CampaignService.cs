@@ -1,14 +1,9 @@
-﻿using FALOFinancialProofing.DTOs;
-using FALOFinancialProofing.DTOs.CampaignDTO;
+﻿using FALOFinancialProofing.DTOs.CampaignDTO;
 using FALOFinancialProofing.DTOs.CreateCampaignFileDTO;
-using FALOFinancialProofing.DTOs.ProjectDTOs;
-using FALOFinancialProofing.DTOs.TransactionLogsDTOs;
-using FALOFinancialProofing.DTOs.UserDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services.BankServices;
-using FALOFinancialProofing.Services.CreateProjectRequestServices;
 using FALOFinancialProofing.Services.ProjectServices;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;

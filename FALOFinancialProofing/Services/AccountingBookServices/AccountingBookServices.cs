@@ -57,13 +57,13 @@ namespace FALOFinancialProofing.Services.AccountingBookServices
                         Id = campaignWithAccountingBook.AccountingBook.Id,
                         CampaignId = campaignWithAccountingBook.AccountingBook.CampaignId,
                         FilePath = uniqueFileName,
-                    }; 
+                    };
                     var canUpdateAccounting = await repository.UpdateAsync(updateAccountingBook);
-                    if(canUpdateAccounting)
+                    if (canUpdateAccounting)
                     {
                         return updateAccountingBook;
                     }
-                } 
+                }
                 else
                 {
                     var newAccountingBook = new AccountingBook
@@ -88,26 +88,26 @@ namespace FALOFinancialProofing.Services.AccountingBookServices
         private async Task<bool> ValidateRequest(CreateAccountingBookRequest request, StringBuilder msg)
         {
             var campaignIdInt = TryToParseInt(request.CampaignId);
-            if(request == null)
+            if (request == null)
             {
                 msg.Append("Request is null");
                 return false;
             }
 
-            if(campaignIdInt == 0)
+            if (campaignIdInt == 0)
             {
                 msg.Append("CampaignId is invalid");
                 return false;
             }
-            
+
             // check if UserId and role is valid with the campaign ID
-            var accountanceValid = await campaignMemberRepository.GetAll(x => x.IsActive 
-                                                && x.UserId.Equals(request.UserId) 
+            var accountanceValid = await campaignMemberRepository.GetAll(x => x.IsActive
+                                                && x.UserId.Equals(request.UserId)
                                                 && x.Role.Name.Equals(Resource.AccountingRoleName)
                                                 && x.CampaignId == campaignIdInt)
                 .Include(x => x.Role)
                 .FirstOrDefaultAsync();
-            if(accountanceValid == null)
+            if (accountanceValid == null)
             {
                 msg.Append("UserID, CurrentRole is not valid or in wrong campaign");
                 return false;

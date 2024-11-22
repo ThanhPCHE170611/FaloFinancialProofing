@@ -1,10 +1,7 @@
-﻿using FALOFinancialProofing.DTOs.CampaignDTO;
-using FALOFinancialProofing.DTOs.ProjectDTOs;
+﻿using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
-using FALOFinancialProofing.Services.BankServices;
-using FALOFinancialProofing.Services.CampaignService;
 using Microsoft.AspNetCore.Identity;
 //using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;

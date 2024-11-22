@@ -1,14 +1,11 @@
-﻿using FALOFinancialProofing.DTOs.CampaignDTO;
-using FALOFinancialProofing.DTOs.CreateProjectFileDTO;
+﻿using FALOFinancialProofing.DTOs.CreateProjectFileDTO;
 using FALOFinancialProofing.DTOs.CreateProjectRequestDTO;
-using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FALOFinancialProofing.Services.CreateProjectRequestServices
 {
