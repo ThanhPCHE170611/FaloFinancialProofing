@@ -252,7 +252,7 @@
     $(document).ready(function () {
         if (checkrole === 'Project Manager' || checkrole === 'Project Management Board') {
             const addMemberButton = `
-                <a class="btn btn-dark mb-0 me-3" href="/Campaign/MemberAdd">Add Member</a>
+                <a class="btn btn-dark mb-0 me-3" href="/Campaign/MemberAdd_PMB">Add Member</a>
             `;
             $('.bg-gradient-primary').append(addMemberButton);
         }
@@ -304,7 +304,7 @@
             const getStatusClass = member.isActive ? 'badge badge-sm badge-approved' : 'badge badge-sm badge-declined';
             const actionButtonText = member.isActive ? 'Inactive' : 'Active';
             const detailButton = `
-                <a class="btn btn-info btn-sm" href="/Campaign/MemberDetail?userId=${member.userId}">Detail</a>
+                <a class="btn btn-info btn-sm" href="/Campaign/MemberDetail_PMB?userId=${member.userId}">Detail</a>
             `;
             const actionButton = checkrole === 'Project Manager' ? `
                 ${detailButton}
@@ -313,12 +313,12 @@
                 </button>` : detailButton;
             const row = `
                 <tr>
-                    <td class="align-middle text-center text-sm">${index + 1 + (currentPage - 1) * pageSize}</td>
-                    <td class="align-middle text-center text-sm">${member.firstName} ${member.lastName}</td>
-                    <td class="align-middle text-center text-sm">${member.email}</td>
-                    <td class="align-middle text-center text-sm">${member.roleInformation.roleName}</td>
-                    <td class="align-middle text-center text-sm"><span class="${getStatusClass}">${statusText}</span></td>
-                    <td class="align-middle text-center text-sm">${actionButton}</td>
+                    <td class="align-middle text-center ">${index + 1 + (currentPage - 1) * pageSize}</td>
+                    <td class="align-middle text-center ">${member.firstName} ${member.lastName}</td>
+                    <td class="align-middle text-center ">${member.email}</td>
+                    <td class="align-middle text-center ">${member.roleInformation.roleName}</td>
+                    <td class="align-middle text-center "><span class="${getStatusClass}">${statusText}</span></td>
+                    <td class="align-middle text-center ">${actionButton}</td>
                 </tr>
             `;
             memberList.append(row);

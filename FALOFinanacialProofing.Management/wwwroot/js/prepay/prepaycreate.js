@@ -19,9 +19,9 @@ $(document).ready(function () {
         });
     });
 
-    if (checkrole === "Accounting") {
-        $('#voucherInput').show();
-    }
+    //if (checkrole === "Accounting") {
+    //    $('#voucherInput').show();
+    //}
     if (checkrole && checkrole !== 'Volunteer') {
         const newLink = document.createElement('a');
         newLink.setAttribute('asp-controller', 'Prepay');
@@ -82,22 +82,22 @@ $(document).ready(function () {
     var dateTime = `${date}T${time}`;
     console.log(dateTime);
 
-    let apiUrl;
-    if (checkrole === "Volunteer") {
-        apiUrl = `https://localhost:7294/api/RequestForm/getapproverlistforvolunteer/${campaignId}`;
-    } else if (checkrole === "Volunteer Leader") {
-        apiUrl = `https://localhost:7294/api/RequestForm/getapproverforvolunteerleader/${campaignId}`;
-    } else if (checkrole === "Accounting") {
-        apiUrl = `https://localhost:7294/api/RequestForm/getapproverforaccounting/${campaignId}`;
-    } else if (checkrole === "Project Manager") {
-        apiUrl = `https://localhost:7294/api/RequestForm/getapproverforprojectmanagement/${campaignId}`;
-    } else {
-        alert('Invalid role. Please check your role and try again.');
-        return;
-    }
+    //let apiUrl;
+    //if (checkrole === "Volunteer") {
+    //    apiUrl = ;
+    //} else if (checkrole === "Volunteer Leader") {
+    //    apiUrl = `https://localhost:7294/api/RequestForm/getapproverforvolunteerleader/${campaignId}`;
+    //} else if (checkrole === "Accounting") {
+    //    apiUrl = `https://localhost:7294/api/RequestForm/getapproverforaccounting/${campaignId}`;
+    //} else if (checkrole === "Project Manager") {
+    //    apiUrl = `https://localhost:7294/api/RequestForm/getapproverforprojectmanagement/${campaignId}`;
+    //} else {
+    //    alert('Invalid role. Please check your role and try again.');
+    //    return;
+    //}
 
     $.ajax({
-        url: apiUrl,
+        url: `https://localhost:7294/api/RequestForm/getapproverlistforvolunteer/${campaignId}`,
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${jwtToken}`

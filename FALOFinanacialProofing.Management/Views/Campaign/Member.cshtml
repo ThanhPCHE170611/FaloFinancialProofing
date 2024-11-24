@@ -184,6 +184,7 @@
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STT</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Email</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" id="debtHeader" style="display:none;">Debt</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Role</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
                                         <th class="text-secondary opacity-7">Action</th>
@@ -340,14 +341,22 @@
                     ${actionButtonText}
                     </button>` : detailButton;
             }
+            let debtTd
+            if(checkrole === 'Accounting') {
+                $('#debtHeader').show();
+                debtTd = `
+                <td class="align-middle text-center ">${member.debt}</td>
+            `;
+            }
             const row = `
                 <tr>
-                    <td class="align-middle text-center text-sm">${index + 1 + (currentPage - 1) * pageSize}</td>
-                    <td class="align-middle text-center text-sm">${member.firstName} ${member.lastName}</td>
-                    <td class="align-middle text-center text-sm">${member.email}</td>
-                    <td class="align-middle text-center text-sm">${member.roleInformation.roleName}</td>
-                    <td class="align-middle text-center text-sm"><span class="${getStatusClass}">${statusText}</span></td>
-                    <td class="align-middle text-center text-sm">${actionButton}</td>
+                    <td class="align-middle text-center ">${index + 1 + (currentPage - 1) * pageSize}</td>
+                    <td class="align-middle text-center ">${member.firstName} ${member.lastName}</td>
+                    <td class="align-middle text-center ">${member.email}</td>
+                    ${debtTd}
+                    <td class="align-middle text-center ">${member.roleInformation.roleName}</td>
+                    <td class="align-middle text-center "><span class="${getStatusClass}">${statusText}</span></td>
+                    <td class="align-middle text-center ">${actionButton}</td>
                 </tr>
             `;
             memberList.append(row);

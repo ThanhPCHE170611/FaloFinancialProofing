@@ -84,7 +84,7 @@
                     </a>
                 </li>
 
-                <li class="nav-item mt-3">
+                <li class="nav-item mt-3" id="titleManagement">
                     <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Management</h6>
                 </li>
                 <li class="nav-item dropdown" id="projectRegistration">
@@ -107,7 +107,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item dropdown">
+                <li class="nav-item dropdown" id="campaignNav">
                     <a class="nav-link dropdown-toggle text-white" href="#" id="campaignDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">table_view</i>
@@ -328,6 +328,8 @@
         if (checkrole === 'Admin') {
             document.getElementById('adminTabTitle').style.display = 'block';
             document.getElementById('adminTab').style.display = 'block';
+            document.getElementById('campaignNav').style.display = 'none';
+            document.getElementById('titleManagement').style.display = 'none';
             }
 
 
