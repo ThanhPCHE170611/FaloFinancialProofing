@@ -24,9 +24,11 @@ namespace FALOFinancialProofing.DTOs
         [Required]
         public string ApproverId { get; set; }
 
+        [ZipFileValidate(ErrorMessage = "File extension must be .zip")]
         public IFormFile? UploadFiles { get; set; }
 
-        public IFormFile? VoucherFile { get; set; }
+        [ZipFileValidate(ErrorMessage = "File extension must be .zip")]
+        public IFormFile VoucherFile { get; set; }
 
         public bool? IsValidate { get; set; } = false;
     }
