@@ -2,28 +2,22 @@ using FALOFinancialProofing.DTOs.CampaignDTO;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
-using FALOFinancialProofing.Services.BankServices;
-using FALOFinancialProofing.Services.ProjectServices;
-using FALOFinancialProofing.Services.CampaignService;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
 using FALOFinancialProofing.Services;
-using MockQueryable;
+using FALOFinancialProofing.Services.BankServices;
+using FALOFinancialProofing.Services.CampaignService;
+using FALOFinancialProofing.Services.EmailService;
+using FALOFinancialProofing.Services.ProjectServices;
 using FALOFinancialProofing.Services.SocialNetworkService;
 using FALOFinancialProofing.Services.UserSDGServices;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using FALOFinancialProofing.Services.EmailService;
-using FALOFinancialProofing.DTOs.BankDTO;
+using MockQueryable;
+using Moq;
+using System.Linq.Expressions;
+using System.Text;
 
 public class CampaignServiceTests
 {
@@ -333,4 +327,274 @@ public class CampaignServiceTests
         // Assert
         Assert.False(result);
     }
+    [Fact]
+    public async Task DeleteCampaignByIdAsync_ShouldReturnFalse_WhenReturnCampaignNull()
+    {
+        // Arrange
+        mockCampaignRepository.Setup(repo => repo.Get(It.IsAny<Expression<Func<Campaign, bool>>>())).ReturnsAsync((Campaign)null);
+
+        // Act
+        var result = await campaignService.DeleteCampaignByIdAsync(1);
+
+        // Assert
+        Assert.False(result);
+    }
+
+
+    [Fact]
+    public async Task GetAllCampaignsByProjectIdAsync_ShouldReturnCampaigns_WhenSuccess()
+    {
+        // Arrange
+        var campaigns = new List<Campaign>
+    {
+        new Campaign { Id = 1, ProjectId = 101, Title = "Campaign 1" },
+        new Campaign { Id = 2, ProjectId = 101, Title = "Campaign 2" }
+    }.AsQueryable().BuildMock();
+        mockCampaignRepository.Setup(repo => repo.GetAll(It.IsAny<Expression<Func<Campaign, bool>>>())).Returns(campaigns);
+
+        // Act
+        var result = await campaignService.GetAllCampaignsByProjectIdAsync(101);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count);
+        Assert.Equal("Campaign 1", result[0].Title);
+    }
+    [Fact]
+    public async Task GetAllCampaignsByProjectIdAsync_HttpRequest_ShouldReturnCampaigns_WhenSuccess()
+    {
+        // Arrange
+        var campaigns = new List<Campaign>
+        {
+            new Campaign
+            {
+                Id = 1,
+                ProjectId = 101,
+                Title = "Campaign 1",
+                User = new User { FirstName = "John", LastName = "Doe" },
+                Project = new Project { ProjectName = "Project 1" },
+                CreateBy = "User1",
+                Description = "Description 1",
+                DateOfCreation = DateTime.Now,
+                FundTarget = 1000,
+                Image = "image1.jpg",
+                EndDate = DateTime.Now.AddMonths(1),
+                Address = "Address 1",
+                IsActive = true,
+                BankId = 1,
+                Status = "Active",
+                TransactionLogs = new List<TransactionLog>
+                {
+                    new TransactionLog { Amount = 500 },
+                    new TransactionLog { Amount = 300 }
+                },
+                UpdateLog = "UpdateLog 1"
+            },
+            new Campaign
+            {
+                Id = 2,
+                ProjectId = 101,
+                Title = "Campaign 2",
+                User = new User { FirstName = "Jane", LastName = "Smith" },
+                Project = new Project { ProjectName = "Project 1" },
+                CreateBy = "User2",
+                Description = "Description 2",
+                DateOfCreation = DateTime.Now,
+                FundTarget = 2000,
+                Image = "image2.jpg",
+                EndDate = DateTime.Now.AddMonths(2),
+                Address = "Address 2",
+                IsActive = true,
+                BankId = 2,
+                Status = "Active",
+                TransactionLogs = new List<TransactionLog>
+                {
+                    new TransactionLog { Amount = 1000 },
+                    new TransactionLog { Amount = 500 }
+                },
+                UpdateLog = "UpdateLog 2"
+            }
+        }.AsQueryable().BuildMock();
+        mockCampaignRepository.Setup(repo => repo.GetAll(It.IsAny<Expression<Func<Campaign, bool>>>())).Returns(campaigns);
+
+        // Act
+        var result = await campaignService.GetAllCampaignsByProjectIdAsync(101, new DefaultHttpContext().Request);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count);
+        Assert.Equal("Campaign 1", result[0].Title);
+        Assert.Equal(101, result[0].ProjectId);
+        Assert.Equal("Campaign 2", result[1].Title);
+        Assert.Equal(101, result[1].ProjectId);
+    }
+    [Fact]
+    public async Task GetAllCampaignsByProjectIdAsync_HttpRequest_ShouldReturnNull_WhenExceptionThrown()
+    {
+        // Arrange
+        mockCampaignRepository.Setup(repo => repo.GetAll(It.IsAny<Expression<Func<Campaign, bool>>>())).Throws(new Exception());
+
+        // Act
+        var result = await campaignService.GetAllCampaignsByProjectIdAsync(101, new DefaultHttpContext().Request);
+
+        // Assert
+        Assert.Null(result);
+    }
+    [Fact]
+    public async Task GetAllCampaignsByProjectIdAsync_ShouldReturnNull_WhenExceptionThrown()
+    {
+        // Arrange
+        mockCampaignRepository.Setup(repo => repo.GetAll(It.IsAny<Expression<Func<Campaign, bool>>>())).Throws(new Exception());
+
+        // Act
+        var result = await campaignService.GetAllCampaignsByProjectIdAsync(101);
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task GetCampaignByCampaignIdAsync_ShouldReturnCampaign_WhenFound()
+    {
+        // Arrange
+        var campaign = new Campaign
+        {
+            Id = 1,
+            Title = "Test Campaign",
+            User = new User
+            {
+                FirstName = "John",
+                LastName = "Doe"
+            },
+            ProjectId = 1,
+            Project = new Project
+            {
+                ProjectName = "Test Project"
+            },
+            CreateBy = "User1",
+            Description = "This is a test campaign",
+            DateOfCreation = DateTime.Now,
+            FundTarget = 10000,
+            Image = "test_image.jpg",
+            EndDate = DateTime.Now.AddMonths(1),
+            Address = "123 Test Street",
+            IsActive = true,
+            Bank = new FALOFinancialProofing.Models.Bank
+            {
+                AccountNumber = "123456789"
+            },
+            BankId = 1,
+            Status = "Active",
+            UpdateLog = "Initial creation",
+            TransactionLogs = new List<TransactionLog>
+    {
+        new TransactionLog { Amount = 5000 },
+        new TransactionLog { Amount = 3000 }
+    },
+            CreateCampaignRequests = new List<CreateCampaignRequest>
+    {
+        new CreateCampaignRequest
+        {
+            CreateCampaignFiles = new List<CreateCampaignFile>
+            {
+                new CreateCampaignFile { Id = 1, RequestId = 1, FilePath = "file1.jpg" },
+                new CreateCampaignFile { Id = 2, RequestId = 1, FilePath = "file2.jpg" }
+            }
+        }
+    }
+        };
+        mockCampaignRepository.Setup(repo => repo.GetAll(It.IsAny<Expression<Func<Campaign, bool>>>())).Returns(new List<Campaign> { campaign }.AsQueryable().BuildMock());
+
+        // Act
+        var result = await campaignService.GetCampaignByCampaignIdAsync(1, new DefaultHttpContext().Request);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(1, result.CampaignId);
+        Assert.Equal("Test Campaign", result.Title);
+    }
+
+    [Fact]
+    public async Task GetCampaignByCampaignIdAsync_ShouldReturnNull_WhenNotFound()
+    {
+        // Arrange
+        mockCampaignRepository.Setup(repo => repo.GetAll(It.IsAny<Expression<Func<Campaign, bool>>>())).Returns(new List<Campaign>().AsQueryable().BuildMock());
+
+        // Act
+        var result = await campaignService.GetCampaignByCampaignIdAsync(1, new DefaultHttpContext().Request);
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task UpdateManyCampaignAsync_ShouldReturnTrue_WhenSuccess()
+    {
+        // Arrange
+        var campaigns = new List<Campaign> { new Campaign { Id = 1, Title = "Campaign 1" } };
+        mockCampaignRepository.Setup(repo => repo.UpdateManyAsync(It.IsAny<List<Campaign>>())).ReturnsAsync(true);
+
+        // Act
+        var result = await campaignService.UpdateManyCampaignAsync(campaigns);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async Task UpdateManyCampaignAsync_ShouldReturnFalse_WhenExceptionThrown()
+    {
+        // Arrange
+        var campaigns = new List<Campaign> { new Campaign { Id = 1, Title = "Campaign 1" } };
+        mockCampaignRepository.Setup(repo => repo.UpdateManyAsync(It.IsAny<List<Campaign>>())).ThrowsAsync(new Exception());
+
+        // Act
+        var result = await campaignService.UpdateManyCampaignAsync(campaigns);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task GetAllCampaignByUserIdAndRoleAsync_ShouldReturnCampaigns_WhenSuccess()
+    {
+        // Arrange
+        var campaigns = new List<Campaign>
+    {
+        new Campaign
+        {
+            Id = 1,
+            CampaignMembers = new List<CampaignMember>
+            {
+                new CampaignMember { UserId = "user1", Role = new Role { Name = "Role1" }, IsActive = true }
+            }
+        }
+    }.AsQueryable().BuildMock();
+        mockCampaignRepository.Setup(repo => repo.GetAll(It.IsAny<Expression<Func<Campaign, bool>>>())).Returns(campaigns);
+
+        // Act
+        var result = await campaignService.GetAllCampaignByUserIdAndRoleAsync("user1", "Role1");
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Single(result);
+        Assert.Equal(1, result[0].Id);
+    }
+
+    [Fact]
+    public async Task GetAllCampaignByUserIdAndRoleAsync_ShouldReturnEmptyList_WhenExceptionThrown()
+    {
+        // Arrange
+        mockCampaignRepository.Setup(repo => repo.GetAll(It.IsAny<Expression<Func<Campaign, bool>>>())).Throws(new Exception());
+
+        // Act
+        var result = await campaignService.GetAllCampaignByUserIdAndRoleAsync("user1", "Role1");
+
+        // Assert
+        Assert.Empty(result);
+    }
+
+
+
+
 }
