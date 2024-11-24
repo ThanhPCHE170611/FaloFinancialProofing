@@ -62,11 +62,41 @@ document.addEventListener('DOMContentLoaded', function () {
         saveBtnContainer.appendChild(updateBtn);
 
         const fieldsToWatch = ['projectName', 'projectProcess', 'projectStatus', 'editor-container','choseImage'];
-        fieldsToWatch.forEach(id => {
-            document.getElementById(id).addEventListener('input', () => {
-                updateBtn.disabled = false;
-            });
+        //fieldsToWatch.forEach(id => {
+        //    document.getElementById(id).addEventListener('input', () => {
+        //        updateBtn.disabled = false;
+        //    });
+        //});
+        const editableFields = ['projectName', 'projectProcess', 'projectStatus', 'choseImage'];
+
+        editableFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.removeAttribute('readonly'); 
+                field.removeAttribute('disabled'); 
+            }
         });
+
+        fieldsToWatch.forEach(id => {
+            const element = document.getElementById(id);
+
+            if (!element) return; 
+
+            if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                element.addEventListener('input', () => {
+                    updateBtn.disabled = false;
+                });
+            } else if (element.tagName === 'SELECT') {
+                element.addEventListener('change', () => {
+                    updateBtn.disabled = false;
+                });
+            } else if (element.tagName === 'BUTTON' || element.type === 'file') {
+                element.addEventListener('change', () => {
+                    updateBtn.disabled = false;
+                });
+            }
+        });
+
 
         updateBtn.addEventListener('click', function () {
             const updateData = prepareUpdateData();

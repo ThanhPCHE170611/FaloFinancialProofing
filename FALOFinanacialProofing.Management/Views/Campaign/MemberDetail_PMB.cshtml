@@ -131,9 +131,9 @@
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class=" pt-4 pb-3 d-flex justify-content-between align-items-center">
                             <nav class="nav-tabs" id="navTabs">
-                                <a asp-controller="Campaign" asp-action="CampaignDetail">Campaign Detail</a>
-                                <a asp-controller="Accounting" asp-action="AccountingBookCampaign">Accounting Book</a>
-                                <a asp-controller="Campaign" asp-action="Member" class="active">Member</a>
+                                <a asp-controller="Campaign" asp-action="CampaignDetail_PMB">Campaign Detail</a>
+                                <a asp-controller="Accounting" asp-action="AccountingBookCampaign_PMB">Accounting Book</a>
+                                <a asp-controller="Campaign" asp-action="Member_PMB" class="active">Member</a>
                                 <a asp-controller="Accounting" asp-action="DebtManagement">Debt</a>
                             </nav>
                         </div>
@@ -323,29 +323,6 @@
         const checkrole = localStorage.getItem('loggingRole');
         loadSDGs()
         loadUserProfile(userId);
-        if (checkrole && checkrole !== 'Volunteer') {
-
-        const navTabs = document.getElementById('navTabs');
-        const newLink = document.createElement('a');
-        newLink.setAttribute('asp-controller', 'Prepay');
-        newLink.setAttribute('asp-action', 'PrepayManagement_PM');
-        newLink.textContent = 'Approval Prepay Request';
-
-        const newLink2 = document.createElement('a');
-        newLink2.setAttribute('asp-controller', 'Payment');
-        newLink2.setAttribute('asp-action', 'PaymentManagement_PM');
-        newLink2.textContent = 'Approval Payment Request';
-
-        const url = new URL(`/Prepay/PrepayManagement_PM`, window.location.origin);
-
-
-        const url2 = new URL(`/Payment/PaymentManagement_PM`, window.location.origin);
-
-        newLink.href = url.toString();
-        newLink2.href = url2.toString();
-        navTabs.appendChild(newLink);
-        navTabs.appendChild(newLink2);
-    }
 
         $('#socialMediaContainer').on('click', '.add-social-btn', function () {
             const newInput = `<div class="input-group mb-2">

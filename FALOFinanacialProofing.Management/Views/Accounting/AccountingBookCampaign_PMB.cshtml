@@ -1,0 +1,364 @@
+﻿@{
+    ViewData["Title"] = "AccountingBookCampaign";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+            .close:hover,
+            .close:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+        .form-control {
+            margin-top: 10px;
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+            .nav-tabs a {
+                padding: 10px 20px;
+                text-decoration: none;
+                color: #000;
+                background-color: #f1f1f1;
+                border-radius: 5px;
+            }
+
+                .nav-tabs a.active {
+                    background-color: #EC407A;
+                    color: #fff;
+                }
+
+                .nav-tabs a:hover {
+                    background-color: #007bff;
+                    color: #fff;
+                }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        td {
+            vertical-align: middle;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .btn {
+            margin: 5px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <nav class="nav-tabs" id="navTabs">
+                                <a asp-controller="Campaign" asp-action="CampaignDetail_PMB" >Campaign Detail</a>
+                                <a asp-controller="Accounting" asp-action="AccountingBookCampaign_PMB" class="active">Accounting Book</a>
+                                <a asp-controller="Campaign" asp-action="Member_PMB">Member</a>
+                                <a asp-controller="Accounting" asp-action="DebtManagement">Debt</a>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Accounting Book</h6>
+                        </div>
+                    </div>
+                    <div class="card-body px-0 pb-2">
+                        <div class="table-responsive p-0">
+                            <table class="table align-items-center mb-0">
+                                <thead class="text-center">
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">STT</th>
+                                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 text-center">File</th>
+                                        <th class="text-secondary text-secondary text-xs font-weight-bolder opacity-7 text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="voucherTableBody" class="text-center">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="createVoucherModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('createVoucherModal')">&times;</span>
+                <h3>Upload Accounting Book</h3>
+                <input type="date" id="voucherDateCreated" class="form-control" value="${new Date().toISOString().split('T')[0]}" hidden required />
+                <label for="voucherFile">File:</label>
+                <input type="file" id="voucherFile" class="form-control" />
+                <span id="fileNameDisplay" style="margin-top: 10px;"></span>
+                <button class="btn btn-success mt-3" onclick="submitVoucher()">Submit</button>
+            </div>
+        </div>
+
+        <div id="detailModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('detailModal')">&times;</span>
+                <h3>Accounting Book Details</h3>
+                <div id="voucherDetailContent"></div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+</html>
+
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    const checkrole = localStorage.getItem('loggingRole');
+    const campaignId = localStorage.getItem('campaignId');
+    const navTabs = document.getElementById('navTabs');
+    const userId = localStorage.getItem('userId');
+    const jwtToken = localStorage.getItem('jwtToken');
+    console.log(campaignId);
+    console.log(checkrole);
+    function showCreateVoucherPopup() {
+        document.getElementById('createVoucherModal').style.display = 'block';
+    }
+
+    function submitVoucher() {
+        const fileInput = document.getElementById('voucherFile');
+        if (fileInput.files.length === 0) {
+            alert("Please upload a file before submitting.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('File', fileInput.files[0]);
+        formData.append('CurrentRole', checkrole);
+        formData.append('UserId', userId);
+        formData.append('CampaignId', campaignId);
+
+        $.ajax({
+            url: 'https://localhost:7294/api/AccountingBook/uploadaccountingbook',
+            type: 'POST',
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            },
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                alert(response.message);
+                if (response.success) {
+                    // document.getElementById('voucherTableBody').insertAdjacentHTML('beforeend', createTableRow(response.Data));
+                    closeModal('createVoucherModal');
+                    location.reload();
+                } else {
+                    closeModal('createVoucherModal');
+                    alert(response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                alert('An error occurred while uploading the file. Please try again.');
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    function createTableRow(accountingBook, index) {
+        const showDeleteButton = checkrole === "Accounting";
+        return `
+            <tr>
+                <td class="align-middle text-center">${index + 1}</td>
+                <td class="align-middle text-center">${accountingBook.filePath}</td>
+                <td class="align-middle text-center">
+                    <button class="btn btn-success btn-sm" onclick="downloadFile(this,'${accountingBook.filePath}')">Download</button>
+                    ${showDeleteButton ? `<button class="btn btn-danger btn-sm" onclick="deleteRow(this, '${accountingBook.filePath}')">Delete</button>` : ''}
+                </td>
+            </tr>
+        `;
+    }
+    function deleteRow(button, fileName) {
+        const jwtToken = localStorage.getItem('jwtToken');
+        if (!jwtToken) {
+            alert('JWT token is missing. Please log in again.');
+            return;
+        }
+
+        if (confirm(`Are you sure you want to delete the accounting book: ${fileName}?`)) {
+            $.ajax({
+                url: `https://localhost:7294/api/AccountingBook/deleteaccountingbook/${fileName}`,
+                type: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                success: function (response) {
+                    if (response.success) {
+                        alert('Accounting book deleted successfully');
+                        $(button).closest('tr').remove();
+                        location.reload();
+                    } else {
+                        alert('Failed to delete accounting book: ' + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert('An error occurred while deleting the accounting book.');
+                    console.error('Error:', error);
+                }
+            });
+        }
+    }
+
+    function displayValue(value) {
+        return value ? value : 'N/A';
+    }
+
+    function fetchAccountingBooks() {
+        $.ajax({
+            url: `https://localhost:7294/api/AccountingBook/getaccountingbookincampaign?campaignId=${campaignId}`,
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            },
+            success: function (response) {
+                console.log('API Response:', response);
+                if (response.success) {
+                    console.log('Data:', response.data);
+                    populateTable(response.data);
+                } else {
+                    const tableBody = $('#voucherTableBody');
+                    tableBody.empty();
+                    tableBody.append('<tr><td colspan="3" class="text-center">No accounting books found</td></tr>');
+                }
+            },
+            error: function (xhr, status, error) {
+                alert('An error occurred while fetching the accounting books.');
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    function populateTable(data) {
+        const tableBody = $('#voucherTableBody');
+        tableBody.empty();
+
+        if (typeof data === 'object' && data !== null) {
+            tableBody.append(createTableRow(data, 0));
+        } else {
+            tableBody.append('<tr><td colspan="3" class="text-center">No accounting books found</td></tr>');
+        }
+    }
+
+    function downloadFile(button, fileName) {
+        $.ajax({
+            url: `https://localhost:7294/api/AccountingBook/downloadaccountingbook/${fileName}`,
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            },
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function (data, status, xhr) {
+                const downloadUrl = window.URL.createObjectURL(data);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(downloadUrl);
+            },
+            error: function (xhr, status, error) {
+                alert('An error occurred while downloading the file.');
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    window.onclick = function (event) {
+        if (event.target == document.getElementById('createVoucherModal')) {
+            closeModal('createVoucherModal');
+        }
+        if (event.target == document.getElementById('detailModal')) {
+            closeModal('detailModal');
+        }
+    };
+
+    fetchAccountingBooks();
+</script>
+
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>

@@ -16,6 +16,32 @@
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <style>
+        .nav-tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+            .nav-tabs a {
+                padding: 10px 20px;
+                text-decoration: none;
+                color: #000;
+                background-color: #f1f1f1;
+                border-radius: 5px;
+            }
+
+                .nav-tabs a.active {
+                    background-color: #EC407A;
+                    color: #fff;
+                }
+
+                .nav-tabs a:hover {
+                    background-color: #007bff;
+                    color: #fff;
+                }
+    </style>
 </head>
 
 <body>
@@ -23,6 +49,16 @@
         <div class="row">
             <div class="col-12">
                 <div class="card my-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <nav class="nav-tabs" id="navTabs">
+                                <a asp-controller="Campaign" asp-action="CampaignDetail_PMB" >Campaign Detail</a>
+                                <a asp-controller="Accounting" asp-action="AccountingBookCampaign_PMB">Accounting Book</a>
+                                <a asp-controller="Campaign" asp-action="Member_PMB">Member</a>
+                                <a asp-controller="Accounting" asp-action="DebtManagement" class="active">Debt</a>
+                            </nav>
+                        </div>
+                    </div>
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
                             <h6 class="text-white text-capitalize ps-3 mb-0">Debt Management</h6>

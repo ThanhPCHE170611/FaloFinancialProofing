@@ -101,6 +101,10 @@
         localStorage.setItem('campaignId', Id);
         window.location.href = '/Campaign/CampaignUpdateProcessRequest';
     }
+    function changeCampaignPm(button, Id) {
+        localStorage.setItem('campaignId', Id);
+        window.location.href = '/Campaign/CampaignDetail_PMB';
+    }
     $(document).ready(function () {
         let currentPage = 1;
         const userId = localStorage.getItem('userId');
@@ -162,9 +166,11 @@
                     actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId})" class="btn btn-info btn-sm detail-btn">Detail</button>
                                         <button class="btn btn-primary btn-sm" onclick="changeCampaignUpdateProcess(this, ${item.campaignId})">Update Process</a>
                     `;
-                }
+                } 
                 if(checkrole === "Project Management Board") {
                     campaignName =`${item.title}`;
+                    actionButtons = `<button onclick="changeCampaignPm(this, ${item.campaignId})" class="btn btn-info btn-sm detail-btn">Detail</button>
+                    `;
                 }
                 const row = `
                     <tr>
