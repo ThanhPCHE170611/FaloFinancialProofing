@@ -150,6 +150,36 @@ namespace FALOFinancialProofing.Services.TransactionLogsServices
             return userTransaction;
         }
 
+        public async Task<List<UserTransactionHistory>> GetMoneyOutTransactionsByCampaignIdAsync(int campaignId)
+        {
+            List<UserTransactionHistory> userTransaction = null!;
+            try
+            {
+                userTransaction = await _transactionLogRepository.GetAll()
+                   .Where(u => u.CampaignId == campaignId && u.Amount < 0)
+                   .Select(u => new UserTransactionHistory()
+                   {
+                       Amount = Math.Abs(u.Amount),
+                       CampaignId = u.CampaignId,
+                       CampaignName = u.Campaign.Title,
+                       Description = u.Description,
+                       TransactionDate = u.TransactionDate,
+                       tid = u.tid,
+                   }).ToListAsync();
+                if (userTransaction == null)
+                {
+                    throw new Exception("Money out Transaction not found");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetMoneyOutTransactionsByCampaignIdAsync: {ex.Message}");
+            }
+
+            return userTransaction;
+        }
+
         public async Task<List<UserTransactionHistory>> GetUserTransactionsByUserIdAsync(string userId)
         {
             List<UserTransactionHistory> userTransaction = null!;
@@ -240,6 +270,23 @@ namespace FALOFinancialProofing.Services.TransactionLogsServices
             }
 
             return result;
+        }
+
+        public async Task<decimal> GetTotalMoneyOutByCampaignId(int campaignId)
+        {
+            decimal totalMoneyOut = 0;
+            try
+            {
+                totalMoneyOut = await _transactionLogRepository.GetAll()
+                    .Where(u => u.CampaignId == campaignId && u.Amount < 0)
+                    .SumAsync(u => Math.Abs(u.Amount));
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetTotalMoneyOutByCampaignId: {ex.Message}");
+            }
+
+            return totalMoneyOut;
         }
     }
 }

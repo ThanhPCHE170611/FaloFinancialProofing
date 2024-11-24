@@ -107,7 +107,7 @@ namespace FALOFinancialProofing.Services
             return checkValid;
         }
 
-        public async Task<bool> CheckRole(string userId, string RoleId, string RoleName, StringBuilder message)
+        public virtual async Task<bool> CheckRole(string userId, string RoleId, string RoleName, StringBuilder message)
         {
             bool checkValid = false;
             try
@@ -674,6 +674,7 @@ namespace FALOFinancialProofing.Services
                 //tokenId
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.NameId, User.Id),
+                new Claim("UserName", User.UserName ),
                 //new Claim("RoleId", User.RoleNames),
                 //new Claim("TokenId", Guid.NewGuid().ToString()),
 

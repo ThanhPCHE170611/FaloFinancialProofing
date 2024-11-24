@@ -3,6 +3,7 @@ using FALOFinancialProofing.DTOs.TransactionLogsDTOs;
 using FALOFinancialProofing.DTOs.UserDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
+using FALOFinancialProofing.Services.CampaignService;
 using FALOFinancialProofing.Services.TransactionLogsServices;
 using FALOFinancialProofing.Utilities;
 using Microsoft.AspNetCore.Mvc;
@@ -15,10 +16,12 @@ namespace FALOFinancialProofing.Controllers
     public class TransactionLogsController : ControllerBase
     {
         private readonly ITransactionLogService _transactionLogService;
+        private readonly ICampaignService _campaignService;
 
-        public TransactionLogsController(ITransactionLogService transactionLogService)
+        public TransactionLogsController(ITransactionLogService transactionLogService, ICampaignService campaignService)
         {
             _transactionLogService = transactionLogService;
+            _campaignService = campaignService;
         }
 
         // GET: api/TransactionLogs
@@ -83,31 +86,29 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
-        //[HttpGet("GetCampaignTransactionLogs/{campaignId}")]
-        //public async Task<ActionResult> GetCampaignTransactionLogs(string? searchInput, int campaignId, int currentPage = IntConstant.PageNumberDefault)
-        //{
-
-        //    var transactionLog = await _transactionLogService.GetUserTransactionsByCampaignIdAsync(campaignId);
-
-        //    if (transactionLog == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    if (!string.IsNullOrEmpty(searchInput))
-        //    {
-        //        searchInput = searchInput.Trim();
-        //        transactionLog = transactionLog.FindAll(x => ($"{x.CampaignName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase) || ($"{x.TransactionDate.ToShortDateString()}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
-        //    }
-        //    return Ok(new ApiResponse()
-        //    {
-        //        Data = transactionLog,
-        //        Success = true,
-        //        Message = "Get Campaign Transaction Logs Successfully!"
-        //    });
-        //}
+        [HttpGet("GetTotalMoneyOutByCampaignId/{campaignId}")]
+        public async Task<ActionResult> GetTotalMoneyOutByCampaignId(int campaignId)
+        {
+            var campaign = await _campaignService.GetCampaignByIdAsync(campaignId);
+            if (campaign == null)
+            {
+                return Ok(new ApiResponse()
+                {
+                    Success = false,
+                    Message = "Campaign not found!"
+                });
+            }
+            decimal transactionLog = await _transactionLogService.GetTotalMoneyOutByCampaignId(campaignId);
+            return Ok(new ApiResponse()
+            {
+                Data = transactionLog,
+                Success = true,
+                Message = "Get Total Money Out Successfully!"
+            });
+        }
 
         [HttpGet("GetCampaignTransactionLogs/{campaignId}")]
-        public async Task<ActionResult> GetCampaignTransactionLogs(string? searchInput, int campaignId, int currentPage = IntConstant.PageNumberDefault)
+        public async Task<ActionResult> GetCampaignTransactionLogs(string? searchInput, DateTime? startDate, DateTime? endDate, int campaignId, int currentPage = IntConstant.PageNumberDefault)
         {
             List<UserTransactionHistory> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -125,10 +126,15 @@ namespace FALOFinancialProofing.Controllers
                         Data = filterPagingData
                     });
                 }
+
                 if (!string.IsNullOrEmpty(searchInput))
                 {
                     searchInput = searchInput.Trim();
-                    data = data.FindAll(x => ($"{x.CampaignName}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
+                    data = data.FindAll(x => ($"{x.tid}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
+                }
+                if (startDate != null && endDate != null)
+                {
+                    data = data.FindAll(x => x.TransactionDate >= startDate && x.TransactionDate <= endDate);
                 }
                 filterPagingData.DataCount = data.Count;
                 data = PaginationHelper.Paginate<UserTransactionHistory>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
@@ -142,6 +148,52 @@ namespace FALOFinancialProofing.Controllers
             {
                 Success = true,
                 Message = "Get All TransactionLogs By CampaignId Successfully!",
+                Data = filterPagingData
+            });
+        }
+
+        [HttpGet("GetCampaignTransactionLogsMoneyOut/{campaignId}")]
+        public async Task<ActionResult> GetCampaignTransactionLogsMoneyOut(string? searchInput, DateTime? startDate, DateTime? endDate, int campaignId, int currentPage = IntConstant.PageNumberDefault)
+        {
+            List<UserTransactionHistory> data = null;
+            FilterPagingData filterPagingData = new FilterPagingData();
+            filterPagingData.CurrentPage = currentPage;
+            StringBuilder stringBuilder = new StringBuilder();
+            try
+            {
+                data = (await _transactionLogService.GetMoneyOutTransactionsByCampaignIdAsync(campaignId)).ToList();
+                if (data == null || data.Count == 0)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "Get All Money Out TransactionLogs By CampaignId Failed!",
+                        Data = filterPagingData
+                    });
+                }
+                if (!string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = searchInput.Trim();
+                    data = data.FindAll(x => ($"{x.tid}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
+                }
+                if (startDate != null && endDate != null)
+                {
+                    data = data.FindAll(x => x.TransactionDate >= startDate && x.TransactionDate <= endDate);
+                }
+                filterPagingData.DataCount = data.Count;
+                data = PaginationHelper.Paginate<UserTransactionHistory>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                filterPagingData.Data = data;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"Get All Money Out TransactionLogs By CampaignId: {ex.Message}");
+
+
+            }
+            return Ok(new ApiResponse()
+            {
+                Success = true,
+                Message = "Get All Money Out TransactionLogs By CampaignId Successfully!",
                 Data = filterPagingData
             });
         }
