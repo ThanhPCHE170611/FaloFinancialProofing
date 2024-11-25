@@ -34,6 +34,10 @@
             display: none;
         }
 
+        #organization-section {
+            display: none;
+        }
+
         #docList li {
             margin-bottom: 5px;
         }
@@ -73,6 +77,12 @@
                             <div class="col-md-12">
                                 <label for="status" class="form-label">Status</label>
                                 <input type="text" class="form-control" id="status" readonly>
+                            </div>
+                        </div>
+                        <div class="row mb-3" id="organization-section">
+                            <div class="col-md-12">
+                                <label for="status" class="form-label">Organization</label>
+                                <input type="text" class="form-control" id="organization" readonly>
                             </div>
                         </div>
                         <div class="row mb-3" id="approver-section">
@@ -156,6 +166,12 @@
                     $('#receiverName').val(data.receiverName);
                     $('#approver-section').show();
                 }
+                if(data.organizationName !== 'No Organization') {
+                    $('#organization').val(data.organizationName);
+                    $('#organization-section').show();
+                    console.log(data.organizationName);
+                }
+                
                 $('#description').val(data.description);
                 $('#status').val(data.status);
 

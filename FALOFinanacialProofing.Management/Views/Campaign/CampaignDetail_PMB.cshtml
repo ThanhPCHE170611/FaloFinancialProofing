@@ -109,12 +109,12 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label for="campaignName" class="form-label">Campaign Name</label>
-                            <input type="text" class="form-control" id="campaignName" placeholder="Enter campaign name" readonly>
+                            <input type="text" class="form-control" id="campaignName" >
                         </div>
 
                         <div class="mb-3">
                             <label for="location" class="form-label">Location</label>
-                            <textarea class="form-control" id="location" rows="2" readonly></textarea>
+                            <textarea class="form-control" id="location" rows="2" ></textarea>
                         </div>
 
                         <div class="mb-3">
@@ -127,8 +127,8 @@
                             <input type="text" class="form-control" id="creator" readonly>
                         </div>
                         <div class="mb-3">
-                            <label for="totalAmount" class="form-label">Total Amount Needed</label>
-                            <input type="text" class="form-control" id="totalAmount" readonly>
+                            <label for="totalAmount" class="form-label">Fund Target</label>
+                            <input type="text" class="form-control" id="totalAmount" >
                         </div>
 
                         <div class="mb-3">
@@ -138,6 +138,7 @@
                         <div class="mb-3">
                             <label for="bankAccountNumber" class="form-label">Bank Account Number</label>
                             <input type="text" class="form-control" id="bankAccountNumber" readonly>
+                            <input type="text" class="form-control" id="bankId" hidden>
                         </div>
                         <div class="mb-3">
                             <label for="startDate" class="form-label">Created Date</label>
@@ -147,13 +148,30 @@
                             <label for="endDate" class="form-label">Expected End Date</label>
                             <input type="date" class="form-control" id="endDate" readonly>
                         </div>
+                        @* <div class="mb-3"> *@
+                        @*     <label for="status" class="form-label">Stage</label> *@
+                        @*     <input type="text" class="form-control" id="status" > *@
+                        @* </div> *@
                         <div class="mb-3">
-                            <label for="status" class="form-label">Stage</label>
-                            <input type="text" class="form-control" id="status" readonly>
+                            <label for="stage" class="form-label">Stage</label>
+                            <select class="form-control" id="stage">
+                                <option value="Fund-Raising">Fund-Raising</option>
+                                <option value="Implement">Implement</option>
+                                <option value="Disbursement">Disbursement</option>
+                                <option value="Close">Close</option>
+                            </select>
                         </div>
                         <div class="mb-3">
+                            <label for="statusDropdown" class="form-label">Status</label>
+                            <select class="form-control" id="statusDropdown">
+                                <option value="true">Active</option>
+                                <option value="false">Inactive</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control" id="description" rows="8" readonly></textarea>
+                            <textarea class="form-control" id="description" rows="8" ></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Update Log</label>
@@ -161,16 +179,26 @@
                         </div>
 
                     </div>
-                    <div id="save-btn">
-                        <div>
-                            <a asp-controller="Campaign" asp-action="CampaignManagement" class="btn btn-primary btn-lg" style="margin-left:10px">Cancel</a>
-                        </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Campaign Picture</h5>
+                    </div>
+                    <div class="card-body">
+                        <button id="choseImage" class="btn btn-primary mb-3" onclick="document.getElementById('projectImages').click()" disabled>Choose file</button> 
+                            <input type="file" id="projectImages" class="form-control d-none" accept="image/*" multiple>
+                        <div id="imagePreview" class="mt-3 row"></div>
+                    </div>
+                </div>
+                <div id="save-btn">
+                    <button class="btn btn-warning btn-lg" id="btnUpdate">Update</button>
+                    <div>
+                        <a asp-controller="Campaign" asp-action="CampaignManagement" class="btn btn-primary btn-lg" style="margin-left:10px">Cancel</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 </body>
 
 </html>
@@ -184,76 +212,15 @@
         date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
         return date.toISOString().split('T')[0];
     }
-
+    let isChanged = false;
     $(document).ready(function () {
         const jwtToken = localStorage.getItem('jwtToken');
         const campaignId = localStorage.getItem('campaignId');
         const checkrole = localStorage.getItem('loggingRole');
+        const roleid = localStorage.getItem('loggingRoleId');
         const userId = localStorage.getItem('userId');
+        
 
-        if (checkrole === 'Project Manager') {
-        const updateButton = $('<button>', {
-            class: 'btn btn-warning btn-lg',
-            text: 'Update End Date',
-            id: 'btnUpdateEndDate',
-        });
-        $('#save-btn').prepend(updateButton);
-
-        const popupHTML = `
-            <div id="updateDatePopup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; border: 1px solid #ccc; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
-                <h5>Select New End Date</h5>
-                <input type="date" id="newEndDateInput" class="form-control mb-3">
-                <button class="btn btn-success" id="submitNewEndDate">Submit</button>
-                <button class="btn btn-secondary" id="closePopup">Cancel</button>
-            </div>
-        `;
-        $('body').append(popupHTML);
-
-        $('#btnUpdateEndDate').on('click', function () {
-            $('#updateDatePopup').show();
-        });
-
-        $('#closePopup').on('click', function () {
-            $('#updateDatePopup').hide();
-        });
-
-        $('#submitNewEndDate').on('click', function () {
-            const newEndDate = new Date($('#newEndDateInput').val());
-            newEndDate.setMinutes(newEndDate.getMinutes() - newEndDate.getTimezoneOffset());
-
-            const currentEndDate = new Date($('#endDate').val());
-            currentEndDate.setMinutes(currentEndDate.getMinutes() - currentEndDate.getTimezoneOffset());
-
-            if (isNaN(newEndDate)) {
-                alert('Please select a valid date.');
-                return;
-            }
-
-            if (newEndDate <= currentEndDate) {
-                alert('The new end date must be later than the current end date.');
-                return;
-            }
-
-            $.ajax({
-                url: `https://localhost:7294/api/Campaign/updateenddateforprojectmanager?campaignId=${campaignId}&userId=${userId}&currentRole=${checkrole}&newDateTime=${newEndDate.toISOString()}`,
-                type: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${jwtToken}`,
-                },
-                success: function (response) {
-                    if (response.success) {
-                        alert(response.message);
-                        location.reload();
-                    } else {
-                        alert(response.message);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error updating end date:', error);
-                }
-            });
-        });
-    }
         if (campaignId) {
             fetchCampaignDetails(campaignId);
         }
@@ -270,17 +237,27 @@
                         const data = response.data;
                         $('#campaignName').val(data.title);
                         $('#location').val(safeValue(data.address));
-                        $('#projectSelect').val(data.projectId);
+                        $('#projectSelect').val(data.projectName);
+                        $('#bankId').val(data.bankId);
                         $('#creator').val(`${data.firstName} ${data.lastName}`);
                         $('#totalAmount').val(data.fundTarget.toLocaleString());
                         $('#realtimeAmount').val(data.totalMoneyEarned.toLocaleString());
                         $('#startDate').val(formatDateToDisplay(data.dateOfCreation));
                         $('#endDate').val(formatDateToDisplay(data.endDate));
-                        $('#status').val(data.status);
+                        // $('#status').val(data.status);
                         $('#description').val(safeValue(data.description));
                         $('#updateLog').val(safeValue(data.updateLog));
-
+                        $('#stage').val(data.status);
+                        $('#statusDropdown').val(data.isActive.toString());
                         $('#bankAccountNumber').val(data.accountNumber ? data.accountNumber : 'N/A');
+                        if (data.image) {
+                            const imagePreview = document.getElementById('imagePreview');
+                            imagePreview.innerHTML = `
+                                    <div class="col-md-4 mb-3">
+                                        <img src="${data.image}" alt="Project Image" class="img-fluid" id="existing-image">
+                                    </div>`;
+                        }
+                        monitorChanges();
                     } else {
                         alert(response.message);
                     }
@@ -290,9 +267,51 @@
                 }
             });
         }
+        $('#btnUpdate').on('click', function () {
+            const formData = new FormData();
+            formData.append('Id', campaignId);
+            formData.append('UserId', userId);
+            formData.append('RoleId', roleid);
+            formData.append('BankId', $('#bankId').val());
+            formData.append('Title', $('#campaignName').val());
+            formData.append('Description', $('#description').val());
+            formData.append('FundTarget', $('#totalAmount').val().replace(/,/g, ''));
+            formData.append('Address', $('#location').val());
+            formData.append('IsActive', $('#statusDropdown').val());
+            formData.append('Status', $('#stage').val());
+            console.log(formData);
+            $.ajax({
+                url: `https://localhost:7294/api/Campaign/UpdateCampaign`,
+                type: 'PUT',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                success: function (response) {
+                    alert(response.message || "Campaign updated successfully!");
+                    if (response.success) {
+                        location.reload();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error updating campaign:', error);
+                    alert('Error updating campaign. Please try again.');
+                }
+            });
+        });
     });
     function safeValue(value, defaultValue = 'N/A') {
         return value ? value : defaultValue;
+    }
+    function monitorChanges() {
+        $('input, textarea, select').on('change keyup', function () {
+            if (!isChanged) {
+                $('#btnUpdate').removeAttr('disable'); 
+                isChanged = true; 
+            }
+        });
     }
 
 </script>

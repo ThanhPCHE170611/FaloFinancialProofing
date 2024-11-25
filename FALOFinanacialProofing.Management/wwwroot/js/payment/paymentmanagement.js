@@ -227,6 +227,9 @@ function approveRequest(button, requestId) {
                     console.log(userId);
                     console.log(requestId);
                     showFileUploadPopup(requestId);
+                    //updateRowToApprovedForPM(button, requestId);
+                    //alert("Request approved successfully for Accounting.");
+                    //location.reload();
                 } else {
                     alert(response.message || "Failed to approve the request.");
                 }
