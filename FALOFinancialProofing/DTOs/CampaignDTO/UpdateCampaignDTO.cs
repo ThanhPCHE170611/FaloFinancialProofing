@@ -23,8 +23,7 @@ namespace FALOFinancialProofing.DTOs.CampaignDTO
         public string? Address { get; set; } // pm
         public bool? IsActive { get; set; }
         public string? Status { get; set; }
-
-
+        public DateTime? EndDate { get; set; }
 
     }
 }
