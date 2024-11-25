@@ -1,6 +1,6 @@
-﻿using System.Text;
-using FALOFinancialProofing.DTOs.MoveNextCampaignStatusRequestHistoryDTO;
+﻿using FALOFinancialProofing.DTOs.MoveNextCampaignStatusRequestHistoryDTO;
 using FALOFinancialProofing.Models;
+using System.Text;
 
 namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestHistoryService
 {

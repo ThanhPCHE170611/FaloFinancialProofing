@@ -1,6 +1,4 @@
 ﻿using FALOFinancialProofing.DTOs.CreateQrCodeDTO;
-using FALOFinancialProofing.DTOs.ProjectDTOs;
-using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services.CampaignService;

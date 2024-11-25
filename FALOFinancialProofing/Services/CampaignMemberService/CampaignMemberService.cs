@@ -1,13 +1,10 @@
-﻿using FALOFinancialProofing.DTOs;
-using FALOFinancialProofing.DTOs.CampaignDTO;
-using FALOFinancialProofing.DTOs.CampaignMemberDTO;
+﻿using FALOFinancialProofing.DTOs.CampaignMemberDTO;
 using FALOFinancialProofing.DTOs.RoleDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services.CampaignService;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using System.Text;
 
 namespace FALOFinancialProofing.Services.CampaignMemberService
@@ -255,6 +252,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             try
             {
                 return await cmRepository.GetAll(x => x.UserId.Equals(userid))
+                    .Include(cm => cm.Role)
                     .FirstOrDefaultAsync();
             }
             catch (Exception e)

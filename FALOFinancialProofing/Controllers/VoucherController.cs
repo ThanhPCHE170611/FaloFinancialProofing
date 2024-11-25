@@ -1,6 +1,4 @@
-﻿using FALOFinancialProofing.Services.AttachmentFIleServices;
-using FALOFinancialProofing.Services.VoucherServices;
-using Microsoft.AspNetCore.Http;
+﻿using FALOFinancialProofing.Services.VoucherServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FALOFinancialProofing.Controllers

@@ -1,6 +1,5 @@
 ﻿using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Services.SocialNetworkService;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FALOFinancialProofing.Controllers

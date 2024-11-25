@@ -1,6 +1,5 @@
 ﻿using FALOFinancialProofing.DTOs.BankDTO;
 using FALOFinancialProofing.Models;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 namespace FALOFinancialProofing.Services.BankServices
 {

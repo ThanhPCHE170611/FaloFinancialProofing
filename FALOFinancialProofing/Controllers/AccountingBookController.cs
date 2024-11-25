@@ -3,9 +3,7 @@ using FALOFinancialProofing.Constant;
 using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Services.AccountingBookServices;
-using FALOFinancialProofing.Services.AttachmentFIleServices;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 
@@ -25,7 +23,7 @@ namespace FALOFinancialProofing.Controllers
         [HttpPost("uploadaccountingbook")]
         [Authorize]
         [RoleAttribute(AppRole.Accounting)]
-        public async Task<IActionResult> UploadAccountingBook([FromForm]CreateAccountingBookRequest request)
+        public async Task<IActionResult> UploadAccountingBook([FromForm] CreateAccountingBookRequest request)
         {
             var errorMessages = new StringBuilder();
             var newAccountingBook = await accountingBookServices.CreateAccountingRequest(request, errorMessages);

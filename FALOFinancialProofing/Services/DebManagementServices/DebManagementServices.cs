@@ -13,7 +13,7 @@ namespace FALOFinancialProofing.Services.DebManagementServices
         private readonly IRepository<CampaignMember, int> repository;
         private readonly AuthServices authServices;
 
-        public DebManagementServices(IRepository<CampaignMember, int> repository, 
+        public DebManagementServices(IRepository<CampaignMember, int> repository,
             AuthServices authServices)
         {
             this.repository = repository;
@@ -21,7 +21,7 @@ namespace FALOFinancialProofing.Services.DebManagementServices
         }
 
         public async Task<List<UserWithDeb>> GetDebManagementForAccounting(string userId, string currentLoggingRole,
-            StringBuilder message,  int campaignId)
+            StringBuilder message, int campaignId)
         {
             var userWithDeb = new List<UserWithDeb>();
             try
@@ -65,7 +65,7 @@ namespace FALOFinancialProofing.Services.DebManagementServices
                 var accountingInCampaign = repository.GetAll()
                     .Include(cm => cm.User)
                     .Include(cm => cm.Role)
-                    .Where(cm => cm.UserId == userId 
+                    .Where(cm => cm.UserId == userId
                         && cm.CampaignId == campaignId
                         && cm.Role.Name == AppRole.Accounting
                         && cm.IsActive)
@@ -84,7 +84,7 @@ namespace FALOFinancialProofing.Services.DebManagementServices
             }
         }
 
-        public async Task<List<UserWithDeb>> GetDebManagementForPMB(string userId, 
+        public async Task<List<UserWithDeb>> GetDebManagementForPMB(string userId,
                                                             string currentLoggingRole,
                                                             StringBuilder message)
         {

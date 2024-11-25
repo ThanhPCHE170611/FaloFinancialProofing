@@ -1,6 +1,5 @@
 ﻿using FALOFinancialProofing.Attributes.RoleAttributes;
 using FALOFinancialProofing.Constant;
-using FALOFinancialProofing.DTOs.CampaignDTO;
 using FALOFinancialProofing.DTOs.OrganizationDTO;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;

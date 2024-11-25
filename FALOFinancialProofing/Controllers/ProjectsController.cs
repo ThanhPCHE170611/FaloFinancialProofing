@@ -1,6 +1,5 @@
 ﻿using FALOFinancialProofing.Attributes.RoleAttributes;
 using FALOFinancialProofing.Constant;
-using FALOFinancialProofing.DTOs.CampaignDTO;
 using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
@@ -8,10 +7,7 @@ using FALOFinancialProofing.Services.CreateProjectFileServices;
 using FALOFinancialProofing.Services.CreateProjectRequestServices;
 using FALOFinancialProofing.Services.ProjectServices;
 using FALOFinancialProofing.Utilities;
-using Microsoft.AspNetCore.Components.QuickGrid;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata;
 using System.Text;
 
 namespace FALOFinancialProofing.Controllers

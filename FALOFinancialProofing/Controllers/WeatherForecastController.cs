@@ -1,11 +1,7 @@
-﻿using FALOFinancialProofing.Attributes;
-using FALOFinancialProofing.Attributes.RoleAttributes;
+﻿using FALOFinancialProofing.Attributes.RoleAttributes;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Services;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace FALOFinancialProofing.Controllers

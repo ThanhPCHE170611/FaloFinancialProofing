@@ -4,7 +4,6 @@ using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services;
 using FALOFinancialProofing.Services.BankServices;
 using FALOFinancialProofing.Services.CreateQrCodeServices;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 

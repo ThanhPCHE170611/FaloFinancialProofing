@@ -15,5 +15,7 @@ namespace FALOFinancialProofing.Services.TransactionLogsServices
         Task<TransactionLog> GetTransactionLogByCassoTransactionIdAsync(int id);
         Task<List<UserTransactionHistory>> GetUserTransactionsByUserIdAsync(string userId);
         Task<List<UserTransactionHistory>> GetUserTransactionsByCampaignIdAsync(int campaignId);
+        Task<List<UserTransactionHistory>> GetMoneyOutTransactionsByCampaignIdAsync(int campaignId);
+        Task<decimal> GetTotalMoneyOutByCampaignId(int campaignId);
     }
 }

@@ -1,17 +1,12 @@
 ﻿using FALOFinancialProofing.Attributes.RoleAttributes;
 using FALOFinancialProofing.Constant;
-using FALOFinancialProofing.DTOs.CampaignDTO;
 using FALOFinancialProofing.DTOs.CreateProjectRequestDTO;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.CreateProjectRequestServices;
 using FALOFinancialProofing.Utilities;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FALOFinancialProofing.Controllers
 {

@@ -2,16 +2,14 @@
 using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Extensions;
 using FALOFinancialProofing.Models;
+using FALOFinancialProofing.Services;
 using FALOFinancialProofing.Services.ApproveProcessServices;
 using FALOFinancialProofing.Services.AttachmentFIleServices;
+using FALOFinancialProofing.Services.CampaignMemberService;
 using FALOFinancialProofing.Services.RequestFormServices;
 using FALOFinancialProofing.Services.VoucherServices;
-using Humanizer.Localisation;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Mail;
 using System.Text;
 
 namespace FALOFinancialProofing.Controllers
@@ -25,17 +23,19 @@ namespace FALOFinancialProofing.Controllers
         private readonly IAttachmentFileServices attachmentFileService;
         private readonly IApproveProcessServices approveProcessServices;
         private readonly IVoucherServices voucherServices;
+        private readonly ICampaignMemberService campaignMemberServices;
 
-        public RequestFormController(IRequestFormServices requestFormService,
-            IAttachmentFileServices attachmentFileService,
-            IApproveProcessServices approveProcessServices,
-            IVoucherServices voucherServices
-            )
+        public RequestFormController(IRequestFormServices requestFormService, 
+            IAttachmentFileServices attachmentFileService, 
+            IApproveProcessServices approveProcessServices, 
+            IVoucherServices voucherServices, 
+            ICampaignMemberService campaignMemberServices)
         {
             this.requestFormService = requestFormService;
             this.attachmentFileService = attachmentFileService;
             this.approveProcessServices = approveProcessServices;
             this.voucherServices = voucherServices;
+            this.campaignMemberServices = campaignMemberServices;
         }
 
         [HttpGet]
@@ -118,7 +118,7 @@ namespace FALOFinancialProofing.Controllers
             }
             var attachmentfiles = new List<IFormFile>();
             var voucherFiles = new List<IFormFile>();
-            if(requestFormRequest.UploadFiles != null)
+            if (requestFormRequest.UploadFiles != null)
             {
                 string attachmentfileExtension = Path.GetExtension(requestFormRequest.UploadFiles.FileName);
 
@@ -133,7 +133,7 @@ namespace FALOFinancialProofing.Controllers
                 }
                 attachmentfiles.Add(requestFormRequest.UploadFiles);
             }
-            if(requestFormRequest.VoucherFile != null)
+            if (requestFormRequest.VoucherFile != null)
             {
                 string voucherfileExtension = Path.GetExtension(requestFormRequest.VoucherFile.FileName);
 
@@ -177,6 +177,61 @@ namespace FALOFinancialProofing.Controllers
                 RequestId = newRequestForm.Id,
                 ApproverId = requestFormRequest.ApproverId
             };
+            // special case for volunteer leader select approver is still they
+            if(requestFormRequest.ApproverId == requestFormRequest.CreatedBy)
+            {
+                approveProcessDTO.ApproveStatus = Resource.ApprovedStatus;
+                // create and accept for leader
+                var newApproveProcessForLeader = await approveProcessServices.CreateApproveProcessAsync(approveProcessDTO);
+                //Create new AttachmentFile
+                if (requestFormRequest.UploadFiles != null)
+                {
+                    var attachmentFiles = await requestFormService.SaveAttachmentFilesAsync(attachmentfiles, newRequestForm.Id, newRequestForm.TypeId);
+                    var canCreateAttachmentFiles = await attachmentFileService.CreateManyAttachmentFileAsync(attachmentFiles);
+                    if (!canCreateAttachmentFiles)
+                    {
+                        return Ok(new
+                        {
+                            Success = false,
+                            Message = "Create new AttachmentFiles failed."
+                        });
+                    }
+                }
+                if (requestFormRequest.VoucherFile != null)
+                {
+                    var newVouchers = await requestFormService.SaveUploadedVoucherAsync(newApproveProcessForLeader.Id, voucherFiles);
+                    var canCreateVouchers = await voucherServices.CreateManyVoucherAsync(newVouchers);
+                    if (!canCreateVouchers)
+                    {
+                        return Ok(new
+                        {
+                            Success = false,
+                            Message = "Create new Voucher failed."
+                        });
+                    }
+                }
+                // pushhing approve process for accounting
+                var accountingInCampaign = await requestFormService.GetApproverForVolunteerLeader(Int32.Parse(requestFormRequest.CampaignId));
+                var approveProcessForAccounting = new ApproveProcessRequest
+                {
+                    ApproveNumber = IntConstant.SecondApproveNumber,
+                    ApproveStatus = Resource.ProcessStatus,
+                    RequestId = newRequestForm.Id,
+                    ApproverId = accountingInCampaign.UserId
+                };
+                var newApproveProcessForAccounting = await approveProcessServices.CreateApproveProcessAsync(approveProcessForAccounting);
+                
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Create new PrePay RequestForm successfully.",
+                    Data = new
+                    {
+                        RequestId = newRequestForm.Id,
+                        ApproveProcessId = newApproveProcessForAccounting.Id
+                    }
+                });
+            }
             var newApproveProcess = await approveProcessServices.CreateApproveProcessAsync(approveProcessDTO);
             //Create new AttachmentFile
             if (requestFormRequest.UploadFiles != null)
@@ -293,6 +348,60 @@ namespace FALOFinancialProofing.Controllers
                 RequestId = newRequestForm.Id,
                 ApproverId = requestFormRequest.ApproverId
             };
+            if (requestFormRequest.ApproverId == requestFormRequest.CreatedBy)
+            {
+                approveProcessDTO.ApproveStatus = Resource.ApprovedStatus;
+                // create and accept for leader
+                var newApproveProcessForLeader = await approveProcessServices.CreateApproveProcessAsync(approveProcessDTO);
+                //Create new AttachmentFile
+                if (requestFormRequest.UploadFiles != null)
+                {
+                    var attachmentFiles = await requestFormService.SaveAttachmentFilesAsync(attachmentfiles, newRequestForm.Id, newRequestForm.TypeId);
+                    var canCreateAttachmentFiles = await attachmentFileService.CreateManyAttachmentFileAsync(attachmentFiles);
+                    if (!canCreateAttachmentFiles)
+                    {
+                        return Ok(new
+                        {
+                            Success = false,
+                            Message = "Create new AttachmentFiles failed."
+                        });
+                    }
+                }
+                if (requestFormRequest.VoucherFile != null)
+                {
+                    var newVouchers = await requestFormService.SaveUploadedVoucherAsync(newApproveProcessForLeader.Id, voucherFiles);
+                    var canCreateVouchers = await voucherServices.CreateManyVoucherAsync(newVouchers);
+                    if (!canCreateVouchers)
+                    {
+                        return Ok(new
+                        {
+                            Success = false,
+                            Message = "Create new Voucher failed."
+                        });
+                    }
+                }
+                // pushhing approve process for accounting
+                var accountingInCampaign = await requestFormService.GetApproverForVolunteerLeader(Int32.Parse(requestFormRequest.CampaignId));
+                var approveProcessForAccounting = new ApproveProcessRequest
+                {
+                    ApproveNumber = IntConstant.SecondApproveNumber,
+                    ApproveStatus = Resource.ProcessStatus,
+                    RequestId = newRequestForm.Id,
+                    ApproverId = accountingInCampaign.UserId
+                };
+                var newApproveProcessForAccounting = await approveProcessServices.CreateApproveProcessAsync(approveProcessForAccounting);
+
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Create new Payment RequestForm successfully.",
+                    Data = new
+                    {
+                        RequestId = newRequestForm.Id,
+                        ApproveProcessId = newApproveProcessForAccounting.Id
+                    }
+                });
+            }
             var newApproveProcess = await approveProcessServices.CreateApproveProcessAsync(approveProcessDTO);
             //Create new AttachmentFile
             if (requestFormRequest.UploadFiles != null)
@@ -532,7 +641,8 @@ namespace FALOFinancialProofing.Controllers
             {
                 Success = true,
                 Message = "Request Form canceled successfully.",
-                Data = new {
+                Data = new
+                {
                     Id = requestFormIsCancel.Id,
                     Description = requestFormIsCancel.Description,
                     Status = requestFormIsCancel.Status,
@@ -557,7 +667,7 @@ namespace FALOFinancialProofing.Controllers
                 });
             }
             var addMissingFileSuccess = await requestFormService.AddMissingAttachmentFileForRequestAsync(requestId, message, attachment);
-            if(!addMissingFileSuccess)
+            if (!addMissingFileSuccess)
             {
                 return Ok(new
                 {
