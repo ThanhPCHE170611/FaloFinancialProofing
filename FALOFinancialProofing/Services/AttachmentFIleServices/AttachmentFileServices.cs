@@ -2,7 +2,6 @@
 using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
-using Humanizer;
 using Microsoft.EntityFrameworkCore;
 
 namespace FALOFinancialProofing.Services.AttachmentFIleServices
@@ -35,7 +34,7 @@ namespace FALOFinancialProofing.Services.AttachmentFIleServices
         private async Task<List<AttachmentFile>> ListDTOToListEntity(List<AttachmentFileRequest> dtos)
         {
             var attachmentFiles = new List<AttachmentFile>();
-            foreach(var dto in dtos)
+            foreach (var dto in dtos)
             {
                 attachmentFiles.Add(await DTOToEntity(dto));
             }
@@ -51,122 +50,6 @@ namespace FALOFinancialProofing.Services.AttachmentFIleServices
                 RequestId = dto.RequestId
             };
         }
-
-        public async Task<bool> DeleteRequestFormAsync(AttachmentFileRequest dto)
-        {
-            try
-            {
-                var deletedAttachmentFiles = await repository.Get(x => x.Id == dto.Id);
-                if (deletedAttachmentFiles == null) return false;
-
-                return await repository.DeleteAsync(deletedAttachmentFiles);
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
-
-        public async Task<bool> DeleteRequestFormByIdAsync(int id)
-        {
-            try
-            {
-                var deletedAttachmentFiles = await repository.Get(x => x.Id == id);
-                if (deletedAttachmentFiles == null) return false;
-
-                return await repository.DeleteAsync(deletedAttachmentFiles);
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
-
-        public async Task<List<AttachmentFile>> GetAllAttachmentFilesAsync()
-        {
-            try
-            {
-                return await repository.GetAll().Include(x => x.RequestForm)
-                    .Select(af => new AttachmentFile
-                    {
-                        Id = af.Id,
-                        FilePath = af.FilePath,
-                        RequestId = af.RequestId,
-                        RequestForm = new RequestForm 
-                        {
-                            Id = af.RequestForm.Id,
-                            CreateAt = af.RequestForm.CreateAt,
-                            Description = af.RequestForm.Description,
-                        }
-                    }).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                return new List<AttachmentFile>();
-            }
-        }
-
-        public async Task<AttachmentFile?> GetAttachmentFileByIdAsync(int id)
-        {
-            try
-            {
-                return await repository.GetAll(x => x.Id == id).Include(x => x.RequestForm)
-                    .Select(af => new AttachmentFile
-                    {
-                        Id = af.Id,
-                        FilePath = af.FilePath,
-                        RequestId = af.RequestId,
-                        RequestForm = new RequestForm
-                        {
-                            Id = af.RequestForm.Id,
-                            CreateAt = af.RequestForm.CreateAt,
-                            Description = af.RequestForm.Description,
-                        }
-                    }).FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
-        }
-
-        public async Task<List<AttachmentFile>?> GetAttachmentFileByRequestIdAsync(int requestId)
-        {
-            try
-            {
-                return await repository.GetAll(x => x.RequestId == requestId).Include(x => x.RequestForm)
-                    .Select(af => new AttachmentFile
-                    {
-                        Id = af.Id,
-                        FilePath = af.FilePath,
-                        RequestId = af.RequestId,
-                        RequestForm = new RequestForm
-                        {
-                            Id = af.RequestForm.Id,
-                            CreateAt = af.RequestForm.CreateAt,
-                            Description = af.RequestForm.Description,
-                        }
-                    }).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
-        }
-
-        public async Task<bool> UpdateRequestFormAsync(AttachmentFileRequest dto)
-        {
-            try
-            {
-                var updatedRequestForm = await DTOToEntity(dto);
-                return await repository.UpdateAsync(updatedRequestForm);
-            }
-            catch (Exception e)
-            {
-                return false;
-            }
-        }
-
         public async Task<(byte[] fileBytes, string contentType, string fileName)> DownloadPrePayAttachmentFileByFileName(string fileName)
         {
             try
@@ -210,6 +93,12 @@ namespace FALOFinancialProofing.Services.AttachmentFIleServices
         {
             try
             {
+                var attachmentWithRequest = await repository.GetAll(x => x.FilePath == fileName)
+                    .Include(x => x.RequestForm).FirstOrDefaultAsync();
+                if (attachmentWithRequest == null)
+                {
+                    return (null, null, null);
+                }
                 // Đường dẫn đầy đủ đến file trong server
                 var filePath = Path.Combine(Directory.GetCurrentDirectory(), "PaymentUploads", fileName);
 

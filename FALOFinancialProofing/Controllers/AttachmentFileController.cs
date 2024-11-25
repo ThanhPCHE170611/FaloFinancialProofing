@@ -1,14 +1,12 @@
 ﻿using FALOFinancialProofing.Constant;
 using FALOFinancialProofing.Services.AttachmentFIleServices;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FALOFinancialProofing.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    
+
     public class AttachmentFileController : ControllerBase
     {
         private readonly IAttachmentFileServices attachmentFileServices;
@@ -25,9 +23,11 @@ namespace FALOFinancialProofing.Controllers
 
             if (fileBytes == null)
             {
-                return Ok(new { Success = false,
+                return Ok(new
+                {
+                    Success = false,
                     Message = "File not found",
-                    });
+                });
             }
 
             return File(fileBytes, contentType, downloadFileName);
@@ -49,9 +49,6 @@ namespace FALOFinancialProofing.Controllers
 
             return File(fileBytes, contentType, downloadFileName);
         }
-
-
-        
         [HttpGet("downloadattachmentfilewithnotypebyfilename/{fileName}")]
         [AllowAnonymous]
         public async Task<IActionResult> DownloadAttachmentFileWithNoTypeByFileName(string fileName)
@@ -71,7 +68,7 @@ namespace FALOFinancialProofing.Controllers
         }
 
         [HttpGet("getallcurrentattachmentincampaign/{campaignId}")]
-        public async Task<IActionResult> GetAllCurrentAttachmentInCampaign(int campaignId, 
+        public async Task<IActionResult> GetAllCurrentAttachmentInCampaign(int campaignId,
             string? type,
             string? name,
             int page = IntConstant.PageNumberDefault)
@@ -89,11 +86,11 @@ namespace FALOFinancialProofing.Controllers
             if (type != null)
             {
                 var typeInt = 0;
-                if(type == "prepay")
+                if (type == "prepay")
                 {
                     typeInt = IntConstant.PrePayRequestType;
                 }
-                else if(type == "payment")
+                else if (type == "payment")
                 {
                     typeInt = IntConstant.PaymentRequestType;
                 }
@@ -174,7 +171,7 @@ namespace FALOFinancialProofing.Controllers
             int page = IntConstant.PageNumberDefault)
         {
             var attachmentFiles = await attachmentFileServices.GetAllPaymentAttachmentInCampaignWithRequest(campaignId);
-            if(!attachmentFiles.Any())
+            if (!attachmentFiles.Any())
             {
                 return Ok(new
                 {

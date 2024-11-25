@@ -1,18 +1,12 @@
 ﻿using FALOFinancialProofing.Constant;
 using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.DTOs.CampaignMemberDTO;
-using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services;
 using FALOFinancialProofing.Services.ApproveProcessServices;
 using FALOFinancialProofing.Services.RequestFormServices;
 using FALOFinancialProofing.Services.VoucherServices;
-using Humanizer.Localisation;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
-using System.Drawing.Printing;
 using System.Text;
 
 namespace FALOFinancialProofing.Controllers
@@ -37,10 +31,10 @@ namespace FALOFinancialProofing.Controllers
         }
 
         [HttpGet("getallprepayrequestforvolunteerleaderincampaign/{userid}")]
-        public async Task<IActionResult> GetAllPrePayRequestForVolunteerLeader(string userid, string currentLoggingRole, 
+        public async Task<IActionResult> GetAllPrePayRequestForVolunteerLeader(string userid, string currentLoggingRole,
             int campaignId,
-            string? status = null,          
-            string? createdByEmail = null,  
+            string? status = null,
+            string? createdByEmail = null,
             int page = IntConstant.PageNumberDefault)
         {
             var result = await approveProcessServices.GetAllPrepayRequestForVolunteerLeader(userid, currentLoggingRole);
@@ -90,7 +84,7 @@ namespace FALOFinancialProofing.Controllers
                 Data = response
             });
         }
-        
+
         [HttpGet("getallpaymentrequestforvolunteerleaderincampaign/{userid}")]
         public async Task<IActionResult> GetAllPaymentRequestForVolunteerLeader(string userid, string currentLoggingRole, int campaignId,
             string? status = null,
@@ -286,7 +280,7 @@ namespace FALOFinancialProofing.Controllers
             if (!string.IsNullOrEmpty(status))
             {
                 filteredResult = filteredResult.Where(x => x.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
-            }          
+            }
             var totalRecords = filteredResult.Count();
             var pagedResult = filteredResult
             .Skip((page - 1) * IntConstant.PageSize)
@@ -306,7 +300,7 @@ namespace FALOFinancialProofing.Controllers
                 Data = response
             });
         }
-        
+
         [HttpGet("getallpaymentrequestforprojectmanagerincampaign/{userid}")]
         public async Task<IActionResult> GetAllPaymentRequestForProjectManager(string userid, string currentLoggingRole, int campaignId,
              string? status = null,
@@ -532,112 +526,41 @@ namespace FALOFinancialProofing.Controllers
         [HttpGet("approverequestforaccounting/{requestid}")]
         public async Task<IActionResult> ApproveRequestForAccounting(string userid, string currentLoggingRole, int requestid)
         {
-            return  Ok(new
-            {
-                Success = true,
-                Message = "You have to submit pre-pay voucher first",
-                Data = new
-                {
-                    Userid = userid,
-                    CurrentLoggingRole = currentLoggingRole,
-                    RequestId = requestid
-                }
-            });
-        }
-
-        [HttpPost("approverequestforaccounting")]
-        public async Task<IActionResult> ApproveRequestAndSubmitVoucherForAccounting(string userid, string currentLoggingRole, int requestid, IFormFile voucherFiles)
-        {
             var message = new StringBuilder();
-            var files = new List<IFormFile>();
-            string fileExtension = Path.GetExtension(voucherFiles.FileName);
-
-            if (!string.Equals(fileExtension, ".zip", StringComparison.OrdinalIgnoreCase))
+            var requestForm = await requestFormServices.GetRequestFormByIdAsync(requestid);
+            var accountingInCampaign = await requestFormServices.GetApproverForVolunteerLeader(requestForm.CampaignId);
+            var projectManagerInCampaign = await requestFormServices.GetApproverForAccounting(requestForm.CampaignId);
+            if (projectManagerInCampaign == null)
             {
-                message.Append("Voucher file must be a zip file");
                 return Ok(new
                 {
                     Success = false,
-                    Message = message.ToString()
+                    Message = "Project Manager not found"
                 });
             }
-            files.Add(voucherFiles);
-            var requestForm = await requestFormServices.GetRequestFormByIdAsync(requestid);
-            var isRequestFormCreateByProjectManager = await requestFormServices.IsRequestFormCreateByProjectManager(requestForm);
-            if(!isRequestFormCreateByProjectManager)
+            var canApprove = await approveProcessServices.ApproveRequestForAccounting(userid, currentLoggingRole, requestid, message);
+            if (canApprove == false)
             {
-                var projectmanagerInCampaign = await requestFormServices.GetApproverForAccounting(requestForm.CampaignId);
-                if (projectmanagerInCampaign == null)
+                return Ok(new
                 {
-                    return Ok(new
-                    {
-                        Success = false,
-                        Message = "Project Manager not found"
-                    });
-                }
-                var canApprove = await approveProcessServices.ApproveRequestForAccounting(userid, currentLoggingRole, requestid, message);
-                if (canApprove == false)
-                {
-                    return Ok(new
-                    {
-                        Success = false,
-                        Message = "Approve action cannot be done " + message.ToString()
-                    });
-                }
-                // create next new approve process for accounting
-                var newApproveProvess = new ApproveProcessRequest
+                    Success = false,
+                    Message = "Approve action cannot be done " + message.ToString()
+                });
+            }
+            // if create by accounting, create next new approve process for pm, auto approved
+            if (requestForm.CreatedBy.Equals(projectManagerInCampaign.UserId))
+            {
+                var newApproveProvessForPM = new ApproveProcessRequest
                 {
                     ApproveNumber = IntConstant.ThirdApproveNumber,
-                    ApproveStatus = Resource.ProcessStatus,
+                    ApproveStatus = Resource.ApprovedStatus,
                     RequestId = requestid,
-                    ApproverId = projectmanagerInCampaign.UserId,
+                    ApproverId = projectManagerInCampaign.UserId,
                 };
-                var newApproveProcess = await approveProcessServices.CreateApproveProcessAsync(newApproveProvess);
-
-
-                if (newApproveProcess == null)
-                {
-                    return Ok(new
-                    {
-                        Success = false,
-                        Message = "Cannot create new Approve Process for accounting"
-                    });
-                }
-                // save voucher file
-                var vouchers = await requestFormServices.SaveUploadedVoucherAsync(newApproveProcess.Id, files);
-                var canCreateVouchers = await voucherServices.CreateManyVoucherAsync(vouchers);
-                if (!canCreateVouchers)
-                {
-                    return Ok(new
-                    {
-                        Success = false,
-                        Message = "Create new Voucher failed."
-                    });
-                }
-            } 
-            else
-            {
-                var canApprove = await approveProcessServices.ApproveRequestForAccounting(userid, currentLoggingRole, requestid, message);
-                if (canApprove == false)
-                {
-                    return Ok(new
-                    {
-                        Success = false,
-                        Message = "Approve action cannot be done " + message.ToString()
-                    });
-                }
+                var newApproveProcessForAccounting = await approveProcessServices.CreateApproveProcessAsync(newApproveProvessForPM);
+                // update all request form status to approved
                 // calculate debt for request user
                 var campaignMember = await campaignMemberService.GetCampaignMemberByUserIdAsync(requestForm.CreatedBy);
-                if (campaignMember == null)
-                {
-                    return Ok(new
-                    {
-                        Success = false,
-                        Message = "Campaign Member not found"
-                    });
-                }
-                var aproveProcess = await approveProcessServices.GetApproveProcessesByRequestIdAndApproveIdAsync(requestid, userid);
-
                 var updateRequestForm = new RequestFormDTO
                 {
                     Id = requestForm.Id,
@@ -650,14 +573,6 @@ namespace FALOFinancialProofing.Controllers
                     Status = Resource.ApprovedStatus,
                 };
                 var canUpdateRequestFormStatus = await requestFormServices.UpdateRequestFormAsync(updateRequestForm);
-                if (!canUpdateRequestFormStatus)
-                {
-                    return Ok(new
-                    {
-                        Success = false,
-                        Message = "Cannot update Request Form"
-                    });
-                }
                 var updateCampaignMember = (requestForm.TypeId == IntConstant.PrePayRequestType ?
                     new UpdateCampaignMemberDTO
                     {
@@ -672,27 +587,22 @@ namespace FALOFinancialProofing.Controllers
                         IsActive = campaignMember.IsActive,
                     });
                 var canUpdateCampaignMember = await campaignMemberService.UpdateCampaignMemberAsync(updateCampaignMember);
-                if (!canUpdateCampaignMember)
+                return Ok(new
                 {
-                    return Ok(new
-                    {
-                        Success = false,
-                        Message = "Cannot update Campaign Member"
-                    });
-                }
-                // save voucher file
-                var vouchers = await requestFormServices.SaveUploadedVoucherAsync(aproveProcess.Id, files);
-                var canCreateVouchers = await voucherServices.CreateManyVoucherAsync(vouchers);
-                if (!canCreateVouchers)
-                {
-                    return Ok(new
-                    {
-                        Success = false,
-                        Message = "Create new Voucher failed."
-                    });
-                }
+                    Success = true,
+                    Message = "Request is approved successfully",
+                });
             }
-            
+            // create next new approve process for pm
+            var newApproveProvess = new ApproveProcessRequest
+            {
+                ApproveNumber = IntConstant.ThirdApproveNumber,
+                ApproveStatus = Resource.ProcessStatus,
+                RequestId = requestid,
+                ApproverId = projectManagerInCampaign.UserId,
+            };
+            var newApproveProcess = await approveProcessServices.CreateApproveProcessAsync(newApproveProvess);
+
             return Ok(new
             {
                 Success = true,
@@ -706,6 +616,7 @@ namespace FALOFinancialProofing.Controllers
             var message = new StringBuilder();
             var requestForm = await requestFormServices.GetRequestFormByIdAsync(requestid);
             var accountingInCampaign = await requestFormServices.GetApproverForVolunteerLeader(requestForm.CampaignId);
+            var projectManagerInCampaign = await requestFormServices.GetApproverForAccounting(requestForm.CampaignId);
             if (accountingInCampaign == null)
             {
                 return Ok(new
@@ -721,6 +632,32 @@ namespace FALOFinancialProofing.Controllers
                 {
                     Success = false,
                     Message = "Approve action cannot be done " + message.ToString()
+                });
+            }
+            // if create by accounting, create next new approve process for pm, auto approved
+            if (requestForm.CreatedBy.Equals(accountingInCampaign.UserId))
+            {
+                var newApproveProvessForAccounting = new ApproveProcessRequest
+                {
+                    ApproveNumber = IntConstant.SecondApproveNumber,
+                    ApproveStatus = Resource.ApprovedStatus,
+                    RequestId = requestid,
+                    ApproverId = accountingInCampaign.UserId,
+                };
+                var newApproveProcessForAccounting = await approveProcessServices.CreateApproveProcessAsync(newApproveProvessForAccounting);
+                // pushing for project manager
+                var newApproveProvessForPM = new ApproveProcessRequest
+                {
+                    ApproveNumber = IntConstant.ThirdApproveNumber,
+                    ApproveStatus = Resource.ProcessStatus,
+                    RequestId = requestid,
+                    ApproverId = projectManagerInCampaign.UserId,
+                };
+                var newApproveProcessForPM = await approveProcessServices.CreateApproveProcessAsync(newApproveProvessForPM);
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Request is approved successfully",
                 });
             }
             // create next new approve process for accounting

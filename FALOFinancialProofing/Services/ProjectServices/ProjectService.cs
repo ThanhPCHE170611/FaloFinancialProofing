@@ -1,9 +1,7 @@
-﻿using FALOFinancialProofing.DTOs.CampaignDTO;
-using FALOFinancialProofing.DTOs.ProjectDTOs;
+﻿using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
-using FALOFinancialProofing.Services.BankServices;
 using Microsoft.AspNetCore.Identity;
 //using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
@@ -19,15 +17,18 @@ namespace FALOFinancialProofing.Services.ProjectServices
         private readonly RoleManager<Role> _roleManager;
         private readonly UserManager<User> _userManager;
         private readonly AuthServices _authServices;
+        private readonly IRepository<Campaign, int> _campaignRepository;
 
 
-        public ProjectService(IRepository<Project, int> projectRepository, IRepository<Organization, int> organizationRepository, RoleManager<Role> roleManager, UserManager<User> userManager, AuthServices authServices)
+
+        public ProjectService(IRepository<Project, int> projectRepository, IRepository<Organization, int> organizationRepository, RoleManager<Role> roleManager, UserManager<User> userManager, AuthServices authServices, IRepository<Campaign, int> campaignRepository)
         {
             _projectRepository = projectRepository;
             _organizationRepository = organizationRepository;
             _roleManager = roleManager;
             _userManager = userManager;
             _authServices = authServices;
+            _campaignRepository = campaignRepository;
         }
         public async Task<bool> CreateProjectAsync(Project createProject)
         {
@@ -333,15 +334,27 @@ namespace FALOFinancialProofing.Services.ProjectServices
                 project.ProjectName = updateProjectRequest.ProjectName;
                 project.Description = updateProjectRequest.Description;
                 project.Image = await FileHelper.SaveImageAndReturnShortPathAsync(updateProjectRequest.LogoFile, FolderImage.ProjectImageUpload, project.Image) ?? project.Image;
-                bool checkAdmin = await _authServices.CheckUserInRole(updateProjectRequest.UserId, AppRole.Admin, new StringBuilder());
-                bool checkPMB = await _authServices.CheckUserInRole(updateProjectRequest.UserId, AppRole.ProjectManagementBoard, new StringBuilder());
+                bool checkAdmin = await _authServices.CheckRole(updateProjectRequest.UserId, updateProjectRequest.RoleId, AppRole.Admin, new StringBuilder());
+                bool checkPMB = await _authServices.CheckRole(updateProjectRequest.UserId, updateProjectRequest.RoleId, AppRole.ProjectManagementBoard, new StringBuilder());
                 if (checkAdmin || checkPMB)
                 {
                     project.IsActive = updateProjectRequest.IsActive ?? project.IsActive;
                     project.Status = updateProjectRequest.Status ?? project.Status;
                 }
-
                 checkValid = await _projectRepository.UpdateAsync(project);
+                if (checkValid && !project.IsActive)
+                {
+                    var campaigns = await _campaignRepository.GetAll(c => c.ProjectId == project.Id && c.IsActive).ToListAsync();
+                    foreach (var item in campaigns)
+                    {
+                        item.IsActive = false;
+                    }
+                    checkValid = await _campaignRepository.UpdateManyAsync(campaigns);
+                    if (!checkValid)
+                    {
+                        throw new Exception("Update Campaigns by projectId failed");
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -399,9 +412,9 @@ namespace FALOFinancialProofing.Services.ProjectServices
                     throw new Exception("Project not found!");
                 }
                 var projectOwner = await GetProjectByUserIdAndProjectIdAsync(updateProjectRequest.UserId, updateProjectRequest.ProjectId);
-                bool checkAdmin = await _authServices.CheckUserInRole(updateProjectRequest.UserId, AppRole.Admin, new StringBuilder());
-                bool checkPMB = await _authServices.CheckUserInRole(updateProjectRequest.UserId, AppRole.ProjectManagementBoard, new StringBuilder());
-                if ((projectOwner == null && !checkPMB && !checkAdmin) || (projectOwner != null && !projectOwner.IsActive))
+                bool checkAdmin = await _authServices.CheckRole(updateProjectRequest.UserId, updateProjectRequest.RoleId, AppRole.Admin, new StringBuilder());
+                bool checkPMB = await _authServices.CheckRole(updateProjectRequest.UserId, updateProjectRequest.RoleId, AppRole.ProjectManagementBoard, new StringBuilder());
+                if ((projectOwner == null && !checkPMB && !checkAdmin) || (!checkPMB && !checkAdmin && projectOwner != null && !projectOwner.IsActive))
                 {
                     throw new Exception("You don't have permission to update project!");
                 }

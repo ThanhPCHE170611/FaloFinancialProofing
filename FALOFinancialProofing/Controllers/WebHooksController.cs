@@ -4,13 +4,10 @@ using FALOFinancialProofing.Services;
 using FALOFinancialProofing.Services.CampaignService;
 using FALOFinancialProofing.Services.CreateQrCodeServices;
 using FALOFinancialProofing.Services.TransactionLogsServices;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Transactions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -30,6 +27,7 @@ namespace FALOFinancialProofing.Controllers
             _campaignService = campaignService;
             _createQrCodeService = createQrCodeService;
             secure_token = configuration.GetSection("Authentication:Casso:secure_token").Value;
+            secure_token = "string";
         }
         // mẫu TransactionRequest
         [HttpPost("Create-Webhook")]
@@ -88,7 +86,9 @@ namespace FALOFinancialProofing.Controllers
             {
                 string format = "yyyy-MM-dd HH:mm:ss";
                 string descriptionPatern = "^(C[0-9]+CC[0-9]+Q){1}$";
-                Regex regex = new Regex(descriptionPatern);
+                string moneyOutDescriptionPatern = "^(C[0-9]+C){1}$";
+                Regex moneyInRegex = new Regex(descriptionPatern);
+                Regex moneyOutRegex = new Regex(moneyOutDescriptionPatern);
                 foreach (var transaction in item.data)
                 {
                     var transactionLogByCassoTransactionId = await _transactionLogService.GetTransactionLogByCassoTransactionIdAsync(transaction.id);
@@ -104,19 +104,29 @@ namespace FALOFinancialProofing.Controllers
                     string description = null;
                     foreach (var stringItem in stringSplit)
                     {
-                        Match match = regex.Match(stringItem);
+                        Match match = moneyInRegex.Match(stringItem);
                         if (match.Success)
                         {
                             description = stringItem;
                             break;
                         }
+                        match = moneyOutRegex.Match(stringItem);
+                        if (match.Success)
+                        {
+                            description = stringItem;
+                            break;
+                        }
+
                     }
                     if (description == null)
                     {
                         continue;
                     }
-                    string[] descriptionSplit = description.Split('C', 'Q');
-                    if (int.TryParse(descriptionSplit[1], out int CampaignId) && int.TryParse(descriptionSplit[3], out int CreateQrId))
+                    string[] descriptionSplit = description.Split('C', 'Q')
+                        .Where(x => !string.IsNullOrEmpty(x))
+                        .ToArray();
+                    if (int.TryParse(descriptionSplit[0], out int CampaignId) && int.TryParse(
+                   descriptionSplit.Length >= 2 ? descriptionSplit[1] : null, out int CreateQrId))
                     {
                         var campaign = await _campaignService.GetCampaignByCampaignIdAsync(CampaignId);
                         var createQrCode = await _createQrCodeService.GetQrCodeByIdAsync(CreateQrId);
@@ -130,7 +140,7 @@ namespace FALOFinancialProofing.Controllers
                             CreateQrCodeId = createQrCode.Id,
                             Amount = transaction.amount,
                             CampaignId = campaign.Id,
-                            Description = description,
+                            Description = transaction.description,
                             TransactionDate = DateTime.ParseExact(transaction.when, format, CultureInfo.InvariantCulture),
                             CassoTransactionId = transaction.id,
                             tid = transaction.tid
@@ -139,6 +149,25 @@ namespace FALOFinancialProofing.Controllers
                         // cap nhat trang thai cua qr
                         createQrCode.IsPaid = true;
                         await _createQrCodeService.UpdateCreateQrCodeAsync(createQrCode);
+                    }
+                    else if (int.TryParse(descriptionSplit[0], out int CampaignMoneyOutId))
+                    {
+                        var campaign = await _campaignService.GetCampaignByCampaignIdAsync(CampaignMoneyOutId);
+                        if (campaign == null)
+                        {
+                            continue;
+                        }
+                        // lưu vào transactionlog
+                        TransactionLog transactionLog = new TransactionLog()
+                        {
+                            Amount = transaction.amount,
+                            CampaignId = campaign.Id,
+                            Description = transaction.description,
+                            TransactionDate = DateTime.ParseExact(transaction.when, format, CultureInfo.InvariantCulture),
+                            CassoTransactionId = transaction.id,
+                            tid = transaction.tid
+                        };
+                        await _transactionLogService.CreateTransactionLogAsync(transactionLog);
                     }
                     else
                     {

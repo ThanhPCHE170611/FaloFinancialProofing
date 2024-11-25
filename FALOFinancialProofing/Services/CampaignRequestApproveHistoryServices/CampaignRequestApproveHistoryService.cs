@@ -3,7 +3,6 @@ using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services.BankServices;
-using FALOFinancialProofing.Services.CampaignMemberService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text;

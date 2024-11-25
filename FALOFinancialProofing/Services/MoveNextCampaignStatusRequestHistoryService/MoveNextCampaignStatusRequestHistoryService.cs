@@ -1,9 +1,9 @@
-﻿using System.Text;
-using FALOFinancialProofing.DTOs.MoveNextCampaignStatusRequestHistoryDTO;
+﻿using FALOFinancialProofing.DTOs.MoveNextCampaignStatusRequestHistoryDTO;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestHistoryService
 {
@@ -281,7 +281,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestHistorySer
         //    }
         //    return beforeStatus;
         //}
-        private string BeforeStatus(string status) 
+        private string BeforeStatus(string status)
         {
             string beforeStatus;
             if (status == Resource.CampaignStatus_Implement)
@@ -296,7 +296,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestHistorySer
             {
                 beforeStatus = Resource.CampaignStatus_Disbursement;
             }
-            else 
+            else
             {
                 throw new InvalidOperationException("The campaign has just begun, no previous stage");
             }

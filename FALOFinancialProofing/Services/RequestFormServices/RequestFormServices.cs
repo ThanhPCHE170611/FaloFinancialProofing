@@ -290,11 +290,6 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 return false;
             }
             // check ApproverId exist in campain && ApproverId != CreatedBy && Role of ApproverId is greater than CreatedBy
-            if (requestForm.ApproverId == requestForm.CreatedBy)
-            {
-                message.Append("Approver ID cannot equal CreatBy");
-                return false;
-            }
             var approveByValidate = campainInDb.CampaignMembers.Any(cm => cm.UserId == requestForm.ApproverId && cm.IsActive);
             if (!approveByValidate)
             {
@@ -306,15 +301,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             var haveEnoughPermission = CheckPermission(requestForm.CreatedBy, requestForm.ApproverId);
             if (!haveEnoughPermission)
             {
-                message.Append("The selected Approver dont have enough permission");
-                return false;
-            }
-
-            // if createByRole is Accounting => Voucher should not be null
-            var createByRole = campainInDb.CampaignMembers.FirstOrDefault(cm => cm.UserId == requestForm.CreatedBy && cm.IsActive).Role.Name;
-            if (createByRole.Equals(Resource.AccountingRoleName) && requestForm.VoucherFile == null)
-            {
-                message.Append("Voucher file cannot be null");
+                message.Append("The selected Approver must start from volunteer leader");
                 return false;
             }
 
@@ -329,46 +316,20 @@ namespace FALOFinancialProofing.Services.RequestFormServices
         private bool CheckPermission(string createdBy, string approverId)
         {
             // 2 case that (volunteer, leader, accounting) and PM
-            var createByRole = campaignRepository.GetAll(cp => cp.CampaignMembers.Any(cm => cm.UserId == createdBy))
-                .Include(cp => cp.CampaignMembers)
-                .ThenInclude(x => x.Role)
-                .FirstOrDefault()
-                .CampaignMembers
-                .FirstOrDefault(cm => cm.UserId == createdBy && cm.IsActive)
-                .Role.Name;
             var approverRole = campaignMemberRepository.GetAll(x => x.UserId == approverId && x.IsActive)
                     .Include(x => x.Role)
                     .FirstOrDefault()
                     .Role.Name;
-            if (createByRole.Equals(Resource.ProjectManagerRoleName))
+
+            // check approveId role is Volunteer Leader
+            if (approverRole.Equals(Resource.VolunteerLeaderRoleName))
             {
-                // check approveId role is accoungting
-                if (approverRole.Equals(Resource.VolunteerLeaderRoleName))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return true;
             }
             else
             {
-                // check approveId role is greater than createBy
-                if (createByRole.Equals(Resource.VolunteerRoleName) && approverRole.Equals(Resource.VolunteerLeaderRoleName))
-                {
-                    return true;
-                }
-                if (createByRole.Equals(Resource.VolunteerLeaderRoleName) && approverRole.Equals(Resource.AccountingRoleName))
-                {
-                    return true;
-                }
-                if (createByRole.Equals(Resource.AccountingRoleName) && approverRole.Equals(Resource.ProjectManagerRoleName))
-                {
-                    return true;
-                }
+                return false;
             }
-            return false;
         }
 
         public async Task<List<AttachmentFileRequest>> SaveAttachmentFilesAsync(List<IFormFile> uploadFiles, int requestId, int typeId)
