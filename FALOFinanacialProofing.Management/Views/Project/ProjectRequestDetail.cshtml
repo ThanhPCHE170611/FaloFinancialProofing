@@ -210,7 +210,14 @@
                 }
 
                 data.createProjectFiles.forEach(function (file) {
-                    $('#docList').append(`<li class="list-group-item">${file.filePath}</li>`);
+                    const listItem = $(`<li class="list-group-item"><a href="#" class="file-link" data-file="${file.filePath}">${file.filePath}</a></li>`);
+                    $('#docList').append(listItem);
+                });
+
+                $('.file-link').on('click', function (event) {
+                    event.preventDefault();
+                    const fileName = $(this).data('file');
+                    downloadFile(fileName);
                 });
             },
             error: function (xhr, status, error) {
@@ -218,6 +225,35 @@
             }
         });
     });
+    function downloadFile(fileName) {
+        $.ajax({
+            url: `https://localhost:7294/api/CreateProjectFiles/DownloadProjectFile/${fileName}`,
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            },
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function (data, status, xhr) {
+                console.log(fileName);
+                const contentType = xhr.getResponseHeader('Content-Type');
+                const blob = new Blob([data], { type: contentType });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            },
+            error: function (xhr, status, error) {
+                alert('Error downloading file. Please try again.');
+                console.error('Error downloading file:', error);
+            }
+        });
+    }
 </script>
 
 

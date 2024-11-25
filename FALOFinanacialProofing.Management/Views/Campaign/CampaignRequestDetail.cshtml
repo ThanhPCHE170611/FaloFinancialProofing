@@ -150,10 +150,9 @@
     function safeValue(value, defaultValue = 'N/A') {
         return value ? value : defaultValue;
     }
-
+    const jwtToken = localStorage.getItem('jwtToken');
     $(document).ready(function () {
         const campaignId = new URLSearchParams(window.location.search).get('requestId');
-        const jwtToken = localStorage.getItem('jwtToken');
         const userId = localStorage.getItem('userId');
         $.ajax({
             url: `https://localhost:7294/api/CreateCampaignRequests/GetCreateCampaignRequest/${campaignId}`,
@@ -212,7 +211,14 @@
                 }
 
                 data.createCampaignFiles.forEach(function (file) {
-                    $('#docList').append(`<li class="list-group-item">${file.filePath}</li>`);
+                    const listItem = $(`<li class="list-group-item"><a href="#" class="file-link" data-file="${file.filePath}">${file.filePath}</a></li>`);
+                    $('#docList').append(listItem);
+                });
+
+                $('.file-link').on('click', function (event) {
+                    event.preventDefault();
+                    const fileName = $(this).data('file');
+                    downloadFile(fileName);
                 });
             },
             error: function (err) {
@@ -220,4 +226,33 @@
             }
         });
     });
+    function downloadFile(fileName) {
+        $.ajax({
+            url: `https://localhost:7294/api/CreateCampaignFiles/DownloadCampaignFile/${fileName}`,
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            },
+            xhrFields: {
+                responseType: 'blob' 
+            },
+            success: function (data, status, xhr) {
+                console.log(fileName);
+                const contentType = xhr.getResponseHeader('Content-Type');
+                const blob = new Blob([data], { type: contentType });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            },
+            error: function (xhr, status, error) {
+                alert('Error downloading file. Please try again.');
+                console.error('Error downloading file:', error);
+            }
+        });
+    }
 </script>

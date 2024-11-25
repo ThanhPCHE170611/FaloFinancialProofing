@@ -83,6 +83,11 @@
                     background-color: #007bff;
                     color: #fff;
                 }
+
+        #imagePreview img {
+            width: 100%;
+            height: auto;
+        }
     </style>
 </head>
 
@@ -146,7 +151,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="endDate" class="form-label">Expected End Date</label>
-                            <input type="date" class="form-control" id="endDate" readonly>
+                            <input type="date" class="form-control" id="endDate">
                         </div>
                         @* <div class="mb-3"> *@
                         @*     <label for="status" class="form-label">Stage</label> *@
@@ -182,10 +187,18 @@
                 </div>
                 <div class="card mb-4">
                     <div class="card-header">
+                        <h5>Campaign Files</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul id="campaignFilesList" class="list-unstyled"></ul>
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-header">
                         <h5>Campaign Picture</h5>
                     </div>
                     <div class="card-body">
-                        <button id="choseImage" class="btn btn-primary mb-3" onclick="document.getElementById('projectImages').click()" disabled>Choose file</button> 
+                        <button id="choseImage" class="btn btn-primary mb-3" onclick="document.getElementById('projectImages').click()">Choose file</button> 
                             <input type="file" id="projectImages" class="form-control d-none" accept="image/*" multiple>
                         <div id="imagePreview" class="mt-3 row"></div>
                     </div>
@@ -213,8 +226,9 @@
         return date.toISOString().split('T')[0];
     }
     let isChanged = false;
+    const jwtToken = localStorage.getItem('jwtToken');
     $(document).ready(function () {
-        const jwtToken = localStorage.getItem('jwtToken');
+        
         const campaignId = localStorage.getItem('campaignId');
         const checkrole = localStorage.getItem('loggingRole');
         const roleid = localStorage.getItem('loggingRoleId');
@@ -254,10 +268,11 @@
                             const imagePreview = document.getElementById('imagePreview');
                             imagePreview.innerHTML = `
                                     <div class="col-md-4 mb-3">
-                                        <img src="${data.image}" alt="Project Image" class="img-fluid" id="existing-image">
+                                        <img src="${data.image}" alt="Project Image" class="img-fluid rounded" id="existing-image">
                                     </div>`;
                         }
                         monitorChanges();
+                        populateCampaignFiles(data.createCampaignFiles);
                     } else {
                         alert(response.message);
                     }
@@ -279,6 +294,11 @@
             formData.append('Address', $('#location').val());
             formData.append('IsActive', $('#statusDropdown').val());
             formData.append('Status', $('#stage').val());
+            formData.append('EndDate', $('#endDate').val());
+            const logoFile = $('#projectImages')[0].files[0];
+            if (logoFile) {
+                formData.append('LogoFile', logoFile);
+            }
             console.log(formData);
             $.ajax({
                 url: `https://localhost:7294/api/Campaign/UpdateCampaign`,
@@ -313,5 +333,91 @@
             }
         });
     }
+    $('#projectImages').on('change', function (event) {
+        const files = event.target.files;
+        if (files.length > 0) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                updateImagePreview(e.target.result);
+            };
+            reader.readAsDataURL(files[0]);
 
+            if (!isChanged) {
+                $('#btnUpdate').removeAttr('disable');
+                isChanged = true;
+            }
+        }
+    });
+
+    document.getElementById('projectImages').addEventListener('change', function(event) {
+      const imagePreview = document.getElementById('imagePreview');
+      imagePreview.innerHTML = '';
+      const files = event.target.files;
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const colDiv = document.createElement('div');
+          colDiv.classList.add('col-md-4', 'mb-3');
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.classList.add('img-fluid', 'rounded');
+          colDiv.appendChild(img);
+          imagePreview.appendChild(colDiv);
+        }
+        reader.readAsDataURL(file);
+      });
+    });
+    function populateCampaignFiles(files) {
+        const campaignFilesList = $('#campaignFilesList');
+        campaignFilesList.empty();
+
+        if (!files || files.length === 0) {
+            campaignFilesList.append('<li>No files available for this campaign.</li>');
+            return;
+        }
+
+        files.forEach(file => {
+            const listItem = $(`
+                <li>
+                    <a href="#" class="file-link" data-file="${file.filePath}">
+                        ${file.filePath}
+                    </a>
+                </li>
+            `);
+            campaignFilesList.append(listItem);
+        });
+
+        $('.file-link').on('click', function (event) {
+            event.preventDefault();
+            const fileName = $(this).data('file');
+            downloadFile(fileName);
+        });
+    }
+
+    function downloadFile(fileName) {
+        $.ajax({
+            url: `https://localhost:7294/api/CreateCampaignFiles/DownloadCampaignFile/${fileName}`,
+            type: 'GET',
+            xhrFields: {
+                responseType: 'blob' 
+            },
+            processData: false,
+            success: function (data, status, xhr) {
+                const contentType = xhr.getResponseHeader('Content-Type');
+                const blob = new Blob([data], { type: contentType });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            },
+            error: function (xhr, status, error) {
+                alert('Error downloading file. Please try again.');
+                console.error('Error downloading file:', error);
+            }
+        });
+    }
 </script>
