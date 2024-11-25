@@ -594,6 +594,42 @@ public class CampaignServiceTests
         Assert.Empty(result);
     }
 
+    [Fact]
+    public async Task GetCampaignByUserIdAndCampaignIdAsync_ShouldReturnCampaign_WhenCampaignExists()
+    {
+        // Arrange
+        var pmUserId = "user123";
+        var campaignId = 1;
+        var expectedCampaign = new Campaign { Id = campaignId, CreateBy = pmUserId };
+
+        mockCampaignRepository.Setup(repo => repo.Get(It.IsAny<Expression<Func<Campaign, bool>>>()))
+            .ReturnsAsync(expectedCampaign);
+
+        // Act
+        var result = await campaignService.GetCampaignByUserIdAndCampaignIdAsync(pmUserId, campaignId);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(expectedCampaign.Id, result.Id);
+        Assert.Equal(expectedCampaign.CreateBy, result.CreateBy);
+    }
+
+    [Fact]
+    public async Task GetCampaignByUserIdAndCampaignIdAsync_ShouldThrowException_WhenCampaignDoesNotExist()
+    {
+        // Arrange
+        var pmUserId = "user123";
+        var campaignId = 1;
+
+        mockCampaignRepository.Setup(repo => repo.Get(It.IsAny<Expression<Func<Campaign, bool>>>()))
+            .ReturnsAsync((Campaign)null);
+
+        // Act & Assert
+        var h
+
+        Assert.Equal("This user Has no such Campaign", exception.Message);
+    }
+
 
 
 
