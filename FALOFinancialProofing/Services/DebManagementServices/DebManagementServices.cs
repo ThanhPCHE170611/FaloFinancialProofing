@@ -40,6 +40,7 @@ namespace FALOFinancialProofing.Services.DebManagementServices
                         .Select(cm => new UserWithDeb
                         {
                             UserId = cm.UserId,
+                            UserName = cm.User.FirstName + " " + cm.User.LastName,
                             UserRole = cm.Role.Name,
                             UserEmail = cm.User.Email,
                             Debt = cm.Debt,
@@ -102,6 +103,7 @@ namespace FALOFinancialProofing.Services.DebManagementServices
                         .Select(cm => new UserWithDeb
                         {
                             UserId = cm.UserId,
+                            UserName = cm.User.FirstName + " " + cm.User.LastName,
                             UserRole = cm.Role.Name,
                             UserEmail = cm.User.Email,
                             Debt = cm.Debt,
