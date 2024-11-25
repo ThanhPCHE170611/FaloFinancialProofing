@@ -8,10 +8,11 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
     <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
     <link href="~/css/prepaymanagement.css" rel="stylesheet" />
@@ -53,10 +54,8 @@
                         <div class="pt-4 pb-3 d-flex justify-content-between align-items-center">
                             <nav class="nav-tabs" id="navTabs">
                                 <a asp-controller="Campaign" asp-action="CampaignDetail">Campaign Detail</a>
-                                <a asp-controller="Prepay" asp-action="PrepayManagement" class="active">Prepay Request</a>
-                                <a asp-controller="Payment" asp-action="PaymentManagement">Payment Request</a>
-                                @* <a asp-controller="Prepay" asp-action="PrepayVoucher">Prepay Voucher</a> *@
-                                @* <a asp-controller="Payment" asp-action="PaymentVoucher">Payment Voucher</a> *@
+                                <a asp-controller="Prepay" asp-action="PrepayManagement" class="active">Created Prepay Request</a>
+                                <a asp-controller="Payment" asp-action="PaymentManagement">Created Payment Request</a>
                                 <a asp-controller="Accounting" asp-action="AccountingBookCampaign">Accounting Book</a>
                                 <a asp-controller="Campaign" asp-action="Member">Member</a>
                             </nav>
@@ -64,7 +63,7 @@
                     </div>
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
-                            <h6 class="text-white text-capitalize ps-3 mb-0" id="nametitle">Prepay Request</h6>
+                            <h6 class="text-white text-capitalize ps-3 mb-0" id="nametitle">Created Prepay Request</h6>
                             <a id="create_request_page" class="btn btn-dark mb-0 me-3" asp-controller="Prepay" asp-action="PrepayCreate">Create Prepay Request</a>
                         </div>
                     </div>
@@ -119,16 +118,16 @@
             <button class="btn btn-danger mt-3" onclick="submitDecline()">Submit</button>
         </div>
     </div>
-    <script src="../assets/js/core/popper.min.js"></script>
-    <script src="../assets/js/core/bootstrap.min.js"></script>
-    <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
-    <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
-    <script src="~/js/prepay/prepaymanagement.js"></script>
+
 
 </body>
 
 </html>
 
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@* <script src="~/js/prepay/prepaymanagement.js"></script> *@
+<script src="~/js/prepay/prepaycreatedmanagement.js"></script>

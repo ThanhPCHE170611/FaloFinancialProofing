@@ -71,7 +71,7 @@
 
                 $('#registerMessage').text('');
 
-                const password = $('#password').val();
+                const password = $('#passwordRegister').val();
                 const confirmPassword = $('#confirmPassword').val();
 
                 if (password !== confirmPassword) {
@@ -81,7 +81,7 @@
                 const registerData = {
                     FirstName: $('#firstname').val(),
                     LastName: $('#lastname').val(),
-                    UserName: $('#username').val(),
+                    UserName: $('#usernameRegister').val(),
                     Email: $('#email').val(),
                     Password: password
                 };
@@ -99,8 +99,9 @@
                             $('#registerMessage').html('<span class="text-danger">' + response.message + '</span>');
                         }
                     },
-                    error: function() {
+                    error: function(errors) {
                         $('#registerMessage').html('<span class="text-danger">An error occurred. Please try again.</span>');
+                        console.error(errors);
                     }
                 });
             });

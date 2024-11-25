@@ -43,7 +43,9 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
+        
         [HttpGet("getaccountingbookincampaign")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAccountingBookInCampaign(int campaignId)
         {
             var accountingBook = await accountingBookServices.GetAccountingBookInCampaign(campaignId);
@@ -79,7 +81,7 @@ namespace FALOFinancialProofing.Controllers
 
             var filteredAttachmentFiles = accountingBooks.AsQueryable();
 
-            if (String.IsNullOrEmpty(name))
+            if (!String.IsNullOrEmpty(name))
             {
                 filteredAttachmentFiles = filteredAttachmentFiles
                     .Where(x => x.FilePath.ToLower().Contains(name.ToLower()));
@@ -105,6 +107,7 @@ namespace FALOFinancialProofing.Controllers
         }
 
         [HttpGet("downloadaccountingbook/{fileName}")]
+        [AllowAnonymous]
         public async Task<IActionResult> DownloadAccountingBookByFileName(string fileName)
         {
             var (fileBytes, contentType, downloadFileName) = await accountingBookServices.DownloadAccountingBookFileByFileName(fileName);

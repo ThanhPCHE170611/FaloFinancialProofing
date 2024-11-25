@@ -12,10 +12,29 @@
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
     <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
-    <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
+    <style>
+        .search-filter-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .search-box {
+            width: 70%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .filter-box {
+            width: 25%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+    </style>
 </head>
 <body>
     <div class="container-fluid py-4">
@@ -30,99 +49,162 @@
                             </a>
                         </div>
                     </div>
+                    <div class="search-filter-container px-3">
+                        <input type="text" id="searchInput" placeholder="Search by Name" class="search-box" />
+                    </div>
                     <div class="card-body px-0 pb-2">
                         <div class="table-responsive p-0">
                             <table class="table align-items-center mb-0">
                                 <thead>
                                     <tr>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STT</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Name</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Email</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Main Office</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Phone Number</th>
-                                        <th class="text-secondary opacity-7">Action</th>
+                                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">STT</th>
+                                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">Name</th>
+                                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Email</th>
+                                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Main Office</th>
+                                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Phone Number</th>
+                                        <th class="text-center text-secondary opacity-7">Action</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="text-center">
-                                            <span class="text-xs font-weight-bold">1</span>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex px-2 py-1">
-                                                <div>
-                                                    <img src="../assets/img/team-2.jpg" class="avatar avatar-sm me-3 border-radius-lg" alt="organization1">
-                                                </div>
-                                                <div class="d-flex flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-sm">Tech Corp</h6>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <p class="text-xs text-secondary mb-0">contact@techcorp.com</p>
-                                        </td>
-                                        <td>
-                                            <p class="text-xs font-weight-bold mb-0">New York, USA</p>
-                                        </td>
-                                        <td>
-                                            <p class="text-xs font-weight-bold mb-0">(123) 456-7890</p>
-                                        </td>
-                                        <td class="align-middle">
-                                            <button class="btn btn-danger btn-sm me-2" data-toggle="tooltip" title="Delete Organization">Delete</button>
-                                            <a asp-area="" asp-controller="Organization" asp-action="OrganizationDetail" class="btn btn-info btn-sm" data-toggle="tooltip" title="Edit Organization">Edit</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">
-                                            <span class="text-xs font-weight-bold">2</span>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex px-2 py-1">
-                                                <div>
-                                                    <img src="../assets/img/team-2.jpg" class="avatar avatar-sm me-3 border-radius-lg" alt="organization2">
-                                                </div>
-                                                <div class="d-flex flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-sm">Creative Solutions</h6>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <p class="text-xs text-secondary mb-0">info@creativesolutions.com</p>
-                                        </td>
-                                        <td>
-                                            <p class="text-xs font-weight-bold mb-0">San Francisco, USA</p>
-                                        </td>
-                                        <td>
-                                            <p class="text-xs font-weight-bold mb-0">(987) 654-3210</p>
-                                        </td>
-                                        <td class="align-middle">
-                                            <button class="btn btn-danger btn-sm me-2" data-toggle="tooltip" title="Delete Organization">Delete</button>
-                                            <a asp-area="" asp-controller="Organization" asp-action="OrganizationDetail" class="btn btn-info btn-sm" data-toggle="tooltip" title="Edit Organization">Edit</a>
-                                        </td>
-                                    </tr>
+                                <tbody id="organizationList">
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
+                <div class="pagination-container text-center mt-4">
+                    <div id="pagination"></div>
+                </div>
             </div>
         </div>
     </div>
-    <script src="../assets/js/core/popper.min.js"></script>
-    <script src="../assets/js/core/bootstrap.min.js"></script>
-    <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
-    <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
-    <script>
-        var win = navigator.platform.indexOf('Win') > -1;
-        if (win && document.querySelector('#sidenav-scrollbar')) {
-          var options = {
-            damping: '0.5'
-          }
-          Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
-        }
-    </script>
+
 </body>
 </html>
 
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+      var options = {
+        damping: '0.5'
+      }
+      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+    $(document).ready(function () {
+        const jwtToken = localStorage.getItem('jwtToken');
+        const userId = localStorage.getItem('userId');
+        const checkrole = localStorage.getItem('loggingRole');
+
+        if (!jwtToken || !userId) {
+            alert('JWT token or user ID is missing. Please log in again.');
+            return;
+        }
+
+        let currentPage = 1;
+        let searchInput = '';
+
+
+        function fetchOrganizationList() {
+        let apiUrl;
+        if (checkrole === "Project Manager") {
+            apiUrl = `https://localhost:7294/api/Organizations/GetOrganizationsByUserId/${userId}?OrganizationName=${searchInput}&currentPage=${currentPage}`;
+        } else if (checkrole === "Project Management Board") {
+            apiUrl = `https://localhost:7294/api/Organizations/GetAllOrganizationInSystem?OrganizationName=${searchInput}&currentPage=${currentPage}`;
+        } else {
+            alert('Invalid role. Access denied.');
+            return;
+        }
+            $.ajax({
+                url: apiUrl,
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                success: function (response) {
+                    if (response.success) {
+                        renderOrganizationTable(response.data.data);
+                        setupPagination(response.data);
+                    } else {
+                        alert('Failed to fetch organizations: ' + response.message);
+                    }
+                },
+                error: function (errors) {
+                    alert('Error fetching organization list');
+                    console.error(errors);
+                }
+            });
+        }
+
+        function renderOrganizationTable(organizations) {
+            const tableBody = $('#organizationList');
+            tableBody.empty();
+
+            organizations.forEach((org, index) => {
+                const row = `
+                    <tr data-organization-id="${org.id}">
+                        <td class="align-middle text-center">
+                            <span class="text-xs font-weight-bold">${index + 1 + (currentPage - 1) * 5}</span>
+                        </td>
+                        <td class=" align-middle text-center">
+                            <div class="d-flex px-2 py-1">
+                                <div>
+                                    <img src="${org.logo}" class="avatar avatar-sm me-3 border-radius-lg" alt="${org.name}">
+                                </div>
+                                <div class="d-flex flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm">${org.name}</h6>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="align-middle text-center">
+                            <p class="text-xs font-weight-bold mb-0">${org.email}</p>
+                        </td>
+                        <td class="align-middle text-center">
+                            <p class="text-xs font-weight-bold mb-0">${org.main_office}</p>
+                        </td>
+                        <td class="align-middle text-center">
+                            <p class="text-xs font-weight-bold mb-0">${org.phoneNumber}</p>
+                        </td>
+                        <td class="align-middle text-center">
+                            <a href="/Organization/OrganizationDetail?orgId=${org.id}" class="btn btn-info btn-sm" title="Edit Organization">Edit</a>
+                        </td>
+                    </tr>
+                `;
+                tableBody.append(row);
+            });
+        }
+
+        function setupPagination(data) {
+            const paginationControls = $('#pagination');
+            paginationControls.empty();
+            const totalPages = Math.ceil(data.dataCount / 5);
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = `
+                    <button class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-light'}" onclick="goToPage(${i})">${i}</button>
+                `;
+                paginationControls.append(pageButton);
+            }
+        }
+
+        $('#searchInput').on('keyup', function () {
+            searchInput = $(this).val().trim();
+            currentPage = 1;
+            fetchOrganizationList();
+        });
+
+        fetchOrganizationList();
+    });
+
+    function goToPage(page) {
+        currentPage = page;
+        fetchOrganizationList();
+    }
+    window.goToPage = goToPage;
+
+</script>

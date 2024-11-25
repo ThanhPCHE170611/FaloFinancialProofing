@@ -1,0 +1,142 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var userId = Context.Session.GetString("UserId");  // Get the userId from session
+}
+
+<div class="container">
+    <h2>Lịch sử từ thiện</h2>
+    <!-- Search Bar -->
+    <div class="blog-single__right-item">
+        <div class="item shadow mb-30">
+            <h5 class="title">Search</h5>
+            <div class="serach-bar">
+                <input type="text" id="searchInput" placeholder="Search here">
+                <button id="searchButton"><i class="fa-regular fa-magnifying-glass"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Message -->
+    <div id="errorMessage" class="alert alert-danger" style="display:none;"></div>
+
+    <!-- Table to display transactions -->
+    <table class="table table-bordered table-hover" id="transactions-table" style="display:none;">
+        <thead>
+            <tr>
+                <th scope="col">Mã Giao Dịch</th>
+                <th scope="col">Thời Điểm Giao Dịch</th>
+                <th scope="col">Số Tiền</th>
+                <th scope="col">Nội Dung Giao Dịch</th>
+                <th scope="col">Tên Chiến Dịch</th>
+            </tr>
+        </thead>
+        <tbody id="transactionLogs"></tbody>
+    </table>
+
+    <!-- Pagination Controls -->
+    <div id="paginationControls" class="pegi justify-content-center mt-80 pagination"></div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Load transactions on page load
+        loadTransactions(1, "");
+
+        // Event handler for search button click
+        $('#searchButton').click(function () {
+            var searchInput = $('#searchInput').val();
+            loadTransactions(1, searchInput);
+        });
+
+        // Event handler for pressing 'Enter' in the search input field
+        $('#searchInput').keypress(function (e) {
+            if (e.which === 13) {  // Enter key
+                var searchInput = $('#searchInput').val();
+                loadTransactions(1, searchInput);
+            }
+        });
+    });
+
+    // Function to load transactions with pagination and search
+    function loadTransactions(currentPage, searchInput) {
+        var userId = '@userId';  // Get userId from session
+        var apiUrl = `https://localhost:7294/api/TransactionLogs/GetUserTransactionLogs/${userId}?searchInput=${searchInput}&currentPage=${currentPage}`;
+
+        // Make AJAX call to fetch transactions
+        $.ajax({
+            url: apiUrl,
+            type: 'GET',
+            success: function (response) {
+                if (response && response.data && response.data.data) {
+                    renderTransactionLogs(response.data.data);
+                    renderPagination(response.data.dataCount, currentPage, searchInput);
+                } else {
+                    showError("No transaction logs available.");
+                }
+            },
+            error: function () {
+                showError("Failed to fetch transaction logs.");
+            }
+        });
+    }
+
+    // Function to render the transaction logs in the table
+    function renderTransactionLogs(transactions) {
+        $('#transactions-table').show();
+        $('#transactionLogs').empty();
+
+        transactions.forEach(function (transaction) {
+            var rowHtml = `<tr>
+                            <td>${transaction.tid}</td>
+                            <td>${new Date(transaction.transactionDate).toLocaleString()}</td>
+                            <td>${transaction.amount}</td>
+                            <td>${transaction.description}</td>
+                            <td>${transaction.campaignName}</td>
+                        </tr>`;
+            $('#transactionLogs').append(rowHtml);
+        });
+
+        $('#errorMessage').hide();
+    }
+
+    // Function to render pagination controls
+    function renderPagination(totalRecords, currentPage, searchInput) {
+        var pageSize = 5;  // Set the number of items per page
+        var totalPages = Math.ceil(totalRecords / pageSize);  // Calculate the total number of pages
+        var paginationControls = $('#paginationControls');
+        paginationControls.empty();  // Clear any existing pagination buttons
+
+        // Render "Previous" button
+        if (currentPage > 1) {
+            paginationControls.append(`<button onclick="loadTransactions(${currentPage - 1}, '${searchInput}')">
+                <i class="fa-solid fa-arrow-left-long primary-color transition"></i>
+            </button>`);
+        }
+
+        // Render page number buttons
+        var startPage = Math.max(1, currentPage - 2);  // Ensure the start page does not go below 1
+        var endPage = Math.min(totalPages, currentPage + 2);  // Ensure the end page does not exceed total pages
+
+        for (var i = startPage; i <= endPage; i++) {
+            if (i === currentPage) {
+                paginationControls.append(`<button class="active" disabled> ${i} </button>`);
+            } else {
+                paginationControls.append(`<button onclick="loadTransactions(${i}, '${searchInput}')"> ${i} </button>`);
+            }
+        }
+
+        // Render "Next" button
+        if (currentPage < totalPages) {
+            paginationControls.append(`<button onclick="loadTransactions(${currentPage + 1}, '${searchInput}')">
+                <i class="fa-solid fa-arrow-right-long primary-color transition"></i>
+            </button>`);
+        }
+    }
+
+    // Function to show error message
+    function showError(message) {
+        $('#errorMessage').text(message).show();
+        $('#transactions-table').hide();
+    }
+</script>

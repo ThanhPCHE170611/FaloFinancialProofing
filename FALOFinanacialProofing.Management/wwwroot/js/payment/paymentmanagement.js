@@ -473,37 +473,37 @@ $(document).ready(function () {
     let currentPage = 1;
     const pageSize = 5;
 
-    if (checkrole && checkrole !== 'Volunteer') {
-        const nametitle = document.getElementById('nametitle');
-        nametitle.textContent = 'Approve Payment Request';
+    //if (checkrole && checkrole !== 'Volunteer') {
+    //    const nametitle = document.getElementById('nametitle');
+    //    nametitle.textContent = 'Approve Payment Request';
 
-        const createRequestLink = document.getElementById('create_request_page');
-        createRequestLink.style.display = 'none';
+    //    const createRequestLink = document.getElementById('create_request_page');
+    //    createRequestLink.style.display = 'none';
 
-        const newLink = document.createElement('a');
-        newLink.setAttribute('asp-controller', 'Prepay');
-        newLink.setAttribute('asp-action', 'PrepayManagement_PM');
-        newLink.textContent = 'Prepay Created Request';
+    //    const newLink = document.createElement('a');
+    //    newLink.setAttribute('asp-controller', 'Prepay');
+    //    newLink.setAttribute('asp-action', 'PrepayManagement_PM');
+    //    newLink.textContent = 'Prepay Created Request';
 
-        const newLink2 = document.createElement('a');
-        newLink2.setAttribute('asp-controller', 'Payment');
-        newLink2.setAttribute('asp-action', 'PaymentManagement_PM');
-        newLink2.textContent = 'Payment Created Request';
+    //    const newLink2 = document.createElement('a');
+    //    newLink2.setAttribute('asp-controller', 'Payment');
+    //    newLink2.setAttribute('asp-action', 'PaymentManagement_PM');
+    //    newLink2.textContent = 'Payment Created Request';
 
-        const url = new URL(`/Prepay/PrepayManagement_PM`, window.location.origin);
-        if (campaignId) {
-            url.searchParams.set('campaignid', campaignId);
-        }
+    //    const url = new URL(`/Prepay/PrepayManagement_PM`, window.location.origin);
+    //    if (campaignId) {
+    //        url.searchParams.set('campaignid', campaignId);
+    //    }
 
-        const url2 = new URL(`/Payment/PaymentManagement_PM`, window.location.origin);
-        if (campaignId) {
-            url.searchParams.set('campaignid', campaignId);
-        }
-        newLink.href = url.toString();
-        newLink2.href = url2.toString();
-        navTabs.appendChild(newLink);
-        navTabs.appendChild(newLink2);
-    }
+    //    const url2 = new URL(`/Payment/PaymentManagement_PM`, window.location.origin);
+    //    if (campaignId) {
+    //        url.searchParams.set('campaignid', campaignId);
+    //    }
+    //    newLink.href = url.toString();
+    //    newLink2.href = url2.toString();
+    //    navTabs.appendChild(newLink);
+    //    navTabs.appendChild(newLink2);
+    //}
 
     function formatDateTime(dateString) {
         if (!dateString) return 'N/A';
@@ -540,7 +540,6 @@ $(document).ready(function () {
                 apiUrl = `https://localhost:7294/api/ApproveProcess/getallpaymentrequestforvolunteerleaderincampaign/${userId}?currentLoggingRole=${checkrole}&campaignId=${campaignId}&page=${page}`;
                 break;
             default:
-                apiUrl = `https://localhost:7294/api/RequestForm/getallpaymentrequestincampaign/${campaignId}?userId=${userId}&page=${page}`;
                 break;
         }
 

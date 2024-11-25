@@ -13,7 +13,6 @@
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
     <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
     <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
@@ -143,7 +142,7 @@
                 <div class="card my-4">
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
-                            <h6 class="text-white text-capitalize ps-3 mb-0">Campaign Request Management</h6>
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Campaign Registration Request Management</h6>
                             @* <a class="btn btn-dark mb-0 me-3" asp-controller="Campaign" asp-action="CampaignCreate">
                                 Add Campaign
                             </a> *@
@@ -206,427 +205,433 @@
         </div>
     </div>
 
-    <script src="../assets/js/core/popper.min.js"></script>
-    <script src="../assets/js/core/bootstrap.min.js"></script>
-    <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
-    <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
 
-        function searchCampaign() {
-            var input = document.getElementById("searchInput").value.toLowerCase();
-            var table = document.getElementById("campaignTable");
-            var tr = table.getElementsByTagName("tr");
+</body>
+</html>
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
 
-            for (var i = 1; i < tr.length; i++) {
-                var td = tr[i].getElementsByTagName("td")[1];
-                if (td) {
-                    var txtValue = td.textContent || td.innerText;
-                    tr[i].style.display = txtValue.toLowerCase().indexOf(input) > -1 ? "" : "none";
+    function searchCampaign() {
+        var input = document.getElementById("searchInput").value.toLowerCase();
+        var table = document.getElementById("campaignTable");
+        var tr = table.getElementsByTagName("tr");
+
+        for (var i = 1; i < tr.length; i++) {
+            var td = tr[i].getElementsByTagName("td")[1];
+            if (td) {
+                var txtValue = td.textContent || td.innerText;
+                tr[i].style.display = txtValue.toLowerCase().indexOf(input) > -1 ? "" : "none";
+            }
+        }
+    }
+
+    function filterByStatus() {
+        var filter = document.getElementById("statusFilter").value;
+        var table = document.getElementById("campaignTable");
+        var tr = table.getElementsByTagName("tr");
+
+        for (var i = 1; i < tr.length; i++) {
+            var td = tr[i].getElementsByTagName("td")[4];
+            if (td) {
+                var statusText = td.textContent || td.innerText;
+                if (filter === "" || statusText === filter) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
                 }
             }
         }
+    }
 
-        function filterByStatus() {
-            var filter = document.getElementById("statusFilter").value;
-            var table = document.getElementById("campaignTable");
-            var tr = table.getElementsByTagName("tr");
+    function formatDateTime(dateString) {
+        if (!dateString) return 'N/A';
 
-            for (var i = 1; i < tr.length; i++) {
-                var td = tr[i].getElementsByTagName("td")[4];
-                if (td) {
-                    var statusText = td.textContent || td.innerText;
-                    if (filter === "" || statusText === filter) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+            return 'Invalid Date';
+        }
+
+        const formattedDate = date.getDate().toString().padStart(2, '0') + '-' +
+            (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
+            date.getFullYear();
+
+        const formattedTime = date.getHours().toString().padStart(2, '0') + ':' +
+            date.getMinutes().toString().padStart(2, '0') + ':' +
+            date.getSeconds().toString().padStart(2, '0');
+
+        return formattedDate + ' ' + formattedTime;
+    }
+    function updateRowToApprovedForPM(button, id) {
+        const row = button.closest('tr');
+        const actionCell = row.querySelector('td:nth-child(6)');
+        const statusCell = row.querySelector('td:nth-child(5)');
+
+        const declinedText = document.createElement('span');
+        declinedText.classList.add('badge', 'badge-sm', 'bg-gradient-success');
+        declinedText.textContent = 'Approved';
+
+        button.style.display = 'none';
+        actionCell.querySelector('.btn-info').style.display = 'none';
+        actionCell.querySelector('.btn-danger').style.display = 'none';
+
+        const approvedText = document.createElement('span');
+        approvedText.classList.add('text-approved', 'me-2');
+        approvedText.textContent = 'Approved';
+
+        const detailLink = document.createElement('a');
+        detailLink.classList.add('text-blue');
+        detailLink.textContent = 'Detail';
+        detailLink.href = `/Campaign/CampaignRequestDetail?requestId=${id}`;
+
+        actionCell.appendChild(approvedText);
+        actionCell.appendChild(detailLink);
+        statusCell.innerHTML = '';
+        statusCell.appendChild(declinedText);
+    }
+
+    function updateRowToRejected(button, id) {
+        const row = button.closest('tr');
+        const actionCell = row.querySelector('td:nth-child(6)');
+        const statusCell = row.querySelector('td:nth-child(5)');
+
+        const declinedText = document.createElement('span');
+        declinedText.classList.add('badge', 'badge-sm', 'bg-gradient-danger');
+        declinedText.textContent = 'Rejected';
+
+        button.style.display = 'none';
+        actionCell.querySelector('.btn-info').style.display = 'none';
+        actionCell.querySelector('.btn-success').style.display = 'none';
+
+        const rejectedText = document.createElement('span');
+        rejectedText.classList.add('text-declined', 'me-2');
+        rejectedText.textContent = 'Rejected';
+
+        const detailLink = document.createElement('a');
+        detailLink.classList.add('text-blue');
+        detailLink.textContent = 'Detail';
+        detailLink.href = `/Campaign/CampaignRequestDetail?requestId=${id}`;
+
+        actionCell.appendChild(rejectedText);
+        actionCell.appendChild(detailLink);
+        statusCell.innerHTML = '';
+        statusCell.appendChild(declinedText);
+    }
+
+    function formatDateTime(dateString) {
+        if (!dateString) return 'N/A';
+
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+            return 'Invalid Date';
+        }
+
+        const formattedDate = date.getDate().toString().padStart(2, '0') + '-' +
+            (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
+            date.getFullYear();
+
+        const formattedTime = date.getHours().toString().padStart(2, '0') + ':' +
+            date.getMinutes().toString().padStart(2, '0') + ':' +
+            date.getSeconds().toString().padStart(2, '0');
+
+        return formattedDate + ' ' + formattedTime;
+    }
+            let currentButton = null;
+    let currentRequestId = null;
+
+    function openDeclineModal(button, requestId) {
+        currentButton = button;
+        currentRequestId = requestId;
+        $('#declineModal').fadeIn();
+    }
+
+    function closeModalDeclineCampainRequest() {
+        $('#declineModal').fadeOut();
+    }
+
+    function submitDecline() {
+        const feedback = $('#declineReason').val().trim();
+
+        if (!feedback) {
+            alert('Please enter a reason for the decline.');
+            return;
+        }
+
+        closeModalDeclineCampainRequest();
+        handleCampaignReject(currentButton, currentRequestId, false, feedback);
+    }
+
+    function handleCampaignReject(button, createCampaignRequestId, isAllowed, feedback) {
+        const userId = localStorage.getItem('userId');
+        const jwtToken = localStorage.getItem('jwtToken');
+
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const hours = String(today.getHours()).padStart(2, '0');
+        const minutes = String(today.getMinutes()).padStart(2, '0');
+        const seconds = String(today.getSeconds()).padStart(2, '0');
+        const dateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+
+        const payload = {
+            campaignRequestId: createCampaignRequestId,
+            approverId: userId,
+            dateOfApproval: dateTime,
+            isAllowed: isAllowed,
+            feedBack: feedback
+        };
+
+        console.log('Payload:', payload);
+        console.log('Token:', jwtToken);
+        console.log('User ID:', userId);
+
+        $.ajax({
+            url: 'https://localhost:7294/api/CampaignRequestApproveHistories/CreateCampaignRequestApproveHistory',
+            type: 'POST',
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            },
+            contentType: 'application/json',
+            data: JSON.stringify(payload),
+            success: function (response) {
+                if (response.success) {
+                    updateRowToRejected(button, createCampaignRequestId);
+                } else {
+                    alert('Failed: ' + response.message);
                 }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error in project approval:', error);
             }
+        });
+    }
+
+    $(document).ready(function () {
+        const jwtToken = localStorage.getItem('jwtToken');
+        const checkrole = localStorage.getItem('loggingRole');
+        const userId = localStorage.getItem('userId');
+        if (!jwtToken) {
+            alert('JWT token not found. Please log in.');
+            return;
         }
-
-        function formatDateTime(dateString) {
-            if (!dateString) return 'N/A';
-
-            const date = new Date(dateString);
-            if (isNaN(date.getTime())) {
-                return 'Invalid Date';
-            }
-
-            const formattedDate = date.getDate().toString().padStart(2, '0') + '-' +
-                (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
-                date.getFullYear();
-
-            const formattedTime = date.getHours().toString().padStart(2, '0') + ':' +
-                date.getMinutes().toString().padStart(2, '0') + ':' +
-                date.getSeconds().toString().padStart(2, '0');
-
-            return formattedDate + ' ' + formattedTime;
-        }
-        function updateRowToApprovedForPM(button, id) {
-            const row = button.closest('tr');
-            const actionCell = row.querySelector('td:nth-child(6)');
-            const statusCell = row.querySelector('td:nth-child(5)');
-
-            const declinedText = document.createElement('span');
-            declinedText.classList.add('badge', 'badge-sm', 'bg-gradient-success');
-            declinedText.textContent = 'Approved';
-
-            button.style.display = 'none';
-            actionCell.querySelector('.btn-info').style.display = 'none';
-            actionCell.querySelector('.btn-danger').style.display = 'none';
-
-            const approvedText = document.createElement('span');
-            approvedText.classList.add('text-approved', 'me-2');
-            approvedText.textContent = 'Approved';
-
-            const detailLink = document.createElement('a');
-            detailLink.classList.add('text-blue');
-            detailLink.textContent = 'Detail';
-            detailLink.href = `/Campaign/CampaignRequestDetail?requestId=${id}`;
-
-            actionCell.appendChild(approvedText);
-            actionCell.appendChild(detailLink);
-            statusCell.innerHTML = '';
-            statusCell.appendChild(declinedText);
-        }
-
-        function updateRowToRejected(button, id) {
-            const row = button.closest('tr');
-            const actionCell = row.querySelector('td:nth-child(6)');
-            const statusCell = row.querySelector('td:nth-child(5)');
-
-            const declinedText = document.createElement('span');
-            declinedText.classList.add('badge', 'badge-sm', 'bg-gradient-danger');
-            declinedText.textContent = 'Rejected';
-
-            button.style.display = 'none';
-            actionCell.querySelector('.btn-info').style.display = 'none';
-            actionCell.querySelector('.btn-success').style.display = 'none';
-
-            const rejectedText = document.createElement('span');
-            rejectedText.classList.add('text-declined', 'me-2');
-            rejectedText.textContent = 'Rejected';
-
-            const detailLink = document.createElement('a');
-            detailLink.classList.add('text-blue');
-            detailLink.textContent = 'Detail';
-            detailLink.href = `/Campaign/CampaignRequestDetail?requestId=${id}`;
-
-            actionCell.appendChild(rejectedText);
-            actionCell.appendChild(detailLink);
-            statusCell.innerHTML = '';
-            statusCell.appendChild(declinedText);
-        }
-
-        function formatDateTime(dateString) {
-            if (!dateString) return 'N/A';
-
-            const date = new Date(dateString);
-            if (isNaN(date.getTime())) {
-                return 'Invalid Date';
-            }
-
-            const formattedDate = date.getDate().toString().padStart(2, '0') + '-' +
-                (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
-                date.getFullYear();
-
-            const formattedTime = date.getHours().toString().padStart(2, '0') + ':' +
-                date.getMinutes().toString().padStart(2, '0') + ':' +
-                date.getSeconds().toString().padStart(2, '0');
-
-            return formattedDate + ' ' + formattedTime;
-        }
-                let currentButton = null;
+        let currentButton = null;
         let currentRequestId = null;
 
-        function openDeclineModal(button, requestId) {
-            currentButton = button;
-            currentRequestId = requestId;
-            $('#declineModal').fadeIn();
-        }
+        function showBankingNumberPopup(button, requestId) {
+        currentButton = button;
+        currentRequestId = requestId;
+        $.ajax({
+            url: 'https://localhost:7294/api/Banks/GetAllBanks',
+            type: 'GET',
+            success: function (response) {
+                if (response && Array.isArray(response)) {
+                    const bankingNumberSelect = $('#bankingNumberSelect');
+                    bankingNumberSelect.empty();
+                    bankingNumberSelect.append('<option value="">Select a bank</option>');
 
-        function closeModalDeclineCampainRequest() {
-            $('#declineModal').fadeOut();
-        }
+                    response.forEach(bank => {
+                        bankingNumberSelect.append(`<option value="${bank.id}">${bank.accountNumber}</option>`);
+                    });
 
-        function submitDecline() {
-            const feedback = $('#declineReason').val().trim();
-
-            if (!feedback) {
-                alert('Please enter a reason for the decline.');
-                return;
-            }
-
-            closeModalDeclineCampainRequest();
-            handleCampaignReject(currentButton, currentRequestId, false, feedback);
-        }
-
-        function handleCampaignReject(button, createCampaignRequestId, isAllowed, feedback) {
-            const userId = localStorage.getItem('userId');
-            const jwtToken = localStorage.getItem('jwtToken');
-
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
-            const hours = String(today.getHours()).padStart(2, '0');
-            const minutes = String(today.getMinutes()).padStart(2, '0');
-            const seconds = String(today.getSeconds()).padStart(2, '0');
-            const dateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
-
-            const payload = {
-                campaignRequestId: createCampaignRequestId,
-                approverId: userId,
-                dateOfApproval: dateTime,
-                isAllowed: isAllowed,
-                feedBack: feedback
-            };
-
-            console.log('Payload:', payload);
-            console.log('Token:', jwtToken);
-            console.log('User ID:', userId);
-
-            $.ajax({
-                url: 'https://localhost:7294/api/CampaignRequestApproveHistories/CreateCampaignRequestApproveHistory',
-                type: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${jwtToken}`
-                },
-                contentType: 'application/json',
-                data: JSON.stringify(payload),
-                success: function (response) {
-                    if (response.success) {
-                        updateRowToRejected(button, createCampaignRequestId);
-                    } else {
-                        alert('Failed: ' + response.message);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error in project approval:', error);
+                    $('#bankingNumberPopup').fadeIn();
+                } else {
+                    alert('Failed to load banks. Please try again later.');
                 }
-            });
+            },
+            error: function (xhr, status, error) {
+                console.error('Error fetching banks:', error);
+            }
+        });
+    }
+
+    $('#approveConfirmBtn').on('click', function () {
+        const bankId = $('#bankingNumberSelect').val();
+        if (!bankId) {
+            alert('Please select a bank.');
+            return;
         }
 
-        $(document).ready(function () {
-            const jwtToken = localStorage.getItem('jwtToken');
-            const checkrole = localStorage.getItem('loggingRole');
-            const userId = localStorage.getItem('userId');
-            if (!jwtToken) {
-                alert('JWT token not found. Please log in.');
-                return;
-            }
-            let currentButton = null;
-            let currentRequestId = null;
+        $('#bankingNumberPopup').fadeOut();
 
-            function showBankingNumberPopup(button, requestId) {
-            currentButton = button;
-            currentRequestId = requestId;
+        handleProjectApproval(currentButton, currentRequestId, true, bankId);
+    });
+
+    $('#cancelPopupBtn').on('click', function () {
+        $('#bankingNumberPopup').fadeOut();
+    });
+
+    function handleProjectApproval(button, createCampaignRequestId, isAllowed, bankId) {
+        const userId = localStorage.getItem('userId');
+
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const hours = String(today.getHours()).padStart(2, '0');
+        const minutes = String(today.getMinutes()).padStart(2, '0');
+        const seconds = String(today.getSeconds()).padStart(2, '0');
+        const dateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+
+        const payload = {
+            campaignRequestId: createCampaignRequestId,
+            approverId: userId,
+            dateOfApproval: dateTime,
+            isAllowed: isAllowed,
+            bankId: bankId
+        };
+
+        console.log('Payload:', payload);
+
+        $.ajax({
+            url: 'https://localhost:7294/api/CampaignRequestApproveHistories/CreateCampaignRequestApproveHistory',
+            type: 'POST',
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            },
+            contentType: 'application/json',
+            data: JSON.stringify(payload),
+            success: function (response) {
+                if (response.success) {
+                    updateRowToApprovedForPM(button, createCampaignRequestId);
+
+                } else {
+                    alert('Failed: ' + response.Message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error in project approval:', error);
+            }
+        });
+    }
+    window.showBankingNumberPopup = showBankingNumberPopup;
+
+        if (checkrole === "Project Management Board") {
+            $('.action-buttons').show();
+            apiUrl = 'https://localhost:7294/api/CreateCampaignRequests/GetCreateCampaignRequestByPMB';
+        } else {
+            apiUrl = `https://localhost:7294/api/CreateCampaignRequests/GetAllCreateCampaignRequestsByUserId/${userId}`;
+        }
+        let currentPage = 1;
+        const pageSize = 5;
+        function fetchCampaignRequests(searchInput = '', status = null, page = 1) {
             $.ajax({
-                url: 'https://localhost:7294/api/Banks/GetAllBanks',
+                url: apiUrl,
                 type: 'GET',
-                success: function (response) {
-                    if (response && Array.isArray(response)) {
-                        const bankingNumberSelect = $('#bankingNumberSelect');
-                        bankingNumberSelect.empty(); 
-                        bankingNumberSelect.append('<option value="">Select a bank</option>');
-
-                        response.forEach(bank => {
-                            bankingNumberSelect.append(`<option value="${bank.id}">${bank.accountNumber}</option>`);
-                        });
-
-                        $('#bankingNumberPopup').fadeIn();
-                    } else {
-                        alert('Failed to load banks. Please try again later.');
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error fetching banks:', error);
-                }
-            });
-        }
-
-        $('#approveConfirmBtn').on('click', function () {
-            const bankId = $('#bankingNumberSelect').val();
-            if (!bankId) {
-                alert('Please select a bank.');
-                return;
-            }
-
-            $('#bankingNumberPopup').fadeOut();
-
-            handleProjectApproval(currentButton, currentRequestId, true, bankId);
-        });
-
-        $('#cancelPopupBtn').on('click', function () {
-            $('#bankingNumberPopup').fadeOut();
-        });
-
-        function handleProjectApproval(button, createCampaignRequestId, isAllowed, bankId) {
-            const userId = localStorage.getItem('userId');
-
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
-            const hours = String(today.getHours()).padStart(2, '0');
-            const minutes = String(today.getMinutes()).padStart(2, '0');
-            const seconds = String(today.getSeconds()).padStart(2, '0');
-            const dateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
-
-            const payload = {
-                campaignRequestId: createCampaignRequestId,
-                approverId: userId,
-                dateOfApproval: dateTime,
-                isAllowed: isAllowed,
-                bankId: bankId 
-            };
-
-            console.log('Payload:', payload);
-
-            $.ajax({
-                url: 'https://localhost:7294/api/CampaignRequestApproveHistories/CreateCampaignRequestApproveHistory',
-                type: 'POST',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`
                 },
-                contentType: 'application/json',
-                data: JSON.stringify(payload),
+                data: {
+                    searchInput: searchInput,
+                    status: status,
+                    currentPage: page
+                },
                 success: function (response) {
                     if (response.success) {
-                        updateRowToApprovedForPM(button, createCampaignRequestId);
-
+                        populateTable(response.data.data);
+                        setupPagination(response.data.dataCount);
                     } else {
-                        alert('Failed: ' + response.Message);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error in project approval:', error);
-                }
-            });
-        }
-        window.showBankingNumberPopup = showBankingNumberPopup;
-
-            if (checkrole === "Project Management Board") {
-                $('.action-buttons').show();
-                apiUrl = 'https://localhost:7294/api/CreateCampaignRequests/GetCreateCampaignRequestByPMB';
-            } else {
-                apiUrl = `https://localhost:7294/api/CreateCampaignRequests/GetAllCreateCampaignRequestsByUserId/${userId}`;
-            }
-            let currentPage = 1;
-            const pageSize = 5;
-            function fetchCampaignRequests(searchInput = '', status = null, page = 1) {
-                $.ajax({
-                    url: apiUrl,
-                    type: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${jwtToken}`
-                    },
-                    data: {
-                        searchInput: searchInput,
-                        status: status,
-                        currentPage: page
-                    },
-                    success: function (response) {
-                        if (response.success) {
-                            populateTable(response.data.data);
-                            setupPagination(response.data.dataCount);
-                        } else {
-                            const tableBody = $('#campaignTable tbody');
-                            tableBody.empty();
-                            tableBody.append('<tr><td colspan="6" class="text-center">No campaign requests found</td></tr>');
-                        }
-                    },
-                    error: function (xhr, status, error) {
                         const tableBody = $('#campaignTable tbody');
                         tableBody.empty();
                         tableBody.append('<tr><td colspan="6" class="text-center">No campaign requests found</td></tr>');
                     }
-                });
-            }
-
-            function populateTable(data) {
-                const tableBody = $('#campaignTable tbody');
-                tableBody.empty();
-
-                if (data.length === 0) {
+                },
+                error: function (xhr, status, error) {
+                    const tableBody = $('#campaignTable tbody');
+                    tableBody.empty();
                     tableBody.append('<tr><td colspan="6" class="text-center">No campaign requests found</td></tr>');
-                    return;
                 }
-
-                data.forEach((request, index) => {
-                    const statusClass = getStatusClass(request.status);
-                    let actionButtons = `
-                        <button class="btn btn-success btn-sm" onclick="showBankingNumberPopup(this, ${request.id})">Approve</button>
-                        <button class="btn btn-danger btn-sm" onclick="openDeclineModal(this, ${request.id})">Decline</button>
-                        <a class="btn btn-info btn-sm" href="/Campaign/CampaignRequestDetail?requestId=${request.id}">Detail</a>
-                    `;
-                    if (request.status === "Accepted") {
-                        actionButtons = `<span class="text-approved me-2" style="margin-left:5px">Approved</span>
-                                        <a href="/Campaign/CampaignRequestDetail?requestId=${request.id}" class="text-blue me-2" >Detail</a>`;
-                    } else if (request.status === "Rejected") {
-                        actionButtons = `<span class="text-declined me-2" style="margin-left:5px">Rejected</span>
-                                    <a href="/Campaign/CampaignRequestDetail?requestId=${request.id}" class="text-blue me-2">Detail</a>`;
-                    }
-
-                    if (checkrole !== "Project Management Board") {
-                        actionButtons = `<a class="btn btn-info btn-sm" href="/Campaign/CampaignRequestDetail?requestId=${request.id}">Detail</a>`;
-                    }
-                    const row = `
-                        <tr>
-                            <td class="align-middle text-center text-sm">${index + 1}</td>
-                            <td class="align-middle text-center text-sm">${request.title}</td>
-                            <td class="align-middle text-center text-sm">${request.projectName}</td>
-                            <td class="align-middle text-center text-sm">${formatDateTime(request.createdAt)}</td>
-                            <td class="align-middle text-center text-sm"><span class="badge badge-sm ${statusClass}">${request.status}</span></td>
-                            <td class="align-middle text-center">${actionButtons}</td>
-                        </tr>
-                    `;
-                    tableBody.append(row);
-                });
-            }
-
-            function getStatusClass(status) {
-                if (status === "Accepted") return "badge-approved";
-                if (status === "Rejected") return "badge-declined";
-                return "badge-pending";
-            }
-            function setupPagination(totalItems) {
-                const totalPages = Math.ceil(totalItems / pageSize);
-                const paginationContainer = $('#pagination');
-                paginationContainer.empty();
-
-                for (let i = 1; i <= totalPages; i++) {
-                    const pageButton = $(`<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}">${i}</button>`);
-                    pageButton.on('click', () => changePage(i));
-                    paginationContainer.append(pageButton);
-                }
-            }
-            window.changePage = function (page) {
-                currentPage = page;
-                fetchCampaignRequests($('#searchInput').val(), $('#statusFilter').val(), currentPage);
-            };
-            $('#searchInput').on('keyup', function () {
-                currentPage = 1;
-                fetchCampaignRequests($(this).val(), $('#statusFilter').val(), currentPage);
             });
-
-            $('#statusFilter').on('change', function () {
-                currentPage = 1;
-                fetchCampaignRequests($('#searchInput').val(), $(this).val(), currentPage);
-            });
-
-            fetchCampaignRequests();
-
-
-        });
-        function changeCampaign(button, Id) {
-            localStorage.setItem('campaignId', Id);
-            window.location.href = '/Campaign/CampaignDetail';
         }
-    </script>
 
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
-</body>
-</html>
+        function populateTable(data) {
+            const tableBody = $('#campaignTable tbody');
+            tableBody.empty();
+
+            if (data.length === 0) {
+                tableBody.append('<tr><td colspan="6" class="text-center">No campaign requests found</td></tr>');
+                return;
+            }
+
+            data.forEach((request, index) => {
+                const statusClass = getStatusClass(request.status);
+                let actionButtons = `
+                    <button class="btn btn-success btn-sm" onclick="showBankingNumberPopup(this, ${request.id})">Approve</button>
+                    <button class="btn btn-danger btn-sm" onclick="openDeclineModal(this, ${request.id})">Decline</button>
+                    <a class="btn btn-info btn-sm" href="/Campaign/CampaignRequestDetail?requestId=${request.id}">Detail</a>
+                `;
+                if (request.status === "Accepted") {
+                    actionButtons = `<span class="text-approved me-2" style="margin-left:5px">Approved</span>
+                                    <a href="/Campaign/CampaignRequestDetail?requestId=${request.id}" class="text-blue me-2" >Detail</a>`;
+                } else if (request.status === "Rejected") {
+                    actionButtons = `<span class="text-declined me-2" style="margin-left:5px">Rejected</span>
+                                <a href="/Campaign/CampaignRequestDetail?requestId=${request.id}" class="text-blue me-2">Detail</a>`;
+                } else if(request.status === "Cancel") {
+                actionButtons = `
+                    <a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>
+                `;
+                }
+
+                if (checkrole !== "Project Management Board") {
+                    actionButtons = `<a class="btn btn-info btn-sm" href="/Campaign/CampaignRequestDetail?requestId=${request.id}">Detail</a>`;
+                }
+                const row = `
+                    <tr>
+                        <td class="align-middle text-center text-sm">${index + 1}</td>
+                        <td class="align-middle text-center text-sm">${request.title}</td>
+                        <td class="align-middle text-center text-sm">${request.projectName}</td>
+                        <td class="align-middle text-center text-sm">${formatDateTime(request.createdAt)}</td>
+                        <td class="align-middle text-center text-sm"><span class="badge badge-sm ${statusClass}">${request.status}</span></td>
+                        <td class="align-middle text-center">${actionButtons}</td>
+                    </tr>
+                `;
+                tableBody.append(row);
+            });
+        }
+
+        function getStatusClass(status) {
+            if (status === "Accepted") return "badge-approved";
+            if (status === "Rejected") return "badge-declined";
+            if (status === "Cancel") return "bg-gradient-secondary";
+            return "badge-pending";
+        }
+        function setupPagination(totalItems) {
+            const totalPages = Math.ceil(totalItems / pageSize);
+            const paginationContainer = $('#pagination');
+            paginationContainer.empty();
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = $(`<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}">${i}</button>`);
+                pageButton.on('click', () => changePage(i));
+                paginationContainer.append(pageButton);
+            }
+        }
+        window.changePage = function (page) {
+            currentPage = page;
+            fetchCampaignRequests($('#searchInput').val(), $('#statusFilter').val(), currentPage);
+        };
+        $('#searchInput').on('keyup', function () {
+            currentPage = 1;
+            fetchCampaignRequests($(this).val(), $('#statusFilter').val(), currentPage);
+        });
+
+        $('#statusFilter').on('change', function () {
+            currentPage = 1;
+            fetchCampaignRequests($('#searchInput').val(), $(this).val(), currentPage);
+        });
+
+        fetchCampaignRequests();
+
+
+    });
+    function changeCampaign(button, Id) {
+        localStorage.setItem('campaignId', Id);
+        window.location.href = '/Campaign/CampaignDetail';
+    }
+</script>
+
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>

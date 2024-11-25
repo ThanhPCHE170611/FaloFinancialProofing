@@ -478,33 +478,33 @@ $(document).ready(function () {
     console.log(checkrole);
     console.log(jwtToken);
 
-    if (checkrole && checkrole !== 'Volunteer') {
-        const nametitle = document.getElementById('nametitle');
-        nametitle.textContent = 'Approve Prepay Request';
+    //if (checkrole && checkrole !== 'Volunteer') {
+    //    const nametitle = document.getElementById('nametitle');
+    //    nametitle.textContent = 'Approve Prepay Request';
 
-        const createRequestLink = document.getElementById('create_request_page');
-        createRequestLink.style.display = 'none';
+    //    const createRequestLink = document.getElementById('create_request_page');
+    //    createRequestLink.style.display = 'none';
 
-        const newLink = document.createElement('a');
-        newLink.setAttribute('asp-controller', 'Prepay');
-        newLink.setAttribute('asp-action', 'PrepayManagement_PM');
-        newLink.textContent = 'Prepay Created Request';
+    //    const newLink = document.createElement('a');
+    //    newLink.setAttribute('asp-controller', 'Prepay');
+    //    newLink.setAttribute('asp-action', 'PrepayManagement_PM');
+    //    newLink.textContent = 'Prepay Created Request';
 
-        const newLink2 = document.createElement('a');
-        newLink2.setAttribute('asp-controller', 'Payment');
-        newLink2.setAttribute('asp-action', 'PaymentManagement_PM');
-        newLink2.textContent = 'Payment Created Request';
+    //    const newLink2 = document.createElement('a');
+    //    newLink2.setAttribute('asp-controller', 'Payment');
+    //    newLink2.setAttribute('asp-action', 'PaymentManagement_PM');
+    //    newLink2.textContent = 'Payment Created Request';
 
-        const url = new URL(`/Prepay/PrepayManagement_PM`, window.location.origin);
+    //    const url = new URL(`/Prepay/PrepayManagement_PM`, window.location.origin);
 
 
-        const url2 = new URL(`/Payment/PaymentManagement_PM`, window.location.origin);
+    //    const url2 = new URL(`/Payment/PaymentManagement_PM`, window.location.origin);
 
-        newLink.href = url.toString();
-        newLink2.href = url2.toString();
-        navTabs.appendChild(newLink);
-        navTabs.appendChild(newLink2);
-    }
+    //    newLink.href = url.toString();
+    //    newLink2.href = url2.toString();
+    //    navTabs.appendChild(newLink);
+    //    navTabs.appendChild(newLink2);
+    //}
 
     function formatDateTime(dateString) {
         if (!dateString) return 'N/A';
@@ -543,7 +543,6 @@ $(document).ready(function () {
                 apiUrl = `https://localhost:7294/api/ApproveProcess/getallprepayrequestforvolunteerleaderincampaign/${userId}?currentLoggingRole=${checkrole}&campaignId=${campaignId}&page=${page}`;
                 break;
             default:
-                apiUrl = `https://localhost:7294/api/RequestForm/getallprepayrequestincampaign/${campaignId}?userId=${userId}&page=${page}`;
                 break;
         }
 

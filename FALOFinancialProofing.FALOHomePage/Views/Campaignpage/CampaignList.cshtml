@@ -1,0 +1,163 @@
+﻿@page "/campaignlist"
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main>
+    <!-- Page banner area start here -->
+    <section class="banner__inner-page bg-image pt-160 pb-160 bg-image" data-background="/images/banner/banner_2.jpg">
+        <div class="container">
+            <h2 class="wow fadeInUp" data-wow-delay="00ms" data-wow-duration="1500ms">Danh Sách Chiến Dịch</h2>
+            <div class="breadcrumb-list wow fadeInUp" data-wow-delay="200ms" data-wow-duration="1500ms">
+                <a href="@Url.Action("Index", "Homepage")">Home</a><span>
+                    <i class="fa-regular fa-angles-right mx-2"></i>Chiến Dịch
+                </span>
+            </div>
+        </div>
+    </section>
+    <!-- Page banner area end here -->
+    <!-- Blog single area start here -->
+    <div class="blog-single__right-item">
+        <div class="item shadow mb-30">
+            <h5 class="title">Search</h5>
+            <div class="serach-bar">
+                <input type="text" id="searchInput" placeholder="Search here">
+                <button id="searchButton"><i class="fa-regular fa-magnifying-glass"></i></button>
+            </div>
+        </div>
+    </div>
+    <section class="cause-list-area pt-120 pb-120">
+        <div class="container">
+            <div class="row g-4" id="campaignsContainer">
+                <!-- Campaigns will be dynamically loaded here -->
+            </div>
+            <div class="pegi justify-content-center mt-80 pagination" id="paginationControls">
+                <!-- Pagination controls will be dynamically loaded here -->
+            </div>
+        </div>
+    </section>
+    <!-- Blog single area end here -->
+</main>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Initially load campaigns with an empty search query
+        loadCampaigns(1, "");
+
+        // Set up the search button to trigger the search when clicked
+        $('#searchButton').click(function () {
+            var searchInput = $('#searchInput').val();
+            loadCampaigns(1, searchInput);  // Load campaigns based on the search input
+        });
+
+        // Allow pressing Enter key for search
+        $('#searchInput').keypress(function (e) {
+            if (e.which === 13) {  // Enter key code
+                var searchInput = $('#searchInput').val();
+                loadCampaigns(1, searchInput);  // Load campaigns based on the search input
+            }
+        });
+    });
+
+    function loadCampaigns(pageNumber = 1, searchInput = "") {
+        $.ajax({
+            url: `https://localhost:7294/api/Campaign/GetAllCampaignInSystem?title=${searchInput}&IsActive=true&currentPage=${pageNumber}`,  // Adjust URL for the search query
+            type: 'GET',
+            success: function (response) {
+                if (response.success) {
+                    renderCampaigns(response.data);
+                    renderPagination(response.data.dataCount, pageNumber, searchInput);  // Pass search input to pagination
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function (error) {
+                console.error("Error loading campaigns:", error);
+            }
+        });
+    }
+
+    function renderCampaigns(data) {
+        var campaignsContainer = $('#campaignsContainer');
+        campaignsContainer.empty();  // Clear existing data
+
+        data.data.forEach(function (campaign) {
+            var date = new Date(campaign.dateOfCreation);
+
+            // Format the date as "Jan 1, 2024"
+            var formattedDate = date.toLocaleDateString('en-US', {
+                month: 'short',  // "Jan"
+                day: 'numeric',  // "1"
+                year: 'numeric'  // "2024"
+            });
+
+            var percentage = Math.round((campaign.totalMoneyEarned / campaign.fundTarget) * 100);
+            var percentageDisplay = percentage > 100 ? 100 : percentage;
+            var url = '/Campaignpage/Index/' + campaign.campaignId;
+            var shortenedDescription = campaign.description.length > 100 ? campaign.description.substring(0, 100) + '....' : campaign.description;
+
+            // Now we set the campaign image dynamically from the API response
+            var campaignImage = campaign.image || '/images/cause/CampaignImages.jpg';  // Fallback image if none exists
+
+            var cardHtml = `<div class="col-lg-8 order-2 order-lg-1">
+                                    <div class="cause__item cause-list__item mb-30">
+                                        <div class="cause__image image" style="width:100%; height:auto;overflow:hidden;">
+                                            <img src="${campaignImage}" style="width:100%; height:auto;object-fit:cover" alt="image">
+                                            <span class="cause-tag">${formattedDate}</span>
+                                        </div>
+                                        <div class="cause__content">
+                                            <h4 class="mb-2">
+                                                <a href="${url}" class="btn-inner">
+                                                    ${campaign.title}
+                                                </a>
+                                            </h4>
+                                            <p class="mb-3">
+                                                ${shortenedDescription}
+                                            </p>
+                                            <div class="progress-area">
+                                                <div class="progress__item">
+                                                    <div class="progress__content" style="width: ${percentageDisplay}%;"><span>${percentage}%</span></div>
+                                                </div>
+                                                <div class="progress__goal mt-15">
+                                                    <h6>Goal : <span>${campaign.fundTarget} VND</span></h6>
+                                                    <h6>Raised : <span>${campaign.totalMoneyEarned} VND</span></h6>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>`;
+            campaignsContainer.append(cardHtml);
+        });
+    }
+
+    function renderPagination(totalRecords, currentPage, searchInput) {
+        var pageSize = 6;
+        var totalPages = Math.ceil(totalRecords / pageSize);
+        var paginationControls = $('#paginationControls');
+        paginationControls.empty();  // Clear existing pagination buttons
+
+        // Render "Previous" button
+        if (currentPage > 1) {
+            paginationControls.append(`<button onclick="loadCampaigns(${currentPage - 1}, '${searchInput}')"><i class="fa-solid fa-arrow-left-long primary-color transition"></i></button>`);
+        }
+
+        // Render page number buttons
+        var startPage = Math.max(1, currentPage - 2);  // Show 2 pages before current
+        var endPage = Math.min(totalPages, currentPage + 2);  // Show 2 pages after current
+
+        for (var i = startPage; i <= endPage; i++) {
+            if (i === currentPage) {
+                paginationControls.append(`<button class="active" disabled>${i}</button>`);
+            } else {
+                paginationControls.append(`<button onclick="loadCampaigns(${i}, '${searchInput}')">${i}</button>`);
+            }
+        }
+
+        // Render "Next" button
+        if (currentPage < totalPages) {
+            paginationControls.append(`<button onclick="loadCampaigns(${currentPage + 1}, '${searchInput}')"><i class="fa-solid fa-arrow-right-long primary-color transition"></i></button>`);
+        }
+    }
+</script>

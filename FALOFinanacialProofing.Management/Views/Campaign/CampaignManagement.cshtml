@@ -7,15 +7,11 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
-    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
     <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
-    <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
     <style>
         .search-filter-container {
             display: flex;
@@ -71,6 +67,7 @@
                                         <th class="text-uppercase text-secondary text-xs opacity-7">Campaign Name</th>
                                         <th class="text-uppercase text-secondary text-xs opacity-7">Project Name</th>
                                         <th class="text-uppercase text-secondary text-xs opacity-7">Fund Target</th>
+                                        <th class="text-uppercase text-secondary text-xs opacity-7">Stage</th>
                                         <th class="text-uppercase text-secondary text-xs opacity-7">Actions</th>
                                     </tr>
                                 </thead>
@@ -100,16 +97,28 @@
         localStorage.setItem('campaignId', Id);
         window.location.href = '/Campaign/CampaignDetail';
     }
+    function changeCampaignUpdateProcess(button, Id) {
+        localStorage.setItem('campaignId', Id);
+        window.location.href = '/Campaign/CampaignUpdateProcessRequest';
+    }
     $(document).ready(function () {
         let currentPage = 1;
         const userId = localStorage.getItem('userId');
         const roleId = localStorage.getItem('loggingRoleId');
+        const checkrole = localStorage.getItem('loggingRole');
         const pageSize = 5;
         function fetchCampaignData(searchInput = '', isActive = null, page = 1) {
-            const jwtToken = localStorage.getItem('jwtToken');
+        const jwtToken = localStorage.getItem('jwtToken');
+
+        let apiUrl;
+        if(checkrole === "Project Management Board") {
+            apiUrl = `https://localhost:7294/api/Campaign/GetAllCampaignInSystem`
+        } else {
+            apiUrl = `https://localhost:7294/api/CampaignMember/GetAllCampaignMembersByUserIdAndRoleId`
+        }
 
             $.ajax({
-                url: `https://localhost:7294/api/CampaignMember/GetAllCampaignMembersByUserIdAndRoleId`,
+                url: apiUrl,
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`
@@ -123,6 +132,8 @@
                 },
                 success: function (response) {
                     if (response.success) {
+                        console.log(userId);
+                        console.log(roleId);
                         renderTable(response.data.data);
                         setupPagination(response.data.dataCount);
                     } else {
@@ -142,16 +153,27 @@
                 tableBody.append('<tr><td colspan="5">No results found</td></tr>');
                 return;
             }
-
+            
             data.forEach((item, index) => {
+                console.log(item.campaignId);
+                let actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId})" class="btn btn-info btn-sm detail-btn">Detail</button>`;
+                let campaignName =`${item.title}`;
+                if(checkrole === "Project Manager") {
+                    actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId})" class="btn btn-info btn-sm detail-btn">Detail</button>
+                                        <button class="btn btn-primary btn-sm" onclick="changeCampaignUpdateProcess(this, ${item.campaignId})">Update Process</a>
+                    `;
+                    campaignName = `${item.campaignTitle}`;
+                }
+                
                 const row = `
                     <tr>
                         <td class="align-middle text-center text-sm">${index + 1}</td>
-                        <td class="align-middle text-sm">${item.campaignTitle}</td>
-                        <td class="align-middle text-sm">${item.projectName}</td>
+                        <td class="align-middle text-center text-sm">${campaignName}</td>
+                        <td class="align-middle text-center text-sm">${item.projectName}</td>
                         <td class="align-middle text-center text-sm">${item.fundTarget.toLocaleString()}</td>
+                        <td class="align-middle text-center text-sm">${item.status}</td>
                         <td class="align-middle text-center">
-                            <button onclick="changeCampaign(this, ${item.campaignId})" class="btn btn-info btn-sm detail-btn">Detail</button>
+                            ${actionButtons}
                         </td>
                     </tr>
                 `;

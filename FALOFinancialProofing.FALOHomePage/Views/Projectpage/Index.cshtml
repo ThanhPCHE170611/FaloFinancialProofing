@@ -1,0 +1,185 @@
+﻿@page "/projectDetails"
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var projectDetails = ViewBag.ProjectDetails as FALOFinancialProofing.FALOHomePage.Models.ProjectDetailsDTO;
+    var campaigns = ViewBag.Campaigns as List<FALOFinancialProofing.FALOHomePage.Models.CampaignDTO>;
+}
+
+<style>
+    .item img {
+        max-width: 100%; /* Make sure image never overflows the container */
+        height: auto; /* Keep the aspect ratio of the image */
+        object-fit: contain; /* Ensures the image is contained within the boundaries without distortion */
+    }
+
+    /* Optional: Adjust the container size for better control */
+    .item {
+        width: 100%;
+        height: auto; /* Ensures height adapts based on image size */
+        text-align: center; /* Keeps text and image centered */
+        padding: 10px;
+        border-radius: 8px;
+        overflow: hidden; /* Prevents any image overflow */
+    }
+
+    /* Optional: Adjust text spacing */
+    h5 {
+        margin-top: 20px; /* Adjust as needed */
+        font-size: 16px; /* Customize font size */
+        font-weight: 600; /* Customize font weight */
+    }
+</style>
+
+<main>
+    
+        <!-- Page banner area start here -->
+        <section class="banner__inner-page bg-image pt-160 pb-160 bg-image"
+                 data-background="/images/banner/banner_2.jpg">
+            <div class="container">
+                <h2 class="wow fadeInUp" data-wow-delay="00ms" data-wow-duration="1500ms">Thông Tin Dự Án</h2>
+                <div class="breadcrumb-list wow fadeInUp" data-wow-delay="200ms" data-wow-duration="1500ms">
+                    <a href="@Url.Action("Index", "Homepage")">Home</a><span>
+                        <i class="fa-regular fa-angles-right mx-2"></i>Dự Án
+                    </span>
+                </div>
+            </div>
+        </section>
+        <!-- Page banner area end here -->
+        <!-- Blog single area start here -->
+        <section class="blog-single-area pt-120 pb-120">
+            <div class="container">
+                <div class="row g-4">
+                    <div class="col-lg-8 order-2 order-lg-1">
+                        <div class="blog__item blog-single__left-item shadow-none">
+                            <div class="image">
+                            @if (projectDetails.Image == null)
+                            {
+                                <img src="/images/event/Project_image.jpg" alt="image" style="object-fit:cover; object-position:center;">
+                            }
+                            else
+                            {
+                                <img src="@projectDetails.Image" alt="image" style="object-fit:cover; object-position:center; max-height: 373px; max-width:770px">
+                            }
+                            <span class="blog-tag">@projectDetails.DateOfCreation.ToString("MMM dd, yyyy")</span>
+                            </div>
+                            <div class="blog__content p-0">
+                                <h4 class="mt-40 mb-30 fs-30">
+                                    @projectDetails.ProjectName
+                                </h4>
+                                <p class="mb-20 mt-30">
+                                @Html.Raw(projectDetails.Description.Replace("\n", "<br />"))
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 order-1 order-lg-2">
+                        <div class="event-single__right-item">
+                        <div class="item shadow mb-30 text-center">
+                            @if (projectDetails.UserImage == null)
+                            {
+                                <img src="/images/project/user.png" alt="image" class="image-fluid" style="object-position:center; height: 120px; width: 120px">
+                            }
+                            else
+                            {
+                                <img src="@projectDetails.UserImage" alt="image" class="image-fluid" style="object-position:center; height: 120px; width: 120px">
+                            }
+                            @if (projectDetails.OrganizationId == null || projectDetails.OrganizationName == null)
+                            {
+                                <h5 class="mt-20">@projectDetails.FirstName @projectDetails.LastName</h5>
+                                <span>Người quản lý dự án</span>
+                            }
+                            else
+                            {
+                                <h7 style="font: italic"> Tổ chức</h7>
+                                <h5 class="mt-20">@projectDetails.OrganizationName</h5>
+                                <span>Tổ chức</span>
+                            }
+                        </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+        <!-- Blog single area end here -->
+        
+        @if(campaigns != null)
+        {
+        <!-- Cause area start here -->
+        <section class="cause-area pt-120 pb-100">
+            <div class="container">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-4 mb-40">
+                    <div class="section-header">
+                        <h5 class="wow fadeInUp" data-wow-delay="00ms" data-wow-duration="1500ms">
+                            <i class="fa-regular fa-angles-left pe-1"></i> Các Chiến Dịch <i class="fa-regular fa-angles-right ps-1"></i>
+                        </h5>
+                        <h2 class="wow fadeInUp" data-wow-delay="200ms" data-wow-duration="1500ms">
+                            Các Chiến Dịch Hiện Tại
+                        </h2>
+                    </div>
+                    <div class="arry-btn wow fadeInUp" data-wow-delay="400ms" data-wow-duration="1500ms">
+                        <button class="arry-prev cause__arry-prev"><i class="fa-regular fa-chevron-left"></i></button>
+                        <button class="arry-next cause__arry-next active ml-10">
+                            <i class="fa-regular fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="cause__slider-wrp">
+                <div class="swiper cause__slider">
+                    <div class="swiper-wrapper py-4">
+                        @foreach (var campaign in campaigns)
+                        {
+                            var percentage = Math.Round(((decimal)campaign.TotalMoneyEarned/campaign.FundTarget) * 100);
+                            <div class="swiper-slide">
+                                <div class="cause__item">
+                                    <div class="cause__image image">
+                                        @if(campaign.Image == null)
+                                        {
+                                            <img src="/images/cause/CampaignImages.jpg" alt="image">
+                                        }else{
+                                            <img src="@campaign.Image" alt="image">
+                                        }
+                                        
+                                        <span class="cause-tag">@campaign.EndDate.ToString("MMMM dd, yyyy")</span>
+                                    </div>
+                                    <div class="cause__content">
+                                        <h4 class="mb-4 mt-20">
+                                            <a href="@Url.Action("Index", "Campaignpage", new {id=campaign.CampaignId})" class="primary-hover">
+                                                @campaign.Title
+                                            </a>
+                                        </h4>
+                                        <div class="progress-area">
+                                            <div class="progress__item">
+                                                @if(percentage >100){
+                                                    <div class="progress__content" style="width: 100%;"><span>@percentage%</span></div>
+                                                }else{
+                                                    <div class="progress__content" style="width: @percentage%;"><span>@percentage%</span></div>
+                                                }
+                                            </div>
+                                            <div class="progress__goal mt-15">
+                                                <h6>Goal : <span>@campaign.FundTarget VND</span></h6>
+                                                <h6>Raised : <span>@campaign.TotalMoneyEarned VND</span></h6>
+                                            </div>
+                                            <div class="btn-three mt-30">
+                                                <span class="btn-circle">
+                                                </span>
+                                                <a href="@Url.Action("Index", "Campaignpage", new {id=campaign.CampaignId})" class="btn-inner">
+                                                    <span class="btn-text">
+                                                        ỦNG HỘ
+                                                    </span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </section>
+        }
+        
+</main>

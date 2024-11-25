@@ -13,7 +13,6 @@ namespace FALOFinanacialProofing.Management.Controllers
         {
             return View();
         }
-        // GET: ProjectController/Details/5
         public ActionResult ProjectDetail()
         {
             return View();
@@ -22,7 +21,10 @@ namespace FALOFinanacialProofing.Management.Controllers
         {
             return View();
         }
-
+        public ActionResult ProjectRequestManagement()
+        {
+            return View();
+        }
 
         // POST: ProjectController/Create
         [HttpPost]
