@@ -1,9 +1,7 @@
 ﻿using FALOFinancialProofing.DTOs.CreateProjectRequestApproveHistoryDTO;
-using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
-using FALOFinancialProofing.Services.CreateProjectRequestServices;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 
@@ -160,6 +158,10 @@ namespace FALOFinancialProofing.Services.CreateProjectRequestApproveHistoryServi
                 if (checkRequestId == null)
                 {
                     throw new Exception("CreateProjectRequest not found");
+                }
+                if (checkRequestId.Status.Equals(RequestStatus.Cancel))
+                {
+                    throw new Exception("Project Request has been cancel before");
                 }
                 // kiểm tra thời điểm gửi yêu cầu phê duyệt
                 if (createProjectRequestApproveHistoryClientRequest.DateOfApproval > DateTime.Now)

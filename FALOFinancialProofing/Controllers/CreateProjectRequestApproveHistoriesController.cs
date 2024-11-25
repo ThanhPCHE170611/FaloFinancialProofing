@@ -3,7 +3,6 @@ using FALOFinancialProofing.DTOs.CreateProjectRequestApproveHistoryDTO;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.CreateProjectRequestApproveHistoryServices;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 
@@ -82,6 +81,7 @@ namespace FALOFinancialProofing.Controllers
                         Message = message.ToString()
                     });
                 }
+                createProjectRequestApproveHistoryClientRequest.FeedBack = createProjectRequestApproveHistoryClientRequest.FeedBack?.Trim();
                 checkValid = await _createProjectRequestApproveHistoryService.CreateCreateProjectRequestApproveHistoryAsync(createProjectRequestApproveHistoryClientRequest, message);
                 if (!checkValid)
                 {

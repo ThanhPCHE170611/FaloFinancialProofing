@@ -21,7 +21,7 @@ namespace FALOFinancialProofing.Controllers
             _debManagementService = debManagementService;
         }
 
-        [HttpGet("getdebtlistforpmb")]   
+        [HttpGet("getdebtlistforpmb")]
         [RoleAttribute(AppRole.ProjectManagementBoard)]
         public async Task<IActionResult> GetDebManagementForPMB(string userId, string currentLoggingRole,
             int? campaignId,
@@ -32,7 +32,7 @@ namespace FALOFinancialProofing.Controllers
         {
             var message = new StringBuilder();
             var userWithDebList = await _debManagementService.GetDebManagementForPMB(userId, currentLoggingRole, message);
-            if(userWithDebList.IsNullOrEmpty())
+            if (userWithDebList.IsNullOrEmpty())
             {
                 return Ok(new
                 {
@@ -50,7 +50,7 @@ namespace FALOFinancialProofing.Controllers
             {
                 filteredResult = filteredResult.Where(x => x.UserEmail.ToLower().Contains(emailFilter)).ToList();
             }
-            if(isActive != null)
+            if (isActive != null)
             {
                 filteredResult = filteredResult.Where(x => x.IsActive == isActive).ToList();
             }

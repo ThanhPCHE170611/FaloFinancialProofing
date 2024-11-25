@@ -11,6 +11,7 @@ namespace FALOFinancialProofing.DTOs.OrganizationDTO
         public string Main_office { get; set; }
         public string Representative { get; set; }
         public string PhoneNumber { get; set; }
+        [Required, EmailAddress]
         public string Email { get; set; }
         [ImageFile]
         public IFormFile? LogoFile { get; set; }

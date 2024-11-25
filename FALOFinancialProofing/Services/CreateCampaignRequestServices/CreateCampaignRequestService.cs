@@ -1,7 +1,5 @@
 ﻿using FALOFinancialProofing.DTOs.CreateCampaignFileDTO;
 using FALOFinancialProofing.DTOs.CreateCampaignRequestDTO;
-using FALOFinancialProofing.DTOs.CreateProjectFileDTO;
-using FALOFinancialProofing.DTOs.CreateCampaignRequestDTO;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;

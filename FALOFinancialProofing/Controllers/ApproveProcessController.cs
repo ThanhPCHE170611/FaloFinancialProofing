@@ -1,18 +1,12 @@
 ﻿using FALOFinancialProofing.Constant;
 using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.DTOs.CampaignMemberDTO;
-using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services;
 using FALOFinancialProofing.Services.ApproveProcessServices;
 using FALOFinancialProofing.Services.RequestFormServices;
 using FALOFinancialProofing.Services.VoucherServices;
-using Humanizer.Localisation;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
-using System.Drawing.Printing;
 using System.Text;
 
 namespace FALOFinancialProofing.Controllers
@@ -37,10 +31,10 @@ namespace FALOFinancialProofing.Controllers
         }
 
         [HttpGet("getallprepayrequestforvolunteerleaderincampaign/{userid}")]
-        public async Task<IActionResult> GetAllPrePayRequestForVolunteerLeader(string userid, string currentLoggingRole, 
+        public async Task<IActionResult> GetAllPrePayRequestForVolunteerLeader(string userid, string currentLoggingRole,
             int campaignId,
-            string? status = null,          
-            string? createdByEmail = null,  
+            string? status = null,
+            string? createdByEmail = null,
             int page = IntConstant.PageNumberDefault)
         {
             var result = await approveProcessServices.GetAllPrepayRequestForVolunteerLeader(userid, currentLoggingRole);
@@ -90,7 +84,7 @@ namespace FALOFinancialProofing.Controllers
                 Data = response
             });
         }
-        
+
         [HttpGet("getallpaymentrequestforvolunteerleaderincampaign/{userid}")]
         public async Task<IActionResult> GetAllPaymentRequestForVolunteerLeader(string userid, string currentLoggingRole, int campaignId,
             string? status = null,
@@ -286,7 +280,7 @@ namespace FALOFinancialProofing.Controllers
             if (!string.IsNullOrEmpty(status))
             {
                 filteredResult = filteredResult.Where(x => x.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
-            }          
+            }
             var totalRecords = filteredResult.Count();
             var pagedResult = filteredResult
             .Skip((page - 1) * IntConstant.PageSize)
@@ -306,7 +300,7 @@ namespace FALOFinancialProofing.Controllers
                 Data = response
             });
         }
-        
+
         [HttpGet("getallpaymentrequestforprojectmanagerincampaign/{userid}")]
         public async Task<IActionResult> GetAllPaymentRequestForProjectManager(string userid, string currentLoggingRole, int campaignId,
              string? status = null,

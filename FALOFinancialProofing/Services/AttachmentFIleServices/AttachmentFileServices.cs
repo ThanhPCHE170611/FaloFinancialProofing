@@ -2,7 +2,6 @@
 using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
-using Humanizer;
 using Microsoft.EntityFrameworkCore;
 
 namespace FALOFinancialProofing.Services.AttachmentFIleServices
@@ -35,7 +34,7 @@ namespace FALOFinancialProofing.Services.AttachmentFIleServices
         private async Task<List<AttachmentFile>> ListDTOToListEntity(List<AttachmentFileRequest> dtos)
         {
             var attachmentFiles = new List<AttachmentFile>();
-            foreach(var dto in dtos)
+            foreach (var dto in dtos)
             {
                 attachmentFiles.Add(await DTOToEntity(dto));
             }

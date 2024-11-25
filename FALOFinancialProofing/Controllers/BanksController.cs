@@ -1,6 +1,5 @@
 ﻿using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.BankServices;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FALOFinancialProofing.Controllers
@@ -15,6 +14,13 @@ namespace FALOFinancialProofing.Controllers
             _bankService = bankService;
         }
 
+        //[HttpGet("GetAllBanks")]
+        //public async Task<ActionResult<IEnumerable<Bank>>> GetBanks()
+        //{
+        //    return Ok(await _bankService.GetAllBanksAsync());
+        //}
+
+        // bank not in used
         [HttpGet("GetAllBanks")]
         public async Task<ActionResult<IEnumerable<Bank>>> GetBanks()
         {

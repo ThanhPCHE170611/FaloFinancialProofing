@@ -3,7 +3,6 @@ using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services.BankServices;
-using FALOFinancialProofing.Services.CampaignMemberService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
@@ -186,6 +185,10 @@ namespace FALOFinancialProofing.Services.CampaignRequestApproveHistoryServices
                 if (checkRequestId == null)
                 {
                     throw new Exception("CampaignRequest not found");
+                }
+                if (checkRequestId.Status.Equals(RequestStatus.Cancel))
+                {
+                    throw new Exception("Campaign Request has been cancel before");
                 }
                 // kiểm tra thời điểm gửi yêu cầu phê duyệt
                 if (createCampaignRequestApproveHistoryClientRequest.DateOfApproval > DateTime.Now)

@@ -1,15 +1,12 @@
-﻿using System.Security.Claims;
-using System.Text;
-using FALOFinancialProofing.Attributes.RoleAttributes;
+﻿using FALOFinancialProofing.Attributes.RoleAttributes;
 using FALOFinancialProofing.Constant;
-using FALOFinancialProofing.DTOs.CreateCampaignRequestDTO;
 using FALOFinancialProofing.DTOs.MoveNextCampaignStatusRequestDTO;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices;
 using FALOFinancialProofing.Utilities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 
 namespace FALOFinancialProofing.Controllers
 {
@@ -114,7 +111,7 @@ namespace FALOFinancialProofing.Controllers
                 }
                 var request = await _moveNextCampaignStatusRequestService.CreateMoveNextCampaignStatusRequestAsync(requestDto, stringBuilderMessage);
                 //return CreatedAtAction(nameof(CreateMoveNextCampaignStatusRequestAsync), new { id = request.Id }, request); // Trả về kết quả
-                if(request != null)
+                if (request != null)
                 {
                     var responseDto = _moveNextCampaignStatusRequestService.MapToDto(request);
                     return Ok(responseDto);
@@ -128,7 +125,7 @@ namespace FALOFinancialProofing.Controllers
                     });
                 }
             }
-            
+
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);

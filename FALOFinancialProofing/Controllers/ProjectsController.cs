@@ -1,6 +1,5 @@
 ﻿using FALOFinancialProofing.Attributes.RoleAttributes;
 using FALOFinancialProofing.Constant;
-using FALOFinancialProofing.DTOs.CampaignDTO;
 using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
@@ -8,10 +7,7 @@ using FALOFinancialProofing.Services.CreateProjectFileServices;
 using FALOFinancialProofing.Services.CreateProjectRequestServices;
 using FALOFinancialProofing.Services.ProjectServices;
 using FALOFinancialProofing.Utilities;
-using Microsoft.AspNetCore.Components.QuickGrid;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata;
 using System.Text;
 
 namespace FALOFinancialProofing.Controllers
@@ -160,6 +156,8 @@ namespace FALOFinancialProofing.Controllers
                         Success = checkValid
                     });
                 }
+                updateProjectRequest.ProjectName = updateProjectRequest.ProjectName.Trim();
+                updateProjectRequest.Description = updateProjectRequest.Description.Trim();
                 checkValid = await _projectService.UpdateProjectAsync(updateProjectRequest, message);
                 if (checkValid)
                     message.Append("Update Project Successfully!");
@@ -177,7 +175,7 @@ namespace FALOFinancialProofing.Controllers
         }
         // POST: api/Projects
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)] // mở nếu làm thật
+        [RoleAttribute(AppRole.ProjectManager)] // mở nếu làm thật
         [HttpPost("CreateProject", Name = "CreateProject")]
         public async Task<ActionResult<Project>> PostProject([FromForm] CreateProject createProject)
         {
@@ -193,6 +191,8 @@ namespace FALOFinancialProofing.Controllers
                         Message = stringBuilderMessage.ToString()
                     });
                 }
+                createProject.ProjectName = createProject.ProjectName.Trim();
+                createProject.Description = createProject.Description.Trim();
                 var project = await _projectService.ConvertDtoToBaseClass(createProject);
 
                 var checkProjectCreated = await _projectService.CreateProjectReturnEntityAsync(project);

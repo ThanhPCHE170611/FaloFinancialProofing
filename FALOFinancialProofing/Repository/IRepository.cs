@@ -1,5 +1,4 @@
 ﻿using FALOFinancialProofing.Core;
-using FALOFinancialProofing.Models;
 using System.Linq.Expressions;
 
 namespace FALOFinancialProofing.Repository
@@ -20,8 +19,9 @@ namespace FALOFinancialProofing.Repository
         Task<bool> InsertManyAsync(IEnumerable<T> entities);
 
         Task<bool> UpdateAsync(T entity);
-
+        Task<bool> UpdateManyAsync(IEnumerable<T> entities);
         Task<bool> DeleteAsync(TPrimaryKey id);
         Task<bool> DeleteAsync(T entity);
+
     }
 }

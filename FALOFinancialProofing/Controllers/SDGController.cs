@@ -1,9 +1,6 @@
 ﻿using FALOFinancialProofing.DTOs;
-using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services.SDGServices;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace FALOFinancialProofing.Controllers
 {

@@ -1,7 +1,6 @@
 ﻿using FALOFinancialProofing.Attributes.RoleAttributes;
 using FALOFinancialProofing.Constant;
 using FALOFinancialProofing.DTOs.CampaignDTO;
-using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services;
@@ -36,7 +35,6 @@ namespace FALOFinancialProofing.Controllers
         }
 
         // những campaign không ở trạng thái pending và rejected
-        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.Admin)]
         [HttpGet("GetAllCampaignInSystem")]
         public async Task<IActionResult> GetAllCampaignInSystem(string? title, string? status, bool? IsActive, int currentPage = IntConstant.PageNumberDefault)
         {
@@ -171,7 +169,6 @@ namespace FALOFinancialProofing.Controllers
                 Data = data
             });
         }
-        //[RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
         [HttpGet("GetCampaignDetailsById/{id}")]
         public async Task<IActionResult> GetCampaignDetailsById(int id)
         {
@@ -193,29 +190,7 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
-        [HttpPost("CreateCampaign")]
-        public async Task<IActionResult> CreateCampaign([FromBody] CreateCampaignDTO createCampaignDTO)
-        {
-            var createCampaign = await _campaignService.CreateCampaignAsync(createCampaignDTO);
-            if (createCampaign == null)
-            {
-                return Ok(new
-                {
-                    Success = false,
-                    Message = "Unable to create Campaign."
-                });
-            }
-
-            return Ok(new
-            {
-                Success = true,
-                Message = "Campaign created successfully.",
-                Data = createCampaign
-            });
-        }
-
-
-        [RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]// mở nếu làm thật
+        [RoleAttribute(AppRole.ProjectManager)]// mở nếu làm thật
         [HttpPost("CreateCampaignClient", Name = "CreateCampaignClient")]
         public async Task<ActionResult<Campaign>> PostCampaign([FromForm] CreateCampaignClientRequest createCampaignClientRequest)
         {
@@ -231,6 +206,10 @@ namespace FALOFinancialProofing.Controllers
                         Message = stringBuilderMessage.ToString()
                     });
                 }
+                createCampaignClientRequest.CreateBy = createCampaignClientRequest.CreateBy.Trim();
+                createCampaignClientRequest.Title = createCampaignClientRequest.Title.Trim();
+                createCampaignClientRequest.Description = createCampaignClientRequest.Description.Trim();
+                createCampaignClientRequest.Address = createCampaignClientRequest.Address?.Trim();
                 var campaign = await _campaignService.ConvertDtoToBaseClass(createCampaignClientRequest);
 
                 var checkCampaignCreated = await _campaignService.CreateCampaignReturnEntityAsync(campaign);
@@ -304,6 +283,10 @@ namespace FALOFinancialProofing.Controllers
                         Success = checkValid
                     });
                 }
+                updateCampaignDTO.Title = updateCampaignDTO.Title.Trim();
+                updateCampaignDTO.Description = updateCampaignDTO.Description.Trim();
+                updateCampaignDTO.Address = updateCampaignDTO.Address?.Trim();
+                updateCampaignDTO.Status = updateCampaignDTO.Status?.Trim();
                 checkValid = await _campaignService.UpdateCampaignAsync(updateCampaignDTO, message);
                 if (checkValid)
                     message.Append("Campaign updated successfully!");

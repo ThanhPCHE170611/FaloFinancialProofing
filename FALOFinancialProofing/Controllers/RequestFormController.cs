@@ -8,12 +8,8 @@ using FALOFinancialProofing.Services.AttachmentFIleServices;
 using FALOFinancialProofing.Services.CampaignMemberService;
 using FALOFinancialProofing.Services.RequestFormServices;
 using FALOFinancialProofing.Services.VoucherServices;
-using Humanizer.Localisation;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Mail;
 using System.Text;
 
 namespace FALOFinancialProofing.Controllers
@@ -122,7 +118,7 @@ namespace FALOFinancialProofing.Controllers
             }
             var attachmentfiles = new List<IFormFile>();
             var voucherFiles = new List<IFormFile>();
-            if(requestFormRequest.UploadFiles != null)
+            if (requestFormRequest.UploadFiles != null)
             {
                 string attachmentfileExtension = Path.GetExtension(requestFormRequest.UploadFiles.FileName);
 
@@ -137,7 +133,7 @@ namespace FALOFinancialProofing.Controllers
                 }
                 attachmentfiles.Add(requestFormRequest.UploadFiles);
             }
-            if(requestFormRequest.VoucherFile != null)
+            if (requestFormRequest.VoucherFile != null)
             {
                 string voucherfileExtension = Path.GetExtension(requestFormRequest.VoucherFile.FileName);
 
@@ -645,7 +641,8 @@ namespace FALOFinancialProofing.Controllers
             {
                 Success = true,
                 Message = "Request Form canceled successfully.",
-                Data = new {
+                Data = new
+                {
                     Id = requestFormIsCancel.Id,
                     Description = requestFormIsCancel.Description,
                     Status = requestFormIsCancel.Status,
@@ -670,7 +667,7 @@ namespace FALOFinancialProofing.Controllers
                 });
             }
             var addMissingFileSuccess = await requestFormService.AddMissingAttachmentFileForRequestAsync(requestId, message, attachment);
-            if(!addMissingFileSuccess)
+            if (!addMissingFileSuccess)
             {
                 return Ok(new
                 {

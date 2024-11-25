@@ -107,6 +107,33 @@ namespace FALOFinancialProofing.Services
             return checkValid;
         }
 
+        public virtual async Task<bool> CheckRole(string userId, string RoleId, string RoleName, StringBuilder message)
+        {
+            bool checkValid = false;
+            try
+            {
+                var user = await userManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    throw new Exception("User not found");
+                }
+                var role = await roleManager.FindByIdAsync(RoleId);
+                if (role == null)
+                {
+                    throw new Exception("User Role is not permitted");
+                }
+                if (role.Name.Equals(RoleName))
+                {
+                    checkValid = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                await Console.Out.WriteLineAsync($"CheckUserInRole: {ex.Message}");
+            }
+            return checkValid;
+        }
         public async Task<bool> CheckUserInRoleId(string userId, string userRoleID, StringBuilder message)
         {
             bool checkValid = false;
@@ -647,6 +674,7 @@ namespace FALOFinancialProofing.Services
                 //tokenId
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.NameId, User.Id),
+                new Claim("UserName", User.UserName ),
                 //new Claim("RoleId", User.RoleNames),
                 //new Claim("TokenId", Guid.NewGuid().ToString()),
 
