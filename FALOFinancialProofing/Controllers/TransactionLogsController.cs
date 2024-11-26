@@ -47,7 +47,7 @@ namespace FALOFinancialProofing.Controllers
         }
         // lịch sử chuyển tiền cua nguoi dung
         [HttpGet("GetUserTransactionLogs/{userId}")]
-        public async Task<ActionResult> GetUserTransactionLogs(string? searchInput, string userId, int currentPage = IntConstant.PageNumberDefault)
+        public async Task<ActionResult> GetUserTransactionLogs(string? searchInput, DateTime? startDate, DateTime? endDate, string userId, int currentPage = IntConstant.PageNumberDefault)
         {
             List<UserTransactionHistory> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -69,6 +69,10 @@ namespace FALOFinancialProofing.Controllers
                 {
                     searchInput = searchInput.Trim();
                     data = data.FindAll(x => ($"{x.tid}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
+                }
+                if (startDate != null && endDate != null)
+                {
+                    data = data.FindAll(x => x.TransactionDate >= startDate && x.TransactionDate <= endDate);
                 }
                 filterPagingData.DataCount = data.Count;
                 data = PaginationHelper.Paginate<UserTransactionHistory>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
