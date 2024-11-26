@@ -3,9 +3,9 @@
     public static class IntConstant
     {
         // Page size for pagination default
-        public static readonly int PageSize = 5;
-        public static readonly int PageSizeCustom = 6;
-        public static readonly int PageSizeForDeb = 20;
+        public static readonly int PageSize = 30;
+        public static readonly int PageSizeCustom = 30;
+        public static readonly int PageSizeForDeb = 50;
 
         public const int PageNumberDefault = 1;
 
