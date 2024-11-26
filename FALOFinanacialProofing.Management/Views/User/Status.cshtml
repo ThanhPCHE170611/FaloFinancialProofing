@@ -37,6 +37,7 @@
             background-color: #dc3545;
             color: #fff;
         }
+
         .modal-content, .add-member-content {
             background-color: #fefefe;
             margin: auto;
@@ -153,11 +154,8 @@
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class=" pt-4 pb-3 d-flex justify-content-between align-items-center">
                             <nav class="nav-tabs" id="navTabs">
-                                <a asp-controller="Campaign" asp-action="CampaignDetail">Campaign Detail</a>
-                                <a asp-controller="Prepay" asp-action="PrepayManagement">Prepay Request</a>
-                                <a asp-controller="Payment" asp-action="PaymentManagement">Payment Request</a>
-                                <a asp-controller="Accounting" asp-action="AccountingBookCampaign">Accounting Book</a>
-                                <a asp-controller="Campaign" asp-action="Member" class="active">Member</a>
+                                <a asp-controller="User" asp-action="UserDetail" >Account Detail</a>
+                                <a asp-controller="User" asp-action="Status" class="active">Status</a>
                             </nav>
                         </div>
                     </div>
@@ -182,16 +180,14 @@
                                 <thead>
                                     <tr>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STT</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Email</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" id="debtHeader" style="display:none;">Debt</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Campaign</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Debt</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Role</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
                                         <th class="text-secondary opacity-7">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="memberList">
-
                                 </tbody>
                             </table>
                         </div>
@@ -229,29 +225,6 @@
     let selectedMember = null;
     const checkrole = localStorage.getItem('loggingRole');
     const userId = localStorage.getItem('userId');
-    if (checkrole && checkrole !== 'Volunteer') {
-
-        const navTabs = document.getElementById('navTabs');
-        const newLink = document.createElement('a');
-        newLink.setAttribute('asp-controller', 'Prepay');
-        newLink.setAttribute('asp-action', 'PrepayManagement_PM');
-        newLink.textContent = 'Approval Prepay Request';
-
-        const newLink2 = document.createElement('a');
-        newLink2.setAttribute('asp-controller', 'Payment');
-        newLink2.setAttribute('asp-action', 'PaymentManagement_PM');
-        newLink2.textContent = 'Approval Payment Request';
-
-        const url = new URL(`/Prepay/PrepayManagement_PM`, window.location.origin);
-
-
-        const url2 = new URL(`/Payment/PaymentManagement_PM`, window.location.origin);
-
-        newLink.href = url.toString();
-        newLink2.href = url2.toString();
-        navTabs.appendChild(newLink);
-        navTabs.appendChild(newLink2);
-    }
     function showDetail(button) {
         const row = button.closest('tr');
         const name = row.cells[1].innerText;
@@ -277,7 +250,7 @@
     $(document).ready(function () {
         if (checkrole === 'Project Manager' || checkrole === 'Project Management Board') {
             const addMemberButton = `
-                <a class="btn btn-dark mb-0 me-3" href="/Campaign/MemberAdd">Add Member</a>
+                <a class="btn btn-dark mb-0 me-3" href="/Campaign/MemberAdd_PMB">Add Member</a>
             `;
             $('.bg-gradient-primary').append(addMemberButton);
         }
@@ -299,7 +272,7 @@
         const isActive = $('#statusFilter').val();
 
         $.ajax({
-            url: `https://localhost:7294/api/CampaignMember/GetAllCampaignMembersByCampaignId?searchInput=${searchInput}&CampaignId=${campaignId}&isActive=${isActive}&currentPage=${currentPage}`,
+            url: `https://localhost:7294/api/CampaignMember/GetAllCampaignMembersByUserId?searchInput=${searchInput}&userId=${userId}&isActive=${isActive}&currentPage=${currentPage}`,
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -329,34 +302,25 @@
             const getStatusClass = member.isActive ? 'badge badge-sm badge-approved' : 'badge badge-sm badge-declined';
             const actionButtonText = member.isActive ? 'Inactive' : 'Active';
             const detailButton = `
-                <a class="btn btn-info btn-sm" href="/Campaign/MemberDetail?userId=${member.userId}">Detail</a>
+                <a class="btn btn-info btn-sm"  >Detail</a>
             `;
-            let actionButton;
+
             if (member.roleInformation.roleName === 'Project Manager') {
                 console.log('gêk');
                 actionButton = detailButton;
             } else {
-                actionButton = checkrole === 'Project Manager' ? `
+                actionButton = checkrole === 'Project Management Board' ? `
                     ${detailButton}
                     <button class="btn ${actionButtonColor} btn-sm" onclick="confirmStatusChange('${member.id}', ${!member.isActive})">
                     ${actionButtonText}
                     </button>` : detailButton;
             }
-            
-            
-            let debtTd
-            if(checkrole === 'Accounting') {
-                $('#debtHeader').show();
-                debtTd = `
-                <td class="align-middle text-center ">${member.debt}</td>
-            `;
-            }
+
             const row = `
                 <tr>
                     <td class="align-middle text-center ">${index + 1 + (currentPage - 1) * pageSize}</td>
                     <td class="align-middle text-center ">${member.firstName} ${member.lastName}</td>
                     <td class="align-middle text-center ">${member.email}</td>
-                    ${debtTd}
                     <td class="align-middle text-center ">${member.roleInformation.roleName}</td>
                     <td class="align-middle text-center "><span class="${getStatusClass}">${statusText}</span></td>
                     <td class="align-middle text-center ">${actionButton}</td>

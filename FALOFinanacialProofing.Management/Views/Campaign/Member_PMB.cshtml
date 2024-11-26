@@ -306,11 +306,18 @@
             const detailButton = `
                 <a class="btn btn-info btn-sm" href="/Campaign/MemberDetail_PMB?userId=${member.userId}">Detail</a>
             `;
-            const actionButton = checkrole === 'Project Manager' ? `
-                ${detailButton}
-                <button class="btn ${actionButtonColor} btn-sm" onclick="confirmStatusChange('${member.id}', ${!member.isActive})">
+
+            if (member.roleInformation.roleName === 'Project Manager') {
+                console.log('gêk');
+                actionButton = detailButton;
+            } else {
+                actionButton = checkrole === 'Project Management Board' ? `
+                    ${detailButton}
+                    <button class="btn ${actionButtonColor} btn-sm" onclick="confirmStatusChange('${member.id}', ${!member.isActive})">
                     ${actionButtonText}
-                </button>` : detailButton;
+                    </button>` : detailButton;
+            }
+            
             const row = `
                 <tr>
                     <td class="align-middle text-center ">${index + 1 + (currentPage - 1) * pageSize}</td>

@@ -14,6 +14,25 @@ document.getElementById('relatedDocs').addEventListener('change', function (even
     });
 });
 
+document.getElementById('projectImages').addEventListener('change', function (event) {
+    const imagePreview = document.getElementById('imagePreview');
+    imagePreview.innerHTML = '';
+    const files = event.target.files;
+    Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const colDiv = document.createElement('div');
+            colDiv.classList.add('col-md-4', 'mb-3');
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.classList.add('img-fluid', 'rounded');
+            colDiv.appendChild(img);
+            imagePreview.appendChild(colDiv);
+        }
+        reader.readAsDataURL(file);
+    });
+});
+
 var win = navigator.platform.indexOf('Win') > -1;
 if (win && document.querySelector('#sidenav-scrollbar')) {
     var options = {
@@ -97,7 +116,9 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-
+        quill.on('text-change', function () {
+            updateBtn.disabled = false; 
+        });
         updateBtn.addEventListener('click', function () {
             const updateData = prepareUpdateData();
 

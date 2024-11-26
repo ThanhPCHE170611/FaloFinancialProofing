@@ -161,12 +161,12 @@ $(document).ready(function () {
         Array.from(files).forEach(file => {
             formData.append('UploadFiles', file);
         });
-        if (checkrole === "Accounting") {
-            Array.from(vouchers).forEach(voucher => {
-                console.log("abcxy" + voucher);
-                formData.append('VoucherFile', voucher);
-            });
-        }
+
+        Array.from(vouchers).forEach(voucher => {
+            console.log("abcxy" + voucher);
+            formData.append('VoucherFile', voucher);
+        });
+
         console.log(assignFrom);
         console.log(userId);
         console.log(expectedMoney);
@@ -192,7 +192,7 @@ $(document).ready(function () {
                     alert('Error: ' + response.message);
                 }
             },
-            error: function () {
+            error: function (response) {
                 alert(response.message);
             }
         });
