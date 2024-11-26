@@ -3,6 +3,6 @@
     public class AddUserRole
     {
         public string UserId { get; set; }
-        public string RoleName { get; set; }
+        public List<string> RoleNames { get; set; }
     }
 }
