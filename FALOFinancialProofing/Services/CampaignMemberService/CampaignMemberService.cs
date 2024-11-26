@@ -288,6 +288,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 var campaignOwner = await campaignService.GetCampaignByUserIdAndCampaignIdAsync(updateCampaignMemberStatusDTO.PmUserId, updateCampaignMemberStatusDTO.CampaignId);
                 bool checkAdmin = await authServices.CheckRole(updateCampaignMemberStatusDTO.PmUserId, updateCampaignMemberStatusDTO.PmRoleId, AppRole.Admin, new StringBuilder());
                 bool checkPMB = await authServices.CheckRole(updateCampaignMemberStatusDTO.PmUserId, updateCampaignMemberStatusDTO.PmRoleId, AppRole.ProjectManagementBoard, new StringBuilder());
+                // Không check trong campaignMember Pm có isactive =true/false
                 if ((campaignOwner == null && !checkPMB && !checkAdmin) || (!checkPMB && !checkAdmin && campaignOwner != null && !campaignOwner.IsActive))
                 {
                     throw new Exception("You don't have permission to update campaign!");
