@@ -81,8 +81,8 @@
                         </div>
                         <div class="row mb-3" id="organization-section">
                             <div class="col-md-12">
-                                <label for="status" class="form-label">Organization</label>
-                                <input type="text" class="form-control" id="organization" readonly>
+                                <label for="organizationInput" class="form-label">Organization</label>
+                                <input type="text" class="form-control" id="organizationInput" readonly>
                             </div>
                         </div>
                         <div class="row mb-3" id="approver-section">
@@ -167,7 +167,7 @@
                     $('#approver-section').show();
                 }
                 if(data.organizationName !== 'No Organization') {
-                    $('#organization').val(data.organizationName);
+                    $('#organizationInput').val(data.organizationName);
                     $('#organization-section').show();
                     console.log(data.organizationName);
                 }

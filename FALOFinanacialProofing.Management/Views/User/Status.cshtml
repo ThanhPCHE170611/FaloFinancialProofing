@@ -161,7 +161,7 @@
                     </div>
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
-                            <h6 class="text-white text-capitalize ps-3 mb-0">Member List</h6>
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Status In Campaign List</h6>
 
                         </div>
                     </div>
@@ -224,7 +224,9 @@
     const pageSize = 5;
     let selectedMember = null;
     const checkrole = localStorage.getItem('loggingRole');
-    const userId = localStorage.getItem('userId');
+    const checkroleId = localStorage.getItem('loggingRoleId');
+    const userLoggingId = localStorage.getItem('userId');
+    const userId = localStorage.getItem('accountId');
     function showDetail(button) {
         const row = button.closest('tr');
         const name = row.cells[1].innerText;
@@ -233,8 +235,8 @@
         const status = row.cells[4].innerText;
 
         const detailContent = `
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Campaign:</strong> ${name}</p>
+            <p><strong>Debt:</strong> ${email}</p>
             <p><strong>Role:</strong> ${role}</p>
             <p><strong>Status:</strong> ${status}</p>
         `;
@@ -303,13 +305,13 @@
             const actionButtonText = member.isActive ? 'Inactive' : 'Active';
             const detailButton = `
                 <a class="btn btn-info btn-sm"  >Detail</a>
+
             `;
 
             if (member.roleInformation.roleName === 'Project Manager') {
-                console.log('gêk');
                 actionButton = detailButton;
             } else {
-                actionButton = checkrole === 'Project Management Board' ? `
+                actionButton = checkrole === 'Admin' ? `
                     ${detailButton}
                     <button class="btn ${actionButtonColor} btn-sm" onclick="confirmStatusChange('${member.id}', ${!member.isActive})">
                     ${actionButtonText}
@@ -319,8 +321,8 @@
             const row = `
                 <tr>
                     <td class="align-middle text-center ">${index + 1 + (currentPage - 1) * pageSize}</td>
-                    <td class="align-middle text-center ">${member.firstName} ${member.lastName}</td>
-                    <td class="align-middle text-center ">${member.email}</td>
+                    <td class="align-middle text-center ">${member.campaignTitle}</td>
+                    <td class="align-middle text-center ">${member.debt}</td>
                     <td class="align-middle text-center ">${member.roleInformation.roleName}</td>
                     <td class="align-middle text-center "><span class="${getStatusClass}">${statusText}</span></td>
                     <td class="align-middle text-center ">${actionButton}</td>
@@ -358,6 +360,7 @@
         const payload = {
             id: id,
             pmUserId: userId,
+            pmRoleId: checkroleId,
             campaignId: campaignId,
             isActive: isActive
         };

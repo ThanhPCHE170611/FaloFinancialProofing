@@ -14,24 +14,6 @@ document.getElementById('relatedDocs').addEventListener('change', function (even
     });
 });
 
-document.getElementById('projectImages').addEventListener('change', function (event) {
-    const imagePreview = document.getElementById('imagePreview');
-    imagePreview.innerHTML = '';
-    const files = event.target.files;
-    Array.from(files).forEach(file => {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            const colDiv = document.createElement('div');
-            colDiv.classList.add('col-md-4', 'mb-3');
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.classList.add('img-fluid', 'rounded');
-            colDiv.appendChild(img);
-            imagePreview.appendChild(colDiv);
-        }
-        reader.readAsDataURL(file);
-    });
-});
 
 var win = navigator.platform.indexOf('Win') > -1;
 if (win && document.querySelector('#sidenav-scrollbar')) {
@@ -152,8 +134,12 @@ document.addEventListener('DOMContentLoaded', function () {
         formData.append('RoleId', roleid);
         formData.append('projectName', document.getElementById('projectName').value);
         formData.append('Description', quill.getText());
-        if (uploadedImage) {
-            formData.append('LogoFile', uploadedImage);
+        //if (uploadedImage) {
+        //    formData.append('LogoFile', uploadedImage);
+        //}
+        const logoFile = $('#projectImages')[0].files[0];
+        if (logoFile) {
+            formData.append('LogoFile', logoFile);
         }
         formData.append('Status', document.getElementById('projectProcess').value);
         formData.append('isActive', document.getElementById('projectStatus').value);
@@ -175,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const imagePreview = document.getElementById('imagePreview');
             imagePreview.innerHTML = `
                         <div class="col-md-4 mb-3">
-                            <img src="${project.image}" alt="Project Image" class="img-fluid" id="existing-image">
+                            <img src="${project.image}" alt="Project Image" class="img-fluid rounded" id="existing-image">
                         </div>`;
         }
 
@@ -185,16 +171,50 @@ document.addEventListener('DOMContentLoaded', function () {
     loadProjectDetails();
 });
 
-projectImageInput.addEventListener('change', function (event) {
-    const file = event.target.files[0];
-    if (file) {
-        uploadedImage = file;
-        const imagePreview = document.getElementById('imagePreview');
-        imagePreview.innerHTML = `
-                        <div class="col-md-4 mb-3">
-                            <img src="${URL.createObjectURL(file)}" alt="New Project Image" class="img-fluid">
-                        </div>`;
+//projectImageInput.addEventListener('change', function (event) {
+//    const file = event.target.files[0];
+//    if (file) {
+//        uploadedImage = file;
+//        const imagePreview = document.getElementById('imagePreview');
+//        imagePreview.innerHTML = `
+//                        <div class="col-md-4 mb-3">
+//                            <img src="${URL.createObjectURL(file)}" alt="New Project Image" class="img-fluid">
+//                        </div>`;
+//    }
+//});
+$('#projectImages').on('change', function (event) {
+    const files = event.target.files;
+    if (files.length > 0) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            updateImagePreview(e.target.result);
+        };
+        reader.readAsDataURL(files[0]);
+
+        if (!isChanged) {
+            $('#btnUpdate').removeAttr('disable');
+            isChanged = true;
+        }
     }
+});
+
+document.getElementById('projectImages').addEventListener('change', function (event) {
+    const imagePreview = document.getElementById('imagePreview');
+    imagePreview.innerHTML = '';
+    const files = event.target.files;
+    Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const colDiv = document.createElement('div');
+            colDiv.classList.add('col-md-4', 'mb-3');
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.classList.add('img-fluid', 'rounded');
+            colDiv.appendChild(img);
+            imagePreview.appendChild(colDiv);
+        }
+        reader.readAsDataURL(file);
+    });
 });
 
 function displayFiles(files) {

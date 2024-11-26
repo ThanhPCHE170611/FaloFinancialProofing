@@ -215,6 +215,7 @@
                 if (response.success) {
                     alert('Organization created successfully!');
                     console.log('Organization creation response:', response);
+                    window.location.href = `/Organization/OrganizationManagement`;
                 } else {
                     alert('Failed to create organization: ' + response.message);
                 }
