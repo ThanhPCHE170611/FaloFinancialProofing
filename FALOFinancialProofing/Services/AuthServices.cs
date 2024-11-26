@@ -1208,12 +1208,12 @@ Click vào link này để đặt lại mật khẩu: {resetPasswordLink}";
                 {
                     throw new Exception("User not found in system!");
                 }
-                var role = await roleManager.FindByNameAsync(addUserRole.RoleName);
-                if (role == null)
-                {
-                    throw new Exception("Role not found in system!");
-                }
-                result = await userManager.AddToRoleAsync(user, role.Name) == IdentityResult.Success;
+                //var role = await roleManager.FindByNameAsync(addUserRole.RoleName);
+                //if (role == null)
+                //{
+                //    throw new Exception("Role not found in system!");
+                //}
+                result = await userManager.AddToRolesAsync(user, addUserRole.RoleNames) == IdentityResult.Success;
                 if (result)
                 {
                     message.Append("Assign Role successfully");
