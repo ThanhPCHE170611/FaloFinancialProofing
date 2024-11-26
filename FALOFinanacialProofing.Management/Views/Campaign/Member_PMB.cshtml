@@ -226,6 +226,7 @@
     const pageSize = 5;
     let selectedMember = null;
     const checkrole = localStorage.getItem('loggingRole');
+    const checkroleId = localStorage.getItem('loggingRoleId');
     const userId = localStorage.getItem('userId');
     function showDetail(button) {
         const row = button.closest('tr');
@@ -360,6 +361,7 @@
         const payload = {
             id: id,
             pmUserId: userId,
+            pmRoleId: checkroleId,
             campaignId: campaignId,
             isActive: isActive
         };

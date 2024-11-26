@@ -228,6 +228,7 @@
     const pageSize = 5;
     let selectedMember = null;
     const checkrole = localStorage.getItem('loggingRole');
+    const checkroleId = localStorage.getItem('loggingRoleId');
     const userId = localStorage.getItem('userId');
     if (checkrole && checkrole !== 'Volunteer') {
 
@@ -394,6 +395,7 @@
         const payload = {
             id: id,
             pmUserId: userId,
+            pmRoleId: checkroleId,
             campaignId: campaignId,
             isActive: isActive
         };
