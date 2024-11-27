@@ -169,7 +169,7 @@ namespace FALOFinancialProofing.Controllers
                     );
                 }
                 filterPagingData.DataCount = data.Count;
-                data = PaginationHelper.Paginate<MoveNextCampaignStatusRequestInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                data = PaginationHelper.Paginate<MoveNextCampaignStatusRequestInformation>(data.AsQueryable(), currentPage, IntConstant.PageSizeCustom).ToList();
                 filterPagingData.Data = data;
             }
             catch (Exception ex)
@@ -220,7 +220,7 @@ namespace FALOFinancialProofing.Controllers
                     );
                 }
                 filterPagingData.DataCount = data.Count;
-                data = PaginationHelper.Paginate<MoveNextCampaignStatusRequestInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                data = PaginationHelper.Paginate<MoveNextCampaignStatusRequestInformation>(data.AsQueryable(), currentPage, IntConstant.PageSizeCustom).ToList();
                 filterPagingData.Data = data;
             }
             catch (Exception ex)
