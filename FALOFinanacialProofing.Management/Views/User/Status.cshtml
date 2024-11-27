@@ -221,7 +221,7 @@
     const campaignId = localStorage.getItem('campaignId');
     const jwtToken = localStorage.getItem('jwtToken');
     let currentPage = 1;
-    const pageSize = 5;
+    const pageSize = 7;
     let selectedMember = null;
     const checkrole = localStorage.getItem('loggingRole');
     const checkroleId = localStorage.getItem('loggingRoleId');
@@ -333,21 +333,21 @@
     }
 
 
-    function setupPagination(totalCount) {
-        const totalPages = Math.ceil(totalCount / pageSize);
-        const paginationContainer = $('#pagination');
-        paginationContainer.empty();
+    // function setupPagination(totalCount) {
+    //     const totalPages = Math.ceil(totalCount / pageSize);
+    //     const paginationContainer = $('#pagination');
+    //     paginationContainer.empty();
 
-        for (let i = 1; i <= totalPages; i++) {
-            const pageButton = `<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}" onclick="goToPage(${i})">${i}</button>`;
-            paginationContainer.append(pageButton);
-        }
-    }
+    //     for (let i = 1; i <= totalPages; i++) {
+    //         const pageButton = `<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}" onclick="goToPage(${i})">${i}</button>`;
+    //         paginationContainer.append(pageButton);
+    //     }
+    // }
 
-    function goToPage(page) {
-        currentPage = page;
-        loadMembers();
-    }
+    // function goToPage(page) {
+    //     currentPage = page;
+    //     loadMembers();
+    // }
 
     function confirmStatusChange(userId, newStatus) {
         const statusText = newStatus ? 'Active' : 'Inactive';

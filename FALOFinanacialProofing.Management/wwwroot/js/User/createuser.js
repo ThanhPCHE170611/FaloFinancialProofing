@@ -11,7 +11,8 @@
         const password = $('#password').val().trim();
         const confirmPassword = $('#confirmPassword').val().trim();
         const birthDate = $('#dob').val();
-        const gender = $('input[name="gender"]:checked').val();
+        //const gender = $('input[name="gender"]:checked').val();
+        const gender = $('input[name="gender"]:checked').val() === "true"
         const address = $('#address').val().trim();
         const phoneNumber = $('#phone').val().trim();;
         const roles = [];
@@ -81,8 +82,8 @@
             return;
         }
 
-        if (enteredDate <= currentDate) {
-            alert('Date of Birth must be after today.');
+        if (enteredDate > currentDate) {
+            alert('Date of Birth must be before today.');
             return;
         }
         const registerRequest = {

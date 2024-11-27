@@ -610,16 +610,73 @@ $(document).ready(function () {
         });
     }
 
+    //function setupPagination(totalRecords, currentPage) {
+    //    const totalPages = Math.ceil(totalRecords / pageSize);
+    //    const paginationContainer = $('#pagination');
+    //    paginationContainer.empty();
+    //    for (let i = 1; i <= totalPages; i++) {
+    //        const pageButton = $(`<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}">${i}</button>`);
+    //        pageButton.on('click', () => changePage(i));
+    //        paginationContainer.append(pageButton);
+    //    }
+    //}
     function setupPagination(totalRecords, currentPage) {
         const totalPages = Math.ceil(totalRecords / pageSize);
         const paginationContainer = $('#pagination');
         paginationContainer.empty();
-        for (let i = 1; i <= totalPages; i++) {
-            const pageButton = $(`<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}">${i}</button>`);
-            pageButton.on('click', () => changePage(i));
-            paginationContainer.append(pageButton);
+
+        const maxVisibleButtons = 5; 
+        const ellipsis = `<span class="btn btn-sm btn-light disabled">...</span>`;
+
+        function createPageButton(page) {
+            return $(`<button class="btn btn-sm btn-page ${page === currentPage ? 'btn-primary' : 'btn-light'}">${page}</button>`)
+                .on('click', () => changePage(page));
         }
+
+        const prevButton = $(`<button class="btn btn-sm btn-page ${currentPage === 1 ? 'btn-light disabled' : 'btn-light'}">Previous</button>`);
+        prevButton.on('click', () => {
+            if (currentPage > 1) changePage(currentPage - 1);
+        });
+        paginationContainer.append(prevButton);
+
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisibleButtons / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisibleButtons - 1);
+
+        if (endPage - startPage + 1 < maxVisibleButtons) {
+            startPage = Math.max(1, endPage - maxVisibleButtons + 1);
+        }
+
+        if (startPage > 1) {
+            paginationContainer.append(createPageButton(1));
+            if (startPage > 2) {
+                paginationContainer.append($(ellipsis));
+            }
+        }
+
+        for (let page = startPage; page <= endPage; page++) {
+            paginationContainer.append(createPageButton(page));
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                paginationContainer.append($(ellipsis));
+            }
+            paginationContainer.append(createPageButton(totalPages));
+        }
+
+        const nextButton = $(`<button class="btn btn-sm btn-page ${currentPage === totalPages ? 'btn-light disabled' : 'btn-light'}">Next</button>`);
+        nextButton.on('click', () => {
+            if (currentPage < totalPages) changePage(currentPage + 1);
+        });
+        paginationContainer.append(nextButton);
     }
+
+    window.changePage = function (page) {
+        if (page < 1 || page > Math.ceil(totalRecords / pageSize)) return; 
+        currentPage = page;
+        loadPrepayRequests(page); 
+    };
+
 
     $('#searchBox').on('keyup', function () {
         searchEmail = $(this).val().trim();
