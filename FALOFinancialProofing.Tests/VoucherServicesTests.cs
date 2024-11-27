@@ -55,8 +55,19 @@ public class VoucherServicesTests
     {
         // Arrange
         var approveId = 1;
-        var vouchers = new List<Voucher> { new Voucher { Id = 1, FilePath = "path", ApproveId = approveId } }.AsQueryable().BuildMock();
-        mockVoucherRepo.Setup(repo => repo.GetAll(It.IsAny<Expression<Func<Voucher, bool>>>())).Returns(vouchers);
+        var vouchers = new List<Voucher>
+    {
+        new Voucher
+        {
+            Id = 1,
+            FilePath = "path",
+            Status = "Approved",
+            ApproveProcess = new ApproveProcess { Id = approveId }
+        }
+    }.AsQueryable().BuildMock();
+
+        mockVoucherRepo.Setup(repo => repo.GetAll(It.IsAny<Expression<Func<Voucher, bool>>>()))
+            .Returns(vouchers);
 
         // Act
         var result = await voucherServices.GetVouchersByApproveIdAsync(approveId);
@@ -64,6 +75,9 @@ public class VoucherServicesTests
         // Assert
         Assert.NotNull(result);
         Assert.Single(result);
+        Assert.Equal(approveId, result.First().ApproveId);
+        Assert.Equal("path", result.First().FilePath);
+        Assert.Equal("Approved", result.First().Status);
     }
 
     [Fact]
@@ -85,9 +99,16 @@ public class VoucherServicesTests
     {
         // Arrange
         var fileName = "test.zip";
-        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Pre-PayVouchers", fileName);
+        var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Pre-PayVouchers");
+        var filePath = Path.Combine(directoryPath, fileName);
         var fileBytes = new byte[] { 1, 2, 3 };
-        System.IO.File.WriteAllBytes(filePath, fileBytes);
+
+        if (!Directory.Exists(directoryPath))
+        {
+            Directory.CreateDirectory(directoryPath);
+        }
+
+        await System.IO.File.WriteAllBytesAsync(filePath, fileBytes);
 
         // Act
         var result = await voucherServices.DownloadPrePayAttachmentFileByFileName(fileName);
@@ -99,6 +120,7 @@ public class VoucherServicesTests
 
         // Cleanup
         System.IO.File.Delete(filePath);
+        Directory.Delete(directoryPath);
     }
 
     [Fact]
@@ -121,8 +143,15 @@ public class VoucherServicesTests
     {
         // Arrange
         var fileName = "test.zip";
-        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "PaymentVouchers", fileName);
+        var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "PaymentVouchers");
+        var filePath = Path.Combine(directoryPath, fileName);
         var fileBytes = new byte[] { 1, 2, 3 };
+
+        if (!Directory.Exists(directoryPath))
+        {
+            Directory.CreateDirectory(directoryPath);
+        }
+
         await System.IO.File.WriteAllBytesAsync(filePath, fileBytes);
 
         // Act
@@ -135,6 +164,7 @@ public class VoucherServicesTests
 
         // Cleanup
         System.IO.File.Delete(filePath);
+        Directory.Delete(directoryPath);
     }
 
     [Fact]

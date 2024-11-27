@@ -637,7 +637,6 @@ namespace FALOFinancialProofing.Services
                         {
                             message.AppendLine(error.Description);
                         }
-                        return result;
                     }
                 }
             }
