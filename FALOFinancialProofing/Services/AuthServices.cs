@@ -602,7 +602,7 @@ namespace FALOFinancialProofing.Services
             }
             return null;
         }
-        public async Task<IdentityResult?> AdminRegisterUser(SignUpAdminRequest registerRequest)
+        public async Task<IdentityResult?> AdminRegisterUser(SignUpAdminRequest registerRequest, StringBuilder message)
         {
             try
             {
@@ -629,6 +629,14 @@ namespace FALOFinancialProofing.Services
                     if (result.Succeeded)
                     {
                         result = await userManager.AddToRolesAsync(newUser, registerRequest.Roles);
+                        return result;
+                    }
+                    else
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            message.AppendLine(error.Description);
+                        }
                         return result;
                     }
                 }
