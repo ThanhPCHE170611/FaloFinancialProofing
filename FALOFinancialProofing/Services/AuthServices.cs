@@ -631,7 +631,14 @@ namespace FALOFinancialProofing.Services
                         result = await userManager.AddToRolesAsync(newUser, registerRequest.Roles);
                         return result;
                     }
-                    message.Append(result.Errors);
+                    else
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            message.AppendLine(error.Description);
+                        }
+                        return result;
+                    }
                 }
             }
             catch (Exception ex)

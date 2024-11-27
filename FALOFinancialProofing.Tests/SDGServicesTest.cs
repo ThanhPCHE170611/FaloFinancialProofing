@@ -1,10 +1,6 @@
-using Moq;
-using Xunit;
-using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using FALOFinancialProofing.Repository;
+using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.Models;
+using FALOFinancialProofing.Repository;
 using FALOFinancialProofing.Services.SDGServices;
 using FALOFinancialProofing.DTOs;
 using System.Linq.Expressions;
