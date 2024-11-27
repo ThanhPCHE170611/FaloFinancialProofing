@@ -613,6 +613,9 @@ namespace FALOFinancialProofing.Services
                 }
                 else
                 {
+                    var user = await userManager.FindByEmailAsync(validatedInformationRequest.Email);
+                    if (user != null)
+                        throw new Exception("Email is already registered in the system!");
                     var newUser = new User
                     {
                         FirstName = validatedInformationRequest.FirstName,
@@ -642,6 +645,7 @@ namespace FALOFinancialProofing.Services
             }
             catch (Exception ex)
             {
+                message.Append(ex.Message);
                 Console.WriteLine($"AdminRegisterUser: {ex.Message}");
             }
             return null;
