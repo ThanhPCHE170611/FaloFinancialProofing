@@ -31,13 +31,14 @@
             return;
         }
 
-        const nameRegex = /^[a-zA-Z\s]+$/;
-        if (!nameRegex.test(firstName)) {
-            alert('First name should only contain letters and spaces.');
+        const nameRegex = /^[a-zA-ZÀ-ỹ\s]+$/u;
+        if (!nameRegex.test(firstName.trim())) {
+            alert('First name should only contain letters and spaces, with no special characters.');
             return;
         }
-        if (!nameRegex.test(lastName)) {
-            alert('Last name should only contain letters and spaces.');
+
+        if (!nameRegex.test(lastName.trim())) {
+            alert('Last name should only contain letters and spaces, with no special characters.');
             return;
         }
         const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
@@ -70,6 +71,18 @@
         const birthDateRegex = /^\d{4}-\d{2}-\d{2}$/;
         if (!birthDateRegex.test(birthDate)) {
             alert('Date of Birth must be in the format YYYY-MM-DD.');
+            return;
+        }
+        const enteredDate = new Date(birthDate);
+        const currentDate = new Date();
+
+        if (isNaN(enteredDate.getTime())) {
+            alert('Invalid date. Please enter a valid date in the format YYYY-MM-DD.');
+            return;
+        }
+
+        if (enteredDate <= currentDate) {
+            alert('Date of Birth must be after today.');
             return;
         }
         const registerRequest = {

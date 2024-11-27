@@ -181,7 +181,7 @@ $(document).ready(function () {
     const jwtToken = localStorage.getItem('jwtToken');
     const checkrole = localStorage.getItem('loggingRole');
     let currentPage = 1;
-    const pageSize = 5;
+    const pageSize = 30;
 
     console.log(campaignId);
 

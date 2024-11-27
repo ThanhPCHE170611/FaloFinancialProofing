@@ -146,7 +146,7 @@ $(document).ready(function () {
 
         const payload = {
             userId: userId,
-            roleName: selectedRoles
+            roleNames: selectedRoles
         };
         console.log(payload);
         $.ajax({

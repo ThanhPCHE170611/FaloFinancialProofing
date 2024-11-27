@@ -226,10 +226,10 @@ function approveRequest(button, requestId) {
                     console.log(checkrole);
                     console.log(userId);
                     console.log(requestId);
-                    showFileUploadPopup(requestId);
-                    //updateRowToApprovedForPM(button, requestId);
-                    //alert("Request approved successfully for Accounting.");
-                    //location.reload();
+                    //showFileUploadPopup(requestId);
+                    updateRowToApprovedForPM(button, requestId);
+                    alert("Request approved successfully for Accounting.");
+                    location.reload();
                 } else {
                     alert(response.message || "Failed to approve the request.");
                 }
@@ -474,39 +474,7 @@ $(document).ready(function () {
     const checkrole = localStorage.getItem('loggingRole');
     const jwtToken = localStorage.getItem('jwtToken');
     let currentPage = 1;
-    const pageSize = 5;
-
-    //if (checkrole && checkrole !== 'Volunteer') {
-    //    const nametitle = document.getElementById('nametitle');
-    //    nametitle.textContent = 'Approve Payment Request';
-
-    //    const createRequestLink = document.getElementById('create_request_page');
-    //    createRequestLink.style.display = 'none';
-
-    //    const newLink = document.createElement('a');
-    //    newLink.setAttribute('asp-controller', 'Prepay');
-    //    newLink.setAttribute('asp-action', 'PrepayManagement_PM');
-    //    newLink.textContent = 'Prepay Created Request';
-
-    //    const newLink2 = document.createElement('a');
-    //    newLink2.setAttribute('asp-controller', 'Payment');
-    //    newLink2.setAttribute('asp-action', 'PaymentManagement_PM');
-    //    newLink2.textContent = 'Payment Created Request';
-
-    //    const url = new URL(`/Prepay/PrepayManagement_PM`, window.location.origin);
-    //    if (campaignId) {
-    //        url.searchParams.set('campaignid', campaignId);
-    //    }
-
-    //    const url2 = new URL(`/Payment/PaymentManagement_PM`, window.location.origin);
-    //    if (campaignId) {
-    //        url.searchParams.set('campaignid', campaignId);
-    //    }
-    //    newLink.href = url.toString();
-    //    newLink2.href = url2.toString();
-    //    navTabs.appendChild(newLink);
-    //    navTabs.appendChild(newLink2);
-    //}
+    const pageSize = 30;
 
     function formatDateTime(dateString) {
         if (!dateString) return 'N/A';

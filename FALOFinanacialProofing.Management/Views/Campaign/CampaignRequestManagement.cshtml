@@ -516,7 +516,7 @@
             apiUrl = `https://localhost:7294/api/CreateCampaignRequests/GetAllCreateCampaignRequestsByUserId/${userId}`;
         }
         let currentPage = 1;
-        const pageSize = 5;
+        const pageSize = 7;
         function fetchCampaignRequests(searchInput = '', status = null, page = 1) {
             $.ajax({
                 url: apiUrl,

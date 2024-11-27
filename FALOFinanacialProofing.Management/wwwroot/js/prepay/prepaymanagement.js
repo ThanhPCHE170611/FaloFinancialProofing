@@ -226,10 +226,10 @@ function approveRequest(button, requestId) {
                     console.log(checkrole);
                     console.log(userId);
                     console.log(requestId);
-                    showFileUploadPopup(requestId);
-                    //updateRowToApprovedForPM(button, requestId);
-                    //alert("Request approved successfully for Accouting");
-                    //location.reload();();
+                    //showFileUploadPopup(requestId);
+                    updateRowToApprovedForPM(button, requestId);
+                    alert("Request approved successfully for Accouting");
+                    location.reload();
                 } else {
                     alert(response.message || "Failed to approve the request.");
                 }
@@ -474,7 +474,7 @@ $(document).ready(function () {
     const checkrole = localStorage.getItem('loggingRole');
     const jwtToken = localStorage.getItem('jwtToken');
     let currentPage = 1;
-    const pageSize = 5;
+    const pageSize = 30;
 
     console.log(userId);
     console.log(campaignId);

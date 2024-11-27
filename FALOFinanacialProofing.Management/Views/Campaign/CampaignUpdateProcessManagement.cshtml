@@ -398,7 +398,7 @@
         const jwtToken = localStorage.getItem('jwtToken');
         const checkrole = localStorage.getItem('loggingRole');
         let currentPage = 1;
-        const pageSize = 5;
+        const pageSize = 7;
         if (checkrole === "Project Management Board") {
             apiUrl = 'https://localhost:7294/api/MoveNextCampaignStatusRequests/GetAllMoveNextCampaignStatusRequestsByPMB';
         } else {
