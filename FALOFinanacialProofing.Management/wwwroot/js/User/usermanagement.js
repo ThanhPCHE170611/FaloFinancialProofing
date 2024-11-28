@@ -7,7 +7,7 @@ if (win && document.querySelector('#sidenav-scrollbar')) {
 }
 const jwtToken = localStorage.getItem('jwtToken');
 let currentPage = 1;
-const pageSize = 5
+const pageSize = 7;
 $(document).ready(function () {
     loadAccounts();
 });

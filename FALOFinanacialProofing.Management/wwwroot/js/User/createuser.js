@@ -11,15 +11,16 @@
         const password = $('#password').val().trim();
         const confirmPassword = $('#confirmPassword').val().trim();
         const birthDate = $('#dob').val();
-        //const gender = $('input[name="gender"]:checked').val();
-        const gender = $('input[name="gender"]:checked').val() === "true"
+        const gendercheck = $('input[name="gender"]:checked').val();
+        const gender = $('input[name="gender"]:checked').val() === "true" ? true : false;
+        console.log(gender);
         const address = $('#address').val().trim();
         const phoneNumber = $('#phone').val().trim();;
         const roles = [];
         $('.role-checkbox:checked').each(function () {
             roles.push($(this).val());
         });
-        if (!firstName || !lastName || !email || !userName || !password || !confirmPassword || !birthDate || !gender || !address || !phoneNumber || roles.length === 0) {
+        if (!firstName || !lastName || !email || !userName || !password || !confirmPassword || !birthDate || !gendercheck || !address || !phoneNumber || roles.length === 0) {
             alert('Please fill in all required fields.');
             return;
         }
