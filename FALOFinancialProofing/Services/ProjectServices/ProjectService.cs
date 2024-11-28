@@ -345,15 +345,19 @@ namespace FALOFinancialProofing.Services.ProjectServices
                 if (checkValid && !project.IsActive)
                 {
                     var campaigns = await _campaignRepository.GetAll(c => c.ProjectId == project.Id && c.IsActive).ToListAsync();
-                    foreach (var item in campaigns)
+                    if (campaigns != null && campaigns.Count != 0)
                     {
-                        item.IsActive = false;
+                        foreach (var item in campaigns)
+                        {
+                            item.IsActive = false;
+                        }
+                        checkValid = await _campaignRepository.UpdateManyAsync(campaigns);
+                        if (!checkValid)
+                        {
+                            throw new Exception("Update Campaigns by projectId failed");
+                        }
                     }
-                    checkValid = await _campaignRepository.UpdateManyAsync(campaigns);
-                    if (!checkValid)
-                    {
-                        throw new Exception("Update Campaigns by projectId failed");
-                    }
+
                 }
             }
             catch (Exception ex)

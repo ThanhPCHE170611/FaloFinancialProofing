@@ -528,7 +528,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                 if (checkAdmin || checkPMB)
                 {
                     var endDate = campaign.EndDate;
-                    if (endDate != null && updateCampaignDTO.EndDate != null && endDate < updateCampaignDTO.EndDate)
+                    if (endDate != null && updateCampaignDTO.EndDate != null && endDate > updateCampaignDTO.EndDate)
                     {
                         throw new Exception("End Date must be after the current end date");
                     }
