@@ -148,9 +148,9 @@
 
         return formattedDate + ' ' + formattedTime;
     }
+    const jwtToken = localStorage.getItem('jwtToken');
     $(document).ready(function () {
-        const projectId = new URLSearchParams(window.location.search).get('requestId');
-        const jwtToken = localStorage.getItem('jwtToken');
+        const projectId = new URLSearchParams(window.location.search).get('requestId');    
         const userId = localStorage.getItem('userId');
         $.ajax({
             url: `https://localhost:7294/api/CreateProjectRequests/GetCreateProjectRequest/${projectId}`,

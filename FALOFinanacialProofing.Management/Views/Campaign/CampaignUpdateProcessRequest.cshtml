@@ -142,7 +142,7 @@
             } else {
                 const errorData = await response.json();
                 console.error('Error:', errorData);
-                alert(`Error: ${errorData.message || 'Failed to send request.'}`);
+                alert(errorData.message);
             }
         } catch (error) {
             console.error('Unexpected error:', error);

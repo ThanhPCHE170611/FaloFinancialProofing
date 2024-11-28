@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         alert('Project updated successfully!');
                         location.reload();
                     } else {
-                        alert('Failed to update project: ' + data.message);
+                        alert( data.message);
                     }
                 },
                 error: function (xhr, status, error) {

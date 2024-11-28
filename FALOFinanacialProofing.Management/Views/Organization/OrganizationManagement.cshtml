@@ -44,7 +44,7 @@
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
                             <h6 class="text-white text-capitalize ps-3 mb-0">Organization Management</h6>
-                            <a class="btn btn-dark mb-0 me-3" asp-area="" asp-controller="Organization" asp-action="OrganizationCreate">
+                            <a class="btn btn-dark mb-0 me-3" asp-area="" asp-controller="Organization" asp-action="OrganizationCreate" id="createOrg" style="display:none;">
                                 Add Organization
                             </a>
                         </div>
@@ -103,7 +103,11 @@
 
         if (!jwtToken || !userId) {
             alert('JWT token or user ID is missing. Please log in again.');
-            return;
+            window.location.href = '/Authentication/ChooseRole';
+        }
+
+        if(checkrole === "Project Manager") {
+            document.getElementById('createOrg').style.display = 'block';
         }
 
         let currentPage = 1;

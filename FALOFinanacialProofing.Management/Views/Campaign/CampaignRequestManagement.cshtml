@@ -497,9 +497,8 @@
             success: function (response) {
                 if (response.success) {
                     updateRowToApprovedForPM(button, createCampaignRequestId);
-
                 } else {
-                    alert('Failed: ' + response.Message);
+                    alert(response.message);
                 }
             },
             error: function (xhr, status, error) {

@@ -205,6 +205,12 @@
                 return;
             }
 
+            if (!location || location.length < 8) {
+                alert('Location is required and must be at least 8 characters long.');
+                $('#location').focus();
+                return;
+            }
+
             if (!location) {
                 alert('Location is required and cannot be empty.');
                 $('#location').focus();
