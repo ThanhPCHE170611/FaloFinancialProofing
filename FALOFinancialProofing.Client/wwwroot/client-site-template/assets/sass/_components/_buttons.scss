@@ -1,0 +1,311 @@
+// Button one area start here ***
+.btn-one {
+	overflow: hidden;
+	position: relative;
+	display: inline-block;
+	background-color: var(--primary-color);
+	border-radius: 8px;
+	.btn-circle {
+		border-radius: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 0px;
+		height: 0px;
+		margin-left: 0px;
+		margin-top: 0px;
+		pointer-events: none;
+		&.explode-circle {
+			animation: explode 0.4s forwards;
+		}
+		&.desplode-circle {
+			animation: desplode 0.4s forwards;
+		}
+	}
+	.btn-inner {
+		display: inline-block;
+		font-size: 16px;
+		font-weight: normal;
+		text-align: center;
+		transition: var(--transition);
+		text-decoration: none;
+		padding: 13px 36px;
+		z-index: 100;
+		.btn-text {
+			position: relative;
+			z-index: 100;
+			font-weight: 400;
+			text-transform: uppercase;
+			color: var(--white);
+			transition: var(--transition);
+			font-weight: 700;
+		}
+	}
+	&:hover {
+		.btn-text {
+			color: var(--black);
+		}
+	}
+}
+@keyframes explode {
+	0% {
+		width: 0px;
+		height: 0px;
+		margin-left: 0px;
+		margin-top: 0px;
+		background-color: var(--white);
+	}
+	100% {
+		width: 400px;
+		height: 400px;
+		margin-left: -200px;
+		margin-top: -200px;
+		background-color: var(--white);
+	}
+}
+@keyframes desplode {
+	0% {
+		width: 400px;
+		height: 400px;
+		margin-left: -200px;
+		margin-top: -200px;
+		background-color: var(--white);
+	}
+	100% {
+		width: 0px;
+		height: 0px;
+		margin-left: 0px;
+		margin-top: 0px;
+		background-color: var(--primary-color);
+	}
+}
+// Button one area end here ***
+
+// Button two area start here ***
+.btn-two {
+	@extend.btn-one;
+	.btn-circle {
+		&.explode-circle {
+			animation: explode2 0.4s forwards;
+		}
+		&.desplode-circle {
+			animation: desplode2 0.4s forwards;
+		}
+	}
+	&:hover {
+		.btn-text {
+			color: var(--white);
+		}
+	}
+}
+@keyframes explode2 {
+	0% {
+		width: 0px;
+		height: 0px;
+		margin-left: 0px;
+		margin-top: 0px;
+		background-color: var(--black);
+	}
+	100% {
+		width: 400px;
+		height: 400px;
+		margin-left: -200px;
+		margin-top: -200px;
+		background-color: var(--black);
+	}
+}
+@keyframes desplode2 {
+	0% {
+		width: 400px;
+		height: 400px;
+		margin-left: -200px;
+		margin-top: -200px;
+		background-color: var(--black);
+	}
+	100% {
+		width: 0px;
+		height: 0px;
+		margin-left: 0px;
+		margin-top: 0px;
+		background-color: var(--primary-color);
+	}
+}
+// Button two area end here ***
+
+// Button three area start here ***
+.btn-three {
+	overflow: hidden;
+	position: relative;
+	display: block;
+	background-color: var(--white);
+	border: 1px solid var(--primary-color);
+	border-radius: 0px;
+	text-align: center;
+	.btn-circle {
+		border-radius: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 0px;
+		height: 0px;
+		margin-left: 0px;
+		margin-top: 0px;
+		pointer-events: none;
+		&.explode-circle {
+			animation: explode3 0.4s forwards;
+		}
+		&.desplode-circle {
+			animation: desplode3 0.4s forwards;
+		}
+	}
+	.btn-inner {
+		display: block;
+		font-size: 16px;
+		font-weight: normal;
+		text-align: center;
+		transition: var(--transition);
+		text-decoration: none;
+		padding: 13px 36px;
+		z-index: 100;
+		.btn-text {
+			position: relative;
+			z-index: 100;
+			font-weight: 400;
+			text-transform: uppercase;
+			color: var(--heading-color);
+			transition: var(--transition);
+			font-weight: 700;
+		}
+	}
+	&:hover {
+		.btn-text {
+			color: var(--white);
+		}
+	}
+}
+@keyframes explode3 {
+	0% {
+		width: 0px;
+		height: 0px;
+		margin-left: 0px;
+		margin-top: 0px;
+		background-color: var(--primary-color);
+	}
+	100% {
+		width: 400px;
+		height: 400px;
+		margin-left: -200px;
+		margin-top: -200px;
+		background-color: var(--primary-color);
+	}
+}
+@keyframes desplode3 {
+	0% {
+		width: 400px;
+		height: 400px;
+		margin-left: -200px;
+		margin-top: -200px;
+		background-color: var(--primary-color);
+	}
+	100% {
+		width: 0px;
+		height: 0px;
+		margin-left: 0px;
+		margin-top: 0px;
+		background-color: var(--white);
+	}
+}
+// Button three area end here ***
+
+// Arry button area start here ***
+.arry-prev {
+	@include radius(50px, 50px, 50px);
+	color: var(--heading-color);
+	transition: var(--transition);
+	border: 1px solid var(--primary-color);
+	font-size: 20px;
+	&:hover {
+		background-color: var(--primary-color);
+		color: var(--white);
+	}
+	&.active {
+		background-color: var(--primary-color);
+		color: var(--white);
+	}
+}
+.arry-next {
+	@extend.arry-prev;
+}
+// Arry button area end here ***
+
+// Next button area start here ***
+.next-btn {
+	@include radius(60px, 60px, 60px);
+	font-size: 20px;
+	color: var(--primary-color);
+	border-radius: 0px;
+	background-color: var(--white);
+	overflow: hidden;
+	&:hover {
+		color: var(--primary-color);
+		i {
+			animation: next 0.4s;
+		}
+	}
+	@keyframes next {
+		0% {
+			transform: translateX(-100px);
+		}
+		100% {
+			transform: translateX(0px);
+		}
+	}
+}
+// Next button area end here ***
+
+// Video button area start here ***
+.video-btn {
+	position: relative;
+	text-align: center;
+	display: inline-block;
+	z-index: 2;
+	a {
+		position: relative;
+		color: var(--primary-color);
+		font-size: 28px;
+		z-index: 1;
+		background-color: var(--white);
+		width: 90px;
+		height: 90px;
+		line-height: 90px;
+		border-radius: 50%;
+		display: block;
+	}
+	&.video-pulse {
+		&::after,
+		&::before {
+			position: absolute;
+			content: "";
+			width: 100%;
+			height: 100%;
+			border: 1px solid var(--white);
+			opacity: 0.7;
+			left: 0;
+			top: 0;
+			border-radius: 50%;
+			-webkit-animation-duration: 2.5s;
+			animation-duration: 2.5s;
+			-webkit-animation-timing-function: linear;
+			animation-timing-function: linear;
+			-webkit-animation-name: video-animation;
+			animation-name: video-animation;
+			-webkit-animation-iteration-count: infinite;
+			animation-iteration-count: infinite;
+		}
+		&::before {
+			-webkit-animation-delay: 1s;
+			animation-delay: 1s;
+		}
+	}
+}
+// Video button area end here ***

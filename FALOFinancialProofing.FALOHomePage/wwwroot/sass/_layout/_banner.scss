@@ -1,0 +1,241 @@
+// Banner area start here ***
+.banner {
+	&__left-shape {
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		img {
+			height: 100%;
+		}
+	}
+	&__right-shape {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		img {
+			height: 100%;
+		}
+	}
+	&__hero {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		img {
+			height: 100%;
+		}
+	}
+	&-area {
+		background-color: var(--black);
+		position: relative;
+		overflow: hidden;
+		@include breakpoint(max-lg) {
+			padding: 80px 0;
+		}
+	}
+	&__content {
+		position: relative;
+		max-width: 600px;
+		h3 {
+			color: var(--primary-color);
+			@include breakpoint(max-md) {
+				font-size: 20px;
+			}
+		}
+		h1 {
+			color: var(--white);
+		}
+	}
+	&-two {
+		&-area {
+			overflow-x: hidden;
+			position: relative;
+			&:hover {
+				.banner-two__arry-btn {
+					button {
+						transform: translateX(0px);
+						visibility: visible;
+						opacity: 1;
+					}
+				}
+			}
+		}
+		&__content {
+			padding-top: 260px;
+			padding-bottom: 160px;
+			text-align: center;
+			position: relative;
+			@include breakpoint(max-md) {
+				padding: 80px 0;
+			}
+			h4 {
+				font-size: 24px;
+				font-weight: 700;
+				line-height: 30px;
+				color: var(--white);
+				margin-bottom: 30px;
+				@include breakpoint(max-md) {
+					font-size: 18px;
+					line-height: 30px;
+					margin-bottom: 10px;
+				}
+			}
+			h1 {
+				color: var(--white);
+				font-weight: 700;
+				font-size: 80px;
+				line-height: 90px;
+				@include breakpoint(max-md) {
+					font-size: 40px;
+					line-height: 50px;
+				}
+			}
+			.btn-one {
+				@include breakpoint(max-md) {
+					margin-top: 30px;
+				}
+			}
+		}
+		&__slider {
+			.slide-bg {
+				position: absolute;
+				left: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				opacity: 1;
+				z-index: -2;
+				background-repeat: no-repeat;
+				background-position: center center;
+				background-size: cover;
+				transform: scale(1);
+				-webkit-transition: all 8s ease-out 0s;
+				-moz-transition: all 8s ease-out 0s;
+				-ms-transition: all 8s ease-out 0s;
+				-o-transition: all 8s ease-out 0s;
+				transition: all 8s ease-out 0s;
+			}
+			.swiper-slide-active .slide-bg {
+				-webkit-transform: scale(1.12);
+				-moz-transform: scale(1.12);
+				transform: scale(1.12);
+			}
+		}
+		&__arry-btn {
+			width: 60px;
+			position: absolute;
+			top: 50%;
+			right: 60px;
+			transform: translateY(-50%);
+			z-index: 2;
+			button {
+				background-color: transparent;
+				border: 1px solid var(--white);
+				color: var(--white);
+				&:hover {
+					background-color: transparent;
+					border: 1px solid var(--primary-color);
+					color: var(--primary-color);
+				}
+				&.active {
+					background-color: transparent;
+					border: 1px solid var(--primary-color);
+					color: var(--primary-color);
+				}
+				transform: translateX(30px);
+				visibility: hidden;
+				opacity: 0;
+				transition: var(--transition);
+			}
+			.arry-next {
+				transition: all 0.6s ease-in-out;
+			}
+			@include breakpoint(max-md) {
+				display: none;
+			}
+		}
+		&__social {
+			position: absolute;
+			left: 60px;
+			top: 50%;
+			z-index: 1;
+			transform: translateY(-50%);
+			width: 20px;
+			@include breakpoint(max-sm) {
+				left: 20px;
+			}
+			li {
+				&:not(:last-child) {
+					margin-bottom: 20px;
+				}
+				a {
+					color: var(--white);
+					&:hover {
+						color: var(--primary-color);
+					}
+					&.active {
+						color: var(--primary-color);
+					}
+				}
+			}
+			&::after {
+				position: absolute;
+				width: 1px;
+				height: 73px;
+				background-color: var(--border);
+				bottom: -90px;
+				left: 6px;
+				content: "";
+				opacity: 30%;
+			}
+			&::before {
+				position: absolute;
+				width: 1px;
+				height: 73px;
+				background-color: var(--border);
+				top: -90px;
+				left: 6px;
+				content: "";
+				opacity: 30%;
+			}
+		}
+		&__shape {
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			z-index: 1;
+		}
+	}
+	&__inner-page {
+		text-transform: capitalize;
+		text-align: center;
+		@include breakpoint(max-md) {
+			padding: 80px 0;
+		}
+		h2 {
+			margin-bottom: 10px;
+			color: var(--white);
+		}
+		span {
+			color: var(--primary-color);
+			font-weight: 500;
+			i {
+				color: var(--white);
+			}
+		}
+		a {
+			color: var(--white);
+			font-weight: 500;
+			&:hover {
+				color: var(--primary-color);
+			}
+		}
+	}
+}
+// Banner area end here ***
+
+// Page banner area start here ***
+
+// Page banner area end here ***

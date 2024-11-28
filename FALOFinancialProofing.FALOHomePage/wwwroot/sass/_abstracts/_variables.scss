@@ -1,0 +1,27 @@
+:root {
+	// Font family ***
+	--dm-sans: "DM Sans", sans-serif;
+	--quicksand: "Quicksand", sans-serif;
+
+	// Colors ***
+	--primary-color: #f74f22;
+	--secondary-color: #252525;
+	--sub-bg: #f2f2f2;
+	--heading-color: #252525;
+	--paragraph: #797979;
+	--span: #797979;
+	--border: #eaecf0;
+	--white: #ffffff;
+	--black: #222328;
+	--black-sub: #292a2e;
+
+	// border ***
+	--border-1px: 1px solid #eaecf0;
+	--border-2px: 2px solid #eaecf0;
+
+	// Transitions ***
+	--transition: all 0.4s ease-in-out;
+
+	// Box shadow ***
+	--shadow: 0px 4px 25px 0px #0000000f;
+}

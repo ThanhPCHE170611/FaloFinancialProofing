@@ -1,0 +1,78 @@
+﻿@using FALOFinancialProofing.FALOHomePage.Services
+@model IEnumerable<BankAccount>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .table {
+        margin: 10px auto; /* Space on top and bottom */
+        width: 100%; /* Adjust width as needed */
+    }
+
+        .table th, .table td {
+            padding: 10px; /* Space inside the cells */
+        }
+</style>
+
+<div class="container">
+    <h2>Tài khoản ngân hàng</h2>
+
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Account ID</th>
+                <th scope="col">Account Number</th>
+                <th scope="col">Account Name</th>
+                <th scope="col">Balance</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var transaction in Model)
+            {
+                <tr>
+                    <td scope="col">@transaction.Id</td>
+                    <td scope="col">@transaction.AccountNumber</td>
+                    <td scope="col">@transaction.AccountName</td>
+                    <td scope="col">@transaction.Balance</td>
+                    <td scope="col">Chọn</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Function to fetch and update transactions
+    function fetchTransactions() {
+        $.ajax({
+            url: '@Url.Action("GetAccounts", "BankAccount")', // URL to call
+            type: 'GET',
+            success: function (data) {
+                // Clear the current table
+                $('#transactions-table tbody').empty();
+
+                // Populate the table with new data
+                data.forEach(function (transaction) {
+                    $('#transactions-table tbody').append(
+                        `<tr>
+                                                <td>${transaction.id}</td>
+                                                <td>${transaction.accountNumber}</td>
+                                                <td>${transaction.accountName}</td>
+                                            </tr>`
+                    );
+                });
+            },
+            error: function (error) {
+                console.error("Error fetching transactions:", error);
+            }
+        });
+    }
+
+    // Set up polling every 60 seconds (60000 milliseconds)
+    setInterval(fetchTransactions, 60000);
+</script>
