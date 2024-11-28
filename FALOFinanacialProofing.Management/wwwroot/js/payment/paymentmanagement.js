@@ -13,12 +13,16 @@ function submitDecline() {
     if (!currentDeclineButton || !currentRequestId) return;
 
     const reason = document.getElementById('declineReason').value.trim();
-    if (!reason) {
-        alert('Please enter a reason for decline.');
+    //if (!reason) {
+    //    alert('Please enter a reason for decline.');
+    //    return;
+    //}
+
+    if (!reason || reason.length < 10) {
+        alert('The reason must be at least 10 characters long.');
+        document.getElementById('declineReason').focus(); 
         return;
     }
-
-
 
     let apiUrl = '';
     if (checkrole === "Volunteer Leader") {
@@ -386,8 +390,8 @@ function downloadAttachment(fileName) {
             link.download = fileName;
             link.click();
         },
-        error: function () {
-            alert('Failed to download attachment file. Please try again.');
+        error: function (errors) {
+            alert(errors);
         }
     });
 }
@@ -572,8 +576,8 @@ $(document).ready(function () {
                         }
 
                         let voucherLinks = '';
-                        if (request.voucherFiles && request.voucherFiles.length > 0) {
-                            const validFiles = request.voucherFiles.filter(file => file.filePath);
+                        if (request.vouchers && request.vouchers.length > 0) {
+                            const validFiles = request.vouchers.filter(file => file.filePath);
                             if (validFiles.length > 0) {
                                 voucherLinks = validFiles.map(file => `
                                 <a href="javascript:void(0);" onclick="downloadVoucher('${file.filePath}')" class="btn btn-link text-info">${file.filePath}</a>
@@ -586,14 +590,14 @@ $(document).ready(function () {
                         }
                         tbody.append(`
                                     <tr data-request-id="${request.id}">
-                                        <td class="align-middle text-center text-sm">${index + 1}</td>
+                                        <td class="align-middle text-center ">${index + 1}</td>
                                         <td><span class="text-secondary text-xs font-weight-bold">${request.createByName}</span></td>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${request.expectedMoney.toLocaleString()}</span></td>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${request.createByEmail}</span></td>
+                                        <td class="align-middle text-center "><span class="text-secondary text-xs font-weight-bold">${request.expectedMoney.toLocaleString()}</span></td>
+                                        <td class="align-middle text-center "><span class="text-secondary text-xs font-weight-bold">${request.createByEmail}</span></td>
                                         <td class="align-middle text-center">${attachmentLinks}</td>
                                         <td class="align-middle text-center">${voucherLinks}</td>
-                                        <td class="align-middle text-center text-sm">${statusLabel}</td>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${formatDateTime(request.createAt)}</span></td>
+                                        <td class="align-middle text-center ">${statusLabel}</td>
+                                        <td class="align-middle text-center "><span class="text-secondary text-xs font-weight-bold">${formatDateTime(request.createAt)}</span></td>
                                         <td class="align-middle text-center">${actionButtons}</td>
                                     </tr>
                                 `);

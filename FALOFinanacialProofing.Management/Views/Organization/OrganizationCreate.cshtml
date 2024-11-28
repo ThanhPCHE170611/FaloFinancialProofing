@@ -180,6 +180,39 @@
             alert('JWT token or User ID is missing. Please log in again.');
             return;
         }
+        const requiredFields = [
+        { id: '#name', label: 'Name' },
+        { id: '#mainOffice', label: 'Main Office' },
+        { id: '#representative', label: 'Representative' },
+        { id: '#phoneNumber', label: 'Phone Number' },
+        { id: '#email', label: 'Email' },
+        { id: '#description', label: 'Description' },
+        { id: '#vision', label: 'Vision' },
+        { id: '#mission', label: 'Mission' },
+        { id: '#coreValue', label: 'Core Value' },
+        { id: '#mainActivity', label: 'Main Activity' },
+        { id: '#interests', label: 'Interests' },
+        { id: '#volunteerExperience', label: 'Volunteer Experience' },
+        { id: '#volunteerObjectives', label: 'Volunteer Objectives' },
+        { id: '#bio', label: 'Bio' }
+    ];
+
+    for (const field of requiredFields) {
+        const value = $(field.id).val().trim();
+        if (!value || value.length < 8) {
+            alert(`${field.label} is required and must be at least 8 characters long.`);
+            $(field.id).focus();
+            return;
+        }
+    }
+
+    const phoneNumber = $('#phoneNumber').val().trim();
+    const phoneRegex = /^[0-9]{10,15}$/; 
+    if (!phoneRegex.test(phoneNumber)) {
+        alert('Phone Number must be between 10 and 15 digits.');
+        $('#phoneNumber').focus();
+        return;
+    }
 
         const formData = new FormData();
         formData.append('UserId', userId);

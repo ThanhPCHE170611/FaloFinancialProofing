@@ -130,8 +130,8 @@ $(document).ready(function () {
             alert('Please fill in all required fields.');
             return;
         }
-        if (!expectedMoney || isNaN(expectedMoney) || Number(expectedMoney) <= 0) {
-            alert('Expected Money is required and must be a valid number greater than 0.');
+        if (!expectedMoney || isNaN(expectedMoney) || Number(expectedMoney) <= 1000) {
+            alert('Expected Money is required and must be a valid number greater than 1000');
             $('#expectedMoney').focus();
             return;
         }
@@ -148,8 +148,34 @@ $(document).ready(function () {
             return;
         }
 
+        if (files.length === 0) {
+            alert('Attachments are required. Please upload at least one file.');
+            $('#attachments').focus();
+            return;
+        }
 
+        if (vouchers.length === 0) {
+            alert('Vouchers are required. Please upload at least one file.');
+            $('#vouchers').focus();
+            return;
+        }
+        for (let i = 0; i < files.length; i++) {
+            const fileName = files[i].name;
+            if (!fileName.toLowerCase().endsWith('.zip')) {
+                alert(`Invalid file type for attachments. Only .zip files are allowed. (${fileName})`);
+                $('#attachments').focus();
+                return;
+            }
+        }
 
+        for (let i = 0; i < vouchers.length; i++) {
+            const fileName = vouchers[i].name;
+            if (!fileName.toLowerCase().endsWith('.zip')) {
+                alert(`Invalid file type for vouchers. Only .zip files are allowed. (${fileName})`);
+                $('#vouchers').focus();
+                return;
+            }
+        }
         const formData = new FormData();
         formData.append('CreatedBy', userId);
         formData.append('CampaignId', campaignId);
