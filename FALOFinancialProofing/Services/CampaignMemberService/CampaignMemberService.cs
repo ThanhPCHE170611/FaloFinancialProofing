@@ -248,11 +248,11 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             return campaignMembers;
         }
         //?
-        public async Task<CampaignMember?> GetCampaignMemberByUserIdAsync(string userid)
+        public async Task<CampaignMember?> GetCampaignMemberByUserIdAndCampaignIdAsync(string userid, int campaignId)
         {
             try
             {
-                return await cmRepository.GetAll(x => x.UserId.Equals(userid))
+                return await cmRepository.GetAll(x => x.UserId.Equals(userid) && x.CampaignId == campaignId)
                     .Include(cm => cm.Role)
                     .FirstOrDefaultAsync();
             }
