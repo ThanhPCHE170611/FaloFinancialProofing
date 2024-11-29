@@ -218,7 +218,7 @@ $(document).ready(function () {
                     alert('Create new Payment RequestForm successfully.');
                     window.location.href = `/Payment/PaymentManagement?campaignid=${campaignId}`;
                 } else {
-                    alert('Error: ' + response.message);
+                    alert(response.message);
                 }
             },
             error: function () {

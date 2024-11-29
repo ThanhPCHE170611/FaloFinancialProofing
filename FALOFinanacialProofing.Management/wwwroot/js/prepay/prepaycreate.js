@@ -215,7 +215,7 @@ $(document).ready(function () {
                     alert('Create new PrePay RequestForm successfully.');
                     window.location.href = `/Prepay/PrepayManagement?campaignid=${campaignId}`;
                 } else {
-                    alert('Error: ' + response.message);
+                    alert(response.message);
                 }
             },
             error: function (response) {
