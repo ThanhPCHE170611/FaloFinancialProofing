@@ -560,7 +560,7 @@ namespace FALOFinancialProofing.Controllers
                 var newApproveProcessForAccounting = await approveProcessServices.CreateApproveProcessAsync(newApproveProvessForPM);
                 // update all request form status to approved
                 // calculate debt for request user
-                var campaignMember = await campaignMemberService.GetCampaignMemberByUserIdAndCampaignIdAsync(requestForm.CreatedBy);
+                var campaignMember = await campaignMemberService.GetCampaignMemberByUserIdAndCampaignIdAsync(requestForm.CreatedBy, requestForm.CampaignId);
                 var updateRequestForm = new RequestFormDTO
                 {
                     Id = requestForm.Id,
@@ -700,7 +700,7 @@ namespace FALOFinancialProofing.Controllers
             }
             var requestForm = await requestFormServices.GetRequestFormByIdAsync(requestid);
             // calculate debt for request user
-            var campaignMember = await campaignMemberService.GetCampaignMemberByUserIdAndCampaignIdAsync(requestForm.CreatedBy);
+            var campaignMember = await campaignMemberService.GetCampaignMemberByUserIdAndCampaignIdAsync(requestForm.CreatedBy, requestForm.CampaignId);
             if (campaignMember == null)
             {
                 return Ok(new
