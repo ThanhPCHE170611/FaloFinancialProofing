@@ -14,6 +14,7 @@ document.getElementById('relatedDocs').addEventListener('change', function (even
     });
 });
 
+
 var win = navigator.platform.indexOf('Win') > -1;
 if (win && document.querySelector('#sidenav-scrollbar')) {
     var options = {
@@ -27,6 +28,8 @@ const userId = localStorage.getItem('userId');
 const projectId = localStorage.getItem('projectId');
 const jwtToken = localStorage.getItem('jwtToken');
 const checkrole = localStorage.getItem('loggingRole');
+const roleid = localStorage.getItem('loggingRoleId');
+
 document.addEventListener('DOMContentLoaded', function () {
     const jwtToken = localStorage.getItem('jwtToken');
     const checkrole = localStorage.getItem('loggingRole');
@@ -59,36 +62,91 @@ document.addEventListener('DOMContentLoaded', function () {
         updateBtn.id = 'update-btn';
         saveBtnContainer.appendChild(updateBtn);
 
-        const fieldsToWatch = ['projectName', 'projectProcess', 'projectStatus','editor-container'];
-        fieldsToWatch.forEach(id => {
-            document.getElementById(id).addEventListener('input', () => {
-                updateBtn.disabled = false;
-            });
+        const fieldsToWatch = ['projectName', 'projectProcess', 'projectStatus', 'editor-container','choseImage'];
+        //fieldsToWatch.forEach(id => {
+        //    document.getElementById(id).addEventListener('input', () => {
+        //        updateBtn.disabled = false;
+        //    });
+        //});
+        const editableFields = ['projectName', 'projectProcess', 'projectStatus', 'choseImage'];
+
+        editableFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.removeAttribute('readonly'); 
+                field.removeAttribute('disabled'); 
+            }
         });
 
+        fieldsToWatch.forEach(id => {
+            const element = document.getElementById(id);
+
+            if (!element) return; 
+
+            if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                element.addEventListener('input', () => {
+                    updateBtn.disabled = false;
+                });
+            } else if (element.tagName === 'SELECT') {
+                element.addEventListener('change', () => {
+                    updateBtn.disabled = false;
+                });
+            } else if (element.tagName === 'BUTTON' || element.type === 'file') {
+                element.addEventListener('change', () => {
+                    updateBtn.disabled = false;
+                });
+            }
+        });
+
+        quill.on('text-change', function () {
+            updateBtn.disabled = false; 
+        });
         updateBtn.addEventListener('click', function () {
             const updateData = prepareUpdateData();
 
-            fetch(`https://localhost:7294/api/Projects/UpdateProject`, {
-                method: 'PUT',
+            $.ajax({
+                url: 'https://localhost:7294/api/Projects/UpdateProject',
+                type: 'PUT',
                 headers: {
-                    'Authorization': `Bearer ${jwtToken}`,
+                    'Authorization': `Bearer ${jwtToken}`
                 },
-                body: updateData
-            })
-                .then(response => response.json())
-                .then(data => {
+                data: updateData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
                     if (data.success) {
                         alert('Project updated successfully!');
                         location.reload();
                     } else {
-                        alert('Failed to update project: ' + data.message);
+                        alert( data.message);
                     }
-                })
-                .catch(() => alert('Error updating project'));
+                },
+                error: function (xhr, status, error) {
+                    alert('Error updating project: ' + xhr.responseText || status);
+                }
+            });
         });
     }
+    function prepareUpdateData() {
+        const formData = new FormData();
+        formData.append('ProjectId', projectId);
+        formData.append('UserId', userId);
+        formData.append('RoleId', roleid);
+        formData.append('projectName', document.getElementById('projectName').value);
+        formData.append('Description', quill.getText());
+        //if (uploadedImage) {
+        //    formData.append('LogoFile', uploadedImage);
+        //}
+        const logoFile = $('#projectImages')[0].files[0];
+        if (logoFile) {
+            formData.append('LogoFile', logoFile);
+        }
+        formData.append('Status', document.getElementById('projectProcess').value);
+        formData.append('isActive', document.getElementById('projectStatus').value);
 
+
+        return formData;
+    }
 
     function populateProjectDetails(project) {
         document.getElementById('projectName').value = project.projectName;
@@ -103,42 +161,60 @@ document.addEventListener('DOMContentLoaded', function () {
             const imagePreview = document.getElementById('imagePreview');
             imagePreview.innerHTML = `
                         <div class="col-md-4 mb-3">
-                            <img src="${project.image}" alt="Project Image" class="img-fluid" id="existing-image">
+                            <img src="${project.image}" alt="Project Image" class="img-fluid rounded" id="existing-image">
                         </div>`;
         }
 
-        //displayFiles(files);
+        displayFiles(files);
 
     }
-
-
     loadProjectDetails();
 });
-function prepareUpdateData() {
-    const formData = new FormData();
-    formData.append('ProjectId', projectId);
-    formData.append('UserId', userId);
-    formData.append('projectName', document.getElementById('projectName').value);
-    formData.append('Description', quill.getText());
-    if (uploadedImage) {
-        formData.append('LogoFile', uploadedImage);
-    }
-    formData.append('Status', document.getElementById('projectProcess').value);
-    formData.append('isActive', document.getElementById('projectStatus').value);
-    
 
-    return formData;
-}
-projectImageInput.addEventListener('change', function (event) {
-    const file = event.target.files[0];
-    if (file) {
-        uploadedImage = file;
-        const imagePreview = document.getElementById('imagePreview');
-        imagePreview.innerHTML = `
-                        <div class="col-md-4 mb-3">
-                            <img src="${URL.createObjectURL(file)}" alt="New Project Image" class="img-fluid">
-                        </div>`;
+//projectImageInput.addEventListener('change', function (event) {
+//    const file = event.target.files[0];
+//    if (file) {
+//        uploadedImage = file;
+//        const imagePreview = document.getElementById('imagePreview');
+//        imagePreview.innerHTML = `
+//                        <div class="col-md-4 mb-3">
+//                            <img src="${URL.createObjectURL(file)}" alt="New Project Image" class="img-fluid">
+//                        </div>`;
+//    }
+//});
+$('#projectImages').on('change', function (event) {
+    const files = event.target.files;
+    if (files.length > 0) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            updateImagePreview(e.target.result);
+        };
+        reader.readAsDataURL(files[0]);
+
+        if (!isChanged) {
+            $('#btnUpdate').removeAttr('disable');
+            isChanged = true;
+        }
     }
+});
+
+document.getElementById('projectImages').addEventListener('change', function (event) {
+    const imagePreview = document.getElementById('imagePreview');
+    imagePreview.innerHTML = '';
+    const files = event.target.files;
+    Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const colDiv = document.createElement('div');
+            colDiv.classList.add('col-md-4', 'mb-3');
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.classList.add('img-fluid', 'rounded');
+            colDiv.appendChild(img);
+            imagePreview.appendChild(colDiv);
+        }
+        reader.readAsDataURL(file);
+    });
 });
 
 function displayFiles(files) {

@@ -60,7 +60,7 @@ namespace FALOFinancialProofing.Controllers
                     data = data.FindAll(x => x.Status.Equals(status));
                 }
                 filterPagingData.DataCount = data.Count;
-                data = PaginationHelper.Paginate<CreateCampaignRequestInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                data = PaginationHelper.Paginate<CreateCampaignRequestInformation>(data.AsQueryable(), currentPage, IntConstant.PageSizeCustom).ToList();
                 filterPagingData.Data = data;
             }
             catch (Exception ex)
@@ -106,7 +106,7 @@ namespace FALOFinancialProofing.Controllers
                     data = data.FindAll(x => x.Status.Equals(status));
                 }
                 filterPagingData.DataCount = data.Count;
-                data = PaginationHelper.Paginate<CreateCampaignRequestInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                data = PaginationHelper.Paginate<CreateCampaignRequestInformation>(data.AsQueryable(), currentPage, IntConstant.PageSizeCustom).ToList();
                 filterPagingData.Data = data;
             }
             catch (Exception ex)

@@ -526,6 +526,7 @@ namespace FALOFinancialProofing.Controllers
         [HttpGet("getallprepayrequestincampaign/{campaignId}")]
         public async Task<IActionResult> GetAllPrePayRequestInCampaign(int campaignId, string userId,
             string? status,
+            string? searchDescription,
             int page = IntConstant.PageNumberDefault)
         {
             var requestForms = await requestFormService.GetAllPrePayRequestInCampaign(campaignId, userId);
@@ -539,6 +540,11 @@ namespace FALOFinancialProofing.Controllers
             }
 
             var filteredResult = requestForms.AsEnumerable();
+            if (!string.IsNullOrEmpty(searchDescription))
+            {
+                filteredResult = filteredResult.Where(x => x.Description.Contains(searchDescription, StringComparison.OrdinalIgnoreCase));
+            }
+
             if (!string.IsNullOrEmpty(status))
             {
                 filteredResult = filteredResult.Where(x => x.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
@@ -587,6 +593,7 @@ namespace FALOFinancialProofing.Controllers
         [HttpGet("getallpaymentrequestincampaign/{campaignId}")]
         public async Task<IActionResult> GetAllPaymentRequestInCampaign(int campaignId, string userId,
             string? status,
+            string? searchDescription,
             int page = IntConstant.PageNumberDefault)
         {
             var requestForms = await requestFormService.GetAllPaymentRequestInCampaign(campaignId, userId);
@@ -599,6 +606,10 @@ namespace FALOFinancialProofing.Controllers
                 });
             }
             var filteredResult = requestForms.AsEnumerable();
+            if (!string.IsNullOrEmpty(searchDescription))
+            {
+                filteredResult = filteredResult.Where(x => x.Description.Contains(searchDescription, StringComparison.OrdinalIgnoreCase));
+            }
             if (!string.IsNullOrEmpty(status))
             {
                 filteredResult = filteredResult.Where(x => x.Status.Equals(status, StringComparison.OrdinalIgnoreCase));

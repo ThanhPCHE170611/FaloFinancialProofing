@@ -93,20 +93,26 @@
 <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    function changeCampaign(button, Id) {
+    function changeCampaign(button, Id, name) {
         localStorage.setItem('campaignId', Id);
+        localStorage.setItem('campaignName', name);
         window.location.href = '/Campaign/CampaignDetail';
     }
     function changeCampaignUpdateProcess(button, Id) {
         localStorage.setItem('campaignId', Id);
         window.location.href = '/Campaign/CampaignUpdateProcessRequest';
     }
+    function changeCampaignPm(button, Id, name) {
+        localStorage.setItem('campaignId', Id);
+        localStorage.setItem('campaignName', name);
+        window.location.href = '/Campaign/CampaignDetail_PMB';
+    }
     $(document).ready(function () {
         let currentPage = 1;
         const userId = localStorage.getItem('userId');
         const roleId = localStorage.getItem('loggingRoleId');
         const checkrole = localStorage.getItem('loggingRole');
-        const pageSize = 5;
+        const pageSize = 7;
         function fetchCampaignData(searchInput = '', isActive = null, page = 1) {
         const jwtToken = localStorage.getItem('jwtToken');
 
@@ -156,15 +162,18 @@
             
             data.forEach((item, index) => {
                 console.log(item.campaignId);
-                let actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId})" class="btn btn-info btn-sm detail-btn">Detail</button>`;
-                let campaignName =`${item.title}`;
+                let actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId}, ${item.campaignName})" class="btn btn-info btn-sm detail-btn">Detail</button>`;
+                let campaignName =`${item.campaignTitle}`;
                 if(checkrole === "Project Manager") {
-                    actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId})" class="btn btn-info btn-sm detail-btn">Detail</button>
+                    actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId}, ${item.campaignName})" class="btn btn-info btn-sm detail-btn">Detail</button>
                                         <button class="btn btn-primary btn-sm" onclick="changeCampaignUpdateProcess(this, ${item.campaignId})">Update Process</a>
                     `;
-                    campaignName = `${item.campaignTitle}`;
+                } 
+                if(checkrole === "Project Management Board") {
+                    campaignName =`${item.title}`;
+                    actionButtons = `<button onclick="changeCampaignPm(this, ${item.campaignId}, ${item.campaignName})" class="btn btn-info btn-sm detail-btn">Detail</button>
+                    `;
                 }
-                
                 const row = `
                     <tr>
                         <td class="align-middle text-center text-sm">${index + 1}</td>
@@ -181,22 +190,63 @@
             });
         }
 
-        function setupPagination(totalItems) {
-            const totalPages = Math.ceil(totalItems / pageSize);
-            const paginationContainer = $('#pagination');
-            paginationContainer.empty();
+    function setupPagination(totalItemsCount) {
+        const totalPages = Math.ceil(totalItemsCount / pageSize);
+        const paginationContainer = $('#pagination');
+        paginationContainer.empty();
 
-            for (let i = 1; i <= totalPages; i++) {
-                const pageButton = $(`<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}">${i}</button>`);
-                pageButton.on('click', () => changePage(i));
-                paginationContainer.append(pageButton);
-            }
+        const maxVisibleButtons = 5;
+        const ellipsis = `<span class="btn btn-sm btn-light disabled">...</span>`;
 
-            $('.page-btn').click(function () {
-                currentPage = $(this).data('page');
-                fetchCampaignData($('#searchInput').val(), $('#statusFilter').val(), currentPage);
-            });
+        function createPageButton(page) {
+            return $(`<button class="btn btn-sm btn-page ${page === currentPage ? 'btn-primary' : 'btn-light'}">${page}</button>`)
+                .on('click', () => changePage(page, totalItemsCount));
         }
+
+        const prevButton = $(`<button class="btn btn-sm btn-page ${currentPage === 1 ? 'btn-light disabled' : 'btn-light'}">Previous</button>`);
+        prevButton.on('click', () => {
+            if (currentPage > 1) changePage(currentPage - 1, totalItemsCount);
+        });
+        paginationContainer.append(prevButton);
+
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisibleButtons / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisibleButtons - 1);
+
+        if (endPage - startPage + 1 < maxVisibleButtons) {
+            startPage = Math.max(1, endPage - maxVisibleButtons + 1);
+        }
+
+        if (startPage > 1) {
+            paginationContainer.append(createPageButton(1));
+            if (startPage > 2) {
+                paginationContainer.append($(ellipsis));
+            }
+        }
+
+        for (let page = startPage; page <= endPage; page++) {
+            paginationContainer.append(createPageButton(page));
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                paginationContainer.append($(ellipsis));
+            }
+            paginationContainer.append(createPageButton(totalPages));
+        }
+
+        const nextButton = $(`<button class="btn btn-sm btn-page ${currentPage === totalPages ? 'btn-light disabled' : 'btn-light'}">Next</button>`);
+        nextButton.on('click', () => {
+            if (currentPage < totalPages) changePage(currentPage + 1, totalItemsCount);
+        });
+        paginationContainer.append(nextButton);
+    }
+
+    window.changePage = function (page, totalItemsCount) {
+        const totalPages = Math.ceil(totalItemsCount / pageSize);
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        fetchCampaignData($('#searchInput').val(), $('#statusFilter').val(), currentPage);
+    };
 
 
         $('#searchInput').on('keyup', function () {

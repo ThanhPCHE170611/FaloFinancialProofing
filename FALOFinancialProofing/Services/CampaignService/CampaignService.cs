@@ -242,6 +242,10 @@ namespace FALOFinancialProofing.Services.CampaignService
                     campaign.IsActive = updateCampaignDTO.IsActive ?? campaign.IsActive;
                     campaign.Status = updateCampaignDTO.Status ?? campaign.Status;
                     campaign.BankId = updateCampaignDTO.BankId ?? campaign.BankId;
+                    if (updateCampaignDTO.EndDate != null)
+                    {
+                        await UpdateEndDateForProjectManagerBoardAsync(updateCampaignDTO, campaign, message);
+                    }
                 }
                 checkValid = await campaignRepository.UpdateAsync(campaign);
             }
@@ -403,6 +407,27 @@ namespace FALOFinancialProofing.Services.CampaignService
             }
         }
 
+        public async Task<Campaign?> UpdateEndDateForProjectManagerBoardAsync(UpdateCampaignDTO updateCampaignDTO, Campaign campaign, StringBuilder message)
+        {
+            try
+            {
+                // check if new date is valid
+                if (updateCampaignDTO.EndDate != campaign.EndDate)
+                {
+                    campaign.EndDate = updateCampaignDTO.EndDate;
+                    var newUpdateLog = new StringBuilder(campaign.UpdateLog);
+                    newUpdateLog.AppendLine($"Project Manager Board change end date to {updateCampaignDTO.EndDate} at {DateTime.Now}");
+                    campaign.UpdateLog = newUpdateLog.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                Console.WriteLine($"UpdateEndDateForProjectManagerBoardAsync: {ex.Message}");
+            }
+
+            return campaign;
+        }
         public async Task<Campaign?> UpdateEndDateForProjectManagerAsync(int campaignId, string userId, string currentRole, DateTime newDateTime, StringBuilder message)
         {
             try
@@ -499,6 +524,14 @@ namespace FALOFinancialProofing.Services.CampaignService
                 if ((campaignOwner == null && !checkPMB && !checkAdmin) || (!checkPMB && !checkAdmin && campaignOwner != null && !campaignOwner.IsActive))
                 {
                     throw new Exception("You don't have permission to update campaign!");
+                }
+                if (checkAdmin || checkPMB)
+                {
+                    var endDate = campaign.EndDate;
+                    if (endDate != null && updateCampaignDTO.EndDate != null && endDate > updateCampaignDTO.EndDate)
+                    {
+                        throw new Exception("End Date must be after the current end date");
+                    }
                 }
                 if (updateCampaignDTO.LogoFile != null && updateCampaignDTO.LogoFile.Length > FileHelper.CampaignImageMaxFileSize)
                 {

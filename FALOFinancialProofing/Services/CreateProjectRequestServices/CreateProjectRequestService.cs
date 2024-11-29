@@ -78,6 +78,8 @@ namespace FALOFinancialProofing.Services.CreateProjectRequestServices
                         Feedback = s.Feedback,
                         Status = s.Status,
                         Description = s.Description,
+                        OrganizationId = s.Project.OrganizationId,
+                        OrganizationName = s.Project.Organization != null ? s.Project.Organization.Name : "No Organization",
                         CreateProjectFiles = s.CreateProjectFiles.Select(f => new CreateProjectFileInformation()
                         {
                             Id = f.Id,

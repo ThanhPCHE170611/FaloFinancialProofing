@@ -398,7 +398,7 @@
         const jwtToken = localStorage.getItem('jwtToken');
         const checkrole = localStorage.getItem('loggingRole');
         let currentPage = 1;
-        const pageSize = 5;
+        const pageSize = 7;
         if (checkrole === "Project Management Board") {
             apiUrl = 'https://localhost:7294/api/MoveNextCampaignStatusRequests/GetAllMoveNextCampaignStatusRequestsByPMB';
         } else {
@@ -492,22 +492,79 @@
             return "badge-pending";
         }
 
-        function setupPagination(totalItems) {
-            const totalPages = Math.ceil(totalItems / pageSize);
-            const paginationContainer = $('#pagination');
-            paginationContainer.empty();
+        // function setupPagination(totalItems) {
+        //     const totalPages = Math.ceil(totalItems / pageSize);
+        //     const paginationContainer = $('#pagination');
+        //     paginationContainer.empty();
 
-            for (let i = 1; i <= totalPages; i++) {
-                const pageButton = $(`<button class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-light'}">${i}</button>`);
-                pageButton.on('click', () => changePage(i));
-                paginationContainer.append(pageButton);
+        //     for (let i = 1; i <= totalPages; i++) {
+        //         const pageButton = $(`<button class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-light'}">${i}</button>`);
+        //         pageButton.on('click', () => changePage(i));
+        //         paginationContainer.append(pageButton);
+        //     }
+        // }
+
+        // window.changePage = function (page) {
+        // currentPage = page;
+        // fetchCampaignUpdateProcessRequests($('#searchInput').val(), $('#statusFilter').val(), currentPage);
+        // };
+            function setupPagination(totalItemsCount) {
+        const totalPages = Math.ceil(totalItemsCount / pageSize);
+        const paginationContainer = $('#pagination');
+        paginationContainer.empty();
+
+        const maxVisibleButtons = 5;
+        const ellipsis = `<span class="btn btn-sm btn-light disabled">...</span>`;
+
+        function createPageButton(page) {
+            return $(`<button class="btn btn-sm btn-page ${page === currentPage ? 'btn-primary' : 'btn-light'}">${page}</button>`)
+                .on('click', () => changePage(page, totalItemsCount));
+        }
+
+        const prevButton = $(`<button class="btn btn-sm btn-page ${currentPage === 1 ? 'btn-light disabled' : 'btn-light'}">Previous</button>`);
+        prevButton.on('click', () => {
+            if (currentPage > 1) changePage(currentPage - 1, totalItemsCount);
+        });
+        paginationContainer.append(prevButton);
+
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisibleButtons / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisibleButtons - 1);
+
+        if (endPage - startPage + 1 < maxVisibleButtons) {
+            startPage = Math.max(1, endPage - maxVisibleButtons + 1);
+        }
+
+        if (startPage > 1) {
+            paginationContainer.append(createPageButton(1));
+            if (startPage > 2) {
+                paginationContainer.append($(ellipsis));
             }
         }
 
-        window.changePage = function (page) {
+        for (let page = startPage; page <= endPage; page++) {
+            paginationContainer.append(createPageButton(page));
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                paginationContainer.append($(ellipsis));
+            }
+            paginationContainer.append(createPageButton(totalPages));
+        }
+
+        const nextButton = $(`<button class="btn btn-sm btn-page ${currentPage === totalPages ? 'btn-light disabled' : 'btn-light'}">Next</button>`);
+        nextButton.on('click', () => {
+            if (currentPage < totalPages) changePage(currentPage + 1, totalItemsCount);
+        });
+        paginationContainer.append(nextButton);
+    }
+
+    window.changePage = function (page, totalItemsCount) {
+        const totalPages = Math.ceil(totalItemsCount / pageSize);
+        if (page < 1 || page > totalPages) return;
         currentPage = page;
         fetchCampaignUpdateProcessRequests($('#searchInput').val(), $('#statusFilter').val(), currentPage);
-        };
+    };
 
         $('#searchInput').on('keyup', function () {
             currentPage = 1;

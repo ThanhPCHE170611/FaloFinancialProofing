@@ -102,7 +102,7 @@ namespace FALOFinancialProofing.Controllers
                     data = data.FindAll(x => x.Status == status);
                 }
                 filterPagingData.DataCount = data.Count;
-                data = PaginationHelper.Paginate<ProjectInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                data = PaginationHelper.Paginate<ProjectInformation>(data.AsQueryable(), currentPage, IntConstant.PageSizeCustom).ToList();
                 filterPagingData.Data = data;
             }
             catch (Exception ex)

@@ -59,7 +59,7 @@
                     </a>
                 </li> 
 
-                <li class="nav-item mt-3">
+@*                 <li class="nav-item mt-3">
                     <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Accounting Management</h6>
                 </li>
                 <li class="nav-item">
@@ -70,7 +70,7 @@
 
                         <span class="nav-link-text ms-1">Debt Management</span>
                     </a>
-                </li>
+                </li> *@
                 <li class="nav-item mt-3">
                     <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Contact</h6>
                 </li>
@@ -84,10 +84,10 @@
                     </a>
                 </li>
 
-                <li class="nav-item mt-3">
+                <li class="nav-item mt-3" id="titleManagement">
                     <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Management</h6>
                 </li>
-                <li class="nav-item dropdown">
+                <li class="nav-item dropdown" id="projectRegistration">
                     <a class="nav-link dropdown-toggle text-white" href="#" id="campaignDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">table_view</i>
@@ -96,7 +96,7 @@
                     </a>
                     <ul style="margin-left:0.8rem" class="dropdown-menu" aria-labelledby="campaignDropdown">
                         <li>
-                            <a class="dropdown-item custom-hover" asp-area="" asp-controller="Project" asp-action="ProjectRequestManagement">
+                            <a class="dropdown-item custom-hover" asp-area="" asp-controller="Project" asp-action="ProjectRequestManagement" >
                                 <strong>Project Registration Request</strong>
                             </a>
                         </li>
@@ -107,7 +107,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item dropdown">
+                <li class="nav-item dropdown" id="campaignNav">
                     <a class="nav-link dropdown-toggle text-white" href="#" id="campaignDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">table_view</i>
@@ -116,12 +116,12 @@
                     </a>
                     <ul style="margin-left:0.8rem" class="dropdown-menu" aria-labelledby="campaignDropdown">
                         <li>
-                            <a class="dropdown-item custom-hover" asp-area="" asp-controller="Campaign" asp-action="CampaignRequestManagement">
+                            <a class="dropdown-item custom-hover" asp-area="" asp-controller="Campaign" asp-action="CampaignRequestManagement" id="campaignRegistration">
                                 <strong>Campaign Registration Request</strong>
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item custom-hover" asp-area="" asp-controller="Campaign" asp-action="CampaignUpdateProcessManagement">
+                            <a class="dropdown-item custom-hover" asp-area="" asp-controller="Campaign" asp-action="CampaignUpdateProcessManagement" id="campaignUpdateProcess">
                                 <strong>Campaign Update Process Request</strong>
                             </a>
                         </li>   
@@ -134,7 +134,7 @@
                 </li>
                 
 
-                <li class="nav-item">
+                <li class="nav-item" id="organization">
                     <a class="nav-link text-white " asp-area="" asp-controller="Organization" asp-action="OrganizationManagement">
                         <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">table_view</i>
@@ -179,13 +179,6 @@
              data-scroll="true">
             <div class="container-fluid py-1 px-3">
                 <nav aria-label="breadcrumb">
-
-                    @* <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a></li>
-                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">index</li>
-                    </ol>
-                    <h6 class="font-weight-bolder mb-0">Dashboard</h6> *@
-
                 </nav>
                 <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                     <div class="ms-md-auto pe-md-3 d-flex align-items-center">
@@ -199,11 +192,6 @@
                                     <i class="sidenav-toggler-line"></i>
                                 </div>
                             </a>
-                        </li>
-                        <li class="nav-item px-3 d-flex align-items-center">
-                            @* <a href="javascript:;" class="nav-link text-body p-0">
-                            <i class="fa fa-cog fixed-plugin-button-nav cursor-pointer"></i>
-                            </a> *@
                         </li>
                         <li class="nav-item dropdown pe-2 d-flex align-items-center">
                             <a href="javascript:;" class="nav-link text-body p-0" id="dropdownMenuButton" data-bs-toggle="dropdown"
@@ -340,18 +328,16 @@
         if (checkrole === 'Admin') {
             document.getElementById('adminTabTitle').style.display = 'block';
             document.getElementById('adminTab').style.display = 'block';
+            document.getElementById('campaignNav').style.display = 'none';
+            document.getElementById('titleManagement').style.display = 'none';
             }
 
 
         if (checkrole !== "Project Manager" && checkrole !== "Project Management Board") {
-        const campaignRegistration = document.querySelector('[asp-action="CampaignRequestManagement"]');
-        if (campaignRegistration) {
-            campaignRegistration.closest('li').style.display = 'none';
+            document.getElementById('projectRegistration').style.display = 'none';
+            document.getElementById('campaignUpdateProcess').style.display = 'none';
+            document.getElementById('campaignRegistration').style.display = 'none';
+            document.getElementById('organization').style.display = 'none';
         }
-        const campaignChangeStage = document.querySelector('[asp-action="CampaignUpdateProcessRequest"]');
-        if (campaignChangeStage) {
-            campaignChangeStage.closest('li').style.display = 'none';
-        }
-    }
     });
 </script>

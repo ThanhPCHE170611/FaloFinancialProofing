@@ -279,13 +279,14 @@ namespace FALOFinancialProofing.Controllers
         [HttpPost("Admin-Register")]
         public async Task<IActionResult> AdminRegister([FromBody] SignUpAdminRequest registerRequest)
         {
-            var user = await authServices.AdminRegisterUser(registerRequest);
+            StringBuilder message = new StringBuilder();
+            var user = await authServices.AdminRegisterUser(registerRequest, message);
             if (user == null)
             {
                 return Ok(new
                 {
                     Success = false,
-                    Message = "Register Failed"
+                    Message = message.ToString()
                 });
             }
             else
@@ -347,7 +348,7 @@ namespace FALOFinancialProofing.Controllers
                 }
 
                 filterPagingData.DataCount = data.Count;
-                data = PaginationHelper.Paginate<UserInformation_Admin>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                data = PaginationHelper.Paginate<UserInformation_Admin>(data.AsQueryable(), currentPage, IntConstant.PageSizeCustom).ToList();
                 filterPagingData.Data = data;
             }
             catch (Exception ex)
@@ -387,7 +388,7 @@ namespace FALOFinancialProofing.Controllers
                 }
 
                 filterPagingData.DataCount = data.Count;
-                data = PaginationHelper.Paginate<UserInformation_Admin>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                data = PaginationHelper.Paginate<UserInformation_Admin>(data.AsQueryable(), currentPage, IntConstant.PageSizeCustom).ToList();
                 filterPagingData.Data = data;
             }
             catch (Exception ex)

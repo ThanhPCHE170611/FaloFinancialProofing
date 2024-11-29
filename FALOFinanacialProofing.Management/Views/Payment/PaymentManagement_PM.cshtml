@@ -56,8 +56,7 @@
                                 <a asp-controller="Campaign" asp-action="CampaignDetail">Campaign Detail</a>
                                 <a asp-controller="Prepay" asp-action="PrepayManagement">Created Prepay Request</a>
                                 <a asp-controller="Payment" asp-action="PaymentManagement">Created Payment Request</a>
-                                @* <a asp-controller="Prepay" asp-action="PrepayVoucher">Prepay Voucher</a>
-                                <a asp-controller="Payment" asp-action="PaymentVoucher">Payment Voucher</a> *@
+
                                 <a asp-controller="Accounting" asp-action="AccountingBookCampaign">Accounting Book</a>
                                 <a asp-controller="Campaign" asp-action="Member">Member</a>
                                 <a asp-controller="Prepay" asp-action="PrepayManagement_PM">Approval Prepay Request</a>
@@ -73,12 +72,13 @@
                     </div>
 
                     <div class="search-filter-container px-3">
-                        <input type="text" id="searchBox" class="search-box" placeholder="Search by Sender" onkeyup="filterTable()">
+                        <input type="text" id="searchBox" class="search-box" placeholder="Search by Email" onkeyup="filterTable()">
                         <select id="statusFilter" class="filter-box" onchange="filterTable()">
                             <option value="">Filter by Status</option>
                             <option value="Process">Process</option>
                             <option value="Approved">Approved</option>
                             <option value="Rejected">Rejected</option>
+                            <option value="Cancel">Cancel</option>
                         </select>
                     </div>
 

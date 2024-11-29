@@ -602,7 +602,7 @@ namespace FALOFinancialProofing.Services
             }
             return null;
         }
-        public async Task<IdentityResult?> AdminRegisterUser(SignUpAdminRequest registerRequest)
+        public async Task<IdentityResult?> AdminRegisterUser(SignUpAdminRequest registerRequest, StringBuilder message)
         {
             try
             {
@@ -613,6 +613,9 @@ namespace FALOFinancialProofing.Services
                 }
                 else
                 {
+                    var user = await userManager.FindByEmailAsync(validatedInformationRequest.Email);
+                    if (user != null)
+                        throw new Exception("Email is already registered in the system!");
                     var newUser = new User
                     {
                         FirstName = validatedInformationRequest.FirstName,
@@ -631,10 +634,18 @@ namespace FALOFinancialProofing.Services
                         result = await userManager.AddToRolesAsync(newUser, registerRequest.Roles);
                         return result;
                     }
+                    else
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            message.AppendLine(error.Description);
+                        }
+                    }
                 }
             }
             catch (Exception ex)
             {
+                message.Append(ex.Message);
                 Console.WriteLine($"AdminRegisterUser: {ex.Message}");
             }
             return null;
@@ -1208,19 +1219,14 @@ Click vào link này để đặt lại mật khẩu: {resetPasswordLink}";
                 {
                     throw new Exception("User not found in system!");
                 }
-                var role = await roleManager.FindByNameAsync(addUserRole.RoleName);
-                if (role == null)
-                {
-                    throw new Exception("Role not found in system!");
-                }
-                result = await userManager.AddToRoleAsync(user, role.Name) == IdentityResult.Success;
+                result = await userManager.AddToRolesAsync(user, addUserRole.RoleNames) == IdentityResult.Success;
                 if (result)
                 {
-                    message.Append("Assign Role successfully");
+                    message.Append("Assign Role(s) successfully");
                 }
                 else
                 {
-                    message.Append("Assign Role failed");
+                    message.Append("Assign Role(s) failed");
                 }
             }
             catch (Exception ex)

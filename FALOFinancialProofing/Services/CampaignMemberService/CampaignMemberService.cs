@@ -1,4 +1,5 @@
-﻿using FALOFinancialProofing.DTOs.CampaignMemberDTO;
+﻿using FALOFinancialProofing.DTOs.CampaignDTO;
+using FALOFinancialProofing.DTOs.CampaignMemberDTO;
 using FALOFinancialProofing.DTOs.RoleDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
@@ -275,13 +276,24 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 {
                     throw new Exception("Cannot deactivate CampaignMember with debt greater than 0.");
                 }
+                #region Điều kiện cũ
+                //var campaignOwner = await campaignService.GetCampaignByUserIdAndCampaignIdAsync(updateCampaignMemberStatusDTO.PmUserId, updateCampaignMemberStatusDTO.CampaignId);
+                //bool checkAdmin = await authServices.CheckUserInRole(updateCampaignMemberStatusDTO.PmUserId, AppRole.Admin, new StringBuilder());
+                //bool checkPMB = await authServices.CheckUserInRole(updateCampaignMemberStatusDTO.PmUserId, AppRole.ProjectManagementBoard, new StringBuilder());
+                //if ((campaignOwner == null && !checkPMB && !checkAdmin) || (campaignOwner != null && !campaignOwner.IsActive))
+                //{
+                //    throw new Exception("You don't have permission to update campaign!");
+                //} 
+                #endregion
                 var campaignOwner = await campaignService.GetCampaignByUserIdAndCampaignIdAsync(updateCampaignMemberStatusDTO.PmUserId, updateCampaignMemberStatusDTO.CampaignId);
-                bool checkAdmin = await authServices.CheckUserInRole(updateCampaignMemberStatusDTO.PmUserId, AppRole.Admin, new StringBuilder());
-                bool checkPMB = await authServices.CheckUserInRole(updateCampaignMemberStatusDTO.PmUserId, AppRole.ProjectManagementBoard, new StringBuilder());
-                if ((campaignOwner == null && !checkPMB && !checkAdmin) || (campaignOwner != null && !campaignOwner.IsActive))
+                bool checkAdmin = await authServices.CheckRole(updateCampaignMemberStatusDTO.PmUserId, updateCampaignMemberStatusDTO.PmRoleId, AppRole.Admin, new StringBuilder());
+                bool checkPMB = await authServices.CheckRole(updateCampaignMemberStatusDTO.PmUserId, updateCampaignMemberStatusDTO.PmRoleId, AppRole.ProjectManagementBoard, new StringBuilder());
+                // Không check trong campaignMember Pm có isactive =true/false
+                if ((campaignOwner == null && !checkPMB && !checkAdmin) || (!checkPMB && !checkAdmin && campaignOwner != null && !campaignOwner.IsActive))
                 {
                     throw new Exception("You don't have permission to update campaign!");
                 }
+
                 UpdateCampaignMemberStatusDTOToEntity(existingCampaignMember, updateCampaignMemberStatusDTO);
 
                 return await cmRepository.UpdateAsync(existingCampaignMember);

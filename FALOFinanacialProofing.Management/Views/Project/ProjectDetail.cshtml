@@ -94,7 +94,7 @@
                         <div class="row mb-3">
                             <div class="col-md-12">
                                 <label for="projectName" class="form-label">Project Name</label>
-                                <input type="text" class="form-control" id="projectName">
+                                <input type="text" class="form-control" id="projectName" readonly >
                             </div>
                         </div>
 
@@ -112,14 +112,14 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="projectProcess" class="form-label">Project Process</label>
-                                <select class="form-select" id="projectProcess">
+                                <select class="form-select" id="projectProcess" disabled>
                                     <option value="Running">Running</option>
                                     <option value="Close">Close</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
                                 <label for="projectStatus" class="form-label">Project Status</label>
-                                <select class="form-select" id="projectStatus">
+                                <select class="form-select" id="projectStatus" disabled>
                                     <option value="true">Active</option>
                                     <option value="false">Inactive</option>
                                 </select>
@@ -129,7 +129,7 @@
 
                         <div class="mb-3">
                             <label for="context" class="form-label">Project Description</label>
-                            <div id="editor-container" style="height: 200px;"></div>
+                            <div id="editor-container" style="height: 200px;" ></div>
                         </div>
                     </div>
                 </div>
@@ -149,7 +149,7 @@
                         <h5>Project Picture</h5>
                     </div>
                     <div class="card-body">
-                        <button class="btn btn-primary mb-3" onclick="document.getElementById('projectImages').click()" disabled>Choose file</button>
+                        <button id="choseImage" class="btn btn-primary mb-3" onclick="document.getElementById('projectImages').click()" disabled>Choose file</button>
                         <input type="file" id="projectImages" class="form-control d-none" accept="image/*" multiple>
                         <div id="imagePreview" class="mt-3 row"></div>
                     </div>

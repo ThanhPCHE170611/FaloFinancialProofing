@@ -119,6 +119,10 @@
                                 <label for="workplace" class="form-label">Password</label>
                                 <input type="password" class="form-control" id="password" placeholder="Enter Password">
                             </div>
+                            <div class="mb-3">
+                                <label for="workplace" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="confirmPassword" placeholder="Enter Confirm Password">
+                            </div>
 
                             <div class="mb-3">
                                 <label for="dob" class="form-label">Date Of Birth</label>
@@ -129,16 +133,12 @@
                                 <label class="form-label">Gender</label>
                                 <div class="gender-radio-group">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="gender" id="male" value="male">
+                                        <input class="form-check-input" type="radio" name="gender" id="male" value="true">
                                         <label class="form-check-label" for="male">Male</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="gender" id="female" value="female">
+                                        <input class="form-check-input" type="radio" name="gender" id="female" value="false">
                                         <label class="form-check-label" for="female">Female</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="gender" id="other" value="other">
-                                        <label class="form-check-label" for="other">Other</label>
                                     </div>
                                 </div>
                             </div>
@@ -180,6 +180,7 @@
 
                             <div id="save-btn">
                                 <button type="submit" class="btn btn-warning">Create</button>
+                                <a href="/User/UserManagement" class="btn btn-info" style="margin-left:10px">Back To List</a>
                             </div>
                         </div>
                     </div>
@@ -200,61 +201,4 @@
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function () {
-        $('#save-btn button').on('click', function (e) {
-            e.preventDefault(); 
-
-            const jwtToken = localStorage.getItem('jwtToken');
-
-            const firstName = $('#fullName').val().trim();
-            const lastName = $('#lastName').val().trim();
-            const email = $('#email').val().trim();
-            const userName = $('#use').val().trim();
-            const password = $('#password').val().trim();
-            const birthDate = $('#dob').val();
-            const gender = $('input[name="gender"]:checked').val();
-            const address = $('#address').val().trim();
-            const phoneNumber = $('#phone').val().trim();;
-            const roles = [];
-            $('.role-checkbox:checked').each(function () {
-                roles.push($(this).val());
-            });
-
-            const registerRequest = {
-                firstName: firstName,
-                lastName: lastName,
-                email: email,
-                password: password,
-                userName: userName,
-                birthDate: birthDate,
-                gender: gender,
-                address: address,
-                phoneNumber: phoneNumber,
-                roles: roles
-            };
-
-            $.ajax({
-                url: 'https://localhost:7294/api/Users/Admin-Register',
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${jwtToken}`,
-                    'Content-Type': 'application/json'
-                },
-                data: JSON.stringify(registerRequest),
-                success: function (response) {
-                    if (response.success) {
-                        alert('User registered successfully!');
-                        window.location.href = `/User/UserManagement`;
-                    } else {
-                        alert('Registration failed: ' + response.message);
-                    }
-                },
-                error: function () {
-                    alert('Error registering the user');
-                }
-            });
-        });
-    });
-
-</script>
+<script src="~/js/user/createuser.js"></script>

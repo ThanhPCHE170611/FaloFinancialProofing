@@ -136,10 +136,6 @@ namespace FALOFinancialProofing.Services.TransactionLogsServices
                        TransactionDate = u.TransactionDate,
                        tid = u.tid,
                    }).ToListAsync();
-                if (userTransaction == null)
-                {
-                    throw new Exception("userTransaction not found");
-                }
 
             }
             catch (Exception ex)
@@ -166,11 +162,6 @@ namespace FALOFinancialProofing.Services.TransactionLogsServices
                        TransactionDate = u.TransactionDate,
                        tid = u.tid,
                    }).ToListAsync();
-                if (userTransaction == null)
-                {
-                    throw new Exception("Money out Transaction not found");
-                }
-
             }
             catch (Exception ex)
             {
@@ -199,11 +190,6 @@ namespace FALOFinancialProofing.Services.TransactionLogsServices
                        TransactionDate = u.TransactionDate,
                        tid = u.tid,
                    }).ToListAsync();
-                if (userTransaction == null)
-                {
-                    throw new Exception("userTransaction not found");
-                }
-
             }
             catch (Exception ex)
             {
