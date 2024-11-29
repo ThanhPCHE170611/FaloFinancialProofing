@@ -150,11 +150,11 @@ $(document).ready(function () {
             return;
         }
 
-        if (files.length === 0) {
-            alert('Attachments are required. Please upload at least one file.');
-            $('#attachments').focus();
-            return;
-        }
+        //if (files.length === 0) {
+        //    alert('Attachments are required. Please upload at least one file.');
+        //    $('#attachments').focus();
+        //    return;
+        //}
 
         if (vouchers.length === 0) {
             alert('Vouchers are required. Please upload at least one file.');
