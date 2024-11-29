@@ -150,11 +150,11 @@ $(document).ready(function () {
             return;
         }
 
-        if (files.length === 0) {
-            alert('Attachments are required. Please upload at least one file.');
-            $('#attachments').focus();
-            return;
-        }
+        //if (files.length === 0) {
+        //    alert('Attachments are required. Please upload at least one file.');
+        //    $('#attachments').focus();
+        //    return;
+        //}
 
         if (vouchers.length === 0) {
             alert('Vouchers are required. Please upload at least one file.');
@@ -218,7 +218,7 @@ $(document).ready(function () {
                     alert('Create new Payment RequestForm successfully.');
                     window.location.href = `/Payment/PaymentManagement?campaignid=${campaignId}`;
                 } else {
-                    alert('Error: ' + response.message);
+                    alert(response.message);
                 }
             },
             error: function () {

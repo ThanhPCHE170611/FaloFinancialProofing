@@ -215,7 +215,7 @@
                         <td class="align-middle text-center">${item.userName || "N/A"}</td>
                         <td class="align-middle text-center">${item.userRole || "N/A"}</td>
                         <td class="align-middle text-center">${item.userEmail || "N/A"}</td>
-                        <td class="align-middle text-center">${item.debt || 0}</td>
+                        <td class="align-middle text-center">${item.debt.toLocaleString() || 0}</td>
                         <td class="align-middle text-center">
                             <span class="badge badge-sm bg-gradient-${item.isActive ? 'success' : 'danger'}">
                                 ${item.isActive ? 'Active' : 'Inactive'}

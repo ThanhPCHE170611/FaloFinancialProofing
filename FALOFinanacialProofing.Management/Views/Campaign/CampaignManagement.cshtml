@@ -167,8 +167,10 @@
                 if(checkrole === "Project Manager") {
                     actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId}, ${item.campaignName})" class="btn btn-info btn-sm detail-btn">Detail</button>
                                         <button class="btn btn-primary btn-sm" onclick="changeCampaignUpdateProcess(this, ${item.campaignId})">Update Process</a>
-                    `;
-                } 
+                    `;    
+                } else if(checkrole === "Project Manager" && item.status === "Close") {
+                    actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId}, ${item.campaignName})" class="btn btn-info btn-sm detail-btn">Detail</button>`;
+                }
                 if(checkrole === "Project Management Board") {
                     campaignName =`${item.title}`;
                     actionButtons = `<button onclick="changeCampaignPm(this, ${item.campaignId}, ${item.campaignName})" class="btn btn-info btn-sm detail-btn">Detail</button>
