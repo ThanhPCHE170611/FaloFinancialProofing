@@ -27,11 +27,12 @@
                 <div class="col-lg-8 order-2 order-lg-1">
                     <div class="blog__item blog-single__left-item shadow-none">
                         <div class="image">
-                            @if(campaignDetails.Image == null)
+                            @if (campaignDetails.Image == null)
                             {
                                 <img src="/images/cause/CampaignImages.jpg" alt="image">
                             }
-                            else{
+                            else
+                            {
                                 <img src="@campaignDetails.Image" alt="image">
                             }
                         </div>
@@ -77,24 +78,24 @@
                                             Ủng Hộ
                                         </span>
                                     </a>
-                                    
+
                                 </div>
                             }
-                            
+
                             else
                             {
-                            <p class="text-danger"> Chiến dịch đã đóng ủng hộ</p>
+                                <p class="text-danger"> Chiến dịch đã đóng ủng hộ</p>
                             }
                         </div>
                         <div class="item shadow mb-30">
                             <h5 class="title">Chứng Thực</h5>
                             <ul class="category">
                                 <li><a <a href="javascript:void(0);" onclick="downloadAccountingBook(@campaignDetails.CampaignId)">Tải Báo Cáo Tài Chính</a></li>
-                                <li><a href="@Url.Action("Index", "Donation", new {id=campaignDetails.BankId})">Sao Kê</a></li>
+                                <li><a href="@Url.Action("Index", "Donation", new {id=campaignDetails.CampaignId})">Sao Kê</a></li>
                                 <li><a href="@Url.Action("CampaignActivity", "Campaignpage", new {id=campaignDetails.CampaignId})">Hoạt Động</a></li>
                             </ul>
                         </div>
-                        @if (campaignDetails.UpdateLog != null && campaignDetails.UpdateLog!="")
+                        @if (campaignDetails.UpdateLog != null && campaignDetails.UpdateLog != "")
                         {
                             <div class="item shadow mb-30">
                                 <h5 class="title">Thông Tin Cập Nhật</h5>

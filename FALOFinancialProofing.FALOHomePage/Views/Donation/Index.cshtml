@@ -87,23 +87,27 @@
         }
 
         let tableHtml = `<table class="table table-bordered table-hover" id="transactions-table">
-                                                 <thead>
-                                                     <tr>
-                                                         <th scope="col">Mã Giao Dịch</th>
-                                                         <th scope="col">Thời Điểm Giao Dịch</th>
-                                                         <th scope="col">Số Tiền</th>
-                                                         <th scope="col">Nội Dung Giao Dịch</th>
-                                                     </tr>
-                                                 </thead>
-                                                 <tbody>`;
+                                                                                                                         <thead>
+                                                                                                                             <tr>
+                                                                                                                                 <th scope="col">Mã Giao Dịch</th>
+                                                                                                                                 <th scope="col">Thời Điểm Giao Dịch</th>
+                                                                                                                                 <th scope="col">Số Tiền</th>
+                                                                                                                                 <th scope="col">Nội Dung Giao Dịch</th>
+                                                                                                                             </tr>
+                                                                                                                         </thead>
+                                                                                                                         <tbody>`;
 
         transactions.forEach(log => {
+            const formattedAmount = log.amount.toLocaleString('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            });
             tableHtml += `<tr>
-                                                 <td>${log.tid}</td>
-                                                 <td>${new Date(log.transactionDate).toLocaleString()}</td>
-                                                 <td>${log.amount}</td>
-                                                 <td>${log.description}</td>
-                                               </tr>`;
+                                                                                                                         <td>${log.tid}</td>
+                                                                                                                         <td>${new Date(log.transactionDate).toLocaleString()}</td>
+                                                                                                                             <td>${formattedAmount}</td>
+                                                                                                                         <td>${log.description}</td>
+                                                                                                                       </tr>`;
         });
 
         tableHtml += `</tbody></table>`;

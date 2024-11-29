@@ -32,27 +32,27 @@
 </style>
 
 <main>
-    
-        <!-- Page banner area start here -->
-        <section class="banner__inner-page bg-image pt-160 pb-160 bg-image"
-                 data-background="/images/banner/banner_2.jpg">
-            <div class="container">
-                <h2 class="wow fadeInUp" data-wow-delay="00ms" data-wow-duration="1500ms">Thông Tin Dự Án</h2>
-                <div class="breadcrumb-list wow fadeInUp" data-wow-delay="200ms" data-wow-duration="1500ms">
-                    <a href="@Url.Action("Index", "Homepage")">Home</a><span>
-                        <i class="fa-regular fa-angles-right mx-2"></i>Dự Án
-                    </span>
-                </div>
+
+    <!-- Page banner area start here -->
+    <section class="banner__inner-page bg-image pt-160 pb-160 bg-image"
+             data-background="/images/banner/banner_2.jpg">
+        <div class="container">
+            <h2 class="wow fadeInUp" data-wow-delay="00ms" data-wow-duration="1500ms">Thông Tin Dự Án</h2>
+            <div class="breadcrumb-list wow fadeInUp" data-wow-delay="200ms" data-wow-duration="1500ms">
+                <a href="@Url.Action("Index", "Homepage")">Home</a><span>
+                    <i class="fa-regular fa-angles-right mx-2"></i>Dự Án
+                </span>
             </div>
-        </section>
-        <!-- Page banner area end here -->
-        <!-- Blog single area start here -->
-        <section class="blog-single-area pt-120 pb-120">
-            <div class="container">
-                <div class="row g-4">
-                    <div class="col-lg-8 order-2 order-lg-1">
-                        <div class="blog__item blog-single__left-item shadow-none">
-                            <div class="image">
+        </div>
+    </section>
+    <!-- Page banner area end here -->
+    <!-- Blog single area start here -->
+    <section class="blog-single-area pt-120 pb-120">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-8 order-2 order-lg-1">
+                    <div class="blog__item blog-single__left-item shadow-none">
+                        <div class="image">
                             @if (projectDetails.Image == null)
                             {
                                 <img src="/images/event/Project_image.jpg" alt="image" style="object-fit:cover; object-position:center;">
@@ -62,19 +62,19 @@
                                 <img src="@projectDetails.Image" alt="image" style="object-fit:cover; object-position:center; max-height: 373px; max-width:770px">
                             }
                             <span class="blog-tag">@projectDetails.DateOfCreation.ToString("MMM dd, yyyy")</span>
-                            </div>
-                            <div class="blog__content p-0">
-                                <h4 class="mt-40 mb-30 fs-30">
-                                    @projectDetails.ProjectName
-                                </h4>
-                                <p class="mb-20 mt-30">
+                        </div>
+                        <div class="blog__content p-0">
+                            <h4 class="mt-40 mb-30 fs-30">
+                                @projectDetails.ProjectName
+                            </h4>
+                            <p class="mb-20 mt-30">
                                 @Html.Raw(projectDetails.Description.Replace("\n", "<br />"))
-                                </p>
-                            </div>
+                            </p>
                         </div>
                     </div>
-                    <div class="col-lg-4 order-1 order-lg-2">
-                        <div class="event-single__right-item">
+                </div>
+                <div class="col-lg-4 order-1 order-lg-2">
+                    <div class="event-single__right-item">
                         <div class="item shadow mb-30 text-center">
                             @if (projectDetails.UserImage == null)
                             {
@@ -96,16 +96,15 @@
                                 <span>Tổ chức</span>
                             }
                         </div>
-                        </div>
                     </div>
                 </div>
-
             </div>
-        </section>
-        <!-- Blog single area end here -->
-        
-        @if(campaigns != null)
-        {
+
+        </div>
+    </section>
+    <!-- Blog single area end here -->
+    @if (campaigns != null)
+    {
         <!-- Cause area start here -->
         <section class="cause-area pt-120 pb-100">
             <div class="container">
@@ -131,18 +130,20 @@
                     <div class="swiper-wrapper py-4">
                         @foreach (var campaign in campaigns)
                         {
-                            var percentage = Math.Round(((decimal)campaign.TotalMoneyEarned/campaign.FundTarget) * 100);
+                            var percentage = Math.Round(((decimal)campaign.TotalMoneyEarned / campaign.FundTarget) * 100);
                             <div class="swiper-slide">
                                 <div class="cause__item">
                                     <div class="cause__image image">
-                                        @if(campaign.Image == null)
+                                        @if (campaign.Image == null)
                                         {
                                             <img src="/images/cause/CampaignImages.jpg" alt="image">
-                                        }else{
+                                        }
+                                        else
+                                        {
                                             <img src="@campaign.Image" alt="image">
                                         }
-                                        
-                                        <span class="cause-tag">@campaign.EndDate.ToString("MMMM dd, yyyy")</span>
+
+                                        <span class="cause-tag">@campaign.EndDate?.ToString("MMMM dd, yyyy")</span>
                                     </div>
                                     <div class="cause__content">
                                         <h4 class="mb-4 mt-20">
@@ -152,9 +153,12 @@
                                         </h4>
                                         <div class="progress-area">
                                             <div class="progress__item">
-                                                @if(percentage >100){
+                                                @if (percentage > 100)
+                                                {
                                                     <div class="progress__content" style="width: 100%;"><span>@percentage%</span></div>
-                                                }else{
+                                                }
+                                                else
+                                                {
                                                     <div class="progress__content" style="width: @percentage%;"><span>@percentage%</span></div>
                                                 }
                                             </div>
@@ -180,6 +184,6 @@
                 </div>
             </div>
         </section>
-        }
-        
+    }
+
 </main>

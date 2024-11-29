@@ -11,7 +11,7 @@
         public decimal FundTarget { get; set; }
         public decimal? TotalMoneyEarned { get; set; }
         public string? Image { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
         public string Address { get; set; }
         public bool IsActive { get; set; }
         public string BankingNumber { get; set; }

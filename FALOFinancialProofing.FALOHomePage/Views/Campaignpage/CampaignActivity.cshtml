@@ -107,18 +107,22 @@
         $('#activityLogs').empty();
 
         activities.forEach(function (activity) {
+            const formattedAmount = activity.expectedMoney.toLocaleString('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            });
             var rowHtml = `<tr>
-                            <td>${new Date(activity.createAt).toLocaleString()}</td>
-                            <td>${activity.description}</td>
-                            <td>${activity.expectedMoney}</td>
-                            <td>${activity.createByName} (${activity.createByEmail})</td>
-                            <td>
-                                ${activity.attachmentFilePath ?
+                                                                                                        <td>${new Date(activity.createAt).toLocaleString()}</td>
+                                                                                                        <td>${activity.description}</td>
+                                                                                                            <td>${formattedAmount}</td>
+                                                                                                        <td>${activity.createByName} (${activity.createByEmail})</td>
+                                                                                                        <td>
+                                                                                                            ${activity.attachmentFilePath ?
                     `<a href="javascript:void(0);" onclick="downloadAttachmentFile('${activity.attachmentFilePath}')">${activity.attachmentFilePath}</a>` :
                     '<span class="text-danger">Thiếu</span>'
                 }
-                            </td>
-                        </tr>`;
+                                                                                                        </td>
+                                                                                                    </tr>`;
             $('#activityLogs').append(rowHtml);
         });
 
@@ -126,17 +130,17 @@
     }
 
     function renderPagination(totalRecords, currentPage, searchInput, campaignId) {
-        const pageSize = 5;  
-        const totalPages = Math.ceil(totalRecords / pageSize);  
+        const pageSize = 5;
+        const totalPages = Math.ceil(totalRecords / pageSize);
         const paginationControls = $('#paginationControls');
-        paginationControls.empty();  
+        paginationControls.empty();
 
         if (currentPage > 1) {
             paginationControls.append(`<button onclick="loadActivityLogs(${currentPage - 1}, '${searchInput}', ${campaignId})"><i class="fa-solid fa-arrow-left-long primary-color transition"></i></button>`);
         }
 
-        const startPage = Math.max(1, currentPage - 2);  
-        const endPage = Math.min(totalPages, currentPage + 2);  
+        const startPage = Math.max(1, currentPage - 2);
+        const endPage = Math.min(totalPages, currentPage + 2);
 
         for (let i = startPage; i <= endPage; i++) {
             if (i === currentPage) {
@@ -188,6 +192,6 @@
                 alert('Error downloading file: ' + error.message);
             });
     }
-    
+
 </script>
 

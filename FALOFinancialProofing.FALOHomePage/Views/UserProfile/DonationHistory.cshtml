@@ -87,13 +87,17 @@
         $('#transactionLogs').empty();
 
         transactions.forEach(function (transaction) {
+            const formattedAmount = transaction.amount.toLocaleString('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            });
             var rowHtml = `<tr>
-                            <td>${transaction.tid}</td>
-                            <td>${new Date(transaction.transactionDate).toLocaleString()}</td>
-                            <td>${transaction.amount}</td>
-                            <td>${transaction.description}</td>
-                            <td>${transaction.campaignName}</td>
-                        </tr>`;
+                                                                            <td>${transaction.tid}</td>
+                                                                            <td>${new Date(transaction.transactionDate).toLocaleString()}</td>
+                                                                                <td>${formattedAmount}</td>
+                                                                            <td>${transaction.description}</td>
+                                                                            <td>${transaction.campaignName}</td>
+                                                                        </tr>`;
             $('#transactionLogs').append(rowHtml);
         });
 
@@ -110,8 +114,8 @@
         // Render "Previous" button
         if (currentPage > 1) {
             paginationControls.append(`<button onclick="loadTransactions(${currentPage - 1}, '${searchInput}')">
-                <i class="fa-solid fa-arrow-left-long primary-color transition"></i>
-            </button>`);
+                                                                <i class="fa-solid fa-arrow-left-long primary-color transition"></i>
+                                                            </button>`);
         }
 
         // Render page number buttons
@@ -129,8 +133,8 @@
         // Render "Next" button
         if (currentPage < totalPages) {
             paginationControls.append(`<button onclick="loadTransactions(${currentPage + 1}, '${searchInput}')">
-                <i class="fa-solid fa-arrow-right-long primary-color transition"></i>
-            </button>`);
+                                                                <i class="fa-solid fa-arrow-right-long primary-color transition"></i>
+                                                            </button>`);
         }
     }
 
