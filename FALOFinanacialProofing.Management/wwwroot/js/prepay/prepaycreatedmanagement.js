@@ -240,7 +240,7 @@ $(document).ready(function () {
     let filterStatus = '';
     function loadPrepayRequests(page) {
         $.ajax({
-            url: `https://localhost:7294/api/RequestForm/getallprepayrequestincampaign/${campaignId}?userId=${userId}&page=${page}&status=${filterStatus}&createdByEmail=${searchEmail}`,
+            url: `https://localhost:7294/api/RequestForm/getallprepayrequestincampaign/${campaignId}?userId=${userId}&page=${page}&status=${filterStatus}&searchDescription=${searchEmail}`,
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -328,11 +328,11 @@ $(document).ready(function () {
     //        paginationContainer.append(pageButton);
     //    }
     //}
-    //$('#searchBox').on('keyup', function () {
-    //    searchEmail = $(this).val().trim();
-    //    currentPage = 1;
-    //    loadPrepayRequests(currentPage);
-    //});
+    $('#searchBox').on('keyup', function () {
+        searchEmail = $(this).val().trim();
+        currentPage = 1;
+        loadPrepayRequests(currentPage);
+    });
     function setupPagination(totalRecords, currentPage) {
         const totalPages = Math.ceil(totalRecords / pageSize);
         const paginationContainer = $('#pagination');

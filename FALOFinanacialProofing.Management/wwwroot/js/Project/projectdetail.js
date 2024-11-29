@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         </div>`;
         }
 
-        //displayFiles(files);
+        displayFiles(files);
 
     }
     loadProjectDetails();

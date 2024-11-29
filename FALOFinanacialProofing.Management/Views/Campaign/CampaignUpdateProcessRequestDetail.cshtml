@@ -176,6 +176,7 @@
                     .css('margin-left', '10px')
                     .text('Cancel Request')
                     .click(function () {
+                        if (confirm('Are you sure you want to cancel this request?')) {
                         $.ajax({
                             url: `https://localhost:7294/api/MoveNextCampaignStatusRequests/CancelMoveNextCampaignStatusRequest?requestId=${id}&senderId=${userId}`,
                             method: 'POST',
@@ -194,6 +195,7 @@
                                 alert('Error: ' + (xhr.responseText || status));
                             }
                         });
+                        }
                     });
                     $('#save-btn').append(cancelButton);
                 }

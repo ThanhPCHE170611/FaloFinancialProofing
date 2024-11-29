@@ -96,7 +96,7 @@
         </div>
         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
-                <h6 class="text-white text-capitalize ps-3 mb-0">Add Member to Campaign</h6>
+                <h6 class="text-white text-capitalize ps-3 mb-0" id="titleAddMember">Add Member to Campaign</h6>
             </div>
         </div>
         <div class="d-flex justify-content-between container-fluid py-4">
@@ -162,6 +162,12 @@
     const jwtToken = localStorage.getItem('jwtToken');
     const userId = localStorage.getItem('userId');
     const checkrole = localStorage.getItem('loggingRole');
+    const campaignName = localStorage.getItem('campaignName');
+    console.log(campaignName);
+    if (campaignName) {
+        const titleElement = document.getElementById('titleAddMember');
+        titleElement.textContent = `Add Member to Campaign ${campaignName}`;
+    }
     $(document).ready(function () {
 
         fetchAvailableVolunteers();
@@ -220,7 +226,11 @@
         const roleSelect = row.find('.role-select');
         const roleId = roleSelect.val();
         const roleName = roleSelect.find('option:selected').text();
-
+        const campaignName = localStorage.getItem('campaignName');
+        if (campaignName) {
+            const titleElement = document.getElementById('titleAddMember');
+            titleElement.textContent = `Add Member to Campaign ${campaignName}`;
+        }
         if (selectedUserIds.includes(userId)) {
             alert('This user is already added to the selected members list.');
             return;

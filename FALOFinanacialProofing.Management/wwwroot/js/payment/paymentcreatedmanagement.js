@@ -234,7 +234,7 @@ $(document).ready(function () {
     let filterStatus = '';
     function loadPrepayRequests(page) {
         $.ajax({
-            url: `https://localhost:7294/api/RequestForm/getallpaymentrequestincampaign/${campaignId}?userId=${userId}&page=${page}&status=${filterStatus}&createdByEmail=${searchEmail}`,
+            url: `https://localhost:7294/api/RequestForm/getallpaymentrequestincampaign/${campaignId}?userId=${userId}&page=${page}&status=${filterStatus}&searchDescription=${searchEmail}`,
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`

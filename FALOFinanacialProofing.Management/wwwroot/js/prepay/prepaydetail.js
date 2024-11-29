@@ -129,24 +129,26 @@ $(document).ready(function () {
                     $(".back-button-container").append(cancelBtn);
 
                     $("#cancelRequestBtn").on('click', function () {
-                        $.ajax({
-                            url: `https://localhost:7294/api/RequestForm/cancelrequest/${requestId}`,
-                            type: 'GET',
-                            headers: {
-                                'Authorization': `Bearer ${jwtToken}`
-                            },
-                            success: function (response) {
-                                if (response.success) {
+                        if (confirm("Are you sure you want to cancel this request?")) {
+                            $.ajax({
+                                url: `https://localhost:7294/api/RequestForm/cancelrequest/${requestId}`,
+                                type: 'GET',
+                                headers: {
+                                    'Authorization': `Bearer ${jwtToken}`
+                                },
+                                success: function (response) {
+                                    if (response.success) {
+                                        alert(response.message);
+                                        location.reload();
+                                    } else {
+                                        alert(`Failed to cancel: ${response.message}`);
+                                    }
+                                },
+                                error: function (response) {
                                     alert(response.message);
-                                    location.reload(); 
-                                } else {
-                                    alert(`Failed to cancel: ${response.message}`);
                                 }
-                            },
-                            error: function (response) {
-                                alert(response.message);
-                            }
-                        });
+                            });
+                        }
                     });
                 }
 
