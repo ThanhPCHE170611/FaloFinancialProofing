@@ -256,7 +256,8 @@ namespace FALOFinancialProofing.Services.ProjectServices
                         IsActive = p.IsActive,
                         OrganizationId = p.OrganizationId,
                         OrganizationName = p.Organization != null ? p.Organization.Name : "No Organization",
-                        Image = UrlHelper.GetImageUrl(request, p.Image, FolderImage.ProjectImageUpload)
+                        Image = UrlHelper.GetImageUrl(request, p.Image, FolderImage.ProjectImageUpload),
+                        Logo = UrlHelper.GetImageUrl(request, p.Organization != null ? p.Organization.Logo : null, FolderImage.OrganizationImageUpload),
                     }).SingleOrDefaultAsync();
             }
             catch (Exception ex)

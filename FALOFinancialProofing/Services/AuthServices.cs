@@ -63,7 +63,7 @@ namespace FALOFinancialProofing.Services
             _roleService = roleService;
             this.userSDGService = userSDGService;
         }
-        public async Task<bool> CheckUserExist(string userId, StringBuilder message)
+        public virtual async Task<bool> CheckUserExist(string userId, StringBuilder message)
         {
             bool checkValid = false;
             try

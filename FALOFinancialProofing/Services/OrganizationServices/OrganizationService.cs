@@ -233,7 +233,6 @@ namespace FALOFinancialProofing.Services.OrganizationServices
                 {
                     throw new Exception("Organization not found!");
                 }
-                //ConvertToBaseEntity(organization, updateOrganization);
                 result = await _organizationRepository.UpdateAsync(updateOrganization);
 
             }
