@@ -1,0 +1,98 @@
+// Footer area start here ***
+.footer {
+	&__main-wrp {
+		position: relative;
+	}
+	&__shape-left {
+		position: absolute;
+		left: 0;
+		top: 0;
+		bottom: 0;
+		img {
+			height: 100%;
+		}
+	}
+	&__shape-right {
+		position: absolute;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		img {
+			height: 100%;
+		}
+	}
+	&__item {
+		.link {
+			li {
+				a {
+					color: var(--white);
+					opacity: 0.8;
+					&:hover {
+						color: var(--primary-color);
+						opacity: 1;
+						padding-left: 10px;
+					}
+				}
+			}
+			&.info {
+				li {
+					a {
+						&:hover {
+							padding-left: 0;
+						}
+					}
+				}
+			}
+		}
+		.post {
+			li {
+				@include flex;
+				gap: 12px;
+				.image {
+					max-width: 78px;
+					width: 100%;
+				}
+				span {
+					font-size: 14px;
+				}
+				a {
+					color: var(--white);
+					opacity: 0.8;
+					font-weight: 500;
+					line-height: 26px;
+					&:hover {
+						color: var(--primary-color);
+						opacity: 1;
+					}
+				}
+			}
+		}
+		.social-icon {
+			@include flex;
+			gap: 15px;
+			a {
+				@include radius(40px, 40px, 40px);
+				background-color: rgba(121, 121, 121, 0.08);
+				color: var(--white);
+				font-size: 20px;
+				&:hover {
+					background-color: var(--white);
+					color: var(--primary-color);
+				}
+				&.active {
+					background-color: var(--white);
+					color: var(--primary-color);
+				}
+			}
+		}
+	}
+	&__copytext {
+		padding: 20px 0;
+		text-align: center;
+		p {
+			color: var(--white);
+		}
+		background-color: var(--black-sub);
+	}
+}
+// Footer area end here ***

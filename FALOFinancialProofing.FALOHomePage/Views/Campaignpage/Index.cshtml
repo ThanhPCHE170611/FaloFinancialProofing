@@ -1,0 +1,148 @@
+﻿@page "/CampaignDetails"
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var campaignDetails = ViewBag.CampaignDetails as FALOFinancialProofing.FALOHomePage.Models.CampaignDetailsDTO;
+    var percentage = Math.Round((campaignDetails.TotalMoneyEarned / campaignDetails.FundTarget) * 100);
+}
+
+<main>
+    <!-- Page banner area start here -->
+    <section class="banner__inner-page bg-image pt-160 pb-160 bg-image"
+             data-background="/images/banner/banner_2.jpg">
+        <div class="container">
+            <h2 class="wow fadeInUp" data-wow-delay="00ms" data-wow-duration="1500ms">Thông Tin Chiến Dịch</h2>
+            <div class="breadcrumb-list wow fadeInUp" data-wow-delay="200ms" data-wow-duration="1500ms">
+                <a href="@Url.Action("Index", "Homepage")">Home</a><span>
+                    <i class="fa-regular fa-angles-right mx-2"></i>Chiến Dịch
+                </span>
+            </div>
+        </div>
+    </section>
+    <!-- Page banner area end here -->
+    <!-- Blog single area start here -->
+    <section class="blog-single-area pt-120 pb-120">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-8 order-2 order-lg-1">
+                    <div class="blog__item blog-single__left-item shadow-none">
+                        <div class="image">
+                            @if(campaignDetails.Image == null)
+                            {
+                                <img src="/images/cause/CampaignImages.jpg" alt="image">
+                            }
+                            else{
+                                <img src="@campaignDetails.Image" alt="image">
+                            }
+                        </div>
+                        <div class="progress-area px-4 pb-4 pt-35 bor border-top-0">
+                            <div class="progress__item">
+                                @if (percentage > 100)
+                                {
+                                    <div class="progress__content" style="width: 100%;"><span>@percentage%</span></div>
+                                }
+                                else
+                                {
+                                    <div class="progress__content" style="width: @percentage%;"><span>@percentage%</span></div>
+                                }
+                            </div>
+                            <div class="progress__goal mt-15">
+                                <h6>Goal : <span>@campaignDetails.FundTarget</span></h6>
+                                <h6>Raised : <span>@campaignDetails.TotalMoneyEarned</span></h6>
+                            </div>
+                        </div>
+                        <div class="blog__content p-0">
+                            <h4 class="mt-20 mb-20 fs-30">
+                                @campaignDetails.Title
+                            </h4>
+                            <p class="mb-20 mt-20">
+                                @Html.Raw(campaignDetails.Description.Replace("\n", "<br />"))
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 order-1 order-lg-2">
+                    <div class="blog-single__right-item">
+                        <div class="item shadow mb-30">
+                            <h5 class="title">Đóng Góp</h5>
+                            @if (campaignDetails.FundTarget > campaignDetails.TotalMoneyEarned)
+                            {
+                                <div class="btn-two d-none d-lg-inline-block">
+
+                                    <span class=" btn-circle">
+                                    </span>
+
+                                    <a asp-controller="Donation" asp-action="CreateQR" asp-route-campaignId="@campaignDetails.CampaignId" spot class="btn-inner">
+                                        <span class="btn-text">
+                                            Ủng Hộ
+                                        </span>
+                                    </a>
+                                    
+                                </div>
+                            }
+                            
+                            else
+                            {
+                            <p class="text-danger"> Chiến dịch đã đóng ủng hộ</p>
+                            }
+                        </div>
+                        <div class="item shadow mb-30">
+                            <h5 class="title">Chứng Thực</h5>
+                            <ul class="category">
+                                <li><a <a href="javascript:void(0);" onclick="downloadAccountingBook(@campaignDetails.CampaignId)">Tải Báo Cáo Tài Chính</a></li>
+                                <li><a href="@Url.Action("Index", "Donation", new {id=campaignDetails.BankId})">Sao Kê</a></li>
+                                <li><a href="@Url.Action("CampaignActivity", "Campaignpage", new {id=campaignDetails.CampaignId})">Hoạt Động</a></li>
+                            </ul>
+                        </div>
+                        @if (campaignDetails.UpdateLog != null && campaignDetails.UpdateLog!="")
+                        {
+                            <div class="item shadow mb-30">
+                                <h5 class="title">Thông Tin Cập Nhật</h5>
+                                <ul class="category">
+                                    <p>@campaignDetails.UpdateLog</p>
+                                </ul>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Blog single area end here -->
+</main>
+
+<script>
+    function downloadAccountingBook(campaignId) {
+        // First, make a request to get the file path from the API
+        const apiUrl = `https://localhost:7294/api/AccountingBook/getaccountingbookincampaign?campaignId=${campaignId}`;
+
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // If the API call is successful, use the file path to download the actual file
+                    const filePath = data.data?.filePath;
+
+                    if (!filePath) {
+                        alert('File không tồn tại');
+                        return;
+                    }
+
+                    const downloadUrl = `https://localhost:7294/api/AccountingBook/downloadaccountingbook/${filePath}`;
+
+                    // Create a temporary anchor element to trigger the download
+                    const a = document.createElement('a');
+                    a.href = downloadUrl;
+                    a.download = filePath; // Optional: use the file name as the download name
+                    a.click(); // Trigger the download
+                } else {
+                    // If the success flag is false, show the error message
+                    alert('Lỗi khi lấy dữ liệu: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Lỗi khi lấy dữ liệu:', error);
+                alert('Lỗi khi tải báo cáo tài chính');
+            });
+    }
+</script>

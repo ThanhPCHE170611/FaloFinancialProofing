@@ -1,0 +1,173 @@
+﻿@{
+    ViewData["Title"] = "ProjectManagement";
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
+
+    <style>
+        .badge-approved {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        .badge-declined {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .badge-pending {
+            background-color: #ffc107;
+            color: #fff;
+        }
+
+        .search-filter-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .search-box {
+            width: 70%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .filter-box {
+            width: 25%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .text-declined {
+            color: red;
+            font-weight: bold;
+        }
+
+        .text-approved {
+            color: green;
+            font-weight: bold;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+            .close:hover, .close:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Project Registration Management</h6>
+                            <div id="createRequestBtn">
+                                <a class="btn btn-dark mb-0 me-3" asp-area="" asp-controller="Project" asp-action="ProjectCreate">Create Project (Individual)</a>
+                                <a class="btn btn-dark mb-0 me-3" asp-area="" asp-controller="Project" asp-action="ProjectCreate_Organization">Create Project (Organization)</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="search-filter-container px-3">
+                        <input type="text" id="searchInput" class="search-box" placeholder="Search by Project Title" onkeyup="searchProject()">
+                        <select id="statusFilter" class="filter-box" onchange="filterByStatus()">
+                            <option value="">All Status</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Accepted">Approved</option>
+                            <option value="Rejected">Rejected</option>
+                            <option value="Cancel">Cancel</option>
+                        </select>
+                    </div>
+
+                    <div class="card-body px-0 pb-2">
+                        <div class="table-responsive p-0">
+                            <table class="table align-items-center mb-0" id="projectTable">
+                                <thead>
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 5%;">STT</th>
+                                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2" style="width: 25%;">Project</th>
+                                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7" style="width: 25%;">Created By</th>
+                                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7" style="width: 15%;">Created Date</th>
+                                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7" style="width: 15%;">Status</th>
+                                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7" style="width: 15%;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="pagination-container text-center mt-4">
+                    <div id="pagination"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="declineModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModalDeclineProjectRequest()">&times;</span>
+            <h3>Reject</h3>
+            <label for="declineReason">Reason for Rejection:</label>
+            <textarea id="declineReason" class="form-control" rows="3" placeholder="Enter feedback..."></textarea>
+            <button class="btn btn-danger mt-3" onclick="submitDecline()">Submit</button>
+        </div>
+    </div>
+
+</body>
+
+</html>
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/js/project/projectrequestmanagement.js"></script>

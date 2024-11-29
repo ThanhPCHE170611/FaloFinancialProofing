@@ -12,9 +12,9 @@
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
     <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
     <style>
         .form-control {
             border: 1px solid #ced4da;
@@ -41,48 +41,21 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <div class="mb-3">
-                                <label for="senderId" class="form-label">Sender ID</label>
-                                <input type="text" class="form-control" id="senderId" readonly value="Sender123">
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="receiver" class="form-label">Receiver</label>
-                                <select class="form-control" id="receiver">
-                                    <option value="">Select a receiver</option>
-                                    <option value="receiver1">Receiver 1</option>
-                                    <option value="receiver2">Receiver 2</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="campaign" class="form-label">Campaign</label>
-                                <input type="text" class="form-control" id="campaign" readonly value="Campaign A">
-                            </div>
 
                             <div class="mb-3">
                                 <label for="title" class="form-label">Title</label>
                                 <textarea class="form-control" id="title" rows="3" placeholder="Enter title here"></textarea>
                             </div>
 
-                            <div class="mb-3" style="display: none;">
-                                <label for="createdAt" class="form-label">Created At</label>
-                                <input type="date" class="form-control" id="createdAt" value="${new Date().toISOString().split('T')[0]}">
-                            </div>
-
                             <div class="mb-3">
-                                <label for="status" class="form-label">Status</label>
-                                <select class="form-control" id="status" onchange="updateStatusOptions()">
-                                    <option value="fundraising">Gây Quỹ</option>
-                                    <option value="deployment">Triển Khai</option>
-                                    <option value="disbursement">Giải Ngân</option>
-                                </select>
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" rows="3" placeholder="Enter description"></textarea>
                             </div>
 
                             <div id="save-btn">
                                 <button type="button" class="btn btn-warning btn-lg" onclick="sendRequest()">Send</button>
                                 <div>
-                                    <a href="campaignmanagement" class="btn btn-success btn-lg" style="margin-left:10px">Cancel</a>
+                                    <a href="/Campaign/CampaignManagement" class="btn btn-success btn-lg" style="margin-left:10px">Cancel</a>
                                 </div>
                             </div>
                         </div>
@@ -92,30 +65,90 @@
         </form>
     </div>
 
-    <script>
-        function updateStatusOptions() {
-            const statusSelect = document.getElementById('status');
-            const currentStatus = statusSelect.value;
 
-            statusSelect.innerHTML = '';
-
-            if (currentStatus === 'fundraising') {
-                statusSelect.innerHTML += '<option value="deployment">Triển Khai</option>';
-                statusSelect.innerHTML += '<option value="disbursement">Giải Ngân</option>';
-            } else if (currentStatus === 'deployment') {
-                statusSelect.innerHTML += '<option value="disbursement">Giải Ngân</option>';
-            } else {
-                statusSelect.innerHTML += '<option value="fundraising">Gây Quỹ</option>';
-                statusSelect.innerHTML += '<option value="deployment">Triển Khai</option>';
-                statusSelect.innerHTML += '<option value="disbursement">Giải Ngân</option>';
-            }
-        }
-
-        function sendRequest() {
-            alert("Request has been sent!");
-        }
-    </script>
 </body>
 
 </html>
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
 
+    async function sendRequest() {
+        const jwtToken = localStorage.getItem('jwtToken');
+        const userId = localStorage.getItem('userId');
+        const campaignId = localStorage.getItem('campaignId');
+
+        if (!jwtToken || !userId || !campaignId) {
+            alert('Missing essential data. Please ensure userId, campaignId, and jwtToken are set in localStorage.');
+            return;
+        }
+
+        const title = document.getElementById('title').value;
+        const description = document.getElementById('description').value;
+
+        if (!title || title.length < 8) {
+            alert('Title is required and must be at least 8 characters long.');
+            document.getElementById('title').focus();
+            return;
+        }
+
+        if (!description || description.length < 8) {
+            alert('Description must be at least 8 characters long.');
+            document.getElementById('description').focus();
+            return;
+        }
+
+        var today = new Date();
+        var year = today.getFullYear();
+        var month = String(today.getMonth() + 1).padStart(2, '0');
+        var day = String(today.getDate()).padStart(2, '0');
+        var hours = String(today.getHours()).padStart(2, '0');
+        var minutes = String(today.getMinutes()).padStart(2, '0');
+        var seconds = String(today.getSeconds()).padStart(2, '0');
+
+        var date = `${year}-${month}-${day}`;
+        var time = `${hours}:${minutes}:${seconds}`;
+        var dateTime = `${date}T${time}`;
+
+        const requestData = {
+            senderId: userId,
+            campaignId: campaignId,
+            title: title,
+            description: description,
+            status: title,
+            statusOfCampaign: description
+        };
+
+        try {
+            const response = await fetch('https://localhost:7294/api/MoveNextCampaignStatusRequests/CreateMoveNextCampaignStatusRequest', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                body: JSON.stringify(requestData)
+            });
+
+            if (response.ok) {
+                const responseData = await response.json();
+                console.log('Request successful:', responseData);
+                alert('Request sent successfully!');
+                window.location.href = `/Campaign/CampaignUpdateProcessManagement`;
+            } else {
+                const errorData = await response.json();
+                console.error('Error:', errorData);
+                alert(errorData.message);
+            }
+        } catch (error) {
+            console.error('Unexpected error:', error);
+            alert('An unexpected error occurred. Please try again later.');
+        }
+    }
+
+
+</script>

@@ -13,12 +13,16 @@ function submitDecline() {
     if (!currentDeclineButton || !currentRequestId) return;
 
     const reason = document.getElementById('declineReason').value.trim();
-    if (!reason) {
-        alert('Please enter a reason for decline.');
+    //if (!reason) {
+    //    alert('Please enter a reason for decline.');
+    //    return;
+    //}
+
+    if (!reason || reason.length < 10) {
+        alert('The reason must be at least 10 characters long.');
+        document.getElementById('declineReason').focus(); 
         return;
     }
-
-
 
     let apiUrl = '';
     if (checkrole === "Volunteer Leader") {
@@ -226,7 +230,10 @@ function approveRequest(button, requestId) {
                     console.log(checkrole);
                     console.log(userId);
                     console.log(requestId);
-                    showFileUploadPopup(requestId);
+                    //showFileUploadPopup(requestId);
+                    updateRowToApprovedForPM(button, requestId);
+                    alert("Request approved successfully for Accounting.");
+                    location.reload();
                 } else {
                     alert(response.message || "Failed to approve the request.");
                 }
@@ -383,8 +390,8 @@ function downloadAttachment(fileName) {
             link.download = fileName;
             link.click();
         },
-        error: function () {
-            alert('Failed to download attachment file. Please try again.');
+        error: function (errors) {
+            alert(errors);
         }
     });
 }
@@ -471,39 +478,7 @@ $(document).ready(function () {
     const checkrole = localStorage.getItem('loggingRole');
     const jwtToken = localStorage.getItem('jwtToken');
     let currentPage = 1;
-    const pageSize = 5;
-
-    if (checkrole && checkrole !== 'Volunteer') {
-        const nametitle = document.getElementById('nametitle');
-        nametitle.textContent = 'Approve Payment Request';
-
-        const createRequestLink = document.getElementById('create_request_page');
-        createRequestLink.style.display = 'none';
-
-        const newLink = document.createElement('a');
-        newLink.setAttribute('asp-controller', 'Prepay');
-        newLink.setAttribute('asp-action', 'PrepayManagement_PM');
-        newLink.textContent = 'Prepay Created Request';
-
-        const newLink2 = document.createElement('a');
-        newLink2.setAttribute('asp-controller', 'Payment');
-        newLink2.setAttribute('asp-action', 'PaymentManagement_PM');
-        newLink2.textContent = 'Payment Created Request';
-
-        const url = new URL(`/Prepay/PrepayManagement_PM`, window.location.origin);
-        if (campaignId) {
-            url.searchParams.set('campaignid', campaignId);
-        }
-
-        const url2 = new URL(`/Payment/PaymentManagement_PM`, window.location.origin);
-        if (campaignId) {
-            url.searchParams.set('campaignid', campaignId);
-        }
-        newLink.href = url.toString();
-        newLink2.href = url2.toString();
-        navTabs.appendChild(newLink);
-        navTabs.appendChild(newLink2);
-    }
+    const pageSize = 30;
 
     function formatDateTime(dateString) {
         if (!dateString) return 'N/A';
@@ -525,7 +500,8 @@ $(document).ready(function () {
     }
 
     
-
+    let searchEmail = ''; 
+    let filterStatus = ''; 
 
     function loadPrepayRequests(page) {
         let apiUrl;
@@ -540,10 +516,9 @@ $(document).ready(function () {
                 apiUrl = `https://localhost:7294/api/ApproveProcess/getallpaymentrequestforvolunteerleaderincampaign/${userId}?currentLoggingRole=${checkrole}&campaignId=${campaignId}&page=${page}`;
                 break;
             default:
-                apiUrl = `https://localhost:7294/api/RequestForm/getallpaymentrequestincampaign/${campaignId}?userId=${userId}&page=${page}`;
                 break;
         }
-
+        apiUrl += `&status=${filterStatus}&createdByEmail=${searchEmail}`;
         $.ajax({
             url: apiUrl,
             method: 'GET',
@@ -601,8 +576,8 @@ $(document).ready(function () {
                         }
 
                         let voucherLinks = '';
-                        if (request.voucherFiles && request.voucherFiles.length > 0) {
-                            const validFiles = request.voucherFiles.filter(file => file.filePath);
+                        if (request.vouchers && request.vouchers.length > 0) {
+                            const validFiles = request.vouchers.filter(file => file.filePath);
                             if (validFiles.length > 0) {
                                 voucherLinks = validFiles.map(file => `
                                 <a href="javascript:void(0);" onclick="downloadVoucher('${file.filePath}')" class="btn btn-link text-info">${file.filePath}</a>
@@ -615,14 +590,14 @@ $(document).ready(function () {
                         }
                         tbody.append(`
                                     <tr data-request-id="${request.id}">
-                                        <td class="align-middle text-center text-sm">${index + 1}</td>
+                                        <td class="align-middle text-center ">${index + 1}</td>
                                         <td><span class="text-secondary text-xs font-weight-bold">${request.createByName}</span></td>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${request.expectedMoney.toLocaleString()}</span></td>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${request.createByEmail}</span></td>
+                                        <td class="align-middle text-center "><span class="text-secondary text-xs font-weight-bold">${request.expectedMoney.toLocaleString()}</span></td>
+                                        <td class="align-middle text-center "><span class="text-secondary text-xs font-weight-bold">${request.createByEmail}</span></td>
                                         <td class="align-middle text-center">${attachmentLinks}</td>
                                         <td class="align-middle text-center">${voucherLinks}</td>
-                                        <td class="align-middle text-center text-sm">${statusLabel}</td>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${formatDateTime(request.createAt)}</span></td>
+                                        <td class="align-middle text-center ">${statusLabel}</td>
+                                        <td class="align-middle text-center "><span class="text-secondary text-xs font-weight-bold">${formatDateTime(request.createAt)}</span></td>
                                         <td class="align-middle text-center">${actionButtons}</td>
                                     </tr>
                                 `);
@@ -639,16 +614,86 @@ $(document).ready(function () {
         });
     }
 
+    //function setupPagination(totalRecords, currentPage) {
+    //    const totalPages = Math.ceil(totalRecords / pageSize);
+    //    const paginationContainer = $('#pagination');
+    //    paginationContainer.empty();
+    //    for (let i = 1; i <= totalPages; i++) {
+    //        const pageButton = $(`<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}">${i}</button>`);
+    //        pageButton.on('click', () => changePage(i));
+    //        paginationContainer.append(pageButton);
+    //    }
+    //}
     function setupPagination(totalRecords, currentPage) {
         const totalPages = Math.ceil(totalRecords / pageSize);
         const paginationContainer = $('#pagination');
         paginationContainer.empty();
-        for (let i = 1; i <= totalPages; i++) {
-            const pageButton = $(`<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}">${i}</button>`);
-            pageButton.on('click', () => changePage(i));
-            paginationContainer.append(pageButton);
+
+        const maxVisibleButtons = 5; 
+        const ellipsis = `<span class="btn btn-sm btn-light disabled">...</span>`;
+
+        function createPageButton(page) {
+            return $(`<button class="btn btn-sm btn-page ${page === currentPage ? 'btn-primary' : 'btn-light'}">${page}</button>`)
+                .on('click', () => changePage(page));
         }
+
+        const prevButton = $(`<button class="btn btn-sm btn-page ${currentPage === 1 ? 'btn-light disabled' : 'btn-light'}">Previous</button>`);
+        prevButton.on('click', () => {
+            if (currentPage > 1) changePage(currentPage - 1);
+        });
+        paginationContainer.append(prevButton);
+
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisibleButtons / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisibleButtons - 1);
+
+        if (endPage - startPage + 1 < maxVisibleButtons) {
+            startPage = Math.max(1, endPage - maxVisibleButtons + 1);
+        }
+
+        if (startPage > 1) {
+            paginationContainer.append(createPageButton(1));
+            if (startPage > 2) {
+                paginationContainer.append($(ellipsis));
+            }
+        }
+
+        for (let page = startPage; page <= endPage; page++) {
+            paginationContainer.append(createPageButton(page));
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                paginationContainer.append($(ellipsis));
+            }
+            paginationContainer.append(createPageButton(totalPages));
+        }
+
+        const nextButton = $(`<button class="btn btn-sm btn-page ${currentPage === totalPages ? 'btn-light disabled' : 'btn-light'}">Next</button>`);
+        nextButton.on('click', () => {
+            if (currentPage < totalPages) changePage(currentPage + 1);
+        });
+        paginationContainer.append(nextButton);
     }
+
+    window.changePage = function (page) {
+        if (page < 1 || page > Math.ceil(totalRecords / pageSize)) return; 
+        currentPage = page;
+        loadPrepayRequests(page); 
+    };
+
+
+    $('#searchBox').on('keyup', function () {
+        searchEmail = $(this).val().trim();
+        currentPage = 1;
+        loadPrepayRequests(currentPage);
+    });
+
+    $('#statusFilter').on('change', function () {
+        filterStatus = $(this).val();
+        currentPage = 1;
+        loadPrepayRequests(currentPage);
+    });
+
 
     window.changePage = function (page) {
         currentPage = page;

@@ -13,10 +13,15 @@
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
     <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
     <style>
+        #save-btn {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
         .container-fluid {
             padding-top: 20px;
         }
@@ -81,12 +86,10 @@
     <div class="container-fluid py-4">
         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="pt-4 pb-3 d-flex justify-content-between align-items-center">
-                <nav class="nav-tabs">
+                <nav class="nav-tabs" id="navTabs">
                     <a asp-controller="Campaign" asp-action="CampaignDetail" >Campaign Detail</a>
-                    <a asp-controller="Prepay" asp-action="PrepayManagement">Prepay Request</a>
-                    <a asp-controller="Payment" asp-action="PaymentManagement">Payment Request</a>
-                    <a asp-controller="Prepay" asp-action="PrepayVoucher">Prepay Voucher</a>
-                    <a asp-controller="Payment" asp-action="PaymentVoucher">Payment Voucher</a>
+                    <a asp-controller="Prepay" asp-action="PrepayManagement">Created Prepay Request</a>
+                    <a asp-controller="Payment" asp-action="PaymentManagement">Created Payment Request</a>
                     <a asp-controller="Accounting" asp-action="AccountingBookCampaign">Accounting Book</a>
                     <a asp-controller="Campaign" asp-action="Member" class="active">Member</a>
                 </nav>
@@ -94,7 +97,7 @@
         </div>
         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
-                <h6 class="text-white text-capitalize ps-3 mb-0">Add Member to Campaign</h6>
+                <h6 class="text-white text-capitalize ps-3 mb-0" id="titleAddMember">Add Member to Campaign</h6>
             </div>
         </div>
         <div class="d-flex justify-content-between container-fluid py-4">
@@ -180,91 +183,206 @@
                     </tbody>
                 </table>
                 <div class="btn-add">
-                    <button class="btn btn-dark" onclick="addToCampaign()">Add to Campaign</button>
+                    <button class="btn btn-primary" onclick="addToCampaign()">Add to Campaign</button>
                 </div>
             </div>
         </div>
+        <div id="save-btn">
+            <a href="/Campaign/Member" class="btn btn-info btn-lg" style="margin-left:10px">Back to List</a>
+        </div>
     </div>
 
-    <script>
-        let accountantAssigned = false;
 
-        function enforceSingleAccountant(select) {
-            if (select.value === 'Accountant' && accountantAssigned) {
-                alert('Only one Accountant can be selected.');
-                select.value = 'Team Member';
-            }
-        }
-
-        function addToSelectedList(button) {
-            const row = button.closest('tr');
-            const name = row.cells[1].innerText;
-            const roleSelect = row.cells[2].querySelector('.role-select');
-            const role = roleSelect.value;
-
-            if (role === 'Accountant' && accountantAssigned) {
-                alert('Only one Accountant can be selected.');
-                return;
-            }
-
-            const selectedMembersList = document.getElementById('selectedMembersList');
-            const newRow = `
-                <tr>
-                    <td>${selectedMembersList.rows.length + 1}</td>
-                    <td>${name}</td>
-                    <td>${role}</td>
-                    <td><button class="btn btn-danger btn-sm" onclick="removeFromSelectedList(this, '${role}')">Remove</button></td>
-                </tr>
-            `;
-            selectedMembersList.innerHTML += newRow;
-
-            if (role === 'Accountant') accountantAssigned = true;
-        }
-
-        function removeFromSelectedList(button, role) {
-            const row = button.closest('tr');
-            row.remove();
-
-            if (role === 'Accountant') accountantAssigned = false;
-            updateSelectedListNumbers();
-        }
-
-        function updateSelectedListNumbers() {
-            const rows = document.getElementById('selectedMembersList').rows;
-            for (let i = 0; i < rows.length; i++) {
-                rows[i].cells[0].innerText = i + 1;
-            }
-        }
-
-        function checkRoles() {
-            const selectedRows = Array.from(document.getElementById('selectedMembersList').rows);
-            const roles = new Set(selectedRows.map(row => row.cells[2].innerText));
-            return roles.has('Team Member') && roles.has('Team Leader') && roles.has('Accountant');
-        }
-
-        function addToCampaign() {
-            if (!checkRoles()) {
-                alert('Each role (Team Member, Team Leader, Accountant) must be selected before adding to the campaign.');
-                return;
-            }
-
-            alert('Members successfully added to campaign!');
-        }
-
-        function filterVolunteers() {
-            const searchInput = document.getElementById('volunteerSearchBox').value.toLowerCase();
-            const rows = document.getElementById('volunteerTable').getElementsByTagName('tr');
-
-            for (let i = 1; i < rows.length; i++) {
-                const name = rows[i].cells[1].innerText.toLowerCase();
-                rows[i].style.display = name.includes(searchInput) ? '' : 'none';
-            }
-        }
-    </script>
-
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
 </body>
 
 </html>
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    let accountantAssigned = false;
+    let selectedUserIds = [];
+    const campaignId = localStorage.getItem('campaignId');
+    const jwtToken = localStorage.getItem('jwtToken');
+    const userId = localStorage.getItem('userId');
+    const checkrole = localStorage.getItem('loggingRole');
+    const campaignName = localStorage.getItem('campaignName');
+    if (campaignName) {
+        const titleElement = document.getElementById('titleAddMember');
+        titleElement.textContent = `Add Member to Campaign ${campaignName}`;
+    }
+    $(document).ready(function () {
+
+        fetchAvailableVolunteers();
+
+        if (checkrole && checkrole !== 'Volunteer') {
+            const navTabs = document.getElementById('navTabs');
+            const newLink = document.createElement('a');
+            newLink.setAttribute('asp-controller', 'Prepay');
+            newLink.setAttribute('asp-action', 'PrepayManagement_PM');
+            newLink.textContent = 'Approval Prepay Request';
+
+            const newLink2 = document.createElement('a');
+            newLink2.setAttribute('asp-controller', 'Payment');
+            newLink2.setAttribute('asp-action', 'PaymentManagement_PM');
+            newLink2.textContent = 'Approval Payment Request';
+
+            const url = new URL(`/Prepay/PrepayManagement_PM`, window.location.origin);
+
+
+            const url2 = new URL(`/Payment/PaymentManagement_PM`, window.location.origin);
+
+            newLink.href = url.toString();
+            newLink2.href = url2.toString();
+            navTabs.appendChild(newLink);
+            navTabs.appendChild(newLink2);
+        }
+
+        function fetchAvailableVolunteers() {
+            const searchInput = $('#volunteerSearchBox').val().trim();
+            $.ajax({
+                url: `https://localhost:7294/api/Users/GetUserNotInCampaignById/${campaignId}?searchInput=${searchInput}`,
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                success: function (response) {
+                    if (response.success) {
+                        renderVolunteerTable(response.data);
+                    } else {
+                        alert('Failed to fetch data: ' + response.message);
+                    }
+                },
+                error: function (errors) {
+                    alert('Error fetching available volunteers');
+                    console.error(errors);
+                }
+            });
+        }
+        $('#volunteerSearchBox').on('keyup', function () {
+            currentPage = 1;
+            fetchAvailableVolunteers();
+        });
+
+        function renderVolunteerTable(users) {
+            const tableBody = $('#volunteerList');
+            tableBody.empty();
+
+            users.forEach((user, index) => {
+                const rolesOptions = user.roles.map(role => `<option value="${role.roleId}">${role.roleName}</option>`).join('');
+                const row = `
+                    <tr data-user-id="${user.id}">
+                        <td>${index + 1}</td>
+                        <td>${user.firstName} ${user.lastName}</td>
+                        <td>
+                            <select class="form-select role-select">${rolesOptions}</select>
+                        </td>
+                        <td><button class="btn btn-success btn-sm" onclick="addToSelectedList(this)">Add</button></td>
+                    </tr>
+                `;
+                tableBody.append(row);
+            });
+        }
+    });
+
+    function addToSelectedList(button) {
+        const row = $(button).closest('tr');
+        const userId = row.data('user-id');
+        const name = row.find('td:nth-child(2)').text();
+        const roleSelect = row.find('.role-select');
+        const roleId = roleSelect.val();
+        const roleName = roleSelect.find('option:selected').text();
+
+        if (selectedUserIds.includes(userId)) {
+            alert('This user is already added to the selected members list.');
+            return;
+        }
+        if (roleName === 'Accounting' && accountantAssigned) {
+            alert('Only one Accountant can be selected.');
+            return;
+        }
+        if (roleName === 'Accounting') {
+            accountantAssigned = true;
+        }
+
+        selectedUserIds.push(userId);
+        const selectedMembersList = $('#selectedMembersList');
+        const newRow = `
+            <tr data-user-id="${userId}" data-role-id="${roleId}" data-role-name="${roleName}">
+                <td>${selectedMembersList.children().length + 1}</td>
+                <td>${name}</td>
+                <td>${roleName}</td>
+                <td><button class="btn btn-danger btn-sm" onclick="removeFromSelectedList(this, '${userId}', '${roleName}')">Remove</button></td>
+            </tr>
+        `;
+        console.log(newRow);
+        selectedMembersList.append(newRow);
+    }
+
+    function removeFromSelectedList(button, userId, roleName) {
+        $(button).closest('tr').remove();
+        selectedUserIds = selectedUserIds.filter(id => id !== userId);
+        if (roleName === 'Accounting') {
+            accountantAssigned = false;
+        }
+        updateSelectedListNumbers();
+    }
+
+    function updateSelectedListNumbers() {
+        $('#selectedMembersList tr').each((index, row) => {
+            $(row).find('td:first').text(index + 1);
+        });
+    }
+    // function checkRequiredRoles() {
+    //     const selectedRows = $('#selectedMembersList tr');
+    //     const roles = new Set();
+
+    //     selectedRows.each((_, row) => {
+    //         const roleName = $(row).data('role-name');
+    //         roles.add(roleName);
+    //     });
+    //     return roles.has('Accounting') && roles.has('Volunteer Leader') && roles.has('Volunteer');
+    // }
+
+    function addToCampaign() {
+        const selectedMembers = [];
+        $('#selectedMembersList tr').each((_, row) => {
+            const userId = $(row).data('user-id');
+            const roleId = $(row).data('role-id');
+            selectedMembers.push({ userId, roleId });
+        });
+
+        if (selectedMembers.length === 0) {
+            alert('No members selected to add to the campaign.');
+            return;
+        }
+
+        $.ajax({
+            url: `https://localhost:7294/api/CampaignMember/CreateManyCampaignMembers/${campaignId}/${userId}`,
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(selectedMembers),
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            },
+            success: function (response) {
+                if (response.success) {
+                    alert('Members successfully added to the campaign!');
+                    location.reload(); 
+                } else {
+                    alert('Failed to add members: ' + response.message);
+                    location.reload();
+                }
+            },
+            error: function () {
+                alert('Error adding members to the campaign');
+            }
+        });
+    }
+</script>
+
 

@@ -1,0 +1,186 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var campaignId = ViewBag.CampaignId;
+}
+
+<style>
+    .table {
+        margin: 10px auto; /* Space on top and bottom */
+        width: 100%; /* Adjust width as needed */
+    }
+
+        .table th, .table td {
+            padding: 10px; /* Space inside the cells */
+        }
+</style>
+
+<div class="container">
+    <h2>Sao Kê</h2>
+
+    <!-- Search Bar -->
+    <div class="blog-single__right-item">
+        <div class="item shadow mb-30">
+            <h5 class="title">Search</h5>
+            <div class="serach-bar">
+                <input type="text" id="searchInput" placeholder="Search here">
+                <button id="searchButton"><i class="fa-regular fa-magnifying-glass"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Message -->
+    <div id="errorMessage" class="alert alert-danger" style="display: none;"></div>
+
+    <!-- Table for Transactions -->
+    <div id="transactionsContainer">
+        <!-- Data will be populated here using JavaScript -->
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="pegi justify-content-center mt-80 pagination" id="paginationContainer">
+        <!-- Pagination links will be populated here using JavaScript -->
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    const campaignId = @campaignId;
+    const pageSize = 5;
+
+    let currentPage = 1;
+    let totalPages = 1;
+    let totalDataCount = 0;
+
+    // Function to fetch transaction logs from the API
+    function fetchTransactions(page = 1, searchQuery = "") {
+        const url = `https://localhost:7294/api/TransactionLogs/GetCampaignTransactionLogs/${campaignId}?currentPage=${page}&searchQuery=${encodeURIComponent(searchQuery)}`;
+
+        console.log("Fetching URL:", url); // Log the request URL for debugging
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                console.log("API Response:", data); // Log the API response
+                if (data?.data?.data) {
+                    displayTransactions(data.data.data);
+                    totalPages = Math.ceil(data.data.dataCount / pageSize);
+                    totalDataCount = data.data.dataCount;
+                    updatePagination();
+                } else {
+                    displayError("No transaction logs available.");
+                }
+            })
+            .catch(error => {
+                displayError("An error occurred while fetching the data.");
+                console.error("Error fetching transaction logs:", error);
+            });
+    }
+
+    // Function to display transaction logs in the table
+    function displayTransactions(transactions) {
+        const tableContainer = document.getElementById('transactionsContainer');
+        tableContainer.innerHTML = '';  // Clear any existing table content
+        if (transactions.length === 0) {
+            displayError("No matching transactions found.");
+            return;
+        }
+
+        let tableHtml = `<table class="table table-bordered table-hover" id="transactions-table">
+                                                 <thead>
+                                                     <tr>
+                                                         <th scope="col">Mã Giao Dịch</th>
+                                                         <th scope="col">Thời Điểm Giao Dịch</th>
+                                                         <th scope="col">Số Tiền</th>
+                                                         <th scope="col">Nội Dung Giao Dịch</th>
+                                                     </tr>
+                                                 </thead>
+                                                 <tbody>`;
+
+        transactions.forEach(log => {
+            tableHtml += `<tr>
+                                                 <td>${log.tid}</td>
+                                                 <td>${new Date(log.transactionDate).toLocaleString()}</td>
+                                                 <td>${log.amount}</td>
+                                                 <td>${log.description}</td>
+                                               </tr>`;
+        });
+
+        tableHtml += `</tbody></table>`;
+        tableContainer.innerHTML = tableHtml;
+    }
+
+    // Function to display error messages
+    function displayError(message) {
+        const errorMessage = document.getElementById('errorMessage');
+        errorMessage.textContent = message;
+        errorMessage.style.display = 'block';
+    }
+
+    // Function to update pagination links
+    function updatePagination() {
+        const paginationContainer = document.getElementById('paginationContainer');
+        paginationContainer.innerHTML = '';  // Clear existing pagination buttons
+
+        // Previous button
+        if (currentPage > 1) {
+            const prevPageButton = document.createElement('button');
+            prevPageButton.innerHTML = `<i class="fa-solid fa-arrow-left-long primary-color transition"></i>`;
+            prevPageButton.onclick = () => changePage(currentPage - 1);
+            paginationContainer.appendChild(prevPageButton);
+        }
+
+        // Page number buttons
+        const startPage = Math.max(1, currentPage - 2);  // Show pages before current
+        const endPage = Math.min(totalPages, currentPage + 2);  // Show pages after current
+
+        for (let page = startPage; page <= endPage; page++) {
+            const pageButton = document.createElement('button');
+            pageButton.textContent = page;
+            if (page === currentPage) {
+                pageButton.classList.add('active');
+                pageButton.disabled = true;
+            }
+            pageButton.onclick = () => changePage(page);
+            paginationContainer.appendChild(pageButton);
+        }
+
+        // Next button
+        if (currentPage < totalPages) {
+            const nextPageButton = document.createElement('button');
+            nextPageButton.innerHTML = `<i class="fa-solid fa-arrow-right-long primary-color transition"></i>`;
+            nextPageButton.onclick = () => changePage(currentPage + 1);
+            paginationContainer.appendChild(nextPageButton);
+        }
+    }
+
+    // Function to handle page change
+    function changePage(page) {
+        if (page >= 1 && page <= totalPages) {
+            currentPage = page;
+            const searchQuery = document.getElementById('searchInput').value;  // Get search input
+            fetchTransactions(currentPage, searchQuery);  // Fetch data for new page
+        }
+    }
+
+    // Listen for Enter key press or click on search button
+    document.getElementById('searchInput').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+            const searchQuery = e.target.value;
+            console.log("Search Query:", searchQuery);
+            currentPage = 1;
+            fetchTransactions(currentPage, searchQuery);
+        }
+    });
+
+    document.getElementById('searchButton').addEventListener('click', function () {
+        const searchQuery = document.getElementById('searchInput').value;
+        console.log("Search Query:", searchQuery);
+        currentPage = 1;
+        fetchTransactions(currentPage, searchQuery);
+    });
+
+    // Initial fetch
+    fetchTransactions(currentPage);
+</script>
+

@@ -1,0 +1,193 @@
+﻿@page "/campaignActivity"
+@using static FALOFinancialProofing.FALOHomePage.Models.AttachmentFileDTO
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .table {
+        margin: 10px auto; /* Space on top and bottom */
+        width: 100%; /* Adjust width as needed */
+    }
+
+        .table th, .table td {
+            padding: 10px; /* Space inside the cells */
+        }
+
+    .pagination {
+        margin: 20px 0;
+        text-align: center;
+    }
+
+        .pagination button {
+            margin: 0 5px;
+        }
+</style>
+
+<div class="container">
+    <h2>Hoạt Động</h2>
+    <!-- Search Bar -->
+    <div class="blog-single__right-item">
+        <div class="item shadow mb-30">
+            <h5 class="title">Search</h5>
+            <div class="serach-bar">
+                <input type="text" id="searchInput" placeholder="Search here">
+                <button id="searchButton"><i class="fa-regular fa-magnifying-glass"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Message -->
+    <div id="errorMessage" class="alert alert-danger" style="display:none;"></div>
+
+    <!-- Table for displaying the activity logs -->
+    <table class="table table-bordered table-hover" id="activityTable" style="display:none;">
+        <thead>
+            <tr>
+                <th scope="col">Thời Gian</th>
+                <th scope="col">Mô tả hoạt động</th>
+                <th scope="col">Số tiền</th>
+                <th scope="col">Người thực hiện</th>
+                <th scope="col">Chứng thực</th>
+            </tr>
+        </thead>
+        <tbody id="activityLogs"></tbody>
+    </table>
+
+    <!-- Pagination controls -->
+    <div id="paginationControls" class="pegi justify-content-center mt-80 pagination"></div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var campaignId = '@ViewBag.campaignId';
+        loadActivityLogs(1, "", campaignId);  // Initial load for page 1
+
+        // Search functionality
+        $('#searchButton').click(function () {
+            var searchInput = $('#searchInput').val();
+            loadActivityLogs(1, searchInput, campaignId);
+        });
+
+        // Allow pressing Enter to trigger search
+        $('#searchInput').keypress(function (e) {
+            if (e.which === 13) {  // Enter key
+                var searchInput = $('#searchInput').val();
+                loadActivityLogs(1, searchInput, campaignId);
+            }
+        });
+    });
+
+    // Function to load activity logs with pagination
+    function loadActivityLogs(currentPage, searchInput, campaignId) {
+        const apiUrl = `https://localhost:7294/api/AttachmentFile/getallpaymentattachmentincampaignwithrequest/${campaignId}?name=${searchInput}&page=${currentPage}`;
+
+        $.ajax({
+            url: apiUrl,
+            type: 'GET',
+            success: function (response) {
+                if (response && response.success && response.data && response.data.data) {
+                    renderActivityLogs(response.data.data);
+                    renderPagination(response.data.totalRecords, currentPage, searchInput, campaignId);
+                } else {
+                    showError("No data found.");
+                }
+            },
+            error: function () {
+                showError("Failed to fetch activity logs.");
+            }
+        });
+    }
+
+    // Function to render the activity logs in the table
+    function renderActivityLogs(activities) {
+        $('#activityTable').show();
+        $('#activityLogs').empty();
+
+        activities.forEach(function (activity) {
+            var rowHtml = `<tr>
+                            <td>${new Date(activity.createAt).toLocaleString()}</td>
+                            <td>${activity.description}</td>
+                            <td>${activity.expectedMoney}</td>
+                            <td>${activity.createByName} (${activity.createByEmail})</td>
+                            <td>
+                                ${activity.attachmentFilePath ?
+                    `<a href="javascript:void(0);" onclick="downloadAttachmentFile('${activity.attachmentFilePath}')">${activity.attachmentFilePath}</a>` :
+                    '<span class="text-danger">Thiếu</span>'
+                }
+                            </td>
+                        </tr>`;
+            $('#activityLogs').append(rowHtml);
+        });
+
+        $('#errorMessage').hide();
+    }
+
+    function renderPagination(totalRecords, currentPage, searchInput, campaignId) {
+        const pageSize = 5;  
+        const totalPages = Math.ceil(totalRecords / pageSize);  
+        const paginationControls = $('#paginationControls');
+        paginationControls.empty();  
+
+        if (currentPage > 1) {
+            paginationControls.append(`<button onclick="loadActivityLogs(${currentPage - 1}, '${searchInput}', ${campaignId})"><i class="fa-solid fa-arrow-left-long primary-color transition"></i></button>`);
+        }
+
+        const startPage = Math.max(1, currentPage - 2);  
+        const endPage = Math.min(totalPages, currentPage + 2);  
+
+        for (let i = startPage; i <= endPage; i++) {
+            if (i === currentPage) {
+                paginationControls.append(`<button class="active" disabled>${i}</button>`);
+            } else {
+                paginationControls.append(`<button onclick="loadActivityLogs(${i}, '${searchInput}', ${campaignId})">${i}</button>`);
+            }
+        }
+
+        if (currentPage < totalPages) {
+            paginationControls.append(`<button onclick="loadActivityLogs(${currentPage + 1}, '${searchInput}', ${campaignId})"><i class="fa-solid fa-arrow-right-long primary-color transition"></i></button>`);
+        }
+    }
+
+
+    // Function to show error message
+    function showError(message) {
+        $('#errorMessage').text(message).show();
+        $('#activityTable').hide();
+    }
+
+    // Function to handle file download
+    function downloadAttachmentFile(filePath) {
+        const filename = filePath.split('/').pop();
+        const url = `https://localhost:7294/api/AttachmentFile/downloadattachmentfilewithnotypebyfilename/${filename}`;
+
+        fetch(url)
+            .then(response => {
+                if (response.ok) {
+                    return response.blob();
+                } else {
+                    throw new Error('Failed to fetch the file: ' + response.statusText);
+                }
+            })
+            .then(blob => {
+                const link = document.createElement('a');
+                const blobUrl = URL.createObjectURL(blob);
+
+                link.href = blobUrl;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                URL.revokeObjectURL(blobUrl);
+            })
+            .catch(error => {
+                console.error('Error downloading file:', error);
+                alert('Error downloading file: ' + error.message);
+            });
+    }
+    
+</script>
+

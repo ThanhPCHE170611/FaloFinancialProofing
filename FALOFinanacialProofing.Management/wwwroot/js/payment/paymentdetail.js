@@ -10,12 +10,12 @@ $(document).ready(function () {
         const newLink = document.createElement('a');
         newLink.setAttribute('asp-controller', 'Prepay');
         newLink.setAttribute('asp-action', 'PrepayManagement_PM');
-        newLink.textContent = 'Prepay Created Request';
+        newLink.textContent = 'Appoval Prepay Request';
 
         const newLink2 = document.createElement('a');
         newLink2.setAttribute('asp-controller', 'Payment');
         newLink2.setAttribute('asp-action', 'PaymentManagement_PM');
-        newLink2.textContent = 'Payment Created Request';
+        newLink2.textContent = 'Approval Payment Request';
 
         const url = new URL(`/Prepay/PrepayManagement_PM`, window.location.origin);
         if (campaignId) {
@@ -48,11 +48,29 @@ $(document).ready(function () {
     <p><strong>Create Date:</strong> ${new Date(data.createAt).toLocaleDateString()}</p>
     <p><strong>Expected Money:</strong> ${data.expectedMoney.toLocaleString()} VND</p>
     <p><strong>Description:</strong> ${data.description}</p>
+    <p><strong>Feed Back:</strong> ${safeValue(data.feedBack)}</p>
     `);
 
+                //if (data.attachmentFiles && data.attachmentFiles.length > 0) {
+                //    const attachmentLinks = data.attachmentFiles.map(file =>
+                //        `<a href="${file.filePath}" download="${file.filePath.split('_').pop()}">${file.filePath.split('_').pop()}</a>`
+                //    ).join(', ');
+                //    $(".left-section").append(`<p><strong>Attachment Files:</strong> ${attachmentLinks}</p>`);
+                //} else {
+                //    $(".left-section").append(`<p><strong>Attachment Files:</strong> No Attachment File</p>`);
+                //}
+
+                //if (data.voucherFiles && data.voucherFiles.length > 0 && data.voucherFiles.some(file => file.filePath)) {
+                //    const voucherLinks = data.voucherFiles.filter(file => file.filePath).map(file =>
+                //        `<a href="${file.filePath}" download="${file.filePath.split('_').pop()}">${file.filePath.split('_').pop()}</a>`
+                //    ).join(', ');
+                //    $(".left-section").append(`<p><strong>Voucher Files:</strong> ${voucherLinks}</p>`);
+                //} else {
+                //    $(".left-section").append(`<p><strong>Voucher Files:</strong> No Attachment File</p>`);
+                //}
                 if (data.attachmentFiles && data.attachmentFiles.length > 0) {
                     const attachmentLinks = data.attachmentFiles.map(file =>
-                        `<a href="${file.filePath}" download="${file.filePath.split('_').pop()}">${file.filePath.split('_').pop()}</a>`
+                        `<a href="#" class="attachment-link" data-file="${file.filePath}">${file.filePath.split('_').pop()}</a>`
                     ).join(', ');
                     $(".left-section").append(`<p><strong>Attachment Files:</strong> ${attachmentLinks}</p>`);
                 } else {
@@ -61,12 +79,24 @@ $(document).ready(function () {
 
                 if (data.voucherFiles && data.voucherFiles.length > 0 && data.voucherFiles.some(file => file.filePath)) {
                     const voucherLinks = data.voucherFiles.filter(file => file.filePath).map(file =>
-                        `<a href="${file.filePath}" download="${file.filePath.split('_').pop()}">${file.filePath.split('_').pop()}</a>`
+                        `<a href="#" class="voucher-link" data-file="${file.filePath}">${file.filePath.split('_').pop()}</a>`
                     ).join(', ');
                     $(".left-section").append(`<p><strong>Voucher Files:</strong> ${voucherLinks}</p>`);
                 } else {
                     $(".left-section").append(`<p><strong>Voucher Files:</strong> No Attachment File</p>`);
                 }
+
+                $(".attachment-link").on('click', function (e) {
+                    e.preventDefault();
+                    const fileName = $(this).data('file');
+                    downloadFile(fileName, 'attachment');
+                });
+
+                $(".voucher-link").on('click', function (e) {
+                    e.preventDefault();
+                    const fileName = $(this).data('file');
+                    downloadFile(fileName, 'voucher');
+                });
 
                 const timelineContainer = $(".approval-timeline ul");
                 timelineContainer.empty();
@@ -102,24 +132,26 @@ $(document).ready(function () {
                     $(".back-button-container").append(cancelBtn);
 
                     $("#cancelRequestBtn").on('click', function () {
-                        $.ajax({
-                            url: `https://localhost:7294/api/RequestForm/cancelrequest/${requestId}`,
-                            type: 'GET',
-                            headers: {
-                                'Authorization': `Bearer ${jwtToken}`
-                            },
-                            success: function (response) {
-                                if (response.success) {
-                                    alert(response.message);
-                                    location.reload();
-                                } else {
-                                    alert(`Failed to cancel: ${response.message}`);
+                        if (confirm("Are you sure you want to cancel this request?")) {
+                            $.ajax({
+                                url: `https://localhost:7294/api/RequestForm/cancelrequest/${requestId}`,
+                                type: 'GET',
+                                headers: {
+                                    'Authorization': `Bearer ${jwtToken}`
+                                },
+                                success: function (response) {
+                                    if (response.success) {
+                                        alert(response.message);
+                                        location.reload();
+                                    } else {
+                                        alert(`Failed to cancel: ${response.message}`);
+                                    }
+                                },
+                                error: function () {
+                                    alert("Error occurred while trying to cancel the request.");
                                 }
-                            },
-                            error: function () {
-                                alert("Error occurred while trying to cancel the request.");
-                            }
-                        });
+                            });
+                        }
                     });
                 }
             } else {
@@ -131,3 +163,38 @@ $(document).ready(function () {
         }
     });
 });
+function safeValue(value, defaultValue = 'N/A') {
+    return value ? value : defaultValue;
+}
+function downloadFile(fileName, fileType) {
+    const jwtToken = localStorage.getItem('jwtToken');
+    const endpoint = fileType === 'attachment'
+        ? `https://localhost:7294/api/AttachmentFile/downloadpaymentattachmentfile/${fileName}`
+        : `https://localhost:7294/api/Voucher/downloadpaymentvoucherfile/${fileName}`;
+
+    $.ajax({
+        url: endpoint,
+        type: 'GET',
+        headers: {
+            'Authorization': `Bearer ${jwtToken}`
+        },
+        xhrFields: {
+            responseType: 'blob'
+        },
+        success: function (data, status, xhr) {
+            const contentType = xhr.getResponseHeader('Content-Type');
+            const blob = new Blob([data], { type: contentType });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName.split('_').pop(); 
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+        },
+        error: function () {
+            alert(`Error downloading the ${fileType} file.`);
+        }
+    });
+}

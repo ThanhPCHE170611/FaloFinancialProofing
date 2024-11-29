@@ -179,11 +179,39 @@ $(document).ready(function () {
     const userId = localStorage.getItem('userId');
     const campaignId = localStorage.getItem('campaignId');
     const jwtToken = localStorage.getItem('jwtToken');
+    const checkrole = localStorage.getItem('loggingRole');
     let currentPage = 1;
-    const pageSize = 5;
+    const pageSize = 30;
 
     console.log(campaignId);
 
+    if (checkrole && checkrole !== 'Volunteer') {
+        //const nametitle = document.getElementById('nametitle');
+        //nametitle.textContent = 'Approve Prepay Request';
+
+        //const createRequestLink = document.getElementById('create_request_page');
+        //createRequestLink.style.display = 'none';
+
+        const newLink = document.createElement('a');
+        newLink.setAttribute('asp-controller', 'Prepay');
+        newLink.setAttribute('asp-action', 'PrepayManagement_PM');
+        newLink.textContent = 'Approval Prepay Request';
+
+        const newLink2 = document.createElement('a');
+        newLink2.setAttribute('asp-controller', 'Payment');
+        newLink2.setAttribute('asp-action', 'PaymentManagement_PM');
+        newLink2.textContent = 'Approval Payment Created Request';
+
+        const url = new URL(`/Prepay/PrepayManagement_PM`, window.location.origin);
+
+
+        const url2 = new URL(`/Payment/PaymentManagement_PM`, window.location.origin);
+
+        newLink.href = url.toString();
+        newLink2.href = url2.toString();
+        navTabs.appendChild(newLink);
+        navTabs.appendChild(newLink2);
+    }
     function formatDateTime(dateString) {
         if (!dateString) return 'N/A';
 
@@ -202,10 +230,11 @@ $(document).ready(function () {
 
         return formattedDate + ' ' + formattedTime;
     }
-
+    let searchEmail = '';
+    let filterStatus = '';
     function loadPrepayRequests(page) {
         $.ajax({
-            url: `https://localhost:7294/api/RequestForm/getallpaymentrequestincampaign/${campaignId}?userId=${userId}&page=${page}`,
+            url: `https://localhost:7294/api/RequestForm/getallpaymentrequestincampaign/${campaignId}?userId=${userId}&page=${page}&status=${filterStatus}&searchDescription=${searchEmail}`,
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -219,6 +248,7 @@ $(document).ready(function () {
                     prepayRequests.forEach((request, index) => {
                         const statusClass = request.status === "Approved" ? "bg-gradient-success" :
                             request.status === "Rejected" ? "bg-gradient-danger" :
+                            request.status === "Cancel" ? "bg-gradient-secondary" :
                                 "bg-gradient-warning";
                         const statusLabel = `<span class="badge badge-sm ${statusClass}">${request.status}</span>`;
 
@@ -277,17 +307,84 @@ $(document).ready(function () {
         });
     }
 
+    //function setupPagination(totalRecords, currentPage) {
+    //    const totalPages = Math.ceil(totalRecords / pageSize);
+    //    const paginationContainer = $('#pagination');
+    //    paginationContainer.empty();
+    //    for (let i = 1; i <= totalPages; i++) {
+    //        const pageButton = $(`<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}">${i}</button>`);
+    //        pageButton.on('click', () => changePage(i));
+    //        paginationContainer.append(pageButton);
+    //    }
+    //}
     function setupPagination(totalRecords, currentPage) {
         const totalPages = Math.ceil(totalRecords / pageSize);
         const paginationContainer = $('#pagination');
         paginationContainer.empty();
-        for (let i = 1; i <= totalPages; i++) {
-            const pageButton = $(`<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}">${i}</button>`);
-            pageButton.on('click', () => changePage(i));
-            paginationContainer.append(pageButton);
+
+        const maxVisibleButtons = 5;
+        const ellipsis = `<span class="btn btn-sm btn-light disabled">...</span>`;
+
+        function createPageButton(page) {
+            return $(`<button class="btn btn-sm btn-page ${page === currentPage ? 'btn-primary' : 'btn-light'}">${page}</button>`)
+                .on('click', () => changePage(page));
         }
+
+        const prevButton = $(`<button class="btn btn-sm btn-page ${currentPage === 1 ? 'btn-light disabled' : 'btn-light'}">Previous</button>`);
+        prevButton.on('click', () => {
+            if (currentPage > 1) changePage(currentPage - 1);
+        });
+        paginationContainer.append(prevButton);
+
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisibleButtons / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisibleButtons - 1);
+
+        if (endPage - startPage + 1 < maxVisibleButtons) {
+            startPage = Math.max(1, endPage - maxVisibleButtons + 1);
+        }
+
+        if (startPage > 1) {
+            paginationContainer.append(createPageButton(1));
+            if (startPage > 2) {
+                paginationContainer.append($(ellipsis));
+            }
+        }
+
+        for (let page = startPage; page <= endPage; page++) {
+            paginationContainer.append(createPageButton(page));
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                paginationContainer.append($(ellipsis));
+            }
+            paginationContainer.append(createPageButton(totalPages));
+        }
+
+        const nextButton = $(`<button class="btn btn-sm btn-page ${currentPage === totalPages ? 'btn-light disabled' : 'btn-light'}">Next</button>`);
+        nextButton.on('click', () => {
+            if (currentPage < totalPages) changePage(currentPage + 1);
+        });
+        paginationContainer.append(nextButton);
     }
 
+    window.changePage = function (page) {
+        if (page < 1 || page > Math.ceil(totalRecords / pageSize)) return; 
+        currentPage = page;
+        loadPrepayRequests(page); 
+    };
+
+    $('#searchBox').on('keyup', function () {
+        searchEmail = $(this).val().trim();
+        currentPage = 1;
+        loadPrepayRequests(currentPage);
+    });
+
+    $('#statusFilter').on('change', function () {
+        filterStatus = $(this).val();
+        currentPage = 1;
+        loadPrepayRequests(currentPage);
+    });
     window.changePage = function (page) {
         currentPage = page;
         loadPrepayRequests(page);

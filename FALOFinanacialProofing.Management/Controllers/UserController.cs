@@ -21,6 +21,14 @@ namespace FALOFinanacialProofing.Management.Controllers
         {
             return View();
         }
+        public ActionResult PMBContactList()
+        {
+            return View();
+        }
+        public ActionResult Status()
+        {
+            return View();
+        }
 
         // POST: UserController/Create
         [HttpPost]

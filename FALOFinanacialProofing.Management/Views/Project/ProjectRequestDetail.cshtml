@@ -9,11 +9,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
-    <link href="~/assets/css/nucleo-icons.css" rel="stylesheet" />
-    <link href="~/assets/css/nucleo-svg.css" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-    <link id="pagestyle" href="~/assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <style>
         .form-control {
@@ -32,6 +31,10 @@
         }
 
         #approver-section {
+            display: none;
+        }
+
+        #organization-section {
             display: none;
         }
 
@@ -76,6 +79,12 @@
                                 <input type="text" class="form-control" id="status" readonly>
                             </div>
                         </div>
+                        <div class="row mb-3" id="organization-section">
+                            <div class="col-md-12">
+                                <label for="organizationInput" class="form-label">Organization</label>
+                                <input type="text" class="form-control" id="organizationInput" readonly>
+                            </div>
+                        </div>
                         <div class="row mb-3" id="approver-section">
                             <div class="col-md-12">
                                 <label for="receiverName" class="form-label">Approver</label>
@@ -104,100 +113,150 @@
 
                 <div id="save-btn">
                     @* <button class="btn btn-primary btn-lg" style="margin-left:10px">Save</button> *@
-                    <a href="/Project/ProjectManagement" class="btn btn-success btn-lg" style="margin-left:10px">Back To List</a>
+                    <a href="/Project/ProjectRequestManagement" class="btn btn-success btn-lg" style="margin-left:10px">Back To List</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script>
-        function formatDateTime(dateString) {
-            if (!dateString) return 'N/A';
 
-            const date = new Date(dateString);
-            if (isNaN(date.getTime())) {
-                return 'Invalid Date';
-            }
-
-            const formattedDate = date.getDate().toString().padStart(2, '0') + '-' +
-                (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
-                date.getFullYear();
-
-            const formattedTime = date.getHours().toString().padStart(2, '0') + ':' +
-                date.getMinutes().toString().padStart(2, '0') + ':' +
-                date.getSeconds().toString().padStart(2, '0');
-
-            return formattedDate + ' ' + formattedTime;
-        }
-        $(document).ready(function () {
-            const projectId = new URLSearchParams(window.location.search).get('requestId');
-            const jwtToken = localStorage.getItem('jwtToken');
-            const userId = localStorage.getItem('userId');
-            $.ajax({
-                url: `https://localhost:7294/api/CreateProjectRequests/GetCreateProjectRequest/${projectId}`,
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${jwtToken}`
-                },
-                success: function (data) {
-                    $('#projectName').val(data.title);
-                    $('#senderName').val(data.senderName);
-                    $('#createdAt').val(formatDateTime(data.createdAt));
-                    if (data.receiverName !== ' ') {
-                        $('#receiverName').val(data.receiverName);
-                        $('#approver-section').show();
-                    }
-                    $('#description').val(data.description);
-                    $('#status').val(data.status);
-
-                    if (data.status.toLowerCase() === 'rejected') {
-                        $('#feedback-section').show();
-                        $('#feedback').val(data.feedback);
-                    }
-                    console.log('senderid = ' + data.senderId);
-                    console.log('userid = ' + userId);
-                    if (data.status.toLowerCase() === 'pending' && data.senderId === userId) {
-                        console.log('status = ' + data.status.toLowerCase());
-                        const cancelButton = $('<button>')
-                        .attr('id', 'cancelButton')
-                        .addClass('btn btn-danger btn-lg')
-                        .css('margin-left', '10px')
-                        .text('Cancel Request')
-                        .click(function () {
-                            $.ajax({
-                                url: `https://localhost:7294/api/CreateProjectRequests/CancelCreateProjectRequest/${userId}/${projectId}`,
-                                method: 'PUT',
-                                headers: {
-                                    'Authorization': `Bearer ${jwtToken}`
-                                },
-                                success: function (response) {
-                                    alert(response.message);
-                                    if (response.success) {
-                                        location.reload();
-                                    }
-                                },
-                                error: function (xhr, status, error) {
-                                    alert('Error: ' + (xhr.responseText || status));
-                                }
-                            });
-                        });
-                        $('#save-btn').append(cancelButton);
-                    }
-
-                    data.createProjectFiles.forEach(function (file) {
-                        $('#docList').append(`<li class="list-group-item">${file.filePath}</li>`);
-                    });
-                },
-                error: function (xhr, status, error) {
-                    alert('Error: ' + xhr.responseText || status);
-                }
-            });
-        });
-    </script>
 </body>
 </html>
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function formatDateTime(dateString) {
+        if (!dateString) return 'N/A';
 
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+            return 'Invalid Date';
+        }
+
+        const formattedDate = date.getDate().toString().padStart(2, '0') + '-' +
+            (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
+            date.getFullYear();
+
+        const formattedTime = date.getHours().toString().padStart(2, '0') + ':' +
+            date.getMinutes().toString().padStart(2, '0') + ':' +
+            date.getSeconds().toString().padStart(2, '0');
+
+        return formattedDate + ' ' + formattedTime;
+    }
+    const jwtToken = localStorage.getItem('jwtToken');
+    $(document).ready(function () {
+        const projectId = new URLSearchParams(window.location.search).get('requestId');    
+        const userId = localStorage.getItem('userId');
+        $.ajax({
+            url: `https://localhost:7294/api/CreateProjectRequests/GetCreateProjectRequest/${projectId}`,
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            },
+            success: function (data) {
+                $('#projectName').val(data.title);
+                $('#senderName').val(data.senderName);
+                $('#createdAt').val(formatDateTime(data.createdAt));
+                if (data.receiverName !== ' ') {
+                    $('#receiverName').val(data.receiverName);
+                    $('#approver-section').show();
+                }
+                if(data.organizationName !== 'No Organization') {
+                    $('#organizationInput').val(data.organizationName);
+                    $('#organization-section').show();
+                    console.log(data.organizationName);
+                }
+                
+                $('#description').val(data.description);
+                $('#status').val(data.status);
+
+                if (data.status.toLowerCase() === 'rejected') {
+                    $('#feedback-section').show();
+                    $('#feedback').val(data.feedback);
+                }
+                console.log('senderid = ' + data.senderId);
+                console.log('userid = ' + userId);
+                if (data.status.toLowerCase() === 'pending' && data.senderId === userId) {
+                    console.log('status = ' + data.status.toLowerCase());
+                    const cancelButton = $('<button>')
+                    .attr('id', 'cancelButton')
+                    .addClass('btn btn-danger btn-lg')
+                    .css('margin-left', '10px')
+                    .text('Cancel Request')
+                    .click(function () {
+                        if (confirm('Are you sure you want to cancel this request?')) {
+                        $.ajax({
+                            url: `https://localhost:7294/api/CreateProjectRequests/CancelCreateProjectRequest/${userId}/${projectId}`,
+                            method: 'PUT',
+                            headers: {
+                                'Authorization': `Bearer ${jwtToken}`
+                            },
+                            success: function (response) {
+                                alert(response.message);
+                                if (response.success) {
+                                    location.reload();
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                alert('Error: ' + (xhr.responseText || status));
+                            }
+                        });
+                        }
+                    });
+                    $('#save-btn').append(cancelButton);
+                }
+
+                data.createProjectFiles.forEach(function (file) {
+                    const listItem = $(`<li class="list-group-item"><a href="#" class="file-link" data-file="${file.filePath}">${file.filePath}</a></li>`);
+                    $('#docList').append(listItem);
+                });
+
+                $('.file-link').on('click', function (event) {
+                    event.preventDefault();
+                    const fileName = $(this).data('file');
+                    downloadFile(fileName);
+                });
+            },
+            error: function (xhr, status, error) {
+                alert('Error: ' + xhr.responseText || status);
+            }
+        });
+    });
+    function downloadFile(fileName) {
+        $.ajax({
+            url: `https://localhost:7294/api/CreateProjectFiles/DownloadProjectFile/${fileName}`,
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            },
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function (data, status, xhr) {
+                console.log(fileName);
+                const contentType = xhr.getResponseHeader('Content-Type');
+                const blob = new Blob([data], { type: contentType });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            },
+            error: function (xhr, status, error) {
+                alert('Error downloading file. Please try again.');
+                console.error('Error downloading file:', error);
+            }
+        });
+    }
+</script>
 
 
 

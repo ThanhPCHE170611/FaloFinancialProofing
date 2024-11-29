@@ -1,5 +1,6 @@
 ﻿using FALOFinancialProofing.Constant;
 using FALOFinancialProofing.Services.AttachmentFIleServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FALOFinancialProofing.Controllers
@@ -50,6 +51,7 @@ namespace FALOFinancialProofing.Controllers
             return File(fileBytes, contentType, downloadFileName);
         }
         [HttpGet("downloadattachmentfilewithnotypebyfilename/{fileName}")]
+        [AllowAnonymous]
         public async Task<IActionResult> DownloadAttachmentFileWithNoTypeByFileName(string fileName)
         {
             var (fileBytes, contentType, downloadFileName) = await attachmentFileServices.DownloadAttachmentFileWithNoTypeByFileName(fileName);
@@ -162,7 +164,9 @@ namespace FALOFinancialProofing.Controllers
             });
         }
 
+
         [HttpGet("getallpaymentattachmentincampaignwithrequest/{campaignId}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllPaymentAttachmentInCampaignWithRequest(int campaignId,
             string? name,
             int page = IntConstant.PageNumberDefault)

@@ -1,0 +1,42 @@
+﻿@page "/projectlist"
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main>
+    <!-- Page banner area start here -->
+    <section class="banner__inner-page bg-image pt-160 pb-160 bg-image"
+             data-background="/images/banner/banner_2.jpg">
+        <div class="container">
+            <h2 class="wow fadeInUp" data-wow-delay="00ms" data-wow-duration="1500ms">Danh Sách Dự Án</h2>
+            <div class="breadcrumb-list wow fadeInUp" data-wow-delay="200ms" data-wow-duration="1500ms">
+                <a href="@Url.Action("Index", "Homepage")">Home</a><span><i class="fa-regular fa-angles-right mx-2"></i>Dự Án</span>
+            </div>
+        </div>
+    </section>
+    <!-- Page banner area end here -->
+    <!-- Event area start here -->
+    <div class="blog-single__right-item">
+        <div class="item shadow mb-30">
+            <h5 class="title">Search</h5>
+            <div class="serach-bar">
+                <input type="text" id="searchInput" placeholder="Search here">
+                <button id="searchButton"><i class="fa-regular fa-magnifying-glass"></i></button>
+            </div>
+        </div>
+    </div>
+    <section class="event-area pt-120 pb-120">
+        <div class="container">
+            <div class="row g-4" id="projectsContainer">
+                <!-- Projects will be loaded here dynamically -->
+            </div>
+            <div class="pegi justify-content-center mt-80 pagination" id="paginationControls">
+                <!-- Pagination controls will be loaded here dynamically -->
+            </div>
+        </div>
+    </section>
+    <!-- Event area end here -->
+</main>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/js/projectpage/projectList.js"></script>

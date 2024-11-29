@@ -22,5 +22,7 @@ namespace FALOFinancialProofing.DTOs
 
         public List<AttachmentFileRequest> AttachmentFiles { get; set; }
 
+        public List<VoucherRequest> Vouchers { get; set; }
+
     }
 }

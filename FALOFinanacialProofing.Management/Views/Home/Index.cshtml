@@ -12,10 +12,8 @@
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
     <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
-    @* <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script> *@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
-    <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -90,7 +88,7 @@
                         </div>
                     </div>
                     <div class="campaign-container">
-                        <div class="campaign-card">
+@*                         <div class="campaign-card">
                             <div class="campaign-name">Campaign 1</div>
                             <div class="campaign-cost">Total Estimated Cost: 10.000.000</div>
                             <div class="campaign-status">Status: Pending</div>
@@ -102,7 +100,7 @@
                             <div class="campaign-status">Status: Approved</div>
                             <a href="campaigndetail" class="get-started-btn">Get Started →</a>
                         </div>
-                    </div>
+                    </div> *@
                 </div>
             </div>
         </div>
@@ -116,6 +114,7 @@
 <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
 <script>
     if ('@Model' && '@Model' !== '') {
@@ -141,4 +140,86 @@
     console.log('checkroleSelected:', checkrole);
     const userId = localStorage.getItem('userId');
     console.log('User ID:', userId);
+        $(document).ready(function () {
+        const userId = localStorage.getItem('userId');
+        const roleId = localStorage.getItem('loggingRoleId');
+        let currentPage = 1;
+        let searchInput = '';
+
+        function fetchCampaignMembers() {
+            $.ajax({
+                url: `https://localhost:7294/api/Campaign/GetFourCampaignByFilter?numOfElements=10`,
+                type: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+                },
+                success: function (response) {
+                    if (response.success) {
+                        populateCampaignCards(response.data);
+                        setupPagination(response.data.dataCount, response.data.currentPage);
+                    } else {
+                        console.error('Error:', response.message);
+                        $('.campaign-container').html('<p>No campaign found.</p>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                    alert('An error occurred while fetching campaign members.');
+                }
+            });
+        }
+
+        function populateCampaignCards(data) {
+            const container = $('.campaign-container');
+            container.empty();
+
+            if (data && data.length > 0) {
+                data.forEach(member => {
+                    const card = `
+                        <div class="campaign-card">
+                            <div class="campaign-name">${member.title}</div>
+                            <div class="campaign-cost">Fund Target: ${member.fundTarget.toLocaleString()} VND</div>
+                            <div class="campaign-status">Status: ${member.status}</div>
+                        </div>
+                    `;
+                    container.append(card);
+                });
+            } else {
+                container.html('<p>No campaign members found.</p>');
+            }
+        }
+
+        function setupPagination(totalRecords, currentPage) {
+            const pageSize = 10; 
+            const totalPages = Math.ceil(totalRecords / pageSize);
+            const paginationContainer = $('#pagination');
+            paginationContainer.empty();
+
+            if (totalPages > 1) {
+                for (let i = 1; i <= totalPages; i++) {
+                    const button = `
+                        <button class="btn ${i === currentPage ? 'btn-primary' : 'btn-light'} mx-1" onclick="goToPage(${i})">${i}</button>
+                    `;
+                    paginationContainer.append(button);
+                }
+            }
+        }
+
+        window.goToPage = function (page) {
+            currentPage = page;
+            fetchCampaignMembers();
+        };
+
+        $('#searchInput').on('input', function () {
+            clearTimeout(this.searchTimer);
+            this.searchTimer = setTimeout(() => {
+                searchInput = $(this).val().trim();
+                currentPage = 1;
+                fetchCampaignMembers();
+            }, 500); // Debounce 500ms
+        });
+
+        fetchCampaignMembers();
+    });
+
 </script>

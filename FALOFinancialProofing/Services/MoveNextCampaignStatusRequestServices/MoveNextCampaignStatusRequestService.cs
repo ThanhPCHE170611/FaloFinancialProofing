@@ -97,7 +97,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                     }
                     else
                     {
-                        throw new Exception($"Debt is not over yet.\nPlease contact {campaignDebtResult.NameOfAccounting} for more information");
+                        throw new Exception($"Debt is not over yet. Please contact project management board to close campaign");
                     }
                 }
                 else
@@ -500,9 +500,24 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                 }
 
                 // Kiểm tra nếu trạng thái của yêu cầu không phải là "pending"
-                if (request.Status != "Pending")
+                //if (request.Status != "Pending")
+                //{
+                //    message.Append("Only requests with status 'pending' can be cancelled.");
+                //    return false;
+                //}
+                if (request.Status == "Accepted")
                 {
-                    message.Append("Only requests with status 'pending' can be cancelled.");
+                    message.Append("Your request has been accepted.");
+                    return false;
+                }
+                if (request.Status == "Rejected")
+                {
+                    message.Append("Your request has been rejected.");
+                    return false;
+                }
+                if (request.Status == "Cancel")
+                {
+                    message.Append("Your request has been canceled. Cancellation is no longer possible.");
                     return false;
                 }
 

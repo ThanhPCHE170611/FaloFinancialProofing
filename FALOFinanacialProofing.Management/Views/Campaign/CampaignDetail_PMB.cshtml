@@ -1,0 +1,423 @@
+﻿@{
+    ViewData["Title"] = "CampaignDetail";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <style>
+        .form-control {
+            margin-top: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+        }
+
+        #save-btn {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        #imagePreview img {
+            width: 100%;
+            height: auto;
+        }
+
+        #fileList {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+            #fileList li {
+                padding: 5px 10px;
+                background-color: #e0e0e0;
+                border-radius: 5px;
+                list-style: none;
+            }
+
+        #fileList2 {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+            #fileList2 li {
+                padding: 5px 10px;
+                background-color: #e0e0e0;
+                border-radius: 5px;
+                list-style: none;
+            }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+            .nav-tabs a {
+                padding: 10px 20px;
+                text-decoration: none;
+                color: #000;
+                background-color: #f1f1f1;
+                border-radius: 5px;
+            }
+
+                .nav-tabs a.active {
+                    background-color: #EC407A;
+                    color: #fff;
+                }
+
+                .nav-tabs a:hover {
+                    background-color: #007bff;
+                    color: #fff;
+                }
+
+        #imagePreview img {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class=" pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <nav class="nav-tabs" id="navTabs">
+                                <a asp-controller="Campaign" asp-action="CampaignDetail_PMB" class="active">Campaign Detail</a>
+                                <a asp-controller="Accounting" asp-action="AccountingBookCampaign_PMB">Accounting Book</a>
+                                <a asp-controller="Campaign" asp-action="Member_PMB">Member</a>
+                                <a asp-controller="Accounting" asp-action="DebtManagement">Debt</a>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Campaign Detail</h6>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="campaignName" class="form-label">Campaign Name</label>
+                            <input type="text" class="form-control" id="campaignName" >
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Location</label>
+                            <textarea class="form-control" id="location" rows="2" ></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="projectSelect" class="form-label">Project</label>
+                            <input type="text" class="form-control" id="projectSelect" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="creator" class="form-label">Creator</label>
+                            <input type="text" class="form-control" id="creator" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="totalAmount" class="form-label">Fund Target</label>
+                            <input type="text" class="form-control" id="totalAmount" >
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="realtimeAmount" class="form-label">Total Money Earned</label>
+                            <input type="text" class="form-control" id="realtimeAmount" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="bankAccountNumber" class="form-label">Bank Account Number</label>
+                            <input type="text" class="form-control" id="bankAccountNumber" readonly>
+                            <input type="text" class="form-control" id="bankId" hidden>
+                        </div>
+                        <div class="mb-3">
+                            <label for="startDate" class="form-label">Created Date</label>
+                            <input type="date" class="form-control" id="startDate" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="endDate" class="form-label">Expected End Date</label>
+                            <input type="date" class="form-control" id="endDate">
+                        </div>
+                        @* <div class="mb-3"> *@
+                        @*     <label for="status" class="form-label">Stage</label> *@
+                        @*     <input type="text" class="form-control" id="status" > *@
+                        @* </div> *@
+                        <div class="mb-3">
+                            <label for="stage" class="form-label">Stage</label>
+                            <select class="form-control" id="stage">
+                                <option value="Fund-Raising">Fund-Raising</option>
+                                <option value="Implement">Implement</option>
+                                <option value="Disbursement">Disbursement</option>
+                                <option value="Close">Close</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="statusDropdown" class="form-label">Status</label>
+                            <select class="form-control" id="statusDropdown">
+                                <option value="true">Active</option>
+                                <option value="false">Inactive</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" rows="8" ></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Update Log</label>
+                            <textarea class="form-control" id="updateLog" rows="8" readonly></textarea>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Campaign Files</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul id="campaignFilesList" class="list-unstyled"></ul>
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Campaign Picture</h5>
+                    </div>
+                    <div class="card-body">
+                        <button id="choseImage" class="btn btn-primary mb-3" onclick="document.getElementById('projectImages').click()">Choose file</button> 
+                            <input type="file" id="projectImages" class="form-control d-none" accept="image/*" multiple>
+                        <div id="imagePreview" class="mt-3 row"></div>
+                    </div>
+                </div>
+                <div id="save-btn">
+                    <button class="btn btn-warning btn-lg" id="btnUpdate">Update</button>
+                    <div>
+                        <a asp-controller="Campaign" asp-action="CampaignManagement" class="btn btn-primary btn-lg" style="margin-left:10px">Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function formatDateToDisplay(dateString) {
+        const date = new Date(dateString);
+        date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+        return date.toISOString().split('T')[0];
+    }
+    let isChanged = false;
+    const jwtToken = localStorage.getItem('jwtToken');
+    $(document).ready(function () {
+        
+        const campaignId = localStorage.getItem('campaignId');
+        const checkrole = localStorage.getItem('loggingRole');
+        const roleid = localStorage.getItem('loggingRoleId');
+        const userId = localStorage.getItem('userId');
+        
+
+        if (campaignId) {
+            fetchCampaignDetails(campaignId);
+        }
+
+        function fetchCampaignDetails(id) {
+            $.ajax({
+                url: `https://localhost:7294/api/Campaign/GetCampaignDetailsById/${id}`,
+                type: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                success: function (response) {
+                    if (response.success) {
+                        const data = response.data;
+                        $('#campaignName').val(data.title);
+                        $('#location').val(safeValue(data.address));
+                        $('#projectSelect').val(data.projectName);
+                        $('#bankId').val(data.bankId);
+                        $('#creator').val(`${data.firstName} ${data.lastName}`);
+                        $('#totalAmount').val(data.fundTarget.toLocaleString());
+                        $('#realtimeAmount').val(data.totalMoneyEarned.toLocaleString());
+                        $('#startDate').val(formatDateToDisplay(data.dateOfCreation));
+                        $('#endDate').val(formatDateToDisplay(data.endDate));
+                        // $('#status').val(data.status);
+                        $('#description').val(safeValue(data.description));
+                        $('#updateLog').val(safeValue(data.updateLog));
+                        $('#stage').val(data.status);
+                        $('#statusDropdown').val(data.isActive.toString());
+                        $('#bankAccountNumber').val(data.accountNumber ? data.accountNumber : 'N/A');
+                        if (data.image) {
+                            const imagePreview = document.getElementById('imagePreview');
+                            imagePreview.innerHTML = `
+                                    <div class="col-md-4 mb-3">
+                                        <img src="${data.image}" alt="Project Image" class="img-fluid rounded" id="existing-image">
+                                    </div>`;
+                        }
+                        monitorChanges();
+                        populateCampaignFiles(data.createCampaignFiles);
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching campaign details:', error);
+                }
+            });
+        }
+        $('#btnUpdate').on('click', function () {
+            const formData = new FormData();
+            formData.append('Id', campaignId);
+            formData.append('UserId', userId);
+            formData.append('RoleId', roleid);
+            formData.append('BankId', $('#bankId').val());
+            formData.append('Title', $('#campaignName').val());
+            formData.append('Description', $('#description').val());
+            formData.append('FundTarget', $('#totalAmount').val().replace(/,/g, ''));
+            formData.append('Address', $('#location').val());
+            formData.append('IsActive', $('#statusDropdown').val());
+            formData.append('Status', $('#stage').val());
+            formData.append('EndDate', $('#endDate').val());
+            const logoFile = $('#projectImages')[0].files[0];
+            if (logoFile) {
+                formData.append('LogoFile', logoFile);
+            }
+            console.log(formData);
+            $.ajax({
+                url: `https://localhost:7294/api/Campaign/UpdateCampaign`,
+                type: 'PUT',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                success: function (response) {
+                    alert(response.message || "Campaign updated successfully!");
+                    if (response.success) {
+                        location.reload();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error updating campaign:', error);
+                    alert('Error updating campaign. Please try again.');
+                }
+            });
+        });
+    });
+    function safeValue(value, defaultValue = 'N/A') {
+        return value ? value : defaultValue;
+    }
+    function monitorChanges() {
+        $('input, textarea, select').on('change keyup', function () {
+            if (!isChanged) {
+                $('#btnUpdate').removeAttr('disable'); 
+                isChanged = true; 
+            }
+        });
+    }
+    $('#projectImages').on('change', function (event) {
+        const files = event.target.files;
+        if (files.length > 0) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                updateImagePreview(e.target.result);
+            };
+            reader.readAsDataURL(files[0]);
+
+            if (!isChanged) {
+                $('#btnUpdate').removeAttr('disable');
+                isChanged = true;
+            }
+        }
+    });
+
+    document.getElementById('projectImages').addEventListener('change', function(event) {
+      const imagePreview = document.getElementById('imagePreview');
+      imagePreview.innerHTML = '';
+      const files = event.target.files;
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const colDiv = document.createElement('div');
+          colDiv.classList.add('col-md-4', 'mb-3');
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.classList.add('img-fluid', 'rounded');
+          colDiv.appendChild(img);
+          imagePreview.appendChild(colDiv);
+        }
+        reader.readAsDataURL(file);
+      });
+    });
+    function populateCampaignFiles(files) {
+        const campaignFilesList = $('#campaignFilesList');
+        campaignFilesList.empty();
+
+        if (!files || files.length === 0) {
+            campaignFilesList.append('<li>No files available for this campaign.</li>');
+            return;
+        }
+
+        files.forEach(file => {
+            const listItem = $(`
+                <li>
+                    <a href="#" class="file-link" data-file="${file.filePath}">
+                        ${file.filePath}
+                    </a>
+                </li>
+            `);
+            campaignFilesList.append(listItem);
+        });
+
+        $('.file-link').on('click', function (event) {
+            event.preventDefault();
+            const fileName = $(this).data('file');
+            downloadFile(fileName);
+        });
+    }
+
+    function downloadFile(fileName) {
+        $.ajax({
+            url: `https://localhost:7294/api/CreateCampaignFiles/DownloadCampaignFile/${fileName}`,
+            type: 'GET',
+            xhrFields: {
+                responseType: 'blob' 
+            },
+            processData: false,
+            success: function (data, status, xhr) {
+                const contentType = xhr.getResponseHeader('Content-Type');
+                const blob = new Blob([data], { type: contentType });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            },
+            error: function (xhr, status, error) {
+                alert('Error downloading file. Please try again.');
+                console.error('Error downloading file:', error);
+            }
+        });
+    }
+</script>

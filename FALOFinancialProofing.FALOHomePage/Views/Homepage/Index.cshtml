@@ -1,0 +1,271 @@
+﻿@page "/homepage"
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Sidebar area start here -->
+<div id="targetElement" class="sidebar-area sidebar__hide">
+    <div class="sidebar__overlay"></div>
+    <a href="index.html" class="logo mb-40">
+        <img src="/images/logo/logo-light.svg" alt="logo">
+    </a>
+    <div class="mobile-menu overflow-hidden"></div>
+    <ul class="info pt-40">
+        <li>
+            <i class="fa-solid primary-color fa-location-dot"></i> <a href="#0">example@example.com</a>
+        </li>
+        <li class="py-2">
+            <i class="fa-solid primary-color fa-phone-volume"></i> <a href="tel:+208-6666-0112">+208-6666-0112</a>
+        </li>
+        <li><i class="fa-solid primary-color fa-paper-plane"></i> <a href="#0">info@example.com</a></li>
+    </ul>
+    <div class="social-icon mt-20">
+        <a href="#0"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#0"><i class="fa-brands fa-twitter"></i></a>
+        <a href="#0"><i class="fa-brands fa-linkedin-in"></i></a>
+        <a href="#0"><i class="fa-brands fa-pinterest-p"></i></a>
+    </div>
+    <button id="closeButton" class="text-white"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<!-- Sidebar area end here -->
+
+<main>
+    <!-- Banner area start here -->
+    <section class="banner-two-area">
+        <div class="swiper banner-two__slider">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <div class="slide-bg" data-background="/images/banner/banner.jpg"></div>
+                    <div class="container">
+                        <div class="banner-two__content">
+                            <h4 data-animation="fadeInUp" data-delay=".3s">FALO Financial Proofing</h4>
+                            <h1 data-animation="fadeInUp" data-delay=".5s">
+                                Giải pháp công nghệ đồng hành cùng<br> cộng đồng thiện nguyện minh bạch
+                            </h1>
+                            <div class="btn-one mt-50" data-animation="fadeInUp" data-delay="1s">
+                                <span class="btn-circle">
+                                </span>
+                                <a asp-controller="Authentication" asp-action="Login" class="btn-inner">
+                                    <span class="btn-text">
+                                        ĐĂNG KÝ
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="slide-bg" data-background="/images/banner/banner_2.jpg"></div>
+                    <div class="container">
+                        <div class="banner-two__content">
+                            <h4 data-animation="fadeInUp" data-delay=".3s">FALO Financial Proofing</h4>
+                            <h1 data-animation="fadeInUp" data-delay=".5s">
+                                Giải pháp công nghệ đồng hành cùng<br> cộng đồng thiện nguyện minh bạch
+                            </h1>
+                            <div class="btn-one mt-50" data-animation="fadeInUp" data-delay="1s">
+                                <span class="btn-circle">
+                                </span>
+                                <a asp-controller="Authentication" asp-action="Login" class="btn-inner">
+                                    <span class="btn-text">
+                                        ĐĂNG KÝ
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="banner-two__arry-btn">
+            <button class="arry-prev mb-15 banner-two__arry-prev active">
+                <i class="fa-light fa-chevron-left"></i>
+            </button>
+            <button class="arry-next banner-two__arry-next"><i class="fa-light fa-chevron-right"></i></button>
+        </div>
+        <ul class="banner-two__social">
+            <li>
+                <a href="#0"><i class="fa-brands fa-facebook-f"></i></a>
+            </li>
+            <li>
+                <a href="#0" class="active"><i class="fa-brands fa-twitter"></i></a>
+            </li>
+            <li>
+                <a href="#0"><i class="fa-brands fa-linkedin-in"></i></a>
+            </li>
+        </ul>
+        <div class="banner-two__shape wow slideInLeft" data-wow-delay="600ms" data-wow-duration="1500ms">
+            <img class="banner__line__animation" src="/images/shape/banner-line.png" alt="shape">
+        </div>
+    </section>
+
+
+    <!-- Banner area end here -->
+    <!-- Service area start here -->
+    <section class="service-area pt-100 pb-100 sub-bg">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-xl-4 col-md-6 wow fadeInUp" data-wow-delay="00ms" data-wow-duration="1500ms">
+                    <div class="service__item">
+                        <div class="service__icon"><img src="/images/icon/service1.png" alt="icon"></div>
+                        <div class="service__content">
+                            <h3 class="text-white">Giáo Dục</h3>
+                            <p class="text-white">Cơ hội giáo dục cho trẻ em mọi miền</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-md-6 wow fadeInUp" data-wow-delay="200ms" data-wow-duration="1500ms">
+                    <div class="service__item active">
+                        <div class="service__icon"><img src="/images/icon/service2.png" alt="icon"></div>
+                        <div class="service__content">
+                            <h3 class="text-white">Thức Ăn</h3>
+                            <p class="text-white">Thức ăn sạch dành cho mọi người</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-md-6 wow fadeInUp" data-wow-delay="400ms" data-wow-duration="1500ms">
+                    <div class="service__item">
+                        <div class="service__icon"><img src="/images/icon/service3.png" alt="icon"></div>
+                        <div class="service__content">
+                            <h3 class="text-white">Sức Khoẻ</h3>
+                            <p class="text-white">Đảm bảo sức khoẻ tới mọi hộ gia đình</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Service area end here -->
+    <!-- About area start here -->
+    <section id="about" class="about-two-area pt-120 pb-120 overflow-hidden">
+        <div class="about-two__wrp">
+            <div class="about-two__shape bobble__animation">
+                <img src="/images/shape/about-dot2.png" alt="image">
+            </div>
+            <div class="container">
+                <div class="row g-4 align-items-center">
+                    <div class="col-lg-6 wow fadeInLeft" data-wow-delay="200ms" data-wow-duration="1500ms">
+                        <div class="about-two__image image pr-60">
+                            <img src="/images/about/AboutUs.jpg" alt="image">
+                            <div class="line-shape sway_Y__animation">
+                                <img src="/images/shape/about-line.png" alt="shape">
+                            </div>
+                            <div class="dot-shape sway__animation">
+                                <img src="/images/shape/about-dot3.png" alt="shape">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="section-header mb-20">
+                            <h5 class="wow fadeInUp" data-wow-delay="00ms" data-wow-duration="1500ms">
+                                <i class="fa-regular fa-angles-left pe-1"></i> VỀ CHÚNG TÔI <i class="fa-regular fa-angles-right ps-1"></i>
+                            </h5>
+                            <h2 class="wow fadeInUp" data-wow-delay="200ms" data-wow-duration="1500ms">
+                                FALO Financial Proofing
+                            </h2>
+                            <p class="wow fadeInUp" data-wow-delay="400ms" data-wow-duration="1500ms">
+                                It is a long
+                                established fact that a reader will be distracted the readable content
+                                of a
+                                page when looking at layout the
+                                point of using lorem Ipsum <br>
+                                less normal distribution of letters.
+                            </p>
+                        </div>
+                        <div class="about-two__content">
+                            <div class="item mb-30 wow fadeInDown" data-wow-delay="00ms" data-wow-duration="1500ms">
+                                <div class="icon">
+                                    <img src="/images/icon/about-icon1.png" alt="icon">
+                                </div>
+                                <div class="content">
+                                    <h6 class="mb-10">Từ Thiện Nhanh Chóng</h6>
+                                    <p>
+                                        Embarrassing hidden in the middle of All the Lorem Ipsum generators on the
+                                        Internet to repeat predefined chunks
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="item wow fadeInDown" data-wow-delay="200ms" data-wow-duration="1500ms">
+                                <div class="icon">
+                                    <img src="/images/icon/about-icon2.png" alt="icon">
+                                </div>
+                                <div class="content">
+                                    <h6 class="mb-10">Minh Bạch Quy Trình</h6>
+                                    <p>
+                                        Embarrassing hidden in the middle of All the Lorem Ipsum generators on the
+                                        Internet to repeat predefined chunks
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-content-center flex-wrap gap-4 mt-40 wow fadeInDown"
+                                 data-wow-delay="400ms" data-wow-duration="1500ms">
+                                @* <div class="btn-two">
+                                    <span class="btn-circle">
+                                    </span>
+                                    <a href="about.html" class="btn-inner">
+                                        <span class="btn-text">
+                                            ABOUT MORE
+                                        </span>
+                                    </a>
+                                </div> *@
+                                <div class="info-video">
+                                    <a class="video-popup" href="https://www.youtube.com/watch?v=ukHK1GVyr0I">
+                                        <i class="fa-solid fa-play"></i>
+                                    </a>
+                                    <h6>Video Giới Thiệu</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- About area end here -->
+    <!-- Cause area start here -->
+    <section class="cause-area pt-120 pb-100">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-4 mb-40">
+                <div class="section-header">
+                    <h5 class="wow fadeInUp" data-wow-delay="00ms" data-wow-duration="1500ms">
+                        <i class="fa-regular fa-angles-left pe-1"></i> Các Chiến Dịch <i class="fa-regular fa-angles-right ps-1"></i>
+                    </h5>
+                    <h2 class="wow fadeInUp" data-wow-delay="200ms" data-wow-duration="1500ms">
+                        Các Chiến Dịch Hiện Tại
+                    </h2>
+                </div>
+                <div class="arry-btn wow fadeInUp" data-wow-delay="400ms" data-wow-duration="1500ms">
+                    @* <button class="arry-prev cause__arry-prev"><i class="fa-regular fa-chevron-left"></i></button>
+                    <button class="arry-next cause__arry-next active ml-10">
+                        <i class="fa-regular fa-chevron-right"></i>
+                    </button> *@
+                </div>
+            </div>
+        </div>
+        <div class="cause__slider-wrp">
+            <div class="swiper cause__slider">
+                <div class="swiper-wrapper py-4" id="campaignsContainer">
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Cause area end here -->
+    <!-- Project area start here -->
+    <section class="event-area pt-120 pb-120 bg-image" data-background="/images/banner/banner_2.jpg">
+        <div class="container-fluid">
+            <div class="section-header text-center mb-60">
+                <h5 class="wow fadeInUp" data-wow-delay="00ms" data-wow-duration="1500ms">
+                    <i class="fa-regular fa-angles-left pe-1"></i> Dự Án <i class="fa-regular fa-angles-right ps-1"></i>
+                </h5>
+                <h2 class="text-white wow fadeInUp" data-wow-delay="200ms" data-wow-duration="1500ms">
+                    Các Dự Án Hiện Tại
+                </h2>
+            </div>
+            <div class="row g-4" id="projectsContainer">
+            </div>
+        </div>
+    </section>
+</main>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/js/homepage/homepage.js"></script>

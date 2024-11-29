@@ -7,15 +7,11 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
-    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
     <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
-    <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
     <style>
         .search-filter-container {
             display: flex;
@@ -71,6 +67,7 @@
                                         <th class="text-uppercase text-secondary text-xs opacity-7">Campaign Name</th>
                                         <th class="text-uppercase text-secondary text-xs opacity-7">Project Name</th>
                                         <th class="text-uppercase text-secondary text-xs opacity-7">Fund Target</th>
+                                        <th class="text-uppercase text-secondary text-xs opacity-7">Stage</th>
                                         <th class="text-uppercase text-secondary text-xs opacity-7">Actions</th>
                                     </tr>
                                 </thead>
@@ -96,20 +93,38 @@
 <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    function changeCampaign(button, Id) {
+    function changeCampaign(button, Id, name) {
         localStorage.setItem('campaignId', Id);
+        localStorage.setItem('campaignName', name);
         window.location.href = '/Campaign/CampaignDetail';
+    }
+    function changeCampaignUpdateProcess(button, Id) {
+        localStorage.setItem('campaignId', Id);
+        window.location.href = '/Campaign/CampaignUpdateProcessRequest';
+    }
+    function changeCampaignPm(button, Id, name) {
+        localStorage.setItem('campaignId', Id);
+        localStorage.setItem('campaignName', name);
+        window.location.href = '/Campaign/CampaignDetail_PMB';
     }
     $(document).ready(function () {
         let currentPage = 1;
         const userId = localStorage.getItem('userId');
         const roleId = localStorage.getItem('loggingRoleId');
-        const pageSize = 5;
+        const checkrole = localStorage.getItem('loggingRole');
+        const pageSize = 7;
         function fetchCampaignData(searchInput = '', isActive = null, page = 1) {
-            const jwtToken = localStorage.getItem('jwtToken');
+        const jwtToken = localStorage.getItem('jwtToken');
+
+        let apiUrl;
+        if(checkrole === "Project Management Board") {
+            apiUrl = `https://localhost:7294/api/Campaign/GetAllCampaignInSystem`
+        } else {
+            apiUrl = `https://localhost:7294/api/CampaignMember/GetAllCampaignMembersByUserIdAndRoleId`
+        }
 
             $.ajax({
-                url: `https://localhost:7294/api/CampaignMember/GetAllCampaignMembersByUserIdAndRoleId`,
+                url: apiUrl,
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`
@@ -123,6 +138,8 @@
                 },
                 success: function (response) {
                     if (response.success) {
+                        console.log(userId);
+                        console.log(roleId);
                         renderTable(response.data.data);
                         setupPagination(response.data.dataCount);
                     } else {
@@ -142,16 +159,30 @@
                 tableBody.append('<tr><td colspan="5">No results found</td></tr>');
                 return;
             }
-
+            
             data.forEach((item, index) => {
+                console.log(item.campaignId);
+                let actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId}, ${item.campaignName})" class="btn btn-info btn-sm detail-btn">Detail</button>`;
+                let campaignName =`${item.campaignTitle}`;
+                if(checkrole === "Project Manager") {
+                    actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId}, ${item.campaignName})" class="btn btn-info btn-sm detail-btn">Detail</button>
+                                        <button class="btn btn-primary btn-sm" onclick="changeCampaignUpdateProcess(this, ${item.campaignId})">Update Process</a>
+                    `;
+                } 
+                if(checkrole === "Project Management Board") {
+                    campaignName =`${item.title}`;
+                    actionButtons = `<button onclick="changeCampaignPm(this, ${item.campaignId}, ${item.campaignName})" class="btn btn-info btn-sm detail-btn">Detail</button>
+                    `;
+                }
                 const row = `
                     <tr>
                         <td class="align-middle text-center text-sm">${index + 1}</td>
-                        <td class="align-middle text-sm">${item.campaignTitle}</td>
-                        <td class="align-middle text-sm">${item.projectName}</td>
+                        <td class="align-middle text-center text-sm">${campaignName}</td>
+                        <td class="align-middle text-center text-sm">${item.projectName}</td>
                         <td class="align-middle text-center text-sm">${item.fundTarget.toLocaleString()}</td>
+                        <td class="align-middle text-center text-sm">${item.status}</td>
                         <td class="align-middle text-center">
-                            <button onclick="changeCampaign(this, ${item.campaignId})" class="btn btn-info btn-sm detail-btn">Detail</button>
+                            ${actionButtons}
                         </td>
                     </tr>
                 `;
@@ -159,22 +190,63 @@
             });
         }
 
-        function setupPagination(totalItems) {
-            const totalPages = Math.ceil(totalItems / pageSize);
-            const paginationContainer = $('#pagination');
-            paginationContainer.empty();
+    function setupPagination(totalItemsCount) {
+        const totalPages = Math.ceil(totalItemsCount / pageSize);
+        const paginationContainer = $('#pagination');
+        paginationContainer.empty();
 
-            for (let i = 1; i <= totalPages; i++) {
-                const pageButton = $(`<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}">${i}</button>`);
-                pageButton.on('click', () => changePage(i));
-                paginationContainer.append(pageButton);
-            }
+        const maxVisibleButtons = 5;
+        const ellipsis = `<span class="btn btn-sm btn-light disabled">...</span>`;
 
-            $('.page-btn').click(function () {
-                currentPage = $(this).data('page');
-                fetchCampaignData($('#searchInput').val(), $('#statusFilter').val(), currentPage);
-            });
+        function createPageButton(page) {
+            return $(`<button class="btn btn-sm btn-page ${page === currentPage ? 'btn-primary' : 'btn-light'}">${page}</button>`)
+                .on('click', () => changePage(page, totalItemsCount));
         }
+
+        const prevButton = $(`<button class="btn btn-sm btn-page ${currentPage === 1 ? 'btn-light disabled' : 'btn-light'}">Previous</button>`);
+        prevButton.on('click', () => {
+            if (currentPage > 1) changePage(currentPage - 1, totalItemsCount);
+        });
+        paginationContainer.append(prevButton);
+
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisibleButtons / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisibleButtons - 1);
+
+        if (endPage - startPage + 1 < maxVisibleButtons) {
+            startPage = Math.max(1, endPage - maxVisibleButtons + 1);
+        }
+
+        if (startPage > 1) {
+            paginationContainer.append(createPageButton(1));
+            if (startPage > 2) {
+                paginationContainer.append($(ellipsis));
+            }
+        }
+
+        for (let page = startPage; page <= endPage; page++) {
+            paginationContainer.append(createPageButton(page));
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                paginationContainer.append($(ellipsis));
+            }
+            paginationContainer.append(createPageButton(totalPages));
+        }
+
+        const nextButton = $(`<button class="btn btn-sm btn-page ${currentPage === totalPages ? 'btn-light disabled' : 'btn-light'}">Next</button>`);
+        nextButton.on('click', () => {
+            if (currentPage < totalPages) changePage(currentPage + 1, totalItemsCount);
+        });
+        paginationContainer.append(nextButton);
+    }
+
+    window.changePage = function (page, totalItemsCount) {
+        const totalPages = Math.ceil(totalItemsCount / pageSize);
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        fetchCampaignData($('#searchInput').val(), $('#statusFilter').val(), currentPage);
+    };
 
 
         $('#searchInput').on('keyup', function () {
