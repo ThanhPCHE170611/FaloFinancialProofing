@@ -70,7 +70,7 @@
 
                         <div class="mb-3">
                             <label for="totalAmount" class="form-label">Fund Target</label>
-                            <input type="number" class="form-control" id="totalAmount" placeholder="Enter total amount" min="0" step="1000">
+                            <input type="text" class="form-control" id="totalAmount" placeholder="Enter total amount">
                         </div>
 
                         <div class="mb-3">
@@ -178,7 +178,7 @@
         $('#totalAmount').on('input', function () {
             let input = $(this).val();
 
-            input = input.replace(/,/g, '');
+            input = input.replace(/[^0-9]/g, '');
 
             if (!/^\d+$/.test(input)) {
                 alert('Vui lòng nhập số nguyên dương và không chứa dấu thập phân hoặc ký tự không hợp lệ.');
@@ -200,7 +200,10 @@
 
             const campaignName = $('#campaignName').val();
             const location = $('#location').val();
-            const totalAmount = parseFloat($('#totalAmount').val());
+
+            // const totalAmount = parseFloat($('#totalAmount').val());
+            const totalAmount = $('#totalAmount').val().replace(/,/g, '');
+
             let endDate = $('#endDate').val();
             const description = quill.getText();;
             const files = $('#attachments')[0].files;
@@ -230,14 +233,15 @@
                 $('#location').focus();
                 return;
             }
-
-            totalAmount = totalAmount.replace(/,/g, '');
-            const amountValue = parseInt(totalAmount, 10);
-            if (!amountValue || amountValue <1000) {
+            
+            const amountValue = parseInt(totalAmount);
+            console.log(amountValue);
+            if (!totalAmount || totalAmount < 1000) {
                 alert('Fund Target is required and must be at least 1000.');
                 $('#totalAmount').focus();
                 return;
             }
+
 
             if (!endDate || selectedEndDate <= today) {
                 alert('Expected End Date must be after today.');

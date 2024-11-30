@@ -1,4 +1,4 @@
-﻿function previewImage() {
+﻿
 function previewImage() {
     var fileInput = document.getElementById('profilePicture');
     var imagePreview = document.getElementById('imagePreview');
@@ -94,39 +94,19 @@ $(document).ready(function () {
                     $('#phone').val(data.phoneNumber);
                     const socialMediaContainer = $('#socialMediaContainer');
                     socialMediaContainer.empty();
-                    // if (data.socialNetworkRequests && data.socialNetworkRequests.length > 0) {
-                    //     data.socialNetworkRequests.forEach(social => {
-                    //         const socialInput = `<div class="input-group mb-2">
-                    //             <input type="url" class="form-control social-media-input" data-id="${social.id}" value="${social.socialNetworksLink}" placeholder="Enter social media link">
-                    //         </div>`;
-                    //         socialMediaContainer.append(socialInput);
-                    //     });
-                    // } else {
-                    //     const blankInput = `<div class="input-group mb-2">
-                    //     <input type="url" class="form-control social-media-input" data-id="0" placeholder="Enter social media link">
-                    //     </div>`;
-                    //     socialMediaContainer.append(blankInput);
-                    // }
-                    if (data.socialNetworkRequests && data.socialNetworkRequests.length > 0) {
-                        data.socialNetworkRequests.forEach(social => {
-                            const socialInput = `<div class="input-group mb-2">
-                <a href="${social.socialNetworksLink}" target="_blank" class="btn btn-link me-2">Visit</a>
-                <input type="url" class="form-control social-media-input" data-id="${social.id}" value="${social.socialNetworksLink}" placeholder="Enter social media link">
-                <button class="btn btn-danger delete-social" data-id="${social.id}">Delete</button>
-            </div>`;
-                            socialMediaContainer.append(socialInput);
-                        });
-                    } else {
-                        const blankInput = `<div class="input-group mb-2">
-            <input type="url" class="form-control social-media-input" data-id="0" placeholder="Enter social media link">
-        </div>`;
-                        socialMediaContainer.append(blankInput);
-                    }
-
-                    // Event listener to delete a social media link
-                    $('#socialMediaContainer').on('click', '.delete-social', function () {
-                        $(this).closest('.input-group').remove();
-                    });
+                     if (data.socialNetworkRequests && data.socialNetworkRequests.length > 0) {
+                         data.socialNetworkRequests.forEach(social => {
+                             const socialInput = `<div class="input-group mb-2">
+                                 <input type="url" class="form-control social-media-input" data-id="${social.id}" value="${social.socialNetworksLink}" placeholder="Enter social media link">
+                             </div>`;
+                             socialMediaContainer.append(socialInput);
+                         });
+                     } else {
+                         const blankInput = `<div class="input-group mb-2">
+                         <input type="url" class="form-control social-media-input" data-id="0" placeholder="Enter social media link">
+                         </div>`;
+                         socialMediaContainer.append(blankInput);
+                     }
                     $('#volunteerExperience').val(data.volunteerExperience);
                     $('#volunteerGoals').val(data.volunteerGoal);
                     const activeSDGIds = data.userSDGInformations.map(item => item.sDGInformation.id);
@@ -280,5 +260,6 @@ $(document).ready(function () {
                 }
             }
         });
+
     });
 });
