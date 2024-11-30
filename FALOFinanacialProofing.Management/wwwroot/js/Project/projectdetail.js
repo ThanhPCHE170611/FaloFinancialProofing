@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         </div>`;
         }
 
-        displayFiles(files);
+        displayFiles(project.createProjectFiles);
 
     }
     loadProjectDetails();
@@ -236,5 +236,31 @@ function displayFiles(files) {
 }
 
 function downloadFile(fileName) {
-    window.location.href = `https://localhost:7294/api/Projects/downloadattachmentfilewithnotypebyfilename/${fileName}`;
+    $.ajax({
+        url: `https://localhost:7294/api/CreateProjectFiles/DownloadProjectFile/${fileName}`,
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${jwtToken}`
+        },
+        xhrFields: {
+            responseType: 'blob'
+        },
+        success: function (data, status, xhr) {
+            console.log(fileName);
+            const contentType = xhr.getResponseHeader('Content-Type');
+            const blob = new Blob([data], { type: contentType });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+        },
+        error: function (xhr, status, error) {
+            alert('Error downloading file. Please try again.');
+            console.error('Error downloading file:', error);
+        }
+    });
 }

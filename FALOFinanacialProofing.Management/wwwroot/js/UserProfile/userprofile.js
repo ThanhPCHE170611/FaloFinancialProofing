@@ -1,4 +1,5 @@
 ﻿function previewImage() {
+function previewImage() {
     var fileInput = document.getElementById('profilePicture');
     var imagePreview = document.getElementById('imagePreview');
     var file = fileInput.files[0];
@@ -47,127 +48,24 @@ function loadSDGs() {
     });
 }
 $(document).ready(function () {
-    const userLoggingId = localStorage.getItem('userId');
-    const userId = localStorage.getItem('accountId');
+    const userId = localStorage.getItem('userId');
     const jwtToken = localStorage.getItem('jwtToken');
     loadSDGs()
     loadUserProfile(userId);
-    $('.btn-warning').on('click', function () {
-        fetchRolesAndShowPopup(userId);
-    });
+
 
     $('#socialMediaContainer').on('click', '.add-social-btn', function () {
         const newInput = `<div class="input-group mb-2">
-                <input type="url" class="form-control social-media-input" data-id="0" placeholder="Enter social media link">
-                <button type="button" class="btn btn-outline-danger remove-social-btn">-</button>
-            </div>`;
+        <input type="url" class="form-control social-media-input" data-id="0" placeholder="Enter social media link">
+            <button type="button" class="btn btn-outline-danger remove-social-btn">-</button>
+    </div>`;
         $('#socialMediaContainer').append(newInput);
     });
 
     $('#socialMediaContainer').on('click', '.remove-social-btn', function () {
         $(this).closest('.input-group').remove();
     });
-    function fetchRolesAndShowPopup(userId) {
-        $.ajax({
-            url: `https://localhost:7294/api/Users/GetAccount/${userId}`,
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${jwtToken}`
-            },
-            success: function (response) {
-                if (response.success) {
-                    const userRoles = response.data.roles.map(role => role.roleName);
-                    showRolePopup(userRoles);
-                } else {
-                    alert('Failed to fetch roles: ' + response.message);
-                }
-            },
-            error: function () {
-                alert('Error fetching user roles.');
-            }
-        });
-    }
-    function showRolePopup(userRoles) {
-        const popupHtml = `
-            <div class="role-popup">
-                <div class="popup-content">
-                    <h5>Assign Roles</h5>
-                    <div class="mb-3">
-                        <label class="form-label">Select Roles</label>
-                        <div class="form-check">
-                            <input class="form-check-input role-checkbox" type="checkbox" value="Volunteer" id="roleVolunteer" ${userRoles.includes('Volunteer') ? 'checked disabled' : ''}>
-                            <label class="form-check-label" for="roleVolunteer">Volunteer</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input role-checkbox" type="checkbox" value="Volunteer Leader" id="roleVolunteerLeader" ${userRoles.includes('Volunteer Leader') ? 'checked disabled' : ''}>
-                            <label class="form-check-label" for="roleVolunteerLeader">Volunteer Leader</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input role-checkbox" type="checkbox" value="Accounting" id="roleAccounting" ${userRoles.includes('Accounting') ? 'checked disabled' : ''}>
-                            <label class="form-check-label" for="roleAccounting">Accounting</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input role-checkbox" type="checkbox" value="Project Manager" id="roleProjectManager" ${userRoles.includes('Project Manager') ? 'checked disabled' : ''}>
-                            <label class="form-check-label" for="roleProjectManager">Project Manager</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input role-checkbox" type="checkbox" value="Project Management Board" id="roleProjectManagementBoard" ${userRoles.includes('Project Management Board') ? 'checked disabled' : ''}>
-                            <label class="form-check-label" for="roleProjectManagementBoard">Project Management Board</label>
-                        </div>
-                    </div>
-                    <div class="popup-buttons">
-                        <button id="saveRolesButton" class="btn btn-success">Save</button>
-                        <button id="closePopupButton" class="btn btn-danger">Close</button>
-                    </div>
-                </div>
-            </div>
-        `;
 
-        $('body').append(popupHtml);
-
-        $('#saveRolesButton').on('click', function () {
-            saveRoles(userId);
-        });
-        $('#closePopupButton').on('click', function () {
-            $('.role-popup').remove();
-        });
-    }
-
-    function saveRoles(userId) {
-        const selectedRoles = [];
-        $('.role-checkbox:not(:disabled):checked').each(function () {
-            selectedRoles.push($(this).val());
-        });
-
-        if (selectedRoles.length === 0) {
-            alert('No new roles selected.');
-            return;
-        }
-
-        const payload = {
-            userId: userId,
-            roleNames: selectedRoles
-        };
-        console.log(payload);
-        $.ajax({
-            url: `https://localhost:7294/api/Users/AssignRoleToUser`,
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${jwtToken}`,
-                'Content-Type': 'application/json'
-            },
-            data: JSON.stringify(payload),
-            success: function (response) {
-                alert(response.message);
-                if (response.success) {
-                    location.reload(); 
-                }
-            },
-            error: function () {
-                alert('Error assigning roles.');
-            }
-        });
-    }
     function loadUserProfile(userId) {
         $.ajax({
             url: `https://localhost:7294/api/Users/GetUserProfile/${userId}`,
@@ -196,19 +94,39 @@ $(document).ready(function () {
                     $('#phone').val(data.phoneNumber);
                     const socialMediaContainer = $('#socialMediaContainer');
                     socialMediaContainer.empty();
+                    // if (data.socialNetworkRequests && data.socialNetworkRequests.length > 0) {
+                    //     data.socialNetworkRequests.forEach(social => {
+                    //         const socialInput = `<div class="input-group mb-2">
+                    //             <input type="url" class="form-control social-media-input" data-id="${social.id}" value="${social.socialNetworksLink}" placeholder="Enter social media link">
+                    //         </div>`;
+                    //         socialMediaContainer.append(socialInput);
+                    //     });
+                    // } else {
+                    //     const blankInput = `<div class="input-group mb-2">
+                    //     <input type="url" class="form-control social-media-input" data-id="0" placeholder="Enter social media link">
+                    //     </div>`;
+                    //     socialMediaContainer.append(blankInput);
+                    // }
                     if (data.socialNetworkRequests && data.socialNetworkRequests.length > 0) {
                         data.socialNetworkRequests.forEach(social => {
                             const socialInput = `<div class="input-group mb-2">
-                                    <input type="url" class="form-control social-media-input" data-id="${social.id}" value="${social.socialNetworksLink}" placeholder="Enter social media link">
-                                </div>`;
+                <a href="${social.socialNetworksLink}" target="_blank" class="btn btn-link me-2">Visit</a>
+                <input type="url" class="form-control social-media-input" data-id="${social.id}" value="${social.socialNetworksLink}" placeholder="Enter social media link">
+                <button class="btn btn-danger delete-social" data-id="${social.id}">Delete</button>
+            </div>`;
                             socialMediaContainer.append(socialInput);
                         });
                     } else {
                         const blankInput = `<div class="input-group mb-2">
-                            <input type="url" class="form-control social-media-input" data-id="0" placeholder="Enter social media link">
-                            </div>`;
+            <input type="url" class="form-control social-media-input" data-id="0" placeholder="Enter social media link">
+        </div>`;
                         socialMediaContainer.append(blankInput);
                     }
+
+                    // Event listener to delete a social media link
+                    $('#socialMediaContainer').on('click', '.delete-social', function () {
+                        $(this).closest('.input-group').remove();
+                    });
                     $('#volunteerExperience').val(data.volunteerExperience);
                     $('#volunteerGoals').val(data.volunteerGoal);
                     const activeSDGIds = data.userSDGInformations.map(item => item.sDGInformation.id);
@@ -341,6 +259,7 @@ $(document).ready(function () {
                 if (response.success) {
                     alert('Profile updated successfully!');
                     console.log($('#fullName').val());
+                    localStorage.setItem('fullname', $('#fullName').val());
                     location.reload();
                 } else {
                     alert('Failed to update profile: ' + response.message);

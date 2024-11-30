@@ -119,6 +119,20 @@ $(document).ready(function () {
             alert('Failed to load approvers. Please try again.');
         }
     });
+    $('#expectedMoney').on('input', function () {
+        let input = $(this).val();
+
+        input = input.replace(/,/g, '');
+
+        if (!/^\d+$/.test(input)) {
+            alert('Vui lòng nhập số nguyên dương và không chứa dấu thập phân hoặc ký tự không hợp lệ');
+            $(this).val('');
+            return;
+        }
+
+        const formatted = Number(input).toLocaleString();
+        $(this).val(formatted);
+    });
 
     $('#create-btn').on('click', function () {
         const expectedMoney = $('#expectedMoney').val();

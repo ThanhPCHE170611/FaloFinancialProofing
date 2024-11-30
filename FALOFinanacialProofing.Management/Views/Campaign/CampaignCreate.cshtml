@@ -175,6 +175,20 @@
       });
     });
     $(document).ready(function () {
+        $('#totalAmount').on('input', function () {
+            let input = $(this).val();
+
+            input = input.replace(/,/g, '');
+
+            if (!/^\d+$/.test(input)) {
+                alert('Vui lòng nhập số nguyên dương và không chứa dấu thập phân hoặc ký tự không hợp lệ.');
+                $(this).val('');
+                return;
+            }
+
+            const formatted = Number(input).toLocaleString();
+            $(this).val(formatted);
+        });
         $('#save-btn button').on('click', function (e) {
             e.preventDefault();
 
@@ -217,7 +231,9 @@
                 return;
             }
 
-            if (!totalAmount || totalAmount <1000) {
+            totalAmount = totalAmount.replace(/,/g, '');
+            const amountValue = parseInt(totalAmount, 10);
+            if (!amountValue || amountValue <1000) {
                 alert('Fund Target is required and must be at least 1000.');
                 $('#totalAmount').focus();
                 return;
