@@ -1,4 +1,7 @@
-﻿namespace FALOFinancialProofing.DTOs.ProjectDTOs
+﻿using FALOFinancialProofing.DTOs.CreateProjectFileDTO;
+using FALOFinancialProofing.Models;
+
+namespace FALOFinancialProofing.DTOs.ProjectDTOs
 {
     public class ProjectInformation
     {
@@ -16,6 +19,7 @@
         public string OrganizationName { get; set; }
         public string? Logo { get; set; }
         public string? Image { get; set; }
+        public ICollection<CreateProjectFileInformation> CreateProjectFiles { get; set; }
 
     }
 }

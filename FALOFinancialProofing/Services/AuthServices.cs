@@ -302,9 +302,23 @@ namespace FALOFinancialProofing.Services
             {
                 return false;
             }
+
             return true;
         }
 
+        public async Task<bool> ChekcIsManyRoleAccount(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return false;
+            }
+            var roleList = await userManager.GetRolesAsync(user);
+            if (roleList.Count > 1)
+                return false;
+
+            return true;
+        }
         //public async Task<User?> RegisterUser(SignUpRequest registerRequest)
         //{
         //    var validatedInformationRequest = await ValidatedInformationRequest(registerRequest);
@@ -1115,7 +1129,7 @@ Click vào link này để đặt lại mật khẩu: {resetPasswordLink}";
             bool checkValid = false;
             try
             {
-                userManager.AddLoginAsync(null, null);
+                //userManager.AddLoginAsync(null, null);
                 if (roleName == null)
                 {
                     throw new Exception("Role Name is null");
@@ -1163,7 +1177,6 @@ Click vào link này để đặt lại mật khẩu: {resetPasswordLink}";
             {
                 Console.WriteLine($"ExternalRegisterUser: {ex.Message}");
             }
-
 
             return null;
         }

@@ -1,4 +1,5 @@
-﻿using FALOFinancialProofing.DTOs.ProjectDTOs;
+﻿using FALOFinancialProofing.DTOs.CreateProjectFileDTO;
+using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
@@ -258,6 +259,12 @@ namespace FALOFinancialProofing.Services.ProjectServices
                         OrganizationName = p.Organization != null ? p.Organization.Name : "No Organization",
                         Image = UrlHelper.GetImageUrl(request, p.Image, FolderImage.ProjectImageUpload),
                         Logo = UrlHelper.GetImageUrl(request, p.Organization != null ? p.Organization.Logo : null, FolderImage.OrganizationImageUpload),
+                        CreateProjectFiles = p.CreateProjectRequests.SelectMany(ccr => ccr.CreateProjectFiles).Select(f => new CreateProjectFileInformation()
+                        {
+                            Id = f.Id,
+                            RequestId = f.RequestId,
+                            FilePath = f.FilePath
+                        }).ToList()
                     }).SingleOrDefaultAsync();
             }
             catch (Exception ex)

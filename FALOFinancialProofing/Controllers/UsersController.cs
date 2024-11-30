@@ -89,6 +89,16 @@ namespace FALOFinancialProofing.Controllers
                     });
                 }
             }
+            var checkIsManyRolesAccount = await authServices.ChekcIsManyRoleAccount(userInfo.Email);
+            if (checkIsManyRolesAccount)
+            {
+                return Ok(new ApiResponse()
+                {
+                    Success = false,
+                    Message = "Login with Google Fails, Account has many roles!"
+                });
+            }
+
             UserDto userDto = await authServices.GetUserDto(userInfo);
             var user = await authServices.GetUserById(userDto.Id);
             var checkIsLockout = authServices.checkLockoutAccount(user, message);

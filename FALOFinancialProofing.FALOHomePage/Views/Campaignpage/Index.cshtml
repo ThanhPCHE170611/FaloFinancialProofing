@@ -3,7 +3,7 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     var campaignDetails = ViewBag.CampaignDetails as FALOFinancialProofing.FALOHomePage.Models.CampaignDetailsDTO;
-    var percentage = Math.Round((campaignDetails.TotalMoneyEarned / campaignDetails.FundTarget) * 100);
+    var percentage = Math.Round((decimal)(campaignDetails.TotalMoneyEarned / campaignDetails.FundTarget) * 100);
 }
 
 <main>
