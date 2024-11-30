@@ -87,7 +87,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                         UpdateLog = p.UpdateLog,
                         TotalMoneyEarned = p.TransactionLogs
                             .Where(t => t.Amount > 0)
-                            .Sum(x => (double)x.Amount),
+                            .Sum(x => (long)x.Amount),
                     }).ToListAsync();
             }
             catch (Exception ex)
@@ -123,7 +123,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                         Status = p.Status,
                         TotalMoneyEarned = p.TransactionLogs
                             .Where(t => t.Amount > 0)
-                            .Sum(x => (double)x.Amount),
+                            .Sum(x => (long)x.Amount),
                         UpdateLog = p.UpdateLog,
                     }).ToListAsync();
             }
@@ -179,7 +179,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                         UpdateLog = p.UpdateLog,
                         TotalMoneyEarned = p.TransactionLogs
                             .Where(t => t.Amount > 0)
-                            .Sum(x => (double)x.Amount),
+                            .Sum(x => (long)x.Amount),
                         CreateCampaignFiles = p.CreateCampaignRequests.SelectMany(ccr => ccr.CreateCampaignFiles).Select(f => new CreateCampaignFileInformation()
                         {
                             Id = f.Id,

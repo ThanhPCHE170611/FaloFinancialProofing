@@ -18,8 +18,8 @@ namespace FALOFinancialProofing.DTOs.CampaignDTO
         [MinLength(8, ErrorMessage = "Description must be at least 8 characters")]
         public string Description { get; set; }// pm
         public IFormFile? LogoFile { get; set; } // pm
-        [Range(0, double.MaxValue, ErrorMessage = "FundTarget must be a non-negative number")]
-        public double FundTarget { get; set; }
+        [Range(0, long.MaxValue, ErrorMessage = "FundTarget must be a non-negative number")]
+        public long FundTarget { get; set; }
         public string? Address { get; set; } // pm
         public bool? IsActive { get; set; }
         public string? Status { get; set; }

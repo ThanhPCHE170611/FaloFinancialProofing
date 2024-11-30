@@ -226,7 +226,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                            Status = p.Status,
                            TotalMoneyEarned = p.TransactionLogs.Sum(x => x.Amount)
                        }).SingleOrDefaultAsync();
-                double sumOfAmount = 0;
+                long sumOfAmount = 0;
                 //Campaign campaign = new Campaign();
                 //campaign = await _campaignRepository.Get(campaignId);
                 sumOfAmount = data.TotalMoneyEarned;
