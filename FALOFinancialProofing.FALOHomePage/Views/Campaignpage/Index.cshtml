@@ -1,5 +1,5 @@
 ﻿@page "/CampaignDetails"
-
+@using System.Globalization
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     var campaignDetails = ViewBag.CampaignDetails as FALOFinancialProofing.FALOHomePage.Models.CampaignDetailsDTO;
@@ -48,8 +48,8 @@
                                 }
                             </div>
                             <div class="progress__goal mt-15">
-                                <h6>Goal : <span>@campaignDetails.FundTarget</span></h6>
-                                <h6>Raised : <span>@campaignDetails.TotalMoneyEarned</span></h6>
+                                <h6>Goal : <span>@campaignDetails.FundTarget.ToString("C", new CultureInfo("vi-VN"))</span></h6>
+                                <h6>Raised : <span>@campaignDetails.TotalMoneyEarned.ToString("C", new CultureInfo("vi-VN"))</span></h6>
                             </div>
                         </div>
                         <div class="blog__content p-0">

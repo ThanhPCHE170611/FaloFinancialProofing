@@ -32,12 +32,21 @@
         <div class="item shadow mb-30">
             <h5 class="title">Search</h5>
             <div class="serach-bar">
-                <input type="text" id="searchInput" placeholder="Search here">
-                <button id="searchButton"><i class="fa-regular fa-magnifying-glass"></i></button>
+                <input type="text" id="searchInput" placeholder="Search here" style=" padding: 9px;">
+                @* <button id="searchButton"><i class="fa-regular fa-magnifying-glass"></i></button> *@
             </div>
         </div>
     </div>
-
+    <div class="blog-single__right-item">
+        <div class="item shadow mb-30">
+            <div class="date-filter">
+                <h5 class="title">Filter by Date</h5>
+                <input type="date" id="startDate" placeholder="Start Date">
+                <input type="date" id="endDate" placeholder="End Date">
+                <button id="applyDateFilter">Apply Filter</button>
+            </div>
+        </div>
+    </div>
     <!-- Error Message -->
     <div id="errorMessage" class="alert alert-danger" style="display:none;"></div>
 
@@ -78,10 +87,11 @@
                 loadActivityLogs(1, searchInput, campaignId);
             }
         });
+        $('#applyDateFilter').click(applyDateFilter);
     });
 
     // Function to load activity logs with pagination
-    function loadActivityLogs(currentPage, searchInput, campaignId) {
+    function loadActivityLogs(currentPage, searchInput, campaignId, startDate = "", endDate = "") {
         const apiUrl = `https://localhost:7294/api/AttachmentFile/getallpaymentattachmentincampaignwithrequest/${campaignId}?name=${searchInput}&page=${currentPage}`;
 
         $.ajax({
@@ -90,7 +100,8 @@
             success: function (response) {
                 if (response && response.success && response.data && response.data.data) {
                     renderActivityLogs(response.data.data);
-                    renderPagination(response.data.totalRecords, currentPage, searchInput, campaignId);
+                    // renderPagination(response.data.totalRecords, currentPage, searchInput, campaignId);
+                    updatePagination(response.data.totalRecords, currentPage, searchInput, campaignId, startDate, endDate);
                 } else {
                     showError("No data found.");
                 }
@@ -105,7 +116,7 @@
     function renderActivityLogs(activities) {
         $('#activityTable').show();
         $('#activityLogs').empty();
-
+        fetchTotalMoneyOut();
         activities.forEach(function (activity) {
             const formattedAmount = activity.expectedMoney.toLocaleString('vi-VN', {
                 style: 'currency',
@@ -128,33 +139,111 @@
 
         $('#errorMessage').hide();
     }
+    function fetchTotalMoneyOut() {
+        const campaignId = '@ViewBag.campaignId';
+        const startDate = $('#startDate').val() || "";
+        const endDate = $('#endDate').val() || "";
+        const searchInput = $('#searchInput').val() || "";
 
-    function renderPagination(totalRecords, currentPage, searchInput, campaignId) {
-        const pageSize = 5;
+        const apiUrl = `https://localhost:7294/api/TransactionLogs/GetCampaignTransactionLogsMoneyOut/${campaignId}?searchInput=${searchInput}&startDate=${startDate}&endDate=${endDate}`;
+
+    $.ajax({
+        url: apiUrl,
+        type: 'GET',
+        success: function (response) {
+            if (response && response.success && response.data && response.data.data) {
+                const totalMoneyOut = response.data.data.reduce((sum, transaction) => sum + transaction.amount, 0)
+                    .toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+
+                $('#activityTable').before(`
+                    <div style="text-align: right; margin-bottom: 10px; font-weight: bold; color: red;">
+                        Tổng Số Tiền Chi: ${totalMoneyOut}
+                    </div>
+                `);
+            } else {
+                console.warn("No data found for total money out.");
+            }
+        },
+        error: function () {
+            console.error("Failed to fetch total money out.");
+        }
+    });
+}
+
+    // function renderPagination(totalRecords, currentPage, searchInput, campaignId) {
+    //     const pageSize = 5;
+    //     const totalPages = Math.ceil(totalRecords / pageSize);
+    //     const paginationControls = $('#paginationControls');
+    //     paginationControls.empty();
+
+    //     if (currentPage > 1) {
+    //         paginationControls.append(`<button onclick="loadActivityLogs(${currentPage - 1}, '${searchInput}', ${campaignId})"><i class="fa-solid fa-arrow-left-long primary-color transition"></i></button>`);
+    //     }
+
+    //     const startPage = Math.max(1, currentPage - 2);
+    //     const endPage = Math.min(totalPages, currentPage + 2);
+
+    //     for (let i = startPage; i <= endPage; i++) {
+    //         if (i === currentPage) {
+    //             paginationControls.append(`<button class="active" disabled>${i}</button>`);
+    //         } else {
+    //             paginationControls.append(`<button onclick="loadActivityLogs(${i}, '${searchInput}', ${campaignId})">${i}</button>`);
+    //         }
+    //     }
+
+    //     if (currentPage < totalPages) {
+    //         paginationControls.append(`<button onclick="loadActivityLogs(${currentPage + 1}, '${searchInput}', ${campaignId})"><i class="fa-solid fa-arrow-right-long primary-color transition"></i></button>`);
+    //     }
+    // }
+    function updatePagination(totalRecords, currentPage, searchInput, campaignId, startDate = "", endDate = "") {
+        const pageSize = 1;
         const totalPages = Math.ceil(totalRecords / pageSize);
         const paginationControls = $('#paginationControls');
         paginationControls.empty();
 
         if (currentPage > 1) {
-            paginationControls.append(`<button onclick="loadActivityLogs(${currentPage - 1}, '${searchInput}', ${campaignId})"><i class="fa-solid fa-arrow-left-long primary-color transition"></i></button>`);
+            paginationControls.append(`<button onclick="loadActivityLogs(${currentPage - 1}, '${searchInput}', ${campaignId}, '${startDate}', '${endDate}')"><i class="fa-solid fa-arrow-left-long primary-color transition"></i></button>`);
         }
 
-        const startPage = Math.max(1, currentPage - 2);
-        const endPage = Math.min(totalPages, currentPage + 2);
-
-        for (let i = startPage; i <= endPage; i++) {
-            if (i === currentPage) {
-                paginationControls.append(`<button class="active" disabled>${i}</button>`);
-            } else {
-                paginationControls.append(`<button onclick="loadActivityLogs(${i}, '${searchInput}', ${campaignId})">${i}</button>`);
+        if (totalPages <= 6) {
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === currentPage) {
+                    paginationControls.append(`<button class="active" disabled>${i}</button>`);
+                } else {
+                    paginationControls.append(`<button onclick="loadActivityLogs(${i}, '${searchInput}', ${campaignId}, '${startDate}', '${endDate}')">${i}</button>`);
+                }
             }
+        } else {
+            paginationControls.append(`<button onclick="loadActivityLogs(1, '${searchInput}', ${campaignId}, '${startDate}', '${endDate}')">1</button>`);
+            paginationControls.append(`<button onclick="loadActivityLogs(2, '${searchInput}', ${campaignId}, '${startDate}', '${endDate}')">2</button>`);
+
+            if (currentPage > 4) {
+                paginationControls.append(`<span>...</span>`);
+            }
+
+            const startPage = Math.max(3, currentPage - 1);
+            const endPage = Math.min(totalPages - 2, currentPage + 1);
+
+            for (let i = startPage; i <= endPage; i++) {
+                if (i === currentPage) {
+                    paginationControls.append(`<button class="active" disabled>${i}</button>`);
+                } else {
+                    paginationControls.append(`<button onclick="loadActivityLogs(${i}, '${searchInput}', ${campaignId}, '${startDate}', '${endDate}')">${i}</button>`);
+                }
+            }
+
+            if (currentPage < totalPages - 3) {
+                paginationControls.append(`<span>...</span>`);
+            }
+
+            paginationControls.append(`<button onclick="loadActivityLogs(${totalPages - 1}, '${searchInput}', ${campaignId}, '${startDate}', '${endDate}')">${totalPages - 1}</button>`);
+            paginationControls.append(`<button onclick="loadActivityLogs(${totalPages}, '${searchInput}', ${campaignId}, '${startDate}', '${endDate}')">${totalPages}</button>`);
         }
 
         if (currentPage < totalPages) {
-            paginationControls.append(`<button onclick="loadActivityLogs(${currentPage + 1}, '${searchInput}', ${campaignId})"><i class="fa-solid fa-arrow-right-long primary-color transition"></i></button>`);
+            paginationControls.append(`<button onclick="loadActivityLogs(${currentPage + 1}, '${searchInput}', ${campaignId}, '${startDate}', '${endDate}')"><i class="fa-solid fa-arrow-right-long primary-color transition"></i></button>`);
         }
     }
-
 
     // Function to show error message
     function showError(message) {
@@ -192,6 +281,18 @@
                 alert('Error downloading file: ' + error.message);
             });
     }
+    function applyDateFilter() {
+        const startDate = $('#startDate').val();
+        const endDate = $('#endDate').val();
 
+        if (new Date(startDate) > new Date(endDate)) {
+            showError("Start date cannot be after the end date.");
+            return;
+        }
+
+        const searchInput = $('#searchInput').val();
+        const campaignId = '@ViewBag.campaignId';
+        loadActivityLogs(1, searchInput, campaignId, startDate, endDate);
+    }
 </script>
 
