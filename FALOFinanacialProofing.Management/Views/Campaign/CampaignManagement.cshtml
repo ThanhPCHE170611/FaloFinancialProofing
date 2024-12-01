@@ -52,6 +52,13 @@
                     <div class="search-filter-container px-3">
                         <input type="text" id="searchInput" placeholder="Search by Campaign Name" class="search-box" onkeyup="searchCampaign()" />
                         <select id="statusFilter" class="filter-box" onchange="filterByStatus()">
+                            <option value="">All Stages</option>
+                            <option value="Fund-Raising">Fund-Raising</option>
+                            <option value="Implement">Implement</option>
+                            <option value="Disbursement">Disbursement</option>
+                            <option value="Close">Close</option>
+                        </select>
+                        <select id="statusFilterStatus" class="filter-box" onchange="filterByStatus()" style="display:none;">
                             <option value="">All Statuses</option>
                             <option value="true">Active</option>
                             <option value="false">Inactive</option>

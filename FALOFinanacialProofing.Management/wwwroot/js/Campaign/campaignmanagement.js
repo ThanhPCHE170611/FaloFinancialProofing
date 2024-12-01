@@ -18,7 +18,10 @@ $(document).ready(function () {
     const roleId = localStorage.getItem('loggingRoleId');
     const checkrole = localStorage.getItem('loggingRole');
     const pageSize = 7;
-    function fetchCampaignData(searchInput = '', isActive = null, page = 1) {
+    if (checkrole === "Project Management Board") {
+        document.getElementById('statusFilterStatus').style.display = 'block';
+    }
+    function fetchCampaignData(searchInput = '', Stage = null, isActive=null, page = 1) {
         const jwtToken = localStorage.getItem('jwtToken');
 
         let apiUrl;
@@ -38,6 +41,7 @@ $(document).ready(function () {
                 searchInput: searchInput,
                 userId: userId,
                 roleId: roleId,
+                status: Stage,
                 isActive: isActive,
                 currentPage: page
             },
@@ -153,19 +157,24 @@ $(document).ready(function () {
         const totalPages = Math.ceil(totalItemsCount / pageSize);
         if (page < 1 || page > totalPages) return;
         currentPage = page;
-        fetchCampaignData($('#searchInput').val(), $('#statusFilter').val(), currentPage);
+        fetchCampaignData($('#searchInput').val(), $('#statusFilter').val(), $('#statusFilterStatus').val(), currentPage);
     };
 
 
     $('#searchInput').on('keyup', function () {
         currentPage = 1;
-        fetchCampaignData($(this).val(), $('#statusFilter').val(), currentPage);
+        fetchCampaignData($(this).val(), $('#statusFilter').val(), $('#statusFilterStatus').val(),currentPage);
     });
 
     $('#statusFilter').on('change', function () {
         currentPage = 1;
-        fetchCampaignData($('#searchInput').val(), $(this).val(), currentPage);
+        fetchCampaignData($('#searchInput').val(), $(this).val(), $('#statusFilterStatus').val(),currentPage);
     });
+    $('#statusFilterStatus').on('change', function () {
+        currentPage = 1;
+        fetchCampaignData($('#searchInput').val(), $('#statusFilter').val(), $(this).val(), currentPage);
+    });
+
 
     fetchCampaignData();
 });
