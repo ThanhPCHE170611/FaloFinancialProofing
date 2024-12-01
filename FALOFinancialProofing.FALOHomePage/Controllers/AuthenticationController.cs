@@ -48,8 +48,10 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
                     var token = apiResponse.Data.AccessToken;
                     var decodedToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
                     var userId = decodedToken.Claims.FirstOrDefault(c => c.Type == "nameid")?.Value;
+                    var userName = decodedToken.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
                     HttpContext.Session.SetString("JwtToken", token);
                     HttpContext.Session.SetString("UserId", userId.ToString());
+                    HttpContext.Session.SetString("UserName", userName.ToString());
                     return RedirectToAction("Index", "Homepage");
                 }
                 else
