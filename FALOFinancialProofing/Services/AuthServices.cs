@@ -82,7 +82,7 @@ namespace FALOFinancialProofing.Services
             }
             return checkValid;
         }
-        public async Task<bool> CheckUserInRole(string userId, string userRole, StringBuilder message)
+        public virtual async Task<bool> CheckUserInRole(string userId, string userRole, StringBuilder message)
         {
             bool checkValid = false;
             try
@@ -302,6 +302,7 @@ namespace FALOFinancialProofing.Services
             return user;
         }
 
+        #region tạm thời chưa dùng
         public async Task<bool> CheckValidDonorAccount(User user)
         {
             var roleList = await userManager.GetRolesAsync(user);
@@ -310,6 +311,7 @@ namespace FALOFinancialProofing.Services
 
             return true;
         }
+        #endregion
         //public async Task<User?> RegisterUser(SignUpRequest registerRequest)
         //{
         //    var validatedInformationRequest = await ValidatedInformationRequest(registerRequest);

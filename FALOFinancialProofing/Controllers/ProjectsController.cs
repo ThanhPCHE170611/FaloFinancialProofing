@@ -74,6 +74,7 @@ namespace FALOFinancialProofing.Controllers
             });
         }
         //[RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
+        //PM xem tất cả project của mình
         [HttpGet("GetAllProjectByUserId/{UserId}")]
         public async Task<IActionResult> GetProjectsByUserIdAsync(string? searchInput, string UserId, string? status, int currentPage = IntConstant.PageNumberDefault)
         {

@@ -9,5 +9,6 @@
         public const string Rejected = "Rejected";
         public const string FundRaising = "Fund-Raising";
         public const string Cancel = "Cancel";
+        public const string Close = "Close";
     }
 }

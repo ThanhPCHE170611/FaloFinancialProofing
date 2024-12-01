@@ -42,9 +42,9 @@ namespace FALOFinancialProofing.Controllers
                 Data = campaignMembers
             });
         }
-        // có thể là tự xem chính mình hoặc admin xem uid và rid này nằm trong những campaign nào
+        // có thể là tự xem chính mình (hoặc admin xem uid và rid này nằm trong những campaign nào: bỏ)
         [HttpGet("GetAllCampaignMembersByUserIdAndRoleId")]
-        public async Task<IActionResult> GetAllCampaignMembersByUserIdAndRoleId(string? searchInput, string userId, string roleId, bool? isActive, int currentPage = IntConstant.PageNumberDefault)
+        public async Task<IActionResult> GetAllCampaignMembersByUserIdAndRoleId(string? searchInput, string userId, string roleId, string? campaignStatus, int currentPage = IntConstant.PageNumberDefault)
         {
             List<CampaignMemberInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -67,10 +67,14 @@ namespace FALOFinancialProofing.Controllers
                     searchInput = searchInput.Trim();
                     data = data.FindAll(x => ($"{x.CampaignTitle}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
                 }
-                if (isActive != null)
+                if (!string.IsNullOrEmpty(campaignStatus))
                 {
-                    data = data.FindAll(x => x.IsActive == isActive);
+                    data = data.FindAll(x => x.Status == campaignStatus);
                 }
+                //if (isActive != null)
+                //{
+                //    data = data.FindAll(x => x.IsActive == isActive);
+                //}
                 filterPagingData.DataCount = data.Count;
 
                 data = PaginationHelper.Paginate<CampaignMemberInformation>(data.AsQueryable(), currentPage, IntConstant.PageSizeCustom).ToList();
@@ -133,7 +137,6 @@ namespace FALOFinancialProofing.Controllers
                 Data = filterPagingData
             });
         }
-
         [HttpGet("GetAllCampaignMembersByCampaignId")]
         public async Task<IActionResult> GetAllCampaignMembersByCampaignId(string? searchInput, int CampaignId, bool? isActive, int currentPage = IntConstant.PageNumberDefault)
         {

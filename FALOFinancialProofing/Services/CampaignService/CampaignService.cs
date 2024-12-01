@@ -308,10 +308,16 @@ namespace FALOFinancialProofing.Services.CampaignService
                 {
                     throw new Exception("This user has no such Project");
                 }
-                var isProjectActive = await _projectService.CheckProjectIsActiveAsync(createCampaignClientRequest.ProjectId);
+                //var isProjectActive = await _projectService.CheckProjectIsActiveAsync(createCampaignClientRequest.ProjectId);
+                var project = await _projectService.GetProjectByIdAsync(createCampaignClientRequest.ProjectId);
+                var isProjectActive = project.IsActive;
                 if (!isProjectActive)
                 {
                     throw new Exception("Project is not active");
+                }
+                if (project.Status != null && project.Status.Equals(RequestStatus.Close))
+                {
+                    throw new Exception("Project has been close");
                 }
                 // số tiền tạo > 0
                 if (createCampaignClientRequest.FundTarget <= 0)

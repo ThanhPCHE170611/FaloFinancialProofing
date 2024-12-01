@@ -311,4 +311,62 @@ public class OrganizationServiceTests
         // Assert
         Assert.False(result);
     }
+
+    [Fact]
+    public async Task ValidateOrganizationUpdateAsync_ShouldReturnFalse_WhenOrganizationNotFound()
+    {
+        // Arrange
+        var updateOrganization = new UpdateOrganization { Id = 1, UserId = "user1" };
+        var message = new StringBuilder();
+
+        _mockOrganizationRepository.Setup(repo => repo.Get(It.IsAny<int>())).ReturnsAsync((Organization)null);
+
+        // Act
+        var result = await _organizationService.ValidateOrganizationUpdateAsync(updateOrganization, message);
+
+        // Assert
+        Assert.False(result);
+        Assert.Contains("Organization not found!", message.ToString());
+    }
+    [Fact]
+    public async Task ValidateOrganizationUpdateAsync_ShouldReturnFalse_WhenUserHasNoPermission()
+    {
+        // Arrange
+        var updateOrganization = new UpdateOrganization { Id = 1, UserId = "user1" };
+        var message = new StringBuilder();
+        var organization = new Organization { Id = 1 };
+
+        _mockOrganizationRepository.Setup(repo => repo.Get(It.IsAny<int>())).ReturnsAsync(organization);
+        _mockOrganizationMemberService.Setup(service => service.GetOrganizationMemberByUserIdAndOrganizationIdAsync(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync((OrganizationMember)null);
+        _mockAuthServices.Setup(auth => auth.CheckUserInRole(It.IsAny<string>(), AppRole.Admin, It.IsAny<StringBuilder>())).ReturnsAsync(false);
+        _mockAuthServices.Setup(auth => auth.CheckUserInRole(It.IsAny<string>(), AppRole.ProjectManagementBoard, It.IsAny<StringBuilder>())).ReturnsAsync(false);
+
+        // Act
+        var result = await _organizationService.ValidateOrganizationUpdateAsync(updateOrganization, message);
+
+        // Assert
+        Assert.False(result);
+        Assert.Contains("You don't have permission to update organization!", message.ToString());
+    }
+
+    [Fact]
+    public async Task ValidateOrganizationUpdateAsync_ShouldReturnFalse_WhenLogoIsTooLarge()
+    {
+        // Arrange
+        var updateOrganization = new UpdateOrganization { Id = 1, UserId = "user1", LogoFile = new FormFile(null, 0, FileHelper.OrganizationImageMaxFileSize + 1, null, null) };
+        var message = new StringBuilder();
+        var organization = new Organization { Id = 1 };
+
+        _mockOrganizationRepository.Setup(repo => repo.Get(It.IsAny<int>())).ReturnsAsync(organization);
+        _mockOrganizationMemberService.Setup(service => service.GetOrganizationMemberByUserIdAndOrganizationIdAsync(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(new OrganizationMember());
+        _mockAuthServices.Setup(auth => auth.CheckUserInRole(It.IsAny<string>(), AppRole.Admin, It.IsAny<StringBuilder>())).ReturnsAsync(true);
+        _mockAuthServices.Setup(auth => auth.CheckUserInRole(It.IsAny<string>(), AppRole.ProjectManagementBoard, It.IsAny<StringBuilder>())).ReturnsAsync(false);
+
+        // Act
+        var result = await _organizationService.ValidateOrganizationUpdateAsync(updateOrganization, message);
+
+        // Assert
+        Assert.False(result);
+        Assert.Contains("Logo is too large", message.ToString());
+    }
 }

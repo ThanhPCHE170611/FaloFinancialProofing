@@ -109,11 +109,10 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             var campaignMembers = new List<CampaignMemberInformation>();
             try
             {
-
                 //bool checkPM = (await authServices.CheckRole(userId, roleId, AppRole.ProjectManager, new StringBuilder()));
-                bool checkPMB = (await authServices.CheckRole(userId, roleId, AppRole.ProjectManagementBoard, new StringBuilder()));
+                //bool checkPMB = (await authServices.CheckRole(userId, roleId, AppRole.ProjectManagementBoard, new StringBuilder()));
                 //!(checkPM || checkPMB)
-                campaignMembers = await cmRepository.GetAll().Where(cm => cm.UserId.Equals(userId) && cm.RoleId.Equals(roleId) && (!(checkPMB) ? cm.Campaign.IsActive : true)).OrderBy(cm => cm.Id).Select(cm => new CampaignMemberInformation()
+                campaignMembers = await cmRepository.GetAll().Where(cm => cm.UserId.Equals(userId) && cm.RoleId.Equals(roleId) && cm.Campaign.IsActive).OrderBy(cm => cm.Id).Select(cm => new CampaignMemberInformation()
                 {
                     id = cm.Id,
                     UserId = cm.UserId,
