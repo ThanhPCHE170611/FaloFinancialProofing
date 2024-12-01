@@ -73,7 +73,8 @@ $(document).ready(function () {
                 actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId}, '${item.campaignTitle}')" class="btn btn-info btn-sm detail-btn">Detail</button>
                                         <button class="btn btn-primary btn-sm" onclick="changeCampaignUpdateProcess(this, ${item.campaignId})">Update Process</a>
                     `;
-            } else if (checkrole === "Project Manager" && item.status === "Close") {
+            }
+            if (checkrole === "Project Manager" && item.status === "Close") {
                 actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId}, '${item.campaignTitle}')" class="btn btn-info btn-sm detail-btn">Detail</button>`;
             }
             if (checkrole === "Project Management Board") {

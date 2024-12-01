@@ -61,6 +61,10 @@ function renderTable(projects) {
                                     <button onclick="changeProject(this, ${project.id})" class="btn btn-info btn-sm">Detail</button>
                                     <a class="btn btn-primary btn-sm" href="/Campaign/CampaignCreate?projectId=${project.id}">Campaign</a>`;
             }
+            if (project.status === 'Close') {
+                actionButtons = `
+                                    <button onclick="changeProject(this, ${project.id})" class="btn btn-info btn-sm">Detail</button>`;
+            }
         }
 
         const row = `
