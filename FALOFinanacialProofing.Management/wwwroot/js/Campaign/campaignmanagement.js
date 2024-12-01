@@ -1,7 +1,6 @@
 ﻿function changeCampaign(button, Id, name) {
     localStorage.setItem('campaignId', Id);
     localStorage.setItem('campaignName', name);
-    console.log(name);
     window.location.href = '/Campaign/CampaignDetail';
 }
 function changeCampaignUpdateProcess(button, Id) {
@@ -68,19 +67,18 @@ $(document).ready(function () {
 
         data.forEach((item, index) => {
             console.log(item.campaignId);
-            let actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId}, ${item.campaignTitle})" class="btn btn-info btn-sm detail-btn">Detail</button>`;
+            let actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId}, '${item.campaignTitle}')" class="btn btn-info btn-sm detail-btn">Detail</button>`;
             let campaignName = `${item.campaignTitle}`;
             if (checkrole === "Project Manager") {
-                actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId}, ${item.campaignTitle})" class="btn btn-info btn-sm detail-btn">Detail</button>
+                actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId}, '${item.campaignTitle}')" class="btn btn-info btn-sm detail-btn">Detail</button>
                                         <button class="btn btn-primary btn-sm" onclick="changeCampaignUpdateProcess(this, ${item.campaignId})">Update Process</a>
                     `;
-            }
-            if (checkrole === "Project Manager" && item.status === "Close") {
-                actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId}, ${item.campaignTitle})" class="btn btn-info btn-sm detail-btn">Detail</button>`;
+            } else if (checkrole === "Project Manager" && item.status === "Close") {
+                actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId}, '${item.campaignTitle}')" class="btn btn-info btn-sm detail-btn">Detail</button>`;
             }
             if (checkrole === "Project Management Board") {
                 campaignName = `${item.title}`;
-                actionButtons = `<button onclick="changeCampaignPm(this, ${item.campaignId}, ${item.title})" class="btn btn-info btn-sm detail-btn">Detail</button>
+                actionButtons = `<button onclick="changeCampaignPm(this, ${item.campaignId}, '${item.title}')" class="btn btn-info btn-sm detail-btn">Detail</button>
                     `;
             }
             const row = `
