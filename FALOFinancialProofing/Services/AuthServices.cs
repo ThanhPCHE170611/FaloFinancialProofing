@@ -82,7 +82,7 @@ namespace FALOFinancialProofing.Services
             }
             return checkValid;
         }
-        public async Task<bool> CheckUserInRole(string userId, string userRole, StringBuilder message)
+        public virtual async Task<bool> CheckUserInRole(string userId, string userRole, StringBuilder message)
         {
             bool checkValid = false;
             try
@@ -295,30 +295,23 @@ namespace FALOFinancialProofing.Services
             var user = await userManager.FindByIdAsync(userId);
             return user;
         }
-        public async Task<bool> CheckGoogleExistAccount(string email)
+        public async Task<User> CheckGoogleExistAccount(string email)
         {
             var user = await userManager.FindByEmailAsync(email);
-            if (user == null)
-            {
-                return false;
-            }
 
-            return true;
+            return user;
         }
 
-        public async Task<bool> ChekcIsManyRoleAccount(string email)
+        #region tạm thời chưa dùng
+        public async Task<bool> CheckValidDonorAccount(User user)
         {
-            var user = await userManager.FindByEmailAsync(email);
-            if (user == null)
-            {
-                return false;
-            }
             var roleList = await userManager.GetRolesAsync(user);
-            if (roleList.Count > 1)
+            if (roleList.Count > 1 || (roleList.Count == 1 && !roleList.Contains(AppRole.Donor)))
                 return false;
 
             return true;
         }
+        #endregion
         //public async Task<User?> RegisterUser(SignUpRequest registerRequest)
         //{
         //    var validatedInformationRequest = await ValidatedInformationRequest(registerRequest);

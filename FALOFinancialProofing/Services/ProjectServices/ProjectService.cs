@@ -180,7 +180,7 @@ namespace FALOFinancialProofing.Services.ProjectServices
             List<ProjectInformation> data = null!;
             try
             {
-                data = await _projectRepository.GetAll().Where(p => p.CreatedBy.Equals(UserId) && p.Status != null && !p.Status.Equals(RequestStatus.Rejected))
+                data = await _projectRepository.GetAll().Where(p => p.CreatedBy.Equals(UserId) && p.Status != null && !p.Status.Equals(RequestStatus.Rejected) && p.IsActive)
                     .Select(p => new ProjectInformation()
                     {
                         id = p.Id,
@@ -365,7 +365,22 @@ namespace FALOFinancialProofing.Services.ProjectServices
                             throw new Exception("Update Campaigns by projectId failed");
                         }
                     }
-
+                }
+                if (checkValid && project.Status != null && project.Status.Equals(RequestStatus.Close))
+                {
+                    var campaigns = await _campaignRepository.GetAll(c => c.ProjectId == project.Id && c.IsActive).ToListAsync();
+                    if (campaigns != null && campaigns.Count != 0)
+                    {
+                        foreach (var item in campaigns)
+                        {
+                            item.Status = RequestStatus.Close;
+                        }
+                        checkValid = await _campaignRepository.UpdateManyAsync(campaigns);
+                        if (!checkValid)
+                        {
+                            throw new Exception("Update Campaigns by projectId failed");
+                        }
+                    }
                 }
             }
             catch (Exception ex)
