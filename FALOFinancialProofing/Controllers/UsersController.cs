@@ -77,7 +77,7 @@ namespace FALOFinancialProofing.Controllers
                 });
             }
             var checkAccountExist = await authServices.CheckGoogleExistAccount(userInfo.Email);
-            if (!checkAccountExist)
+            if (checkAccountExist == null)
             {
                 var checkSuccessCreate = await authServices.ExternalRegisterUser(userInfo, roleName);
                 if (checkSuccessCreate == null || !checkSuccessCreate.Succeeded)
@@ -89,16 +89,18 @@ namespace FALOFinancialProofing.Controllers
                     });
                 }
             }
-            var checkIsManyRolesAccount = await authServices.ChekcIsManyRoleAccount(userInfo.Email);
-            if (checkIsManyRolesAccount)
+            if (roleName.Equals(AppRole.Donor))
             {
-                return Ok(new ApiResponse()
+                var checkIsValidDonorAccount = await authServices.CheckValidDonorAccount(checkAccountExist);
+                if (!checkIsValidDonorAccount)
                 {
-                    Success = false,
-                    Message = "Login with Google Fails, Account has many roles!"
-                });
+                    return Ok(new ApiResponse()
+                    {
+                        Success = false,
+                        Message = "Login With Google Fails, Account Role Not Valid!"
+                    });
+                }
             }
-
             UserDto userDto = await authServices.GetUserDto(userInfo);
             var user = await authServices.GetUserById(userDto.Id);
             var checkIsLockout = authServices.checkLockoutAccount(user, message);
