@@ -102,7 +102,7 @@ namespace FALOFinancialProofing.Services.CampaignService
             List<CampaignInformation> data = null!;
             try
             {
-                data = await campaignRepository.GetAll().Where(p => p.ProjectId == ProjectId)
+                data = await campaignRepository.GetAll().Where(p => p.ProjectId == ProjectId && p.IsActive)
                     .Select(p => new CampaignInformation()
                     {
                         FirstName = p.User.FirstName,
