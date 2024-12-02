@@ -102,6 +102,7 @@
                     renderActivityLogs(response.data.data);
                     // renderPagination(response.data.totalRecords, currentPage, searchInput, campaignId);
                     updatePagination(response.data.totalRecords, currentPage, searchInput, campaignId, startDate, endDate);
+                    fetchTotalFiles(campaignId, response.data.data);
                 } else {
                     showError("No data found.");
                 }
@@ -169,6 +170,33 @@
         }
     });
 }
+
+    function fetchTotalFiles(campaignId, activities) {
+        const apiUrl = `https://localhost:7294/api/AttachmentFile/getnumberallattachmentfileincampain/${campaignId}`;
+
+        $.ajax({
+            url: apiUrl,
+            type: 'GET',
+            success: function (response) {
+                if (response && response.success && typeof response.data === 'number') {
+                    const totalFiles = response.data; 
+                    const currentFiles = activities.filter(activity => activity.attachmentFilePath).length; 
+                    const completionPercentage = ((currentFiles / totalFiles) * 100).toFixed(2); 
+
+                    $('#activityTable').before(`
+                            <div style="text-align: right; margin-bottom: 10px; font-weight: bold; color: orangered;">
+                            Tổng Số File: ${currentFiles} / ${totalFiles} (${completionPercentage}% Hoàn Thành)
+                        </div>
+                    `);
+                } else {
+                    console.warn("Failed to fetch total files data.");
+                }
+            },
+            error: function () {
+                console.error("Failed to fetch total files.");
+            }
+        });
+    }   
 
     // function renderPagination(totalRecords, currentPage, searchInput, campaignId) {
     //     const pageSize = 5;
