@@ -396,6 +396,10 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 {
                     throw new Exception($"Campaign is not active.");
                 }
+                if (campaign.Status != null && (campaign.Status.Equals(RequestStatus.Close) || campaign.Status.Equals(RequestStatus.Pending)))
+                {
+                    throw new Exception($"Campaign is close.");
+                }
                 // chỉ người tạo hoặc pmb mới có quyền add người vào chiến dịch
                 //var campaignMember = await cmRepository.Get(cm=>cm.CampaignId==campaignId&&pmUserId.Equals(cm.))
                 var pmUser = await campaignRepository.Get(c => c.Id == campaignId && c.CreateBy.Equals(pmUserId));
