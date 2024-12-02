@@ -381,13 +381,14 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             };
         }
 
-        public async Task<List<CreateManyCampaignMemberDTO>> ValidateCampaignMembersCreateAsync(List<CreateManyCampaignMemberDTO> createManyCampaignMemberDTOs, int campaignId, string pmUserId, StringBuilder message)
+        public async Task<List<CreateManyCampaignMemberDTO>> ValidateCampaignMembersCreateAsync(List<CreateManyCampaignMemberDTO> createManyCampaignMemberDTOs, int campaignId, string pmUserId, string pmRoleId, StringBuilder message)
         {
             List<CreateManyCampaignMemberDTO> successDatas = new List<CreateManyCampaignMemberDTO>();
             try
             {
                 // check campaign Exist
-                var campaign = await campaignRepository.Get(campaignId);
+                //var campaign = await campaignRepository.Get(campaignId);
+                var campaign = await campaignRepository.Get(c => c.Id == campaignId && c.CreateBy.Equals(pmUserId));
                 if (campaign == null)
                 {
                     throw new Exception($"Campaign not found with id = {campaignId}.");
@@ -396,12 +397,16 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 {
                     throw new Exception($"Campaign is not active.");
                 }
+                if (campaign.Status != null && (campaign.Status.Equals(RequestStatus.Close) || campaign.Status.Equals(RequestStatus.Pending)))
+                {
+                    throw new Exception($"Campaign is close.");
+                }
                 // chỉ người tạo hoặc pmb mới có quyền add người vào chiến dịch
                 //var campaignMember = await cmRepository.Get(cm=>cm.CampaignId==campaignId&&pmUserId.Equals(cm.))
-                var pmUser = await campaignRepository.Get(c => c.Id == campaignId && c.CreateBy.Equals(pmUserId));
+                var pmUser = await cmRepository.Get(c => c.Id == campaignId && c.UserId.Equals(pmUserId) && c.RoleId.Equals(pmRoleId));
                 // kiểm tra thằng add này có phải là pmb không
-                var checkPMB = await authServices.CheckUserInRoleId(pmUserId, AppRole.ProjectManagementBoard, new StringBuilder());
-                var checkAdmin = await authServices.CheckUserInRoleId(pmUserId, AppRole.Admin, new StringBuilder());
+                bool checkAdmin = await authServices.CheckRole(pmUserId, pmRoleId, AppRole.Admin, new StringBuilder());
+                bool checkPMB = await authServices.CheckRole(pmUserId, pmRoleId, AppRole.ProjectManagementBoard, new StringBuilder());
                 // người dùng không tạo ra chiến dịch, hoặc tạo ra nhưng bị vô hiệu hóa hoặc không phải là pmb hoặc admin
                 if ((pmUser == null && !checkPMB && !checkAdmin) || (pmUser != null && !pmUser.IsActive))
                 {
