@@ -403,7 +403,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 }
                 // chỉ người tạo hoặc pmb mới có quyền add người vào chiến dịch
                 //var campaignMember = await cmRepository.Get(cm=>cm.CampaignId==campaignId&&pmUserId.Equals(cm.))
-                var pmUser = await cmRepository.Get(c => c.Id == campaignId && c.UserId.Equals(pmUserId) && c.RoleId.Equals(pmRoleId));
+                var pmUser = await cmRepository.Get(c => c.CampaignId == campaignId && c.UserId.Equals(pmUserId) && c.RoleId.Equals(pmRoleId));
                 // kiểm tra thằng add này có phải là pmb không
                 bool checkAdmin = await authServices.CheckRole(pmUserId, pmRoleId, AppRole.Admin, new StringBuilder());
                 bool checkPMB = await authServices.CheckRole(pmUserId, pmRoleId, AppRole.ProjectManagementBoard, new StringBuilder());

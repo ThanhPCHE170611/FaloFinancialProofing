@@ -63,7 +63,7 @@
 
     function loadCampaigns(pageNumber = 1, searchInput = "") {
         $.ajax({
-            url: `https://localhost:7294/api/Campaign/GetAllCampaignInSystem?title=${searchInput}&IsActive=true&currentPage=${pageNumber}`,  // Adjust URL for the search query
+            url: `https://localhost:7294/api/Campaign/GetAllCampaignInSystem?title=${searchInput}&IsActive=true&currentPage=${pageNumber}&PageSizeCustom=7`,  // Adjust URL for the search query
             type: 'GET',
             success: function (response) {
                 if (response.success) {
