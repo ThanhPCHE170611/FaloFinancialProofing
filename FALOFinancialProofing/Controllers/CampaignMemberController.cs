@@ -223,7 +223,7 @@ namespace FALOFinancialProofing.Controllers
             });
         }
         [RoleAttribute(AppRole.ProjectManager, AppRole.ProjectManagementBoard, AppRole.Admin)]
-        [HttpPost("CreateManyCampaignMembers/{CampaignId}/{pmUserId}")]
+        [HttpPost("CreateManyCampaignMembers/{CampaignId}/{pmUserId}/{pmRoleId}")]
         public async Task<IActionResult> CreateManyCampaignMembers(int CampaignId, string pmUserId, string pmRoleId, [FromBody] List<CreateManyCampaignMemberDTO> createManyCampaignMemberDTOs)
         {
             var message = new StringBuilder();
