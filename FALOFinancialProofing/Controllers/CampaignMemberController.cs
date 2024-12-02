@@ -224,11 +224,11 @@ namespace FALOFinancialProofing.Controllers
         }
         [RoleAttribute(AppRole.ProjectManager, AppRole.ProjectManagementBoard, AppRole.Admin)]
         [HttpPost("CreateManyCampaignMembers/{CampaignId}/{pmUserId}")]
-        public async Task<IActionResult> CreateManyCampaignMembers(int CampaignId, string pmUserId, [FromBody] List<CreateManyCampaignMemberDTO> createManyCampaignMemberDTOs)
+        public async Task<IActionResult> CreateManyCampaignMembers(int CampaignId, string pmUserId, string pmRoleId, [FromBody] List<CreateManyCampaignMemberDTO> createManyCampaignMemberDTOs)
         {
             var message = new StringBuilder();
 
-            var ValidCreateManyCampaignMemberDTOs = await _campaignMemberService.ValidateCampaignMembersCreateAsync(createManyCampaignMemberDTOs, CampaignId, pmUserId, message);
+            var ValidCreateManyCampaignMemberDTOs = await _campaignMemberService.ValidateCampaignMembersCreateAsync(createManyCampaignMemberDTOs, CampaignId, pmUserId, pmRoleId, message);
             if (ValidCreateManyCampaignMemberDTOs == null || ValidCreateManyCampaignMemberDTOs.Count == 0)
             {
                 return Ok(new ApiResponse()
