@@ -15,19 +15,13 @@ namespace FALOFinancialProofing.Services.ProjectServices
     {
         private readonly IRepository<Project, int> _projectRepository;
         private readonly IRepository<Organization, int> _organizationRepository;
-        private readonly RoleManager<Role> _roleManager;
-        private readonly UserManager<User> _userManager;
         private readonly AuthServices _authServices;
         private readonly IRepository<Campaign, int> _campaignRepository;
 
-
-
-        public ProjectService(IRepository<Project, int> projectRepository, IRepository<Organization, int> organizationRepository, RoleManager<Role> roleManager, UserManager<User> userManager, AuthServices authServices, IRepository<Campaign, int> campaignRepository)
+        public ProjectService(IRepository<Project, int> projectRepository, IRepository<Organization, int> organizationRepository, AuthServices authServices, IRepository<Campaign, int> campaignRepository)
         {
             _projectRepository = projectRepository;
             _organizationRepository = organizationRepository;
-            _roleManager = roleManager;
-            _userManager = userManager;
             _authServices = authServices;
             _campaignRepository = campaignRepository;
         }

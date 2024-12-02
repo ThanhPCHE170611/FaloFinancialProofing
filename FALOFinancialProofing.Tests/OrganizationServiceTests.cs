@@ -369,4 +369,75 @@ public class OrganizationServiceTests
         Assert.False(result);
         Assert.Contains("Logo is too large", message.ToString());
     }
+
+    [Fact]
+    public async Task UpdateOrganizationAsync_ShouldReturnTrue_WhenSuccess1()
+    {
+        // Arrange
+        var updateOrganization = new UpdateOrganization
+        {
+            Id = 1,
+            Name = "New Name",
+            Main_office = "New Office",
+            Representative = "New Representative",
+            PhoneNumber = "123456789",
+            Email = "newemail@example.com",
+            LogoFile = null,
+            Description = "New Description",
+            Vision = "New Vision",
+            Mission = "New Mission",
+            CoreValue = "New Core Value",
+            MainActivity = "New Main Activity",
+            Interests = "New Interests",
+            VolunteerExperience = "New Volunteer Experience",
+            VolunteerObjectives = "New Volunteer Objectives",
+            Bio = "New Bio"
+        };
+        var message = new StringBuilder();
+        var organization = new Organization { Id = 1 };
+
+        _mockOrganizationRepository.Setup(repo => repo.Get(It.IsAny<int>())).ReturnsAsync(organization);
+        _mockOrganizationRepository.Setup(repo => repo.UpdateAsync(It.IsAny<Organization>())).ReturnsAsync(true);
+        // Act
+        var result = await _organizationService.UpdateOrganizationAsync(updateOrganization, message);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async Task UpdateOrganizationAsync_ShouldReturnFalse_WhenNotFound1()
+    {
+        // Arrange
+        var updateOrganization = new UpdateOrganization { Id = 1 };
+        var message = new StringBuilder();
+
+        _mockOrganizationRepository.Setup(repo => repo.Get(It.IsAny<int>())).ReturnsAsync((Organization)null);
+
+        // Act
+        var result = await _organizationService.UpdateOrganizationAsync(updateOrganization, message);
+
+        // Assert
+        Assert.False(result);
+        Assert.Contains("Object reference not set to an instance of an object.", message.ToString());
+    }
+
+    [Fact]
+    public async Task UpdateOrganizationAsync_ShouldReturnFalse_WhenExceptionThrown()
+    {
+        // Arrange
+        var updateOrganization = new UpdateOrganization { Id = 1 };
+        var message = new StringBuilder();
+        var organization = new Organization { Id = 1 };
+
+        _mockOrganizationRepository.Setup(repo => repo.Get(It.IsAny<int>())).ReturnsAsync(organization);
+        _mockOrganizationRepository.Setup(repo => repo.UpdateAsync(It.IsAny<Organization>())).ThrowsAsync(new Exception("Update failed"));
+
+        // Act
+        var result = await _organizationService.UpdateOrganizationAsync(updateOrganization, message);
+
+        // Assert
+        Assert.False(result);
+        Assert.Contains("Update failed", message.ToString());
+    }
 }

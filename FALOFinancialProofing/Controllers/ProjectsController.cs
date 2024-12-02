@@ -28,7 +28,7 @@ namespace FALOFinancialProofing.Controllers
         }
         //[RoleAttribute(AppRole.ProjectManagementBoard, AppRole.Admin)]
         [HttpGet("GetAllProjectInSystem")]
-        public async Task<IActionResult> GetAllProjectInSystem(string? searchInput, string? status, bool? IsActive, int currentPage = IntConstant.PageNumberDefault)
+        public async Task<IActionResult> GetAllProjectInSystem(string? searchInput, string? status, bool? IsActive, int currentPage = IntConstant.PageNumberDefault, int PageSizeCustom = 7)
         {
             List<ProjectInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -59,7 +59,7 @@ namespace FALOFinancialProofing.Controllers
                     data = data.FindAll(x => x.IsActive == IsActive);
                 }
                 filterPagingData.DataCount = data.Count;
-                data = PaginationHelper.Paginate<ProjectInformation>(data.AsQueryable(), currentPage, IntConstant.PageSizeCustom).ToList();
+                data = PaginationHelper.Paginate<ProjectInformation>(data.AsQueryable(), currentPage, PageSizeCustom).ToList();
                 filterPagingData.Data = data;
             }
             catch (Exception ex)
