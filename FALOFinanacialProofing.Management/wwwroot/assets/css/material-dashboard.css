@@ -21816,7 +21816,7 @@ body.dark-version {
   .dropup .dropdown-toggle:after,
   .dropstart .dropdown-toggle:after,
   .dropend .dropdown-toggle:after {
-    content: "\f107";
+    content: "\25BC";
     font: normal normal normal 14px/1 FontAwesome;
     border: none;
     vertical-align: middle;
@@ -21886,17 +21886,17 @@ body.dark-version {
         margin-top: 2.8125rem !important;
     }
 
-  .dropdown .dropdown-menu:before {
-    font-family: "FontAwesome";
-    content: "\f0d8";
-    position: absolute;
-    top: 0;
-    left: 28px;
-    right: auto;
-    font-size: 22px;
-    color: #fff;
-    transition: top 0.35s ease;
-  }
+    .dropdown .dropdown-menu:before {
+        font-family: "FontAwesome";
+        content: "\25B2";
+        position: absolute;
+        top: 0;
+        left: 28px;
+        right: auto;
+        font-size: 22px;
+        color: #fff;
+        transition: top 0.35s ease;
+    }
 
   .dropdown .dropdown-item .arrow {
     transform: rotate(-90deg);
