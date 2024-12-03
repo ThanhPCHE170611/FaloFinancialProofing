@@ -12,6 +12,37 @@
         .table th, .table td {
             padding: 10px; /* Space inside the cells */
         }
+
+        .serach-bar {
+    display: flex;
+    align-items: center;
+    width: 100%; /* You can use a fixed width like 200px for a specific size */
+    max-width: 300px; /* Set a max width to ensure it doesn't get too wide */
+    margin-top: 10px;
+}
+
+/* Make the input smaller */
+.serach-bar input[type="text"] {
+    width: 70%; /* Adjust width to make it smaller */
+    padding: 5px; /* Reduce padding */
+    font-size: 14px; /* Adjust font size */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Make the button smaller */
+.serach-bar button {
+    padding: 5px 10px;
+    font-size: 14px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.serach-bar button i {
+    font-size: 16px; /* Adjust icon size */
+}
 </style>
 
 <div class="container">
@@ -98,10 +129,16 @@
                                                  <tbody>`;
 
         transactions.forEach(log => {
+            // Format the amount with commas and currency symbol (if required)
+            const formattedAmount = log.amount.toLocaleString('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            });
+
             tableHtml += `<tr>
                                                  <td>${log.tid}</td>
                                                  <td>${new Date(log.transactionDate).toLocaleString()}</td>
-                                                 <td>${log.amount}</td>
+                                                 <td>${formattedAmount}</td>
                                                  <td>${log.description}</td>
                                                </tr>`;
         });

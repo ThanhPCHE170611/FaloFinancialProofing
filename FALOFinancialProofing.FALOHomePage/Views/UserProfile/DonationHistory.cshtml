@@ -87,10 +87,15 @@
         $('#transactionLogs').empty();
 
         transactions.forEach(function (transaction) {
+            // Format the amount with commas and currency symbol (if required)
+            const formattedAmount = transaction.amount.toLocaleString('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            });
             var rowHtml = `<tr>
                             <td>${transaction.tid}</td>
                             <td>${new Date(transaction.transactionDate).toLocaleString()}</td>
-                            <td>${transaction.amount}</td>
+                            <td>${formattedAmount}</td>
                             <td>${transaction.description}</td>
                             <td>${transaction.campaignName}</td>
                         </tr>`;

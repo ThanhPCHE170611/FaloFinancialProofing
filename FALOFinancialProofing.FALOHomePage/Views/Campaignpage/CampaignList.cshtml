@@ -98,6 +98,16 @@
             var url = '/Campaignpage/Index/' + campaign.campaignId;
             var shortenedDescription = campaign.description.length > 100 ? campaign.description.substring(0, 100) + '....' : campaign.description;
 
+            const formattedAmount = transaction.amount.toLocaleString('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            });
+
+            const formattedAmount = transaction.amount.toLocaleString('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            });
+
             // Now we set the campaign image dynamically from the API response
             var campaignImage = campaign.image || '/images/cause/CampaignImages.jpg';  // Fallback image if none exists
 

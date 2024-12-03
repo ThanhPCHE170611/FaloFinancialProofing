@@ -107,10 +107,14 @@
         $('#activityLogs').empty();
 
         activities.forEach(function (activity) {
+            const formattedAmount = activity.expectedMoney.toLocaleString('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            });
             var rowHtml = `<tr>
                             <td>${new Date(activity.createAt).toLocaleString()}</td>
                             <td>${activity.description}</td>
-                            <td>${activity.expectedMoney}</td>
+                            <td>${formattedAmount}</td>
                             <td>${activity.createByName} (${activity.createByEmail})</td>
                             <td>
                                 ${activity.attachmentFilePath ?
