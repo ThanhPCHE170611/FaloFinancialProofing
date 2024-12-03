@@ -124,6 +124,7 @@ namespace FALOFinancialProofing.Services.TransactionLogsServices
             {
                 userTransaction = await _transactionLogRepository.GetAll()
                    .Where(u => u.CampaignId == campaignId && u.Amount >= 0)
+                   .OrderByDescending(u => u.TransactionDate)
                    .Select(u => new UserTransactionHistory()
                    {
                        UserId = u.CreateQrCode.UserId,
@@ -178,6 +179,7 @@ namespace FALOFinancialProofing.Services.TransactionLogsServices
             {
                 userTransaction = await _transactionLogRepository.GetAll()
                    .Where(u => u.CreateQrCode.UserId.Equals(userId))
+                   .OrderByDescending(u => u.TransactionDate)
                    .Select(u => new UserTransactionHistory()
                    {
                        UserId = u.CreateQrCode.UserId,

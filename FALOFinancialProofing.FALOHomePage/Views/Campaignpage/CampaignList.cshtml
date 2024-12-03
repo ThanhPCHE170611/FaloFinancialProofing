@@ -63,7 +63,7 @@
 
     function loadCampaigns(pageNumber = 1, searchInput = "") {
         $.ajax({
-            url: `https://localhost:7294/api/Campaign/GetAllCampaignInSystem?title=${searchInput}&IsActive=true&currentPage=${pageNumber}`,  // Adjust URL for the search query
+            url: `https://localhost:7294/api/Campaign/GetAllCampaignInSystem?title=${searchInput}&IsActive=true&currentPage=${pageNumber}&PageSizeCustom=7`,  // Adjust URL for the search query
             type: 'GET',
             success: function (response) {
                 if (response.success) {
@@ -92,7 +92,14 @@
                 day: 'numeric',  // "1"
                 year: 'numeric'  // "2024"
             });
-
+            const formattedAmountGoal = campaign.fundTarget.toLocaleString('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            });
+            const formattedAmountRaise = campaign.totalMoneyEarned.toLocaleString('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            });
             var percentage = Math.round((campaign.totalMoneyEarned / campaign.fundTarget) * 100);
             var percentageDisplay = percentage > 100 ? 100 : percentage;
             var url = '/Campaignpage/Index/' + campaign.campaignId;
@@ -112,62 +119,113 @@
             var campaignImage = campaign.image || '/images/cause/CampaignImages.jpg';  // Fallback image if none exists
 
             var cardHtml = `<div class="col-lg-8 order-2 order-lg-1">
-                                    <div class="cause__item cause-list__item mb-30">
-                                        <div class="cause__image image" style="width:100%; height:auto;overflow:hidden;">
-                                            <img src="${campaignImage}" style="width:100%; height:auto;object-fit:cover" alt="image">
-                                            <span class="cause-tag">${formattedDate}</span>
-                                        </div>
-                                        <div class="cause__content">
-                                            <h4 class="mb-2">
-                                                <a href="${url}" class="btn-inner">
-                                                    ${campaign.title}
-                                                </a>
-                                            </h4>
-                                            <p class="mb-3">
-                                                ${shortenedDescription}
-                                            </p>
-                                            <div class="progress-area">
-                                                <div class="progress__item">
-                                                    <div class="progress__content" style="width: ${percentageDisplay}%;"><span>${percentage}%</span></div>
-                                                </div>
-                                                <div class="progress__goal mt-15">
-                                                    <h6>Goal : <span>${campaign.fundTarget} VND</span></h6>
-                                                    <h6>Raised : <span>${campaign.totalMoneyEarned} VND</span></h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>`;
+                                                                                                                                                                                            <div class="cause__item cause-list__item mb-30">
+                                                                                                                                                                                                <div class="cause__image image" style="width:100%; height:auto;overflow:hidden;">
+                                                                                                                                                                                                    <img src="${campaignImage}" style="width:100%; height:auto;object-fit:cover" alt="image">
+                                                                                                                                                                                                    <span class="cause-tag">${formattedDate}</span>
+                                                                                                                                                                                                </div>
+                                                                                                                                                                                                <div class="cause__content">
+                                                                                                                                                                                                    <h4 class="mb-2">
+                                                                                                                                                                                                        <a href="${url}" class="btn-inner">
+                                                                                                                                                                                                            ${campaign.title}
+                                                                                                                                                                                                        </a>
+                                                                                                                                                                                                    </h4>
+                                                                                                                                                                                                    <p class="mb-3">
+                                                                                                                                                                                                        ${shortenedDescription}
+                                                                                                                                                                                                    </p>
+                                                                                                                                                                                                    <div class="progress-area">
+                                                                                                                                                                                                        <div class="progress__item">
+                                                                                                                                                                                                            <div class="progress__content" style="width: ${percentageDisplay}%;"><span>${percentage}%</span></div>
+                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                        <div class="progress__goal mt-15">
+                                                                                                                                                                                                                <h6>Goal : <span>${formattedAmountGoal} VND</span></h6>
+                                                                                                                                                                                                                <h6>Raised : <span>${formattedAmountRaise} VND</span></h6>
+                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                </div>
+                                                                                                                                                                                            </div>
+                                                                                                                                                                                        </div>`;
             campaignsContainer.append(cardHtml);
         });
     }
 
+    // function renderPagination(totalRecords, currentPage, searchInput) {
+    //     var pageSize = 6;
+    //     var totalPages = Math.ceil(totalRecords / pageSize);
+    //     var paginationControls = $('#paginationControls');
+    //     paginationControls.empty();  Clear existing pagination buttons
+
+    //     Render "Previous" button
+    //     if (currentPage > 1) {
+    //         paginationControls.append(`<button onclick="loadCampaigns(${currentPage - 1}, '${searchInput}')"><i class="fa-solid fa-arrow-left-long primary-color transition"></i></button>`);
+    //     }
+
+    //     Render page number buttons
+    //     var startPage = Math.max(1, currentPage - 2);  Show 2 pages before current
+    //     var endPage = Math.min(totalPages, currentPage + 2);  Show 2 pages after current
+
+    //     for (var i = startPage; i <= endPage; i++) {
+    //         if (i === currentPage) {
+    //             paginationControls.append(`<button class="active" disabled>${i}</button>`);
+    //         } else {
+    //             paginationControls.append(`<button onclick="loadCampaigns(${i}, '${searchInput}')">${i}</button>`);
+    //         }
+    //     }
+
+    //     Render "Next" button
+    //     if (currentPage < totalPages) {
+    //         paginationControls.append(`<button onclick="loadCampaigns(${currentPage + 1}, '${searchInput}')"><i class="fa-solid fa-arrow-right-long primary-color transition"></i></button>`);
+    //     }
+    // }
     function renderPagination(totalRecords, currentPage, searchInput) {
-        var pageSize = 6;
+        var pageSize = 7;
         var totalPages = Math.ceil(totalRecords / pageSize);
         var paginationControls = $('#paginationControls');
-        paginationControls.empty();  // Clear existing pagination buttons
+        paginationControls.empty();
 
-        // Render "Previous" button
+        if (totalPages <= 1) return;
+
         if (currentPage > 1) {
             paginationControls.append(`<button onclick="loadCampaigns(${currentPage - 1}, '${searchInput}')"><i class="fa-solid fa-arrow-left-long primary-color transition"></i></button>`);
         }
 
-        // Render page number buttons
-        var startPage = Math.max(1, currentPage - 2);  // Show 2 pages before current
-        var endPage = Math.min(totalPages, currentPage + 2);  // Show 2 pages after current
-
-        for (var i = startPage; i <= endPage; i++) {
-            if (i === currentPage) {
-                paginationControls.append(`<button class="active" disabled>${i}</button>`);
-            } else {
-                paginationControls.append(`<button onclick="loadCampaigns(${i}, '${searchInput}')">${i}</button>`);
+        if (totalPages <= 6) {
+            for (var i = 1; i <= totalPages; i++) {
+                paginationControls.append(generatePageButton(i, currentPage, searchInput));
             }
+        } else {
+            paginationControls.append(generatePageButton(1, currentPage, searchInput));
+            paginationControls.append(generatePageButton(2, currentPage, searchInput));
+
+            if (currentPage > 4) {
+                paginationControls.append(`<span>...</span>`);
+            }
+
+            var startPage = Math.max(3, currentPage - 1);
+            var endPage = Math.min(totalPages - 2, currentPage + 1);
+
+            for (var i = startPage; i <= endPage; i++) {
+                paginationControls.append(generatePageButton(i, currentPage, searchInput));
+            }
+
+            if (currentPage < totalPages - 3) {
+                paginationControls.append(`<span>...</span>`);
+            }
+
+            paginationControls.append(generatePageButton(totalPages - 1, currentPage, searchInput));
+            paginationControls.append(generatePageButton(totalPages, currentPage, searchInput));
         }
 
-        // Render "Next" button
         if (currentPage < totalPages) {
             paginationControls.append(`<button onclick="loadCampaigns(${currentPage + 1}, '${searchInput}')"><i class="fa-solid fa-arrow-right-long primary-color transition"></i></button>`);
+        }
+    }
+
+    function generatePageButton(page, currentPage, searchInput) {
+        if (page === currentPage) {
+            return `<button class="active" disabled>${page}</button>`;
+        } else {
+            return `<button onclick="loadCampaigns(${page}, '${searchInput}')">${page}</button>`;
         }
     }
 </script>

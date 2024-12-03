@@ -63,7 +63,7 @@ namespace FALOFinancialProofing.Services
             _roleService = roleService;
             this.userSDGService = userSDGService;
         }
-        public async Task<bool> CheckUserExist(string userId, StringBuilder message)
+        public virtual async Task<bool> CheckUserExist(string userId, StringBuilder message)
         {
             bool checkValid = false;
             try
@@ -82,7 +82,7 @@ namespace FALOFinancialProofing.Services
             }
             return checkValid;
         }
-        public async Task<bool> CheckUserInRole(string userId, string userRole, StringBuilder message)
+        public virtual async Task<bool> CheckUserInRole(string userId, string userRole, StringBuilder message)
         {
             bool checkValid = false;
             try
@@ -295,16 +295,23 @@ namespace FALOFinancialProofing.Services
             var user = await userManager.FindByIdAsync(userId);
             return user;
         }
-        public async Task<bool> CheckGoogleExistAccount(string email)
+        public async Task<User> CheckGoogleExistAccount(string email)
         {
             var user = await userManager.FindByEmailAsync(email);
-            if (user == null)
-            {
-                return false;
-            }
-            return true;
+
+            return user;
         }
 
+        #region tạm thời chưa dùng
+        public async Task<bool> CheckValidDonorAccount(User user)
+        {
+            var roleList = await userManager.GetRolesAsync(user);
+            if (roleList.Count > 1 || (roleList.Count == 1 && !roleList.Contains(AppRole.Donor)))
+                return false;
+
+            return true;
+        }
+        #endregion
         //public async Task<User?> RegisterUser(SignUpRequest registerRequest)
         //{
         //    var validatedInformationRequest = await ValidatedInformationRequest(registerRequest);
@@ -1115,7 +1122,7 @@ Click vào link này để đặt lại mật khẩu: {resetPasswordLink}";
             bool checkValid = false;
             try
             {
-                userManager.AddLoginAsync(null, null);
+                //userManager.AddLoginAsync(null, null);
                 if (roleName == null)
                 {
                     throw new Exception("Role Name is null");
@@ -1163,7 +1170,6 @@ Click vào link này để đặt lại mật khẩu: {resetPasswordLink}";
             {
                 Console.WriteLine($"ExternalRegisterUser: {ex.Message}");
             }
-
 
             return null;
         }

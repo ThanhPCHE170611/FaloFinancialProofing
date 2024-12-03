@@ -55,7 +55,7 @@ public class CampaignServiceTests
         mockBankService = new Mock<IBankService>();
         mockLogger = new Mock<ILogger<CampaignService>>();
 
-        var mockRoleService = new Mock<RoleService>(mockRoleManager.Object, mockUserManager.Object);
+        mockRoleService = new Mock<RoleService>(mockRoleManager.Object, mockUserManager.Object);
 
         mockAuthServices = new Mock<AuthServices>(
            mockUserManager.Object,

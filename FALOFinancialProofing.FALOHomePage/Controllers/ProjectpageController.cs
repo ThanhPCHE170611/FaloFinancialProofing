@@ -35,7 +35,7 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
 
                     ViewBag.projectDetails = projectDetails.Data;
 
-                    string url = "https://localhost:7294/api/Campaign/GetAllCampaignByProjectId/" + id +"?currentPage=1";
+                    string url = "https://localhost:7294/api/Campaign/GetAllCampaignByProjectId/" + id + "?currentPage=1&PageSizeCustom=1000";
                     // Get all campaigns through project id
                     var responseCampaigns = await client.GetStringAsync(url);
                     

@@ -273,13 +273,14 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             }
             //check campaign id exist?
             var campainInDb = campaignRepository.GetAll(cp => cp.Id == StringExtension.ParseStringToInt(requestForm.CampaignId)
-            && cp.IsActive)
+            && cp.IsActive
+            && !cp.Status.Equals(Resource.CampaignStatus_Close))
                 .Include(cp => cp.CampaignMembers)
                 .ThenInclude(cm => cm.Role)
                 .FirstOrDefault();
             if (campainInDb == null)
             {
-                message.Append("CampaignID is not exist or disable");
+                message.Append("CampaignID is not exist or disable or close");
                 return false;
             }
             //check createBy id exist, in campaign

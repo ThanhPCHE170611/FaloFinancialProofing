@@ -13,7 +13,6 @@ namespace FALOFinancialProofing.FALOHomePage
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
-            builder.Services.AddSession();
             builder.Services.AddHttpClient();
 
             builder.Services.AddAuthentication(options =>
@@ -35,10 +34,6 @@ namespace FALOFinancialProofing.FALOHomePage
             builder.Services.AddAuthorization();
 
             //Build Session Service
-            builder.Services.AddSession(options =>
-            {
-                options.IdleTimeout = TimeSpan.FromMinutes(30);
-            });
             builder.Services.AddDistributedMemoryCache();
 
             builder.Services.AddSession(options =>
@@ -46,13 +41,13 @@ namespace FALOFinancialProofing.FALOHomePage
                 options.IdleTimeout = TimeSpan.FromMinutes(30); // Session timeout
                 options.Cookie.IsEssential = true; // Make session cookie essential for GDPR compliance
             });
-
             builder.Services.AddHostedService<BankDataPollingService>();
             builder.Services.AddTransient<TransactionPollingDirect>();
             builder.Services.AddTransient<BankAccountService>();
-
+            builder.Services.AddCors();
             var app = builder.Build();
-
+            app.UseCors(option => option.AllowAnyHeader().
+               AllowAnyMethod().AllowAnyOrigin());
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
@@ -65,7 +60,7 @@ namespace FALOFinancialProofing.FALOHomePage
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(

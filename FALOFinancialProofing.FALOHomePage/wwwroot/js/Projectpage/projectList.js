@@ -1,62 +1,62 @@
 ﻿$(document).ready(function () {
-        // Initially load projects with an empty search query
-        loadProjects(1, "");
+    // Initially load projects with an empty search query
+    loadProjects(1, "");
 
-        // Set up the search button to trigger the search when clicked
-        $('#searchButton').click(function () {
-            var searchInput = $('#searchInput').val();
-            loadProjects(1, searchInput);  // Load projects based on the search input
-        });
-
-        // Allow pressing Enter key for search
-        $('#searchInput').keypress(function (e) {
-            if (e.which === 13) {  // Enter key code
-                var searchInput = $('#searchInput').val();
-                loadProjects(1, searchInput);  // Load projects based on the search input
-            }
-        });
+    // Set up the search button to trigger the search when clicked
+    $('#searchButton').click(function () {
+        var searchInput = $('#searchInput').val();
+        loadProjects(1, searchInput);  // Load projects based on the search input
     });
 
-    function loadProjects(pageNumber = 1, searchInput = "") {
-        // Construct the API URL with the search input and other parameters
-        var apiUrl = `https://localhost:7294/api/Projects/GetAllProjectInSystem?searchInput=${searchInput}&IsActive=true&currentPage=${pageNumber}`;
+    // Allow pressing Enter key for search
+    $('#searchInput').keypress(function (e) {
+        if (e.which === 13) {  // Enter key code
+            var searchInput = $('#searchInput').val();
+            loadProjects(1, searchInput);  // Load projects based on the search input
+        }
+    });
+});
 
-        $.ajax({
-            url: apiUrl,
-            type: 'GET',
-            success: function (response) {
-                if (response.success) {
-                    renderProjects(response.data);
-                    renderPagination(response.data.dataCount, pageNumber, searchInput);
-                } else {
-                    alert(response.message);
-                }
-            },
-            error: function (error) {
-                console.error("Error loading projects:", error);
+function loadProjects(pageNumber = 1, searchInput = "") {
+    // Construct the API URL with the search input and other parameters
+    var apiUrl = `https://localhost:7294/api/Projects/GetAllProjectInSystem?searchInput=${searchInput}&IsActive=true&currentPage=${pageNumber}`;
+
+    $.ajax({
+        url: apiUrl,
+        type: 'GET',
+        success: function (response) {
+            if (response.success) {
+                renderProjects(response.data);
+                renderPagination(response.data.dataCount, pageNumber, searchInput);
+            } else {
+                alert(response.message);
             }
+        },
+        error: function (error) {
+            console.error("Error loading projects:", error);
+        }
+    });
+}
+
+// Function to render the projects data as cards
+function renderProjects(data) {
+    var projectsContainer = $('#projectsContainer');
+    projectsContainer.empty();  // Clear existing data
+
+    data.data.forEach(function (project) {
+        var date = new Date(project.dateOfCreation);
+        var formattedDate = date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
         });
-    }
+        var url = '/Projectpage/Index/' + project.id;
+        var creator = project.firstName + ' ' + project.lastName;
+        var shortenedDescription = project.description.length > 150 ? project.description.substring(0, 150) + '...' : project.description;
 
-    // Function to render the projects data as cards
-    function renderProjects(data) {
-        var projectsContainer = $('#projectsContainer');
-        projectsContainer.empty();  // Clear existing data
+        var projectImage = project.image || '/images/event/Project_image.jpg';
 
-        data.data.forEach(function (project) {
-            var date = new Date(project.dateOfCreation);
-            var formattedDate = date.toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric'
-            });
-            var url = '/Projectpage/Index/' + project.id;
-            var creator = project.firstName + ' ' + project.lastName;
-            var shortenedDescription = project.description.length > 150 ? project.description.substring(0, 150) + '...' : project.description;
-
-            var projectImage = project.image || '/images/event/Project_image.jpg';
-
-            var cardHtml = `<div class="col-xl-4 col-md-6 wow fadeInUp" data-wow-delay="200ms" data-wow-duration="1500ms">
+        var cardHtml = `<div class="col-xl-4 col-md-6 wow fadeInUp" data-wow-delay="200ms" data-wow-duration="1500ms">
                                 <div class="event__inner-item">
                                     <div class="image">
                                         <img src="${projectImage}" alt="image">
@@ -88,36 +88,87 @@
                                 </div>
                             </div>
                     `;
-            projectsContainer.append(cardHtml);
-        });
+        projectsContainer.append(cardHtml);
+    });
+}
+
+// Function to render pagination controls
+//function renderPagination(totalRecords, currentPage, searchInput) {
+//    var pageSize = 6;
+//    var totalPages = Math.ceil(totalRecords / pageSize);
+//    var paginationControls = $('#paginationControls');
+//    paginationControls.empty();  // Clear existing pagination buttons
+
+//    // Render "Previous" button
+//    if (currentPage > 1) {
+//        paginationControls.append(`<button onclick="loadProjects(${currentPage - 1}, '${searchInput}')"><i class="fa-solid fa-arrow-left-long primary-color transition"></i></button>`);
+//    }
+
+//    // Render page number buttons
+//    var startPage = Math.max(1, currentPage - 2);
+//    var endPage = Math.min(totalPages, currentPage + 2);
+
+//    for (var i = startPage; i <= endPage; i++) {
+//        if (i === currentPage) {
+//            paginationControls.append(`<button class="active" disabled>${i}</button>`);
+//        } else {
+//            paginationControls.append(`<button onclick="loadProjects(${i}, '${searchInput}')">${i}</button>`);
+//        }
+//    }
+
+//    // Render "Next" button
+//    if (currentPage < totalPages) {
+//        paginationControls.append(`<button onclick="loadProjects(${currentPage + 1}, '${searchInput}')"><i class="fa-solid fa-arrow-right-long primary-color transition"></i></button>`);
+//    }
+//}
+function renderPagination(totalRecords, currentPage, searchInput) {
+    var pageSize = 1; 
+    var totalPages = Math.ceil(totalRecords / pageSize);
+    var paginationControls = $('#paginationControls');
+    paginationControls.empty(); 
+
+    if (totalPages <= 1) return;
+
+    if (currentPage > 1) {
+        paginationControls.append(`<button onclick="loadProjects(${currentPage - 1}, '${searchInput}')"><i class="fa-solid fa-arrow-left-long primary-color transition"></i></button>`);
     }
 
-    // Function to render pagination controls
-    function renderPagination(totalRecords, currentPage, searchInput) {
-        var pageSize = 6;
-        var totalPages = Math.ceil(totalRecords / pageSize);
-        var paginationControls = $('#paginationControls');
-        paginationControls.empty();  // Clear existing pagination buttons
+    if (totalPages <= 6) {
+        for (var i = 1; i <= totalPages; i++) {
+            paginationControls.append(generatePageButton(i, currentPage, searchInput));
+        }
+    } else {
+        paginationControls.append(generatePageButton(1, currentPage, searchInput));
+        paginationControls.append(generatePageButton(2, currentPage, searchInput));
 
-        // Render "Previous" button
-        if (currentPage > 1) {
-            paginationControls.append(`<button onclick="loadProjects(${currentPage - 1}, '${searchInput}')"><i class="fa-solid fa-arrow-left-long primary-color transition"></i></button>`);
+        if (currentPage > 4) {
+            paginationControls.append(`<span>...</span>`);
         }
 
-        // Render page number buttons
-        var startPage = Math.max(1, currentPage - 2);
-        var endPage = Math.min(totalPages, currentPage + 2);
+        var startPage = Math.max(3, currentPage - 1);
+        var endPage = Math.min(totalPages - 2, currentPage + 1);
 
         for (var i = startPage; i <= endPage; i++) {
-            if (i === currentPage) {
-                paginationControls.append(`<button class="active" disabled>${i}</button>`);
-            } else {
-                paginationControls.append(`<button onclick="loadProjects(${i}, '${searchInput}')">${i}</button>`);
-            }
+            paginationControls.append(generatePageButton(i, currentPage, searchInput));
         }
 
-        // Render "Next" button
-        if (currentPage < totalPages) {
-            paginationControls.append(`<button onclick="loadProjects(${currentPage + 1}, '${searchInput}')"><i class="fa-solid fa-arrow-right-long primary-color transition"></i></button>`);
+        if (currentPage < totalPages - 3) {
+            paginationControls.append(`<span>...</span>`);
         }
+
+        paginationControls.append(generatePageButton(totalPages - 1, currentPage, searchInput));
+        paginationControls.append(generatePageButton(totalPages, currentPage, searchInput));
     }
+
+    if (currentPage < totalPages) {
+        paginationControls.append(`<button onclick="loadProjects(${currentPage + 1}, '${searchInput}')"><i class="fa-solid fa-arrow-right-long primary-color transition"></i></button>`);
+    }
+}
+
+function generatePageButton(page, currentPage, searchInput) {
+    if (page === currentPage) {
+        return `<button class="active" disabled>${page}</button>`;
+    } else {
+        return `<button onclick="loadProjects(${page}, '${searchInput}')">${page}</button>`;
+    }
+}

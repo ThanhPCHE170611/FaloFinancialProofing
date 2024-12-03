@@ -87,7 +87,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                         UpdateLog = p.UpdateLog,
                         TotalMoneyEarned = p.TransactionLogs
                             .Where(t => t.Amount > 0)
-                            .Sum(x => (double)x.Amount),
+                            .Sum(x => (long)x.Amount),
                     }).ToListAsync();
             }
             catch (Exception ex)
@@ -102,7 +102,7 @@ namespace FALOFinancialProofing.Services.CampaignService
             List<CampaignInformation> data = null!;
             try
             {
-                data = await campaignRepository.GetAll().Where(p => p.ProjectId == ProjectId)
+                data = await campaignRepository.GetAll().Where(p => p.ProjectId == ProjectId && p.IsActive)
                     .Select(p => new CampaignInformation()
                     {
                         FirstName = p.User.FirstName,
@@ -123,7 +123,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                         Status = p.Status,
                         TotalMoneyEarned = p.TransactionLogs
                             .Where(t => t.Amount > 0)
-                            .Sum(x => (double)x.Amount),
+                            .Sum(x => (long)x.Amount),
                         UpdateLog = p.UpdateLog,
                     }).ToListAsync();
             }
@@ -179,7 +179,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                         UpdateLog = p.UpdateLog,
                         TotalMoneyEarned = p.TransactionLogs
                             .Where(t => t.Amount > 0)
-                            .Sum(x => (double)x.Amount),
+                            .Sum(x => (long)x.Amount),
                         CreateCampaignFiles = p.CreateCampaignRequests.SelectMany(ccr => ccr.CreateCampaignFiles).Select(f => new CreateCampaignFileInformation()
                         {
                             Id = f.Id,
@@ -308,10 +308,16 @@ namespace FALOFinancialProofing.Services.CampaignService
                 {
                     throw new Exception("This user has no such Project");
                 }
-                var isProjectActive = await _projectService.CheckProjectIsActiveAsync(createCampaignClientRequest.ProjectId);
+                //var isProjectActive = await _projectService.CheckProjectIsActiveAsync(createCampaignClientRequest.ProjectId);
+                var project = await _projectService.GetProjectByIdAsync(createCampaignClientRequest.ProjectId);
+                var isProjectActive = project.IsActive;
                 if (!isProjectActive)
                 {
                     throw new Exception("Project is not active");
+                }
+                if (project.Status != null && project.Status.Equals(RequestStatus.Close))
+                {
+                    throw new Exception("Project has been close");
                 }
                 // số tiền tạo > 0
                 if (createCampaignClientRequest.FundTarget <= 0)

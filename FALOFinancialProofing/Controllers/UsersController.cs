@@ -77,7 +77,7 @@ namespace FALOFinancialProofing.Controllers
                 });
             }
             var checkAccountExist = await authServices.CheckGoogleExistAccount(userInfo.Email);
-            if (!checkAccountExist)
+            if (checkAccountExist == null)
             {
                 var checkSuccessCreate = await authServices.ExternalRegisterUser(userInfo, roleName);
                 if (checkSuccessCreate == null || !checkSuccessCreate.Succeeded)
@@ -89,6 +89,20 @@ namespace FALOFinancialProofing.Controllers
                     });
                 }
             }
+            #region tạm chưa dùng
+            //if (roleName.Equals(AppRole.Donor))
+            //{
+            //    var checkIsValidDonorAccount = await authServices.CheckValidDonorAccount(checkAccountExist);
+            //    if (!checkIsValidDonorAccount)
+            //    {
+            //        return Ok(new ApiResponse()
+            //        {
+            //            Success = false,
+            //            Message = "Login With Google Fails, Account Role Not Valid!"
+            //        });
+            //    }
+            //} 
+            #endregion
             UserDto userDto = await authServices.GetUserDto(userInfo);
             var user = await authServices.GetUserById(userDto.Id);
             var checkIsLockout = authServices.checkLockoutAccount(user, message);

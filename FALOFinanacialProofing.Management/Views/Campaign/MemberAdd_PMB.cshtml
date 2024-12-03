@@ -161,6 +161,7 @@
     const campaignId = localStorage.getItem('campaignId');
     const jwtToken = localStorage.getItem('jwtToken');
     const userId = localStorage.getItem('userId');
+    const checkroleId = localStorage.getItem('loggingRoleId');
     const checkrole = localStorage.getItem('loggingRole');
     const campaignName = localStorage.getItem('campaignName');
     console.log(campaignName);
@@ -296,7 +297,7 @@
         }
 
         $.ajax({
-            url: `https://localhost:7294/api/CampaignMember/CreateManyCampaignMembers/${campaignId}/${userId}`,
+            url: `https://localhost:7294/api/CampaignMember/CreateManyCampaignMembers/${campaignId}/${userId}/${checkroleId}`,
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(selectedMembers),
@@ -308,7 +309,7 @@
                     alert('Members successfully added to the campaign!');
                     location.reload();
                 } else {
-                    alert('Failed to add members: ' + response.message);
+                    alert(response.message);
                     location.reload();
                 }
             },

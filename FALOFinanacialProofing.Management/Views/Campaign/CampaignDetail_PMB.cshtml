@@ -133,7 +133,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="totalAmount" class="form-label">Fund Target</label>
-                            <input type="text" class="form-control" id="totalAmount" >
+                            <input type="text" class="form-control" id="totalAmount" readonly>
                         </div>
 
                         <div class="mb-3">
@@ -294,12 +294,12 @@
             formData.append('Address', $('#location').val());
             formData.append('IsActive', $('#statusDropdown').val());
             formData.append('Status', $('#stage').val());
-            formData.append('EndDate', $('#endDate').val());
+            formData.append('EndDate', formatDateTimeToDisplay($('#endDate').val()));
             const logoFile = $('#projectImages')[0].files[0];
             if (logoFile) {
                 formData.append('LogoFile', logoFile);
             }
-            console.log(formData);
+            console.log($('#endDate').val());
             $.ajax({
                 url: `https://localhost:7294/api/Campaign/UpdateCampaign`,
                 type: 'PUT',
@@ -419,5 +419,10 @@
                 console.error('Error downloading file:', error);
             }
         });
+    }
+    function formatDateTimeToDisplay(date) {
+        const d = new Date(date);
+        d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+        return d.toISOString().split('.')[0]; // Formats to 'YYYY-MM-DDTHH:mm:ss'
     }
 </script>

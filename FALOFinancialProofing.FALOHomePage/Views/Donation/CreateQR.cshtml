@@ -16,7 +16,7 @@
                     <!-- Input Field with space below it -->
                     <div class="input-box pb-3 mb-4 bor-bottom">
                         <span class="me-2">₫</span>
-                        <input class="addAmount-value form-control" type="number" max="10000000">
+                        <input class="addAmount-value form-control" type="text" id="totalAmount">
                     </div>
 
                     <!-- Amount Buttons with more space between them -->
@@ -72,6 +72,20 @@
             console.error("Donate button not found!");
         }
 
+        $('#totalAmount').on('input', function () {
+            let input = $(this).val();
+
+            input = input.replace(/[^0-9]/g, '');
+
+            if (!/^\d+$/.test(input)) {
+                alert('Vui lòng nhập số nguyên dương và không chứa dấu thập phân hoặc ký tự không hợp lệ.');
+                $(this).val('');
+                return;
+            }
+
+            const formatted = Number(input).toLocaleString();
+            $(this).val(formatted);
+        });
         donateButton.addEventListener('click', function (e) {
             e.preventDefault();
             console.log("Donate button clicked!");
@@ -81,20 +95,20 @@
                 return;
             }
 
-            const amountInput = document.querySelector('.addAmount-value');
-            const amount = parseFloat(amountInput.value);
-
-            if (isNaN(amount) || amount < 2000) {
+            // const amountInput = document.querySelector('.addAmount-value');
+            // const amount = parseFloat(amountInput.value);
+            const totalAmount = $('#totalAmount').val().replace(/,/g, '');
+            if (isNaN(totalAmount) || totalAmount < 2000) {
                 alert('Xin hãy nhập số tiền từ 2000đ trở lên');
                 return;
-            } else if (amount > 10000000) {
+            } else if (totalAmount > 10000000) {
                 alert('Xin hãy nhập số tiền dưới 10000000đ trở xuống');
                 return;
             }
 
             const data = {
                 userId: QRDetails.userId,
-                amount: amount,
+                amount: totalAmount,
                 bankId: QRDetails.bankId,
                 campaignId: QRDetails.campaignId
             };

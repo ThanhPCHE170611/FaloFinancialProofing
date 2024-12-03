@@ -589,17 +589,32 @@ $(document).ready(function () {
                         }
 
                         let voucherLinks = '';
-                        if (request.vouchers && request.vouchers.length > 0) {
-                            const validFiles = request.vouchers.filter(file => file.filePath);
-                            if (validFiles.length > 0) {
-                                voucherLinks = validFiles.map(file => `
+                        if (checkrole === "Project Manager") {
+                            if (request.voucherFiles && request.voucherFiles.length > 0) {
+                                const validFiles = request.voucherFiles.filter(file => file.filePath);
+                                if (validFiles.length > 0) {
+                                    voucherLinks = validFiles.map(file => `
                                 <a href="javascript:void(0);" onclick="downloadVoucher('${file.filePath}')" class="btn btn-link text-info">${file.filePath}</a>
                                 `).join('<br>');
+                                } else {
+                                    voucherLinks = '<span class="text-muted">No Attachments</span>';
+                                }
                             } else {
                                 voucherLinks = '<span class="text-muted">No Attachments</span>';
                             }
                         } else {
-                            voucherLinks = '<span class="text-muted">No Attachments</span>';
+                            if (request.vouchers && request.vouchers.length > 0) {
+                                const validFiles = request.vouchers.filter(file => file.filePath);
+                                if (validFiles.length > 0) {
+                                    voucherLinks = validFiles.map(file => `
+                                <a href="javascript:void(0);" onclick="downloadVoucher('${file.filePath}')" class="btn btn-link text-info">${file.filePath}</a>
+                                `).join('<br>');
+                                } else {
+                                    voucherLinks = '<span class="text-muted">No Attachments</span>';
+                                }
+                            } else {
+                                voucherLinks = '<span class="text-muted">No Attachments</span>';
+                            }
                         }
 
 
