@@ -175,13 +175,11 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                     .GetAll().Include(x => x.User)
                     .Where(cm => cm.CampaignId == campaignId && cm.Debt != 0)
                     .ToListAsync();
-
-                //campaignDebtResult.NameOfAccounting = campaignMembers.Select(cm => cm.User.FirstName).ToList();
-
                 var Accounting = await _campaignMemberRepository
                     .GetAll()
                     .Include(x => x.User)
-                    .Where(cm => cm.CampaignId == campaignId && cm.RoleId == "83292e2c-6c86-4153-bdc5-760d05ec2293")
+                    //.Where(cm => cm.CampaignId == campaignId && cm.RoleId == "83292e2c-6c86-4153-bdc5-760d05ec2293")
+                    .Where(cm => cm.CampaignId == campaignId && cm.Role.Name.Equals(AppRole.Accounting))
                     .SingleAsync();
 
                 campaignDebtResult.NameOfAccounting = Accounting.User.FirstName + " " + Accounting.User.LastName + " with gmail: " + Accounting.User.Email;
@@ -348,9 +346,6 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                 {
                     return IsValid;
                 }
-
-
-
                 var campaign = await _campaignRepository.Get(x => x.Id == createMoveNextCampaignStatusRequestDTO.CampaignID);
                 if (campaign == null)
                 {

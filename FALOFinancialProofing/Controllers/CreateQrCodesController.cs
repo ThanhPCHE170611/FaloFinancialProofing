@@ -45,7 +45,7 @@ namespace FALOFinancialProofing.Controllers
             checkValid = await _createQrCodeService.CreateQrCodeAsync(createQrCode);
             message.Append("Create QrCode successfully. ");
 
-            // tìm bank bằng bankId
+            // tìm bank bằng bankId // muốn tối ưu phải đặt trước createQrCode
             var bankInformation = await bankService.GetBankByIdAsync(createQrCodeRequest.BankId);
             if (bankInformation == null)
             {
