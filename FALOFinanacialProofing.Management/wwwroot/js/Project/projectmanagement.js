@@ -16,7 +16,7 @@ function loadProjects() {
     if (checkrole === "Project Manager") {
         apiUrl = `https://localhost:7294/api/Projects/GetAllProjectByUserId/${userId}?searchInput=${searchInput}&status=${statusFilter}&currentPage=${currentPage}`;
     } else if (checkrole === "Project Management Board") {
-        apiUrl = `https://localhost:7294/api/Projects/GetAllProjectInSystem?searchInput=${searchInput}&status=${statusFilter}&currentPage=${currentPage}`;
+        apiUrl = `https://localhost:7294/api/Projects/GetAllProjectInSystem?searchInput=${searchInput}&status=${statusFilter}&currentPage=${currentPage}&PageSizeCustom=7`;
     } else {
         alert('Unauthorized role. Unable to fetch projects.');
         return;
@@ -60,6 +60,10 @@ function renderTable(projects) {
                 actionButtons = `
                                     <button onclick="changeProject(this, ${project.id})" class="btn btn-info btn-sm">Detail</button>
                                     <a class="btn btn-primary btn-sm" href="/Campaign/CampaignCreate?projectId=${project.id}">Campaign</a>`;
+            }
+            if (project.status === 'Close') {
+                actionButtons = `
+                                    <button onclick="changeProject(this, ${project.id})" class="btn btn-info btn-sm">Detail</button>`;
             }
         }
 

@@ -167,7 +167,7 @@
                 $('#status').val(safeValue(data.status));
                 $('#accountNumber').val(safeValue(data.accountNumber));
                 $('#description').val(safeValue(data.description));
-                $('#fundTarget').val(safeValue(data.fundTarget));
+                $('#fundTarget').val(safeValue(data.fundTarget.toLocaleString()));
 
 
                 if (data.receiverName !== ' ') {

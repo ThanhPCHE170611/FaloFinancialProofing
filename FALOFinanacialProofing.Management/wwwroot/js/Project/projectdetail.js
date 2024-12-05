@@ -2,17 +2,17 @@
     theme: 'snow'
 });
 
-document.getElementById('relatedDocs').addEventListener('change', function (event) {
-    const docList = document.getElementById('docList');
-    docList.innerHTML = '';
-    const files = event.target.files;
-    Array.from(files).forEach(file => {
-        const listItem = document.createElement('li');
-        listItem.classList.add('list-group-item');
-        listItem.textContent = file.name;
-        docList.appendChild(listItem);
-    });
-});
+//document.getElementById('relatedDocs').addEventListener('change', function (event) {
+//    const docList = document.getElementById('docList');
+//    docList.innerHTML = '';
+//    const files = event.target.files;
+//    Array.from(files).forEach(file => {
+//        const listItem = document.createElement('li');
+//        listItem.classList.add('list-group-item');
+//        listItem.textContent = file.name;
+//        docList.appendChild(listItem);
+//    });
+//});
 
 
 var win = navigator.platform.indexOf('Win') > -1;
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         </div>`;
         }
 
-        displayFiles(files);
+        displayFiles(project.createProjectFiles);
 
     }
     loadProjectDetails();
@@ -217,24 +217,84 @@ document.getElementById('projectImages').addEventListener('change', function (ev
     });
 });
 
-function displayFiles(files) {
-    const docList = document.getElementById('docList');
-    docList.innerHTML = '';
+//function displayFiles(files) {
+//    const docList = document.getElementById('docList');
+//    docList.innerHTML = '';
 
-    files.forEach(file => {
-        const listItem = document.createElement('li');
-        listItem.classList.add('list-group-item');
-        listItem.textContent = file;
-        listItem.style.cursor = 'pointer';
+//    if (!Array.isArray(files) || files.length === 0) {
+//        const noFilesMessage = document.createElement('li');
+//        noFilesMessage.classList.add('list-group-item');
+//        noFilesMessage.textContent = 'No files available';
+//        docList.appendChild(noFilesMessage);
+//        return;
+//    }
 
-        listItem.addEventListener('click', function () {
-            downloadFile(file);
-        });
+//    files.forEach(file => {
+//        const listItem = document.createElement('li');
+//        listItem.classList.add('list-group-item');
+//        listItem.textContent = file.filePath; 
+//        listItem.style.cursor = 'pointer';
 
-        docList.appendChild(listItem);
-    });
-}
+//        listItem.addEventListener('click', function () {
+//            downloadFile(file.filePath);
+//        });
+
+//        docList.appendChild(listItem);
+//    });
+//}
 
 function downloadFile(fileName) {
-    window.location.href = `https://localhost:7294/api/Projects/downloadattachmentfilewithnotypebyfilename/${fileName}`;
+    $.ajax({
+        url: `https://localhost:7294/api/CreateProjectFiles/DownloadProjectFile/${fileName}`,
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${jwtToken}`
+        },
+        xhrFields: {
+            responseType: 'blob'
+        },
+        success: function (data, status, xhr) {
+            console.log(fileName);
+            const contentType = xhr.getResponseHeader('Content-Type');
+            const blob = new Blob([data], { type: contentType });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+        },
+        error: function (xhr, status, error) {
+            alert('Error downloading file. Please try again.');
+            console.error('Error downloading file:', error);
+        }
+    });
+}
+function displayFiles(files) {
+    const campaignFilesList = $('#campaignFilesList');
+    campaignFilesList.empty();
+
+    if (!files || files.length === 0) {
+        campaignFilesList.append('<li>No files available for this campaign.</li>');
+        return;
+    }
+
+    files.forEach(file => {
+        const listItem = $(`
+                <li>
+                    <a href="#" class="file-link" data-file="${file.filePath}">
+                        ${file.filePath}
+                    </a>
+                </li>
+            `);
+        campaignFilesList.append(listItem);
+    });
+
+    $('.file-link').on('click', function (event) {
+        event.preventDefault();
+        const fileName = $(this).data('file');
+        downloadFile(fileName);
+    });
 }

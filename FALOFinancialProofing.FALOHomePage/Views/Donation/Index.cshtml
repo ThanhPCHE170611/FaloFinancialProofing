@@ -22,8 +22,20 @@
         <div class="item shadow mb-30">
             <h5 class="title">Search</h5>
             <div class="serach-bar">
-                <input type="text" id="searchInput" placeholder="Search here">
-                <button id="searchButton"><i class="fa-regular fa-magnifying-glass"></i></button>
+                <input type="text" id="searchInput" placeholder="Search here" style="padding:6px">
+                <button id="searchButton">
+                    @* <i class="fa-regular fa-magnifying-glass"></i> *@
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="blog-single__right-item">
+        <div class="item shadow mb-30">
+            <div class="date-filter">
+                <h5 class="title">Filter by Date</h5>
+                <input type="date" id="startDate" placeholder="Start Date">
+                <input type="date" id="endDate" placeholder="End Date">
+                <button id="applyDateFilter">Apply Filter</button>
             </div>
         </div>
     </div>
@@ -37,7 +49,7 @@
     </div>
 
     <!-- Pagination Controls -->
-    <div class="pegi justify-content-center mt-80 pagination" id="paginationContainer">
+    <div class="pegi justify-content-center mt-80 pagination" id="paginationContainer" style="margin-top: 40px">
         <!-- Pagination links will be populated here using JavaScript -->
     </div>
 </div>
@@ -46,23 +58,22 @@
 
 <script>
     const campaignId = @campaignId;
-    const pageSize = 5;
+    const pageSize = 30;
 
     let currentPage = 1;
     let totalPages = 1;
     let totalDataCount = 0;
 
     // Function to fetch transaction logs from the API
-    function fetchTransactions(page = 1, searchQuery = "") {
-        const url = `https://localhost:7294/api/TransactionLogs/GetCampaignTransactionLogs/${campaignId}?currentPage=${page}&searchQuery=${encodeURIComponent(searchQuery)}`;
-
-        console.log("Fetching URL:", url); // Log the request URL for debugging
-
+    function fetchTransactions(page = 1, searchQuery = "",startDate = "", endDate = "") {
+        const url = `https://localhost:7294/api/TransactionLogs/GetCampaignTransactionLogs/${campaignId}?currentPage=${page}&searchInput=${encodeURIComponent(searchQuery)}&startDate=${startDate}&endDate=${endDate}`;        console.log("Fetching URL:", url); // Log the request URL for debugging
+        console.log("Fetching URL:", url);
         fetch(url)
             .then(response => response.json())
             .then(data => {
                 console.log("API Response:", data); // Log the API response
                 if (data?.data?.data) {
+                    errorMessage.style.display = 'none';
                     displayTransactions(data.data.data);
                     totalPages = Math.ceil(data.data.dataCount / pageSize);
                     totalDataCount = data.data.dataCount;
@@ -76,7 +87,7 @@
                 console.error("Error fetching transaction logs:", error);
             });
     }
-
+    document.getElementById('applyDateFilter').addEventListener('click', applyDateFilter);
     // Function to display transaction logs in the table
     function displayTransactions(transactions) {
         const tableContainer = document.getElementById('transactionsContainer');
@@ -85,8 +96,17 @@
             displayError("No matching transactions found.");
             return;
         }
-
-        let tableHtml = `<table class="table table-bordered table-hover" id="transactions-table">
+        const totalAmount = transactions.reduce((sum, log) => sum + log.amount, 0).toLocaleString('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        });
+        const totalAmountHtml = `
+            <div style="text-align: right; margin-bottom: 10px; font-weight: bold; color: green;">
+                Tổng Số Tiền: ${totalAmount}
+            </div>`;
+        let tableHtml = `
+        ${totalAmountHtml}
+        <table class="table table-bordered table-hover" id="transactions-table">
                                                                                                                          <thead>
                                                                                                                              <tr>
                                                                                                                                  <th scope="col">Mã Giao Dịch</th>
@@ -102,6 +122,7 @@
                 style: 'currency',
                 currency: 'VND'
             });
+
             tableHtml += `<tr>
                                                                                                                          <td>${log.tid}</td>
                                                                                                                          <td>${new Date(log.transactionDate).toLocaleString()}</td>
@@ -121,35 +142,79 @@
         errorMessage.style.display = 'block';
     }
 
-    // Function to update pagination links
+    // function updatePagination() {
+    //     const paginationContainer = document.getElementById('paginationContainer');
+    //     paginationContainer.innerHTML = '';  Clear existing pagination buttons
+
+    //     Previous button
+    //     if (currentPage > 1) {
+    //         const prevPageButton = document.createElement('button');
+    //         prevPageButton.innerHTML = `<i class="fa-solid fa-arrow-left-long primary-color transition"></i>`;
+    //         prevPageButton.onclick = () => changePage(currentPage - 1);
+    //         paginationContainer.appendChild(prevPageButton);
+    //     }
+
+    //     Page number buttons
+    //     const startPage = Math.max(1, currentPage - 2);  Show pages before current
+    //     const endPage = Math.min(totalPages, currentPage + 2);  Show pages after current
+
+    //     for (let page = startPage; page <= endPage; page++) {
+    //         const pageButton = document.createElement('button');
+    //         pageButton.textContent = page;
+    //         if (page === currentPage) {
+    //             pageButton.classList.add('active');
+    //             pageButton.disabled = true;
+    //         }
+    //         pageButton.onclick = () => changePage(page);
+    //         paginationContainer.appendChild(pageButton);
+    //     }
+
+    //     Next button
+    //     if (currentPage < totalPages) {
+    //         const nextPageButton = document.createElement('button');
+    //         nextPageButton.innerHTML = `<i class="fa-solid fa-arrow-right-long primary-color transition"></i>`;
+    //         nextPageButton.onclick = () => changePage(currentPage + 1);
+    //         paginationContainer.appendChild(nextPageButton);
+    //     }
+    // }
+
+
     function updatePagination() {
         const paginationContainer = document.getElementById('paginationContainer');
-        paginationContainer.innerHTML = '';  // Clear existing pagination buttons
+        paginationContainer.innerHTML = ''; 
 
-        // Previous button
         if (currentPage > 1) {
             const prevPageButton = document.createElement('button');
             prevPageButton.innerHTML = `<i class="fa-solid fa-arrow-left-long primary-color transition"></i>`;
             prevPageButton.onclick = () => changePage(currentPage - 1);
             paginationContainer.appendChild(prevPageButton);
         }
-
-        // Page number buttons
-        const startPage = Math.max(1, currentPage - 2);  // Show pages before current
-        const endPage = Math.min(totalPages, currentPage + 2);  // Show pages after current
-
-        for (let page = startPage; page <= endPage; page++) {
-            const pageButton = document.createElement('button');
-            pageButton.textContent = page;
-            if (page === currentPage) {
-                pageButton.classList.add('active');
-                pageButton.disabled = true;
+        if (totalPages <= 6) {
+            for (let page = 1; page <= totalPages; page++) {
+                addPageButton(paginationContainer, page);
             }
-            pageButton.onclick = () => changePage(page);
-            paginationContainer.appendChild(pageButton);
+        } else {
+            addPageButton(paginationContainer, 1); 
+            addPageButton(paginationContainer, 2);
+            if (currentPage > 4) {
+                const ellipsis = document.createElement('span');
+                ellipsis.textContent = '...';
+                paginationContainer.appendChild(ellipsis);
+            }
+            const startPage = Math.max(3, currentPage - 1);
+            const endPage = Math.min(totalPages - 2, currentPage + 1);
+            for (let page = startPage; page <= endPage; page++) {
+                addPageButton(paginationContainer, page);
+            }
+            if (currentPage < totalPages - 3) {
+                const ellipsis = document.createElement('span');
+                ellipsis.textContent = '...';
+                paginationContainer.appendChild(ellipsis);
+            }
+            addPageButton(paginationContainer, totalPages - 1); 
+            addPageButton(paginationContainer, totalPages);     
         }
 
-        // Next button
         if (currentPage < totalPages) {
             const nextPageButton = document.createElement('button');
             nextPageButton.innerHTML = `<i class="fa-solid fa-arrow-right-long primary-color transition"></i>`;
@@ -158,15 +223,38 @@
         }
     }
 
-    // Function to handle page change
-    function changePage(page) {
-        if (page >= 1 && page <= totalPages) {
-            currentPage = page;
-            const searchQuery = document.getElementById('searchInput').value;  // Get search input
-            fetchTransactions(currentPage, searchQuery);  // Fetch data for new page
+    function addPageButton(container, page) {
+        const pageButton = document.createElement('button');
+        pageButton.textContent = page;
+        if (page === currentPage) {
+            pageButton.classList.add('active');
+            pageButton.disabled = true;
         }
+        pageButton.onclick = () => changePage(page);
+        container.appendChild(pageButton);
     }
 
+    function changePage(page) {
+        if (page >= 1 && page <= totalPages) {
+            currentPage = page; 
+            const searchQuery = document.getElementById('searchInput').value; 
+            const startDate = document.getElementById('startDate')?.value || ""; 
+            const endDate = document.getElementById('endDate')?.value || "";   
+            fetchTransactions(currentPage, searchQuery, startDate, endDate);  
+        }
+    }
+    function applyDateFilter() {
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+
+        if (new Date(startDate) > new Date(endDate)) {
+            displayError("Start date cannot be later than end date.");
+            return;
+        }
+
+        currentPage = 1; 
+        fetchTransactions(currentPage, document.getElementById('searchInput').value, startDate, endDate);
+    }
     // Listen for Enter key press or click on search button
     document.getElementById('searchInput').addEventListener('keydown', function (e) {
         if (e.key === 'Enter') {

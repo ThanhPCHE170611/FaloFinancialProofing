@@ -119,13 +119,28 @@ $(document).ready(function () {
             alert('Failed to load approvers. Please try again.');
         }
     });
+    $('#expectedMoney').on('input', function () {
+        let input = $(this).val();
 
+        input = input.replace(/[^0-9]/g, '');
+
+        if (!/^\d+$/.test(input)) {
+            alert('Vui lòng nhập số nguyên dương và không chứa dấu thập phân hoặc ký tự không hợp lệ.');
+            $(this).val('');
+            return;
+        }
+
+        const formatted = Number(input).toLocaleString();
+        $(this).val(formatted);
+    });
     $('#create-btn').on('click', function () {
-        const expectedMoney = $('#expectedMoney').val();
+        //const expectedMoney = $('#expectedMoney').val();
+        const expectedMoney = $('#expectedMoney').val().replace(/,/g, '');
         const assignFrom = $('#assignFrom').val();
         const description = $('#description').val();
         const files = $('#attachments')[0].files;
         const vouchers = $('#vouchers')[0].files;
+
         if (!expectedMoney || !description) {
             alert('Please fill in all required fields.');
             return;
@@ -133,6 +148,12 @@ $(document).ready(function () {
         if (!expectedMoney || isNaN(expectedMoney) || Number(expectedMoney) <= 1000) {
             alert('Expected Money is required and must be a valid number greater than 1000');
             $('#expectedMoney').focus();
+            return;
+        }
+
+        if (!expectedMoney || expectedMoney < 1000) {
+            alert('Fund Target is required and must be at least 1000.');
+            $('#totalAmount').focus();
             return;
         }
 

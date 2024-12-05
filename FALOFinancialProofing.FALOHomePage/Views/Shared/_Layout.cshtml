@@ -1,5 +1,6 @@
 ﻿@{
     var userId = Context.Session.GetString("UserId");
+    var userName = Context.Session.GetString("UserName");
 }
 
 <!DOCTYPE html>
@@ -103,6 +104,9 @@
                     <div class="dropdown">
                         <span id="user-image">
                             <img src="/images/project/user.png" alt="image" style="max-height=50px; max-width:50px; border-radius: 100%">
+                            <span id="user-name" style="font-weight: bold; color: #333;">
+                                @userName
+                            </span>
                         </span>
                         <div class="dropdown-content">
                             <p>

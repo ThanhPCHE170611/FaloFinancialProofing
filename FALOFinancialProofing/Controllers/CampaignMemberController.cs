@@ -44,7 +44,7 @@ namespace FALOFinancialProofing.Controllers
         }
         // có thể là tự xem chính mình (hoặc admin xem uid và rid này nằm trong những campaign nào: bỏ)
         [HttpGet("GetAllCampaignMembersByUserIdAndRoleId")]
-        public async Task<IActionResult> GetAllCampaignMembersByUserIdAndRoleId(string? searchInput, string userId, string roleId, string? campaignStatus, int currentPage = IntConstant.PageNumberDefault)
+        public async Task<IActionResult> GetAllCampaignMembersByUserIdAndRoleId(string? searchInput, string userId, string roleId, string? status, int currentPage = IntConstant.PageNumberDefault)
         {
             List<CampaignMemberInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -67,9 +67,9 @@ namespace FALOFinancialProofing.Controllers
                     searchInput = searchInput.Trim();
                     data = data.FindAll(x => ($"{x.CampaignTitle}").Contains(searchInput, StringComparison.OrdinalIgnoreCase));
                 }
-                if (!string.IsNullOrEmpty(campaignStatus))
+                if (!string.IsNullOrEmpty(status))
                 {
-                    data = data.FindAll(x => x.Status == campaignStatus);
+                    data = data.FindAll(x => x.Status == status);
                 }
                 //if (isActive != null)
                 //{

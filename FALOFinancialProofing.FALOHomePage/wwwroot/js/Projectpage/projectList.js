@@ -93,31 +93,82 @@ function renderProjects(data) {
 }
 
 // Function to render pagination controls
+//function renderPagination(totalRecords, currentPage, searchInput) {
+//    var pageSize = 6;
+//    var totalPages = Math.ceil(totalRecords / pageSize);
+//    var paginationControls = $('#paginationControls');
+//    paginationControls.empty();  // Clear existing pagination buttons
+
+//    // Render "Previous" button
+//    if (currentPage > 1) {
+//        paginationControls.append(`<button onclick="loadProjects(${currentPage - 1}, '${searchInput}')"><i class="fa-solid fa-arrow-left-long primary-color transition"></i></button>`);
+//    }
+
+//    // Render page number buttons
+//    var startPage = Math.max(1, currentPage - 2);
+//    var endPage = Math.min(totalPages, currentPage + 2);
+
+//    for (var i = startPage; i <= endPage; i++) {
+//        if (i === currentPage) {
+//            paginationControls.append(`<button class="active" disabled>${i}</button>`);
+//        } else {
+//            paginationControls.append(`<button onclick="loadProjects(${i}, '${searchInput}')">${i}</button>`);
+//        }
+//    }
+
+//    // Render "Next" button
+//    if (currentPage < totalPages) {
+//        paginationControls.append(`<button onclick="loadProjects(${currentPage + 1}, '${searchInput}')"><i class="fa-solid fa-arrow-right-long primary-color transition"></i></button>`);
+//    }
+//}
 function renderPagination(totalRecords, currentPage, searchInput) {
-    var pageSize = 6;
+    var pageSize = 1; 
     var totalPages = Math.ceil(totalRecords / pageSize);
     var paginationControls = $('#paginationControls');
-    paginationControls.empty();  // Clear existing pagination buttons
+    paginationControls.empty(); 
 
-    // Render "Previous" button
+    if (totalPages <= 1) return;
+
     if (currentPage > 1) {
         paginationControls.append(`<button onclick="loadProjects(${currentPage - 1}, '${searchInput}')"><i class="fa-solid fa-arrow-left-long primary-color transition"></i></button>`);
     }
 
-    // Render page number buttons
-    var startPage = Math.max(1, currentPage - 2);
-    var endPage = Math.min(totalPages, currentPage + 2);
-
-    for (var i = startPage; i <= endPage; i++) {
-        if (i === currentPage) {
-            paginationControls.append(`<button class="active" disabled>${i}</button>`);
-        } else {
-            paginationControls.append(`<button onclick="loadProjects(${i}, '${searchInput}')">${i}</button>`);
+    if (totalPages <= 6) {
+        for (var i = 1; i <= totalPages; i++) {
+            paginationControls.append(generatePageButton(i, currentPage, searchInput));
         }
+    } else {
+        paginationControls.append(generatePageButton(1, currentPage, searchInput));
+        paginationControls.append(generatePageButton(2, currentPage, searchInput));
+
+        if (currentPage > 4) {
+            paginationControls.append(`<span>...</span>`);
+        }
+
+        var startPage = Math.max(3, currentPage - 1);
+        var endPage = Math.min(totalPages - 2, currentPage + 1);
+
+        for (var i = startPage; i <= endPage; i++) {
+            paginationControls.append(generatePageButton(i, currentPage, searchInput));
+        }
+
+        if (currentPage < totalPages - 3) {
+            paginationControls.append(`<span>...</span>`);
+        }
+
+        paginationControls.append(generatePageButton(totalPages - 1, currentPage, searchInput));
+        paginationControls.append(generatePageButton(totalPages, currentPage, searchInput));
     }
 
-    // Render "Next" button
     if (currentPage < totalPages) {
         paginationControls.append(`<button onclick="loadProjects(${currentPage + 1}, '${searchInput}')"><i class="fa-solid fa-arrow-right-long primary-color transition"></i></button>`);
+    }
+}
+
+function generatePageButton(page, currentPage, searchInput) {
+    if (page === currentPage) {
+        return `<button class="active" disabled>${page}</button>`;
+    } else {
+        return `<button onclick="loadProjects(${page}, '${searchInput}')">${page}</button>`;
     }
 }
