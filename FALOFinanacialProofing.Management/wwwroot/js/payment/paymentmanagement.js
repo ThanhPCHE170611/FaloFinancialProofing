@@ -54,11 +54,11 @@ function submitDecline() {
             } else {
                 alert(response.message || 'Failed to decline the request.');
             }
-            closeModalDeclinePrepay();
+            closeModalDeclinePayment();
         },
         error: function (xhr) {
             alert(`Error ${xhr.status}: ${xhr.responseText || 'An error occurred while declining the request.'}`);
-            closeModalDeclinePrepay();
+            closeModalDeclinePayment();
         }
     });
 }

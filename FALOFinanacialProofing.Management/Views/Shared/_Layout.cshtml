@@ -276,12 +276,12 @@
                         </li>
                         <li class="nav-item d-flex align-items-center">
                             <a href="/UserProfile/UserProfileIndex" class="nav-link text-body font-weight-bold px-0">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
-                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                    <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                </svg>
+                                <span id="user-image">
+                                    <img src="/images/project/user.png" alt="image" style="max-height=50px; max-width:50px; border-radius: 100%">
+                                    <span id="user-name" style="font-weight: bold; color: #333;">
+                                    </span>
+                                </span>
                                 <span class="d-sm-inline d-none"></span>
-
                             </a>
                         </li>
                     </ul>
@@ -308,6 +308,22 @@
         const jwtToken = localStorage.getItem('jwtToken');
         const checkrole = localStorage.getItem('loggingRole');
         const fullname = localStorage.getItem('fullname');
+        const userId = localStorage.getItem('userId');
+
+        if (userId) {
+            fetch(`https://localhost:7294/api/Users/GetUserProfile/${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.data.image) {
+                        const imageUrl = data.data.image;
+                        const userImageElement = document.getElementById('user-image').getElementsByTagName('img')[0];
+                        userImageElement.src = imageUrl;
+                    } else {
+                        console.log('User profile image not found.');
+                    }
+                })
+                .catch(error => console.error('Error fetching user profile image:', error));
+        }
 
         var win = navigator.platform.indexOf('Win') > -1;
         if (win && document.querySelector('#sidenav-scrollbar')) {
