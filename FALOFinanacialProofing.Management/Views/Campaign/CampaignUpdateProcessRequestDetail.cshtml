@@ -186,7 +186,8 @@
                             success: function (response) {
                                 if(response.success) {
                                     alert(response.message);
-                                    location.reload(); 
+                                    // location.reload(); 
+                                    window.location.href = '/Campaign/CampaignUpdateProcessManagement';
                                 } else {
                                     alert(response.message);
                                 }

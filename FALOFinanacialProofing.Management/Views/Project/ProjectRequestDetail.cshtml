@@ -200,6 +200,7 @@
                                 alert(response.message);
                                 if (response.success) {
                                     location.reload();
+                                    window.location.href = '/Project/ProjectRequestManagement';
                                 }
                             },
                             error: function (xhr, status, error) {

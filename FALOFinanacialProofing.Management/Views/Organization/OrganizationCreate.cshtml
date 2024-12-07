@@ -251,7 +251,7 @@
                     console.log('Organization creation response:', response);
                     window.location.href = `/Organization/OrganizationManagement`;
                 } else {
-                    alert('Failed to create organization: ' + response.message);
+                    alert(response.message);
                 }
             },
             error: function (errors) {
