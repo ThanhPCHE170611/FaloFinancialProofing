@@ -160,7 +160,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
         //    return IsValid;
         //}
 
-        private async Task<CampaignDebtResult> HasDebtInCampaignAsync(int campaignId)
+        public virtual async Task<CampaignDebtResult> HasDebtInCampaignAsync(int campaignId)
         {
             var campaignDebtResult = new CampaignDebtResult
             {
@@ -197,7 +197,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
             return campaignDebtResult;
         }
 
-        private async Task<bool> CheckMoneyOfCampaignAsync(int campaignId)
+        public virtual async Task<bool> CheckMoneyOfCampaignAsync(int campaignId)
         {
             bool IsValid = true;
             try
@@ -240,7 +240,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
             return IsValid;
         }
 
-        private async Task<bool> CheckRequestHasBeenCreated(int campaignId)
+        public virtual async Task<bool> CheckRequestHasBeenCreated(int campaignId)
         {
             bool IsValid = true;
             try
@@ -370,11 +370,11 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                 {
                     throw new Exception($"User with ID = {createMoveNextCampaignStatusRequestDTO.SenderId} is not associated with Campaign ID = {createMoveNextCampaignStatusRequestDTO.CampaignID}.");
                 }
-                var projectManagerRoleId = "205d4496-4ac8-40d9-84b9-e09e1ada7a49"; // ID của Project Manager
-                if (campaignMember.RoleId != projectManagerRoleId)
-                {
-                    throw new Exception("User is not a Project Manager for the specified campaign.");
-                }
+                //var projectManagerRoleId = "205d4496-4ac8-40d9-84b9-e09e1ada7a49"; // ID của Project Manager
+                //if (campaignMember.RoleId != projectManagerRoleId)
+                //{
+                //    throw new Exception("User is not a Project Manager for the specified campaign.");
+                //}
 
                 IsValid = true;
             }

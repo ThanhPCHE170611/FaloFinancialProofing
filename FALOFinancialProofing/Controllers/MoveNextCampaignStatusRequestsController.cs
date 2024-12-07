@@ -22,6 +22,7 @@ namespace FALOFinancialProofing.Controllers
         }
 
 
+        #region Manh moi them
         //Manh moi them
         //[HttpGet("APIBASICGetAllMoveNextCampaignStatusRequests")]
         //public async Task<IActionResult> GetAllMoveNextCampaignStatusRequests()
@@ -86,7 +87,8 @@ namespace FALOFinancialProofing.Controllers
         //        Message = "MoveNextCampaignStatusRequest created successfully.",
         //        Data = createMoveNextCampaignStatusRequest
         //    });
-        //}
+        //} 
+        #endregion
         [RoleAttribute(AppRole.ProjectManager)]
         [HttpPost("CreateMoveNextCampaignStatusRequest")]
         public async Task<ActionResult<MoveNextCampaignStatusRequest>> CreateMoveNextCampaignStatusRequestAsync([FromBody] CreateMoveNextCampaignStatusRequestDTO requestDto)
