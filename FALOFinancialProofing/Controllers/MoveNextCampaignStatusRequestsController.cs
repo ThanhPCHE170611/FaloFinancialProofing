@@ -22,6 +22,7 @@ namespace FALOFinancialProofing.Controllers
         }
 
 
+        #region Manh moi them
         //Manh moi them
         //[HttpGet("APIBASICGetAllMoveNextCampaignStatusRequests")]
         //public async Task<IActionResult> GetAllMoveNextCampaignStatusRequests()
@@ -86,19 +87,13 @@ namespace FALOFinancialProofing.Controllers
         //        Message = "MoveNextCampaignStatusRequest created successfully.",
         //        Data = createMoveNextCampaignStatusRequest
         //    });
-        //}
+        //} 
+        #endregion
         [RoleAttribute(AppRole.ProjectManager)]
         [HttpPost("CreateMoveNextCampaignStatusRequest")]
         public async Task<ActionResult<MoveNextCampaignStatusRequest>> CreateMoveNextCampaignStatusRequestAsync([FromBody] CreateMoveNextCampaignStatusRequestDTO requestDto)
         {
-
             StringBuilder stringBuilderMessage = new StringBuilder();
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState); // Trả về lỗi nếu DTO không hợp lệ
-            }
-
             try
             {
                 bool checkValidateProject = await _moveNextCampaignStatusRequestService.ValidateCampaignCreateAsync(requestDto, stringBuilderMessage);
@@ -110,7 +105,7 @@ namespace FALOFinancialProofing.Controllers
                     });
                 }
                 var request = await _moveNextCampaignStatusRequestService.CreateMoveNextCampaignStatusRequestAsync(requestDto, stringBuilderMessage);
-                //return CreatedAtAction(nameof(CreateMoveNextCampaignStatusRequestAsync), new { id = request.Id }, request); // Trả về kết quả
+                // Trả về kết quả
                 if (request != null)
                 {
                     var responseDto = _moveNextCampaignStatusRequestService.MapToDto(request);
@@ -118,14 +113,12 @@ namespace FALOFinancialProofing.Controllers
                 }
                 else
                 {
-                    //return BadRequest("can not create MoveNextCampaignStatusRequest");
                     return BadRequest(new
                     {
                         Message = stringBuilderMessage.ToString()
                     });
                 }
             }
-
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);

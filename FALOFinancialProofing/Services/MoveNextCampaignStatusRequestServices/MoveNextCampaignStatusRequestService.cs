@@ -160,7 +160,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
         //    return IsValid;
         //}
 
-        private async Task<CampaignDebtResult> HasDebtInCampaignAsync(int campaignId)
+        public virtual async Task<CampaignDebtResult> HasDebtInCampaignAsync(int campaignId)
         {
             var campaignDebtResult = new CampaignDebtResult
             {
@@ -175,13 +175,11 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                     .GetAll().Include(x => x.User)
                     .Where(cm => cm.CampaignId == campaignId && cm.Debt != 0)
                     .ToListAsync();
-
-                //campaignDebtResult.NameOfAccounting = campaignMembers.Select(cm => cm.User.FirstName).ToList();
-
                 var Accounting = await _campaignMemberRepository
                     .GetAll()
                     .Include(x => x.User)
-                    .Where(cm => cm.CampaignId == campaignId && cm.RoleId == "83292e2c-6c86-4153-bdc5-760d05ec2293")
+                    //.Where(cm => cm.CampaignId == campaignId && cm.RoleId == "83292e2c-6c86-4153-bdc5-760d05ec2293")
+                    .Where(cm => cm.CampaignId == campaignId && cm.Role.Name.Equals(AppRole.Accounting))
                     .SingleAsync();
 
                 campaignDebtResult.NameOfAccounting = Accounting.User.FirstName + " " + Accounting.User.LastName + " with gmail: " + Accounting.User.Email;
@@ -199,7 +197,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
             return campaignDebtResult;
         }
 
-        private async Task<bool> CheckMoneyOfCampaignAsync(int campaignId)
+        public virtual async Task<bool> CheckMoneyOfCampaignAsync(int campaignId)
         {
             bool IsValid = true;
             try
@@ -242,7 +240,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
             return IsValid;
         }
 
-        private async Task<bool> CheckRequestHasBeenCreated(int campaignId)
+        public virtual async Task<bool> CheckRequestHasBeenCreated(int campaignId)
         {
             bool IsValid = true;
             try
@@ -348,9 +346,6 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                 {
                     return IsValid;
                 }
-
-
-
                 var campaign = await _campaignRepository.Get(x => x.Id == createMoveNextCampaignStatusRequestDTO.CampaignID);
                 if (campaign == null)
                 {
@@ -375,11 +370,11 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                 {
                     throw new Exception($"User with ID = {createMoveNextCampaignStatusRequestDTO.SenderId} is not associated with Campaign ID = {createMoveNextCampaignStatusRequestDTO.CampaignID}.");
                 }
-                var projectManagerRoleId = "205d4496-4ac8-40d9-84b9-e09e1ada7a49"; // ID của Project Manager
-                if (campaignMember.RoleId != projectManagerRoleId)
-                {
-                    throw new Exception("User is not a Project Manager for the specified campaign.");
-                }
+                //var projectManagerRoleId = "205d4496-4ac8-40d9-84b9-e09e1ada7a49"; // ID của Project Manager
+                //if (campaignMember.RoleId != projectManagerRoleId)
+                //{
+                //    throw new Exception("User is not a Project Manager for the specified campaign.");
+                //}
 
                 IsValid = true;
             }
