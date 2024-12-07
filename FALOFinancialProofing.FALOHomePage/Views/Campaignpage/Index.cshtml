@@ -3,7 +3,7 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     var campaignDetails = ViewBag.CampaignDetails as FALOFinancialProofing.FALOHomePage.Models.CampaignDetailsDTO;
-    var percentage = Math.Round((decimal)(campaignDetails.TotalMoneyEarned / campaignDetails.FundTarget) * 100);
+    var percentage = Math.Round(((decimal)campaignDetails.TotalMoneyEarned / campaignDetails.FundTarget) * 100);
 }
 
 <main>
@@ -34,7 +34,7 @@
                             else
                             {
                                 <img src="@campaignDetails.Image" alt="image">
-                                
+
                             }
                             <span class="blog-tag">End Date - @campaignDetails.EndDate.Value.ToString("MMM dd, yyyy")</span>
                         </div>
@@ -46,7 +46,9 @@
                                 }
                                 else
                                 {
-                                    <div class="progress__content" style="width: @percentage%;"><span>@percentage%</span></div>
+                                    <div class="progress__content" style="width: @percentage%;">
+                                        <span>@percentage%</span>
+                                    </div>
                                 }
                             </div>
                             <div class="progress__goal mt-15">
