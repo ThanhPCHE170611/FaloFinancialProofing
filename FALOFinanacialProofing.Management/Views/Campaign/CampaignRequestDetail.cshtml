@@ -200,7 +200,8 @@
                             success: function (response) {
                                 alert(response.message);
                                 if (response.success) {
-                                    location.reload();
+                                    // location.reload();
+                                    window.location.href = '/Campaign/CampaignRequestManagement';
                                 }
                             },
                             error: function (xhr, status, error) {

@@ -26,24 +26,27 @@ function submitDecline() {
 
     let apiUrl = '';
     if (checkrole === "Volunteer Leader") {
-        apiUrl = `https://localhost:7294/api/ApproveProcess/rejectprepayrequestforvolunteerleader/${currentRequestId}?userid=${userId}&currentLoggingRole=${checkrole}&feedback=${reason}`;
+        apiUrl = `https://localhost:7294/api/ApproveProcess/rejectprepayrequestforvolunteerleader`;
     } else if (checkrole === "Accounting") {
-        apiUrl = `https://localhost:7294/api/ApproveProcess/rejectprepayrequestforaccounting/${currentRequestId}?userid=${userId}&currentLoggingRole=${checkrole}&feedback=${reason}`;
+        apiUrl = `https://localhost:7294/api/ApproveProcess/rejectprepayrequestforaccounting`;
     } else if (checkrole === "Project Manager") {
-        apiUrl = `https://localhost:7294/api/ApproveProcess/rejectprepayrequestforprojectmanager/${currentRequestId}?userid=${userId}&currentLoggingRole=${checkrole}&feedback=${reason}`;
+        apiUrl = `https://localhost:7294/api/ApproveProcess/rejectprepayrequestforprojectmanager`;
     } else {
         alert('Invalid role. Cannot decline request.');
         closeModal();
         return;
     }
+    const payload = {
+        userid: userId,
+        currentLoggingRole: checkrole,
+        requestId: currentRequestId,
+        feedback: reason
+    };
     $.ajax({
         url: apiUrl,
         method: 'POST',
-        data: {
-            userid: userId,
-            currentLoggingRole: checkrole,
-            feedback: reason
-        },
+        contentType: 'application/json',
+        data: JSON.stringify(payload),
         headers: {
             'Authorization': `Bearer ${jwtToken}`
         },
