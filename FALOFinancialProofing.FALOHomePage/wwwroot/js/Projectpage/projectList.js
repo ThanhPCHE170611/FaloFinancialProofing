@@ -19,7 +19,7 @@
 
 function loadProjects(pageNumber = 1, searchInput = "") {
     // Construct the API URL with the search input and other parameters
-    var apiUrl = `https://localhost:7294/api/Projects/GetAllProjectInSystem?searchInput=${searchInput}&IsActive=true&currentPage=${pageNumber}`;
+    var apiUrl = `https://localhost:7294/api/Projects/GetAllProjectInSystem?searchInput=${searchInput}&IsActive=true&currentPage=${pageNumber}&PageSizeCustom=9`;
 
     $.ajax({
         url: apiUrl,
@@ -122,7 +122,7 @@ function renderProjects(data) {
 //    }
 //}
 function renderPagination(totalRecords, currentPage, searchInput) {
-    var pageSize = 1; 
+    var pageSize = 9; 
     var totalPages = Math.ceil(totalRecords / pageSize);
     var paginationControls = $('#paginationControls');
     paginationControls.empty(); 

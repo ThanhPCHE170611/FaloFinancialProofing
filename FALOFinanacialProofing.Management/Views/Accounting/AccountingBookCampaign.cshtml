@@ -264,14 +264,12 @@
     }
 
     function createTableRow(accountingBook, index) {
-        const showDeleteButton = checkrole === "Accounting";
         return `
             <tr>
                 <td class="align-middle text-center">${index + 1}</td>
                 <td class="align-middle text-center">${accountingBook.filePath}</td>
                 <td class="align-middle text-center">
                     <button class="btn btn-success btn-sm" onclick="downloadFile(this,'${accountingBook.filePath}')">Download</button>
-                    ${showDeleteButton ? `<button class="btn btn-danger btn-sm" onclick="deleteRow(this, '${accountingBook.filePath}')">Delete</button>` : ''}
                 </td>
             </tr>
         `;
@@ -322,6 +320,7 @@
                 console.log('API Response:', response);
                 if (response.success) {
                     console.log('Data:', response.data);
+                    document.getElementById('btnupload').style.display = 'none';
                     populateTable(response.data);
                 } else {
                     const tableBody = $('#voucherTableBody');

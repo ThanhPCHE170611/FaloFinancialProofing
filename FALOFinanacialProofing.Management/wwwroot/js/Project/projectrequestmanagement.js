@@ -60,7 +60,7 @@ function handleProjectReject(button, createProjectRequestId, isAllowed, feedback
                 console.log(createProjectRequestId);
                 updateRowToRejected(button, createProjectRequestId);
             } else {
-                alert('Failed: ' + response.message);
+                alert(response.message);
             }
         },
         error: function (xhr, status, error) {
@@ -199,7 +199,7 @@ function handleProjectApproval(button, createProjectRequestId, isAllowed) {
                 console.log(createProjectRequestId);
                 updateRowToApprovedForPM(button, createProjectRequestId);
             } else {
-                alert('Failed: ' + response.message);
+                alert(response.message);
             }
         },
         error: function (xhr, status, error) {
@@ -256,7 +256,32 @@ $(document).ready(function () {
             }
         });
     }
-
+    function checkOrganizations() {
+        $.ajax({
+            url: `https://localhost:7294/api/Organizations/GetOrganizationsByUserId/${userId}`,
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            },
+            success: function (response) {
+                if (!response.success || !response.data || response.data.length === 0) {
+                    // No organization found
+                    alert('You have not created any organizations yet. Redirecting to the organization creation page...');
+                    window.location.href = '/Organization/OrganizationCreate';
+                } else {
+                    window.location.href = '/Project/ProjectCreate_Organization';
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error fetching organizations:', error);
+                alert('An error occurred while checking organizations. Please try again later.');
+            }
+        });
+    }
+    $('#organizationCreated').on('click', function (e) {
+        e.preventDefault();
+        checkOrganizations();
+    });
     function populateTable(data) {
         const tableBody = $('#projectTable tbody');
         tableBody.empty();
@@ -320,22 +345,6 @@ $(document).ready(function () {
         if (status === "Cancel") return "bg-gradient-secondary";
         return "badge-pending";
     }
-    //function setupPagination(totalItems) {
-    //    const totalPages = Math.ceil(totalItems / pageSize);
-    //    const paginationContainer = $('#pagination');
-    //    paginationContainer.empty();
-
-    //    for (let i = 1; i <= totalPages; i++) {
-    //        const pageButton = $(`<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}">${i}</button>`);
-    //        pageButton.on('click', () => changePage(i));
-    //        paginationContainer.append(pageButton);
-    //    }
-    //}
-
-    //window.changePage = function (page) {
-    //    currentPage = page;
-    //    fetchProjectRequests($('#searchInput').val(), $('#statusFilter').val(), currentPage);
-    //};
     function setupPagination(totalItemsCount) {
         const totalPages = Math.ceil(totalItemsCount / pageSize);
         const paginationContainer = $('#pagination');

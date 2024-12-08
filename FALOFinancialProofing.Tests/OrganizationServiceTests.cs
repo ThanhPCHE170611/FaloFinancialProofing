@@ -40,9 +40,6 @@ public class OrganizationServiceTests
     private readonly Mock<ISocialNetworkService> mockSocialNetworkService;
     private readonly Mock<RoleService> mockRoleService;
     private readonly Mock<IUserSDGService> mockUserSDGService;
-    private readonly Mock<IProjectService> mockProjectService;
-    private readonly Mock<IBankService> mockBankService;
-    private readonly Mock<ILogger<CampaignService>> mockLogger;
 
     public OrganizationServiceTests()
     {
@@ -56,10 +53,6 @@ public class OrganizationServiceTests
         mockCampaignMemberRepository = new Mock<IRepository<CampaignMember, int>>();
         mockSocialNetworkService = new Mock<ISocialNetworkService>();
         mockUserSDGService = new Mock<IUserSDGService>();
-        mockProjectService = new Mock<IProjectService>();
-        mockBankService = new Mock<IBankService>();
-        mockLogger = new Mock<ILogger<CampaignService>>();
-
         mockRoleService = new Mock<RoleService>(mockRoleManager.Object, mockUserManager.Object);
 
         _mockAuthServices = new Mock<AuthServices>(

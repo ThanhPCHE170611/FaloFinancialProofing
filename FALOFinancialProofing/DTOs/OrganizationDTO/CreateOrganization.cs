@@ -10,6 +10,7 @@ namespace FALOFinancialProofing.DTOs.OrganizationDTO
         public string Name { get; set; }
         public string Main_office { get; set; }
         public string Representative { get; set; }
+        [PhoneNumber]
         public string PhoneNumber { get; set; }
         [Required, EmailAddress]
         public string Email { get; set; }

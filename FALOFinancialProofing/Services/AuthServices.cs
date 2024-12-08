@@ -1057,9 +1057,7 @@ Click vào link này để đặt lại mật khẩu: {resetPasswordLink}";
                 updateUserProfileRequest.sDGUserRequests = JsonConvert.DeserializeObject<List<SDGUserRequest>>(updateUserProfileRequest.SDGUserRequestJsons);
                 foreach (var item in updateUserProfileRequest.SocialNetworkRequests)
                 {
-
                     var socialNetwork = await socialNetworkService.GetSocialNetworkByIdAsync(item.Id.Value);
-
                     if (socialNetwork != null)
                     {
                         socialNetwork.SocialNetworksLink = item.SocialNetworksLink;

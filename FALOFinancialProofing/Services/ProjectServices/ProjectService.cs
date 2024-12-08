@@ -33,7 +33,6 @@ namespace FALOFinancialProofing.Services.ProjectServices
                 {
                     throw new Exception("Project is null");
                 }
-                //var organization = ConvertToBaseEntity(createProject);
                 await _projectRepository.InsertAsync(createProject);
 
                 return true;
@@ -459,4 +458,7 @@ namespace FALOFinancialProofing.Services.ProjectServices
             throw new NotImplementedException();
         }
     }
+
+
+
 }

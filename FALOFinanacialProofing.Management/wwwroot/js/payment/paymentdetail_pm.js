@@ -20,7 +20,7 @@ $(document).ready(function () {
     <p><strong>Create Date:</strong> ${new Date(data.createAt).toLocaleDateString()}</p>
     <p><strong>Expected Money:</strong> ${data.expectedMoney.toLocaleString()} VND</p>
     <p><strong>Description:</strong> ${data.description}</p>
-    <p><strong>Feed Back:</strong> ${safeValue(data.feedBack)}</p>
+    <p><strong>Feedback:</strong> ${safeValue(data.feedBack)}</p>
     `);
 
                 //if (data.attachmentFiles && data.attachmentFiles.length > 0) {
@@ -116,7 +116,8 @@ $(document).ready(function () {
                                 success: function (response) {
                                     if (response.success) {
                                         alert(response.message);
-                                        location.reload();
+                                        //location.reload();
+                                        window.location.href = '/Payment/PaymentManagement';
                                     } else {
                                         alert(`Failed to cancel: ${response.message}`);
                                     }

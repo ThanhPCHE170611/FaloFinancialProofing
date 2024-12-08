@@ -135,7 +135,7 @@
                         renderOrganizationTable(response.data.data);
                         setupPagination(response.data.dataCount);
                     } else {
-                        alert('Failed to fetch organizations: ' + response.message);
+                        alert(response.message);
                     }
                 },
                 error: function (errors) {
