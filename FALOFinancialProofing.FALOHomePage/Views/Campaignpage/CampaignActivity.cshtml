@@ -70,10 +70,12 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    let fixedTotalAmount = 0;
+    let fixedTotalFiles = 0;
     $(document).ready(function () {
         var campaignId = '@ViewBag.campaignId';
         loadActivityLogs(1, "", campaignId);  // Initial load for page 1
-
+        fetchFixedData(campaignId);
         // Search functionality
         $('#searchButton').click(function () {
             var searchInput = $('#searchInput').val();
@@ -102,7 +104,6 @@
                     renderActivityLogs(response.data.data);
                     // renderPagination(response.data.totalRecords, currentPage, searchInput, campaignId);
                     updatePagination(response.data.totalRecords, currentPage, searchInput, campaignId, startDate, endDate);
-                    fetchTotalFiles(campaignId, response.data.data);
                 } else {
                     showError("No data found.");
                 }
@@ -117,7 +118,6 @@
     function renderActivityLogs(activities) {
         $('#activityTable').show();
         $('#activityLogs').empty();
-        fetchTotalMoneyOut();
         activities.forEach(function (activity) {
             const formattedAmount = activity.expectedMoney.toLocaleString('vi-VN', {
                 style: 'currency',
@@ -137,92 +137,63 @@
                                                                                                     </tr>`;
             $('#activityLogs').append(rowHtml);
         });
-
         $('#errorMessage').hide();
     }
-    function fetchTotalMoneyOut() {
-        const campaignId = '@ViewBag.campaignId';
-        const startDate = $('#startDate').val() || "";
-        const endDate = $('#endDate').val() || "";
-        const searchInput = $('#searchInput').val() || "";
 
-        const apiUrl = `https://localhost:7294/api/TransactionLogs/GetCampaignTransactionLogsMoneyOut/${campaignId}?searchInput=${searchInput}&startDate=${startDate}&endDate=${endDate}`;
+    function fetchFixedData(campaignId) {
+        const fileApiUrl = `https://localhost:7294/api/AttachmentFile/getnumberallattachmentfileincampain/${campaignId}`;
+        const amountApiUrl = `https://localhost:7294/api/AttachmentFile/getallpaymentattachmentincampaignwithrequest/${campaignId}`;
 
-    $.ajax({
-        url: apiUrl,
-        type: 'GET',
-        success: function (response) {
-            if (response && response.success && response.data && response.data.data) {
-                const totalMoneyOut = response.data.data.reduce((sum, transaction) => sum + transaction.amount, 0)
-                    .toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
-
-                $('#activityTable').before(`
-                    <div style="text-align: right; margin-bottom: 10px; font-weight: bold; color: green;">
-                        Tổng Số Tiền Chi: ${totalMoneyOut}
-                    </div>
-                `);
-            } else {
-                console.warn("No data found for total money out.");
-            }
-        },
-        error: function () {
-            console.error("Failed to fetch total money out.");
-        }
-    });
-}
-
-    function fetchTotalFiles(campaignId, activities) {
-        const apiUrl = `https://localhost:7294/api/AttachmentFile/getnumberallattachmentfileincampain/${campaignId}`;
-
+        // Fetch total files
         $.ajax({
-            url: apiUrl,
+            url: fileApiUrl,
             type: 'GET',
             success: function (response) {
                 if (response && response.success && typeof response.data === 'number') {
-                    const totalFiles = response.data; 
-                    const currentFiles = activities.filter(activity => activity.attachmentFilePath).length; 
-                    const completionPercentage = ((currentFiles / totalFiles) * 100).toFixed(2); 
-
-                    $('#activityTable').before(`
-                            <div style="text-align: right; margin-bottom: 10px; font-weight: bold; color: orangered;">
-                            Tổng Số File: ${currentFiles} / ${totalFiles} (${completionPercentage}% Hoàn Thành)
-                        </div>
-                    `);
+                    fixedTotalFiles = response.data;
                 } else {
-                    console.warn("Failed to fetch total files data.");
+                    console.warn("Failed to fetch total file count.");
                 }
             },
             error: function () {
-                console.error("Failed to fetch total files.");
+                console.error("Error fetching total file count.");
             }
         });
-    }   
 
-    // function renderPagination(totalRecords, currentPage, searchInput, campaignId) {
-    //     const pageSize = 5;
-    //     const totalPages = Math.ceil(totalRecords / pageSize);
-    //     const paginationControls = $('#paginationControls');
-    //     paginationControls.empty();
+        // Fetch total amount
+        $.ajax({
+            url: amountApiUrl,
+            type: 'GET',
+            success: function (response) {
+                if (response && response.success && response.data && response.data.data) {
+                    fixedTotalAmount = response.data.data.reduce((sum, transaction) => sum + (transaction.expectedMoney || 0), 0);
+                    displayFixedData(response.data.data);
+                } else {
+                    console.warn("Failed to fetch total amount.");
+                }
+            },
+            error: function () {
+                console.error("Error fetching total amount.");
+            }
+        });
+    }
+    function displayFixedData(activities) {
+        const currentFiles = activities.filter(activity => activity.attachmentFilePath).length; ;
+        const completionPercentage = ((currentFiles / fixedTotalFiles) * 100).toFixed(2);
+        const totalAmountFormatted = fixedTotalAmount.toLocaleString('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        });
 
-    //     if (currentPage > 1) {
-    //         paginationControls.append(`<button onclick="loadActivityLogs(${currentPage - 1}, '${searchInput}', ${campaignId})"><i class="fa-solid fa-arrow-left-long primary-color transition"></i></button>`);
-    //     }
-
-    //     const startPage = Math.max(1, currentPage - 2);
-    //     const endPage = Math.min(totalPages, currentPage + 2);
-
-    //     for (let i = startPage; i <= endPage; i++) {
-    //         if (i === currentPage) {
-    //             paginationControls.append(`<button class="active" disabled>${i}</button>`);
-    //         } else {
-    //             paginationControls.append(`<button onclick="loadActivityLogs(${i}, '${searchInput}', ${campaignId})">${i}</button>`);
-    //         }
-    //     }
-
-    //     if (currentPage < totalPages) {
-    //         paginationControls.append(`<button onclick="loadActivityLogs(${currentPage + 1}, '${searchInput}', ${campaignId})"><i class="fa-solid fa-arrow-right-long primary-color transition"></i></button>`);
-    //     }
-    // }
+        $('#activityTable').before(`
+            <div style="text-align: right; margin-bottom: 10px; font-weight: bold; color: green;">
+                Tổng Số Tiền: ${totalAmountFormatted}
+            </div>
+            <div style="text-align: right; margin-bottom: 10px; font-weight: bold; color: orangered;">
+                Tổng Số File: ${currentFiles} / ${fixedTotalFiles} (${completionPercentage}% Hoàn Thành)
+            </div>
+        `);
+    }
     function updatePagination(totalRecords, currentPage, searchInput, campaignId, startDate = "", endDate = "") {
         const pageSize = 30;
         const totalPages = Math.ceil(totalRecords / pageSize);

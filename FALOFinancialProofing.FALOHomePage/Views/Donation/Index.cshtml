@@ -63,7 +63,7 @@
     let currentPage = 1;
     let totalPages = 1;
     let totalDataCount = 0;
-
+    let fixedTotalAmount = 0;
     // Function to fetch transaction logs from the API
     function fetchTransactions(page = 1, searchQuery = "",startDate = "", endDate = "") {
         const url = `https://localhost:7294/api/TransactionLogs/GetCampaignTransactionLogs/${campaignId}?currentPage=${page}&searchInput=${encodeURIComponent(searchQuery)}&startDate=${startDate}&endDate=${endDate}`;        console.log("Fetching URL:", url); // Log the request URL for debugging
@@ -74,6 +74,12 @@
                 console.log("API Response:", data); // Log the API response
                 if (data?.data?.data) {
                     errorMessage.style.display = 'none';
+
+                    if (fixedTotalAmount === 0) {
+                        fixedTotalAmount = data.data.data.reduce((sum, log) => sum + log.amount, 0);
+                        displayFixedTotalAmount();
+                    }
+
                     displayTransactions(data.data.data);
                     totalPages = Math.ceil(data.data.dataCount / pageSize);
                     totalDataCount = data.data.dataCount;
@@ -88,6 +94,18 @@
             });
     }
     document.getElementById('applyDateFilter').addEventListener('click', applyDateFilter);
+    function displayFixedTotalAmount() {
+        const totalAmountFormatted = fixedTotalAmount.toLocaleString('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        });
+        const totalAmountHtml = `
+            <div style="text-align: right; margin-bottom: 10px; font-weight: bold; color: green;">
+                Tổng Số Tiền: ${totalAmountFormatted}
+            </div>`;
+        $('#transactionsContainer').before(totalAmountHtml);
+    }
+
     // Function to display transaction logs in the table
     function displayTransactions(transactions) {
         const tableContainer = document.getElementById('transactionsContainer');
@@ -100,12 +118,11 @@
             style: 'currency',
             currency: 'VND'
         });
-        const totalAmountHtml = `
-            <div style="text-align: right; margin-bottom: 10px; font-weight: bold; color: green;">
-                Tổng Số Tiền: ${totalAmount}
-            </div>`;
+        // const totalAmountHtml = `
+        //     <div style="text-align: right; margin-bottom: 10px; font-weight: bold; color: green;">
+        //         Tổng Số Tiền: ${totalAmount}
+        //     </div>`;
         let tableHtml = `
-        ${totalAmountHtml}
         <table class="table table-bordered table-hover" id="transactions-table">
                                                                                                                          <thead>
                                                                                                                              <tr>
