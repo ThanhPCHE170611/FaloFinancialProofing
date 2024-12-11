@@ -152,6 +152,10 @@
     $(document).ready(function () {
         const projectId = new URLSearchParams(window.location.search).get('requestId');    
         const userId = localStorage.getItem('userId');
+        if (!jwtToken) {
+            window.location.href = '/Authentication/Login';
+            return;
+        }
         $.ajax({
             url: `https://localhost:7294/api/CreateProjectRequests/GetCreateProjectRequest/${projectId}`,
             method: 'GET',

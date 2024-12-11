@@ -18,7 +18,6 @@ function loadProjects() {
     } else if (checkrole === "Project Management Board") {
         apiUrl = `https://localhost:7294/api/Projects/GetAllProjectInSystem?searchInput=${searchInput}&status=${statusFilter}&currentPage=${currentPage}&PageSizeCustom=7`;
     } else {
-        alert('Unauthorized role. Unable to fetch projects.');
         return;
     }
 

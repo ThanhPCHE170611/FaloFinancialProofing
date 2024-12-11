@@ -208,6 +208,11 @@
     let currentButton = null;
     let currentRequestId = null;
 
+    const jwtToken = localStorage.getItem('jwtToken');
+    if (!jwtToken) {
+        window.location.href = '/Authentication/Login';
+        return;
+    }
     function openDeclineModal(button, requestId) {
         currentButton = button;
         currentRequestId = requestId;
@@ -232,7 +237,7 @@
 
     function handleProjectReject(button, createProjectRequestId, isAllowed, feedback) {
         const userId = localStorage.getItem('userId');
-        const jwtToken = localStorage.getItem('jwtToken');
+        
 
         const today = new Date();
         const year = today.getFullYear();
