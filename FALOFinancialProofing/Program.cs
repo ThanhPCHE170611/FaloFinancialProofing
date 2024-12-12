@@ -220,10 +220,21 @@ namespace FALOFinancialProofing
             app.CustomStaticFiles(); // folder upload
             app.UseStaticFiles();
             app.UseSession();
-            app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
+            using var scope = app.Services.CreateScope();
+            var services = scope.ServiceProvider;
+            try
+            {
+                var context = services.GetRequiredService<FALOFinancialProofingDbContext>();
+                context.Database.Migrate();
+            }
+            catch (Exception ex)
+            {
+                var logger = services.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "An error occurred while migrating the database.");
+            }
             app.Run();
         }
     }

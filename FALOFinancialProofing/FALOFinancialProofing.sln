@@ -5,11 +5,7 @@ VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FALOFinancialProofing", "FALOFinancialProofing.csproj", "{574169E0-9A3D-4CA8-8148-4E10AFD53AE1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FALOFinancialProofing.Tests", "..\FALOFinancialProofing.Tests\FALOFinancialProofing.Tests.csproj", "{2BFDF636-B213-486D-96DC-A169098AC14A}"
-	ProjectSection(ProjectDependencies) = postProject
-		{574169E0-9A3D-4CA8-8148-4E10AFD53AE1} = {574169E0-9A3D-4CA8-8148-4E10AFD53AE1}
-	EndProjectSection
-EndProject
+
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

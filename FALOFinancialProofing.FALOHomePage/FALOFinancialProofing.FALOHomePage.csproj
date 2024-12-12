@@ -94,6 +94,9 @@
 	  <None Remove="wwwroot\js\UserProfile\changePassword.js" />
 	  <None Remove="wwwroot\js\UserProfile\donationHistory.js" />
 	  <None Remove="wwwroot\js\UserProfile\profile.js" />
+	  <None Update="appsettings.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 	<ItemGroup>
