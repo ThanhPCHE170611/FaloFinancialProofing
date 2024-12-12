@@ -13,10 +13,12 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
     public class AuthenticationController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration;
 
-        public AuthenticationController(IHttpClientFactory httpClientFactory)
+        public AuthenticationController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
         }
 
         [HttpPost]
@@ -31,7 +33,9 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
 
             // Create the HttpClient instance
             var client = _httpClientFactory.CreateClient();
-            var apiUrl = "https://localhost:7294/api/Users/Login";
+
+            var apiBaseUrl = _configuration["ApiBaseUrl"];
+            var apiUrl = apiBaseUrl + "/api/Users/Login";
 
             var content = new StringContent(JsonConvert.SerializeObject(loginData), Encoding.UTF8, "application/json");
 
@@ -80,7 +84,9 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
             var claims = result.Principal.Identities.FirstOrDefault().Claims.Select(claim => new { claim.Issuer, claim.OriginalIssuer, claim.Type, claim.Value });
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("AccessToken", accessToken);
-            var response = await client.PostAsync("https://localhost:7294/api/Users/Login-Google/Donor", null);
+            var apiBaseUrl = _configuration["ApiBaseUrl"];
+            var apiUrl = apiBaseUrl + "/api/Users/Login-Google/Donor";
+            var response = await client.PostAsync(apiUrl, null);
             var responseString = await response.Content.ReadAsStringAsync();
             var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseString);
             //ViewData["serverAccessToken"] = apiResponse != null ? apiResponse.Data.AccessToken : null;

@@ -42,8 +42,8 @@
 
     .dropdown-content {
         display: none;
-        position: absolute; 
-        top: 100%; 
+        position: absolute;
+        top: 100%;
         left: 0;
         z-index: 9999;
         background-color: #f9f9f9;
@@ -64,8 +64,9 @@
             <div id="loading-center-absolute">
                 <div class="loading-icon text-center d-flex flex-column align-items-center justify-content-center">
                     <img class="loading-logo" src="/images/preloader.svg" alt="icon">
-@*                     <p style="color:orangered; font-weight:bold; font-size: 40px">FALO Financial Proofing</p>
- *@                </div>
+                    @*                     <p style="color:orangered; font-weight:bold; font-size: 40px">FALO Financial Proofing</p>
+                    *@
+                </div>
             </div>
         </div>
     </div>
@@ -86,11 +87,12 @@
                         </ul>
                     </nav>
                 </div>
-                @if (userId == null) {
+                @if (userId == null)
+                {
                     <div class="btn-two d-none d-lg-inline-block">
                         <span class=" btn-circle">
                         </span>
-                        <a asp-controller="Authentication" asp-action="Login"spot class="btn-inner">
+                        <a asp-controller="Authentication" asp-action="Login" spot class="btn-inner">
                             <span class="btn-text">
                                 ĐĂNG NHẬP
                             </span>
@@ -100,7 +102,8 @@
                         <i id="openButton" class="fa-solid fa-bars"></i>
                     </div>
                 }
-                else{
+                else
+                {
                     <div class="dropdown">
                         <span id="user-image">
                             <img src="/images/project/user.png" alt="image" style="max-height=50px; max-width:50px; border-radius: 100%">
@@ -160,14 +163,17 @@
                                     Giải pháp công nghệ đồng hành cùng
                                     cộng đồng thiện nguyện minh bạch
                                 </p>
+                                @if (userId == null)
+                                {
                                     <div class="btn-one mt-40">
                                         <span class="btn-circle"></span>
                                         <a asp-controller="Authentication" asp-action="Login" class="btn-inner">
-                                        <span class="btn-text">
-                                            ĐĂNG NHẬP
-                                        </span>
+                                            <span class="btn-text">
+                                                ĐĂNG NHẬP
+                                            </span>
                                         </a>
                                     </div>
+                                }
                             </div>
                         </div>
                         <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="600ms" data-wow-duration="1500ms">
@@ -236,7 +242,7 @@
     <script src="/js/script.js"></script>
 
     <script>
-        const userId = '@userId';  
+        const userId = '@userId';
 
         if (userId) {
             fetch(`https://localhost:7294/api/Users/GetUserProfile/${userId}`)
@@ -245,7 +251,7 @@
                     if (data.success && data.data.image) {
                         const imageUrl = data.data.image;
                         const userImageElement = document.getElementById('user-image').getElementsByTagName('img')[0];
-                        userImageElement.src = imageUrl;  
+                        userImageElement.src = imageUrl;
                     } else {
                         console.log('User profile image not found.');
                     }

@@ -12,6 +12,37 @@
         .table th, .table td {
             padding: 10px; /* Space inside the cells */
         }
+
+    .serach-bar {
+        display: flex;
+        align-items: center;
+        width: 100%; /* You can use a fixed width like 200px for a specific size */
+        max-width: 300px; /* Set a max width to ensure it doesn't get too wide */
+        margin-top: 10px;
+    }
+
+        /* Make the input smaller */
+        .serach-bar input[type="text"] {
+            width: 70%; /* Adjust width to make it smaller */
+            padding: 5px; /* Reduce padding */
+            font-size: 14px; /* Adjust font size */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        /* Make the button smaller */
+        .serach-bar button {
+            padding: 5px 10px;
+            font-size: 14px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            .serach-bar button i {
+                font-size: 16px; /* Adjust icon size */
+            }
 </style>
 
 <div class="container">
@@ -55,7 +86,7 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 <script>
     const campaignId = @campaignId;
     const pageSize = 30;
@@ -64,9 +95,11 @@
     let totalPages = 1;
     let totalDataCount = 0;
     let fixedTotalAmount = 0;
+    var apiUrl = '@Configuration["ApiBaseUrl"]';
+
     // Function to fetch transaction logs from the API
-    function fetchTransactions(page = 1, searchQuery = "",startDate = "", endDate = "") {
-        const url = `https://localhost:7294/api/TransactionLogs/GetCampaignTransactionLogs/${campaignId}?currentPage=${page}&searchInput=${encodeURIComponent(searchQuery)}&startDate=${startDate}&endDate=${endDate}`;        console.log("Fetching URL:", url); // Log the request URL for debugging
+    function fetchTransactions(page = 1, searchQuery = "", startDate = "", endDate = "") {
+        const url = apiUrl + `/api/TransactionLogs/GetCampaignTransactionLogs/${campaignId}?currentPage=${page}&searchInput=${encodeURIComponent(searchQuery)}&startDate=${startDate}&endDate=${endDate}`; console.log("Fetching URL:", url); // Log the request URL for debugging
         console.log("Fetching URL:", url);
         fetch(url)
             .then(response => response.json())
@@ -100,9 +133,9 @@
             currency: 'VND'
         });
         const totalAmountHtml = `
-            <div style="text-align: right; margin-bottom: 10px; font-weight: bold; color: green;">
-                Tổng Số Tiền: ${totalAmountFormatted}
-            </div>`;
+                <div style="text-align: right; margin-bottom: 10px; font-weight: bold; color: green;">
+                    Tổng Số Tiền: ${totalAmountFormatted}
+                </div>`;
         $('#transactionsContainer').before(totalAmountHtml);
     }
 
@@ -123,16 +156,16 @@
         //         Tổng Số Tiền: ${totalAmount}
         //     </div>`;
         let tableHtml = `
-        <table class="table table-bordered table-hover" id="transactions-table">
-                                                                                                                         <thead>
-                                                                                                                             <tr>
-                                                                                                                                 <th scope="col">Mã Giao Dịch</th>
-                                                                                                                                 <th scope="col">Thời Điểm Giao Dịch</th>
-                                                                                                                                 <th scope="col">Số Tiền</th>
-                                                                                                                                 <th scope="col">Nội Dung Giao Dịch</th>
-                                                                                                                             </tr>
-                                                                                                                         </thead>
-                                                                                                                         <tbody>`;
+            <table class="table table-bordered table-hover" id="transactions-table">
+                                                                                                                             <thead>
+                                                                                                                                 <tr>
+                                                                                                                                     <th scope="col">Mã Giao Dịch</th>
+                                                                                                                                     <th scope="col">Thời Điểm Giao Dịch</th>
+                                                                                                                                     <th scope="col">Số Tiền</th>
+                                                                                                                                     <th scope="col">Nội Dung Giao Dịch</th>
+                                                                                                                                 </tr>
+                                                                                                                             </thead>
+                                                                                                                             <tbody>`;
 
         transactions.forEach(log => {
             const formattedAmount = log.amount.toLocaleString('vi-VN', {
@@ -141,11 +174,11 @@
             });
 
             tableHtml += `<tr>
-                                                                                                                         <td>${log.tid}</td>
-                                                                                                                         <td>${new Date(log.transactionDate).toLocaleString()}</td>
-                                                                                                                             <td>${formattedAmount}</td>
-                                                                                                                         <td>${log.description}</td>
-                                                                                                                       </tr>`;
+                                                                                                                             <td>${log.tid}</td>
+                                                                                                                             <td>${new Date(log.transactionDate).toLocaleString()}</td>
+                                                                                                                                 <td>${formattedAmount}</td>
+                                                                                                                             <td>${log.description}</td>
+                                                                                                                           </tr>`;
         });
 
         tableHtml += `</tbody></table>`;
@@ -198,7 +231,7 @@
 
     function updatePagination() {
         const paginationContainer = document.getElementById('paginationContainer');
-        paginationContainer.innerHTML = ''; 
+        paginationContainer.innerHTML = '';
 
         if (currentPage > 1) {
             const prevPageButton = document.createElement('button');
@@ -211,7 +244,7 @@
                 addPageButton(paginationContainer, page);
             }
         } else {
-            addPageButton(paginationContainer, 1); 
+            addPageButton(paginationContainer, 1);
             addPageButton(paginationContainer, 2);
             if (currentPage > 4) {
                 const ellipsis = document.createElement('span');
@@ -228,8 +261,8 @@
                 ellipsis.textContent = '...';
                 paginationContainer.appendChild(ellipsis);
             }
-            addPageButton(paginationContainer, totalPages - 1); 
-            addPageButton(paginationContainer, totalPages);     
+            addPageButton(paginationContainer, totalPages - 1);
+            addPageButton(paginationContainer, totalPages);
         }
 
         if (currentPage < totalPages) {
@@ -253,11 +286,11 @@
 
     function changePage(page) {
         if (page >= 1 && page <= totalPages) {
-            currentPage = page; 
-            const searchQuery = document.getElementById('searchInput').value; 
-            const startDate = document.getElementById('startDate')?.value || ""; 
-            const endDate = document.getElementById('endDate')?.value || "";   
-            fetchTransactions(currentPage, searchQuery, startDate, endDate);  
+            currentPage = page;
+            const searchQuery = document.getElementById('searchInput').value;
+            const startDate = document.getElementById('startDate')?.value || "";
+            const endDate = document.getElementById('endDate')?.value || "";
+            fetchTransactions(currentPage, searchQuery, startDate, endDate);
         }
     }
     function applyDateFilter() {
@@ -269,7 +302,7 @@
             return;
         }
 
-        currentPage = 1; 
+        currentPage = 1;
         fetchTransactions(currentPage, document.getElementById('searchInput').value, startDate, endDate);
     }
     // Listen for Enter key press or click on search button

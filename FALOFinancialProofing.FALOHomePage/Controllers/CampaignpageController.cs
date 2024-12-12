@@ -10,10 +10,12 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
     {
 
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration;
 
-        public CampaignpageController(IHttpClientFactory httpClientFactory)
+        public CampaignpageController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
         }
         // GET: CampaignpageController
         public async Task<IActionResult> Index(int? id)
@@ -30,12 +32,15 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
                     var client = _httpClientFactory.CreateClient();
 
                     // Make a GET request to the API
-                    var response = await client.GetStringAsync($"https://localhost:7294/api/Campaign/GetCampaignDetailsById/{id}");
+                    var apiBaseUrl = _configuration["ApiBaseUrl"];
+                    var url = apiBaseUrl + $"/api/Campaign/GetCampaignDetailsById/{id}";
+
+                    var response = await client.GetStringAsync(url);
 
                     // Deserialize the JSON response into an object
                     var campaignDetails = JsonConvert.DeserializeObject<ApiResponseCampaignDetails>(response);
 
-                    if(campaignDetails == null)
+                    if (campaignDetails == null)
                     {
                         return RedirectToAction("Error404", "Error");
                     }
@@ -97,7 +102,7 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
                 //    return RedirectToAction("Error404", "Error");
                 //}
             }
-            
+
         }
 
 

@@ -116,12 +116,14 @@
     <!-- Blog single area end here -->
 </main>
 
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 <script>
+    var apiUrl = '@Configuration["ApiBaseUrl"]';
     function downloadAccountingBook(campaignId) {
         // First, make a request to get the file path from the API
-        const apiUrl = `https://localhost:7294/api/AccountingBook/getaccountingbookincampaign?campaignId=${campaignId}`;
+        const url = apiUrl + `/api/AccountingBook/getaccountingbookincampaign?campaignId=${campaignId}`;
 
-        fetch(apiUrl)
+        fetch(url)
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -133,7 +135,7 @@
                         return;
                     }
 
-                    const downloadUrl = `https://localhost:7294/api/AccountingBook/downloadaccountingbook/${filePath}`;
+                    const downloadUrl = apiUrl + `/api/AccountingBook/downloadaccountingbook/${filePath}`;
 
                     // Create a temporary anchor element to trigger the download
                     const a = document.createElement('a');
