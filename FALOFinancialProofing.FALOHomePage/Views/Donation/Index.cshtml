@@ -86,7 +86,7 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 <script>
     const campaignId = @campaignId;
     const pageSize = 30;
@@ -95,9 +95,11 @@
     let totalPages = 1;
     let totalDataCount = 0;
     let fixedTotalAmount = 0;
+    var apiUrl = '@Configuration["ApiBaseUrl"]';
+
     // Function to fetch transaction logs from the API
     function fetchTransactions(page = 1, searchQuery = "",startDate = "", endDate = "") {
-        const url = `https://localhost:7294/api/TransactionLogs/GetCampaignTransactionLogs/${campaignId}?currentPage=${page}&searchInput=${encodeURIComponent(searchQuery)}&startDate=${startDate}&endDate=${endDate}`;        console.log("Fetching URL:", url); // Log the request URL for debugging
+        const url = apiUrl + `/api/TransactionLogs/GetCampaignTransactionLogs/${campaignId}?currentPage=${page}&searchInput=${encodeURIComponent(searchQuery)}&startDate=${startDate}&endDate=${endDate}`;        console.log("Fetching URL:", url); // Log the request URL for debugging
         console.log("Fetching URL:", url);
         fetch(url)
             .then(response => response.json())

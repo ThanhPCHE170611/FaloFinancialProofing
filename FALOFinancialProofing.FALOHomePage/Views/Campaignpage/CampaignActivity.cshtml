@@ -41,8 +41,8 @@
         <div class="item shadow mb-30">
             <div class="date-filter">
                 <h5 class="title">Filter by Date</h5>
-                <input type="date" id="startDate" placeholder="Start Date">
-                <input type="date" id="endDate" placeholder="End Date">
+                <input type="date" id="startDate">
+                <input type="date" id="endDate">
                 <button id="applyDateFilter">Apply Filter</button>
             </div>
         </div>
@@ -69,6 +69,8 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 <script>
     let fixedTotalAmount = 0;
     let fixedTotalFiles = 0;
@@ -92,12 +94,14 @@
         $('#applyDateFilter').click(applyDateFilter);
     });
 
+    var apiUrl = '@Configuration["ApiBaseUrl"]';
+
     // Function to load activity logs with pagination
     function loadActivityLogs(currentPage, searchInput, campaignId, startDate = "", endDate = "") {
-        const apiUrl = `https://localhost:7294/api/AttachmentFile/getallpaymentattachmentincampaignwithrequest/${campaignId}?name=${searchInput}&page=${currentPage}`;
+        const url = apiUrl + `/api/AttachmentFile/getallpaymentattachmentincampaignwithrequest/${campaignId}?name=${searchInput}&page=${currentPage}`;
 
         $.ajax({
-            url: apiUrl,
+            url: url,
             type: 'GET',
             success: function (response) {
                 if (response && response.success && response.data && response.data.data) {
@@ -141,8 +145,8 @@
     }
 
     function fetchFixedData(campaignId) {
-        const fileApiUrl = `https://localhost:7294/api/AttachmentFile/getnumberallattachmentfileincampain/${campaignId}`;
-        const amountApiUrl = `https://localhost:7294/api/AttachmentFile/getallpaymentattachmentincampaignwithrequest/${campaignId}`;
+        const fileApiUrl = apiUrl + `/api/AttachmentFile/getnumberallattachmentfileincampain/${campaignId}`;
+        const amountApiUrl = apiUrl + `/api/AttachmentFile/getallpaymentattachmentincampaignwithrequest/${campaignId}`;
 
         // Fetch total files
         $.ajax({
@@ -253,7 +257,7 @@
     // Function to handle file download
     function downloadAttachmentFile(filePath) {
         const filename = filePath.split('/').pop();
-        const url = `https://localhost:7294/api/AttachmentFile/downloadattachmentfilewithnotypebyfilename/${filename}`;
+        const url = apiUrl + `/api/AttachmentFile/downloadattachmentfilewithnotypebyfilename/${filename}`;
 
         fetch(url)
             .then(response => {

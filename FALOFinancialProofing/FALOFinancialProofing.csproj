@@ -50,12 +50,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="CampaignFileUploads\" />
-    <Folder Include="PaymentUploads\" />
     <Folder Include="Pre-PayVouchers\" />
-    <Folder Include="ProjectFileUploads\" />
-    <Folder Include="ProjectImageUpload\" />
-    <Folder Include="UserImageUpload\" />
   </ItemGroup>
 
 </Project>

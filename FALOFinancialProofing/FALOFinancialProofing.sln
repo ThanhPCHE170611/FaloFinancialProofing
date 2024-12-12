@@ -10,6 +10,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FALOFinancialProofing.Tests
 		{574169E0-9A3D-4CA8-8148-4E10AFD53AE1} = {574169E0-9A3D-4CA8-8148-4E10AFD53AE1}
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FALOFinancialProofing.FALOHomePage", "..\FALOFinancialProofing.FALOHomePage\FALOFinancialProofing.FALOHomePage.csproj", "{AB2AA806-8CE5-45BA-BF9B-2273FDBD9727}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,6 +26,10 @@ Global
 		{2BFDF636-B213-486D-96DC-A169098AC14A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2BFDF636-B213-486D-96DC-A169098AC14A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2BFDF636-B213-486D-96DC-A169098AC14A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB2AA806-8CE5-45BA-BF9B-2273FDBD9727}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB2AA806-8CE5-45BA-BF9B-2273FDBD9727}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB2AA806-8CE5-45BA-BF9B-2273FDBD9727}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB2AA806-8CE5-45BA-BF9B-2273FDBD9727}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

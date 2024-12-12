@@ -41,6 +41,8 @@
 </main>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 <script>
     $(document).ready(function () {
         // Initially load campaigns with an empty search query
@@ -61,9 +63,12 @@
         });
     });
 
+    var apiUrl = '@Configuration["ApiBaseUrl"]';
+
+
     function loadCampaigns(pageNumber = 1, searchInput = "") {
         $.ajax({
-            url: `https://localhost:7294/api/Campaign/GetAllCampaignInSystem?title=${searchInput}&IsActive=true&currentPage=${pageNumber}&PageSizeCustom=7`,  // Adjust URL for the search query
+            url: apiUrl + `/api/Campaign/GetAllCampaignInSystem?title=${searchInput}&IsActive=true&currentPage=${pageNumber}&PageSizeCustom=7`,  // Adjust URL for the search query
             type: 'GET',
             success: function (response) {
                 if (response.success) {
@@ -104,16 +109,6 @@
             var percentageDisplay = percentage > 100 ? 100 : percentage;
             var url = '/Campaignpage/Index/' + campaign.campaignId;
             var shortenedDescription = campaign.description.length > 100 ? campaign.description.substring(0, 100) + '....' : campaign.description;
-
-            const formattedAmount = transaction.amount.toLocaleString('vi-VN', {
-                style: 'currency',
-                currency: 'VND'
-            });
-
-            const formattedAmount = transaction.amount.toLocaleString('vi-VN', {
-                style: 'currency',
-                currency: 'VND'
-            });
 
             // Now we set the campaign image dynamically from the API response
             var campaignImage = campaign.image || '/images/cause/CampaignImages.jpg';  // Fallback image if none exists

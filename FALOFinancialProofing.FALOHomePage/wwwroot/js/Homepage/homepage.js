@@ -5,7 +5,7 @@
 // Function to load campaigns with pagination
 function loadCampaigns() {
     $.ajax({
-        url: `https://localhost:7294/api/Campaign/GetFourCampaignByFilter?IsActive=true&OrderByAscending=true&numOfElements=4`,  // Adjust URL if necessary, e.g., for a specific controller
+        url: `https://localhost:7294/api/Campaign/GetFourCampaignByFilter?IsActive=true&OrderByAscending=true&numOfElements=4`,  
         type: 'GET',
         data: {
             status: null,

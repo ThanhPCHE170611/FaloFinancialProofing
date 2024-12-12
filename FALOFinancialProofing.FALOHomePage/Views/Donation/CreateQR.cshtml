@@ -61,7 +61,10 @@
 </main>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 <script>
+    var apiUrl = '@Configuration["ApiBaseUrl"]';
+
     document.addEventListener("DOMContentLoaded", function () {
         var QRDetails = @Html.Raw(donationDetailsJson);
 
@@ -115,7 +118,9 @@
 
             console.log("Data being sent:", data);
 
-            fetch('https://localhost:7294/api/CreateQrCodes/CreateQrCode', {
+            var url = apiUrl + '/api/CreateQrCodes/CreateQrCode';
+
+            fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

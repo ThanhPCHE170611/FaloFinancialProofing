@@ -14,6 +14,9 @@ namespace FALOFinancialProofing.FALOHomePage
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
             builder.Services.AddHttpClient();
+            builder.Services.AddHttpContextAccessor();
+
+            builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
             builder.Services.AddAuthentication(options =>
             {
@@ -35,15 +38,15 @@ namespace FALOFinancialProofing.FALOHomePage
 
             //Build Session Service
             builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddHttpContextAccessor();
 
             builder.Services.AddSession(options =>
             {
+                options.Cookie.HttpOnly = true;
                 options.IdleTimeout = TimeSpan.FromMinutes(30); // Session timeout
                 options.Cookie.IsEssential = true; // Make session cookie essential for GDPR compliance
             });
-            builder.Services.AddHostedService<BankDataPollingService>();
-            builder.Services.AddTransient<TransactionPollingDirect>();
-            builder.Services.AddTransient<BankAccountService>();
+            builder.Services.AddScoped<IApiUrlService, ApiUrlService>();
             builder.Services.AddCors();
             var app = builder.Build();
             app.UseCors(option => option.AllowAnyHeader().

@@ -190,6 +190,7 @@
 </html>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 @* <script src="~/js/userProfile/profile.js"></script> *@
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 <script>
     function previewImage() {
         var fileInput = document.getElementById('profilePicture');
@@ -208,6 +209,8 @@
             reader.readAsDataURL(file);
         }
     }
+    var apiUrl = '@Configuration["ApiBaseUrl"]';
+
     document.querySelectorAll('.sdg-tags span').forEach(function (tag) {
         tag.addEventListener('click', function () {
             this.classList.toggle('active');
@@ -233,8 +236,9 @@
         });
 
         function loadUserProfile(userId) {
+            var url = apiUrl + `/api/Users/GetUserProfile/${userId}`;
             $.ajax({
-                url: `https://localhost:7294/api/Users/GetUserProfile/${userId}`,
+                url: url,
                 type: 'GET',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`
