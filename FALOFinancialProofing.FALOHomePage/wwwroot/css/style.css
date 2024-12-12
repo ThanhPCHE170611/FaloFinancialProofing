@@ -192,7 +192,6 @@ button {
 }
 
 input {
-  border: none;
   outline: none;
 }
 
@@ -3090,8 +3089,15 @@ input {
   }
 }
 .cause__image {
-  position: relative;
+    position: relative;
 }
+
+.cause_menu_image {
+    max-height: 170px;
+    overflow:hidden;
+    position: relative;
+}
+
 .cause__image .cause-tag {
   font-size: 14px;
   color: var(--white);

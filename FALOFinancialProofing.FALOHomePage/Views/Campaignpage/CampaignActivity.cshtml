@@ -33,8 +33,6 @@
             <h5 class="title">Search</h5>
             <div class="serach-bar">
                 <input type="text" id="searchInput" placeholder="Search here" style=" padding: 6px;">
-                @* <button id="searchButton"><i class="fa-regular fa-magnifying-glass"></i></button> *@
-            </div>
         </div>
     </div>
     <div class="blog-single__right-item">
@@ -155,6 +153,7 @@
             success: function (response) {
                 if (response && response.success && typeof response.data === 'number') {
                     fixedTotalFiles = response.data;
+                    console.log(response.data.totalRecords);
                 } else {
                     console.warn("Failed to fetch total file count.");
                 }
@@ -171,6 +170,7 @@
             success: function (response) {
                 if (response && response.success && response.data && response.data.data) {
                     fixedTotalAmount = response.data.data.reduce((sum, transaction) => sum + (transaction.expectedMoney || 0), 0);
+                    fixedTotalFiles = response.data.totalRecords;
                     displayFixedData(response.data.data);
                 } else {
                     console.warn("Failed to fetch total amount.");
