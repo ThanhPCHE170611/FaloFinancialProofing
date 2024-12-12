@@ -125,11 +125,11 @@ $(document).ready(function () {
             return;
         }
 
-
-        // if (!passwordRegex.test(password)) {
-        //     $('#loginMessage').html('<span class="text-danger">Password must be at least 8 characters long and include at least one uppercase letter, one number, and one special character.</span>');
-        //     return;
-        // }
+        const passwordRegex = @Html.Raw("/^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,}$/");
+        if (!passwordRegex.test(password)) {
+            $('#loginMessage').html('<span class="text-danger">Password must be at least 8 characters long and include at least one uppercase letter, one number, and one special character.</span>');
+            return;
+        }
 
 
         const loginData = {
