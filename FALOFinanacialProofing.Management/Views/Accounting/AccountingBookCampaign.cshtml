@@ -194,7 +194,10 @@
     const jwtToken = localStorage.getItem('jwtToken');
     console.log(campaignId);
     console.log(checkrole);
-
+    if (!jwtToken) {
+            window.location.href = '/Authentication/Login';
+            return;
+    }
     if(checkrole !== "Accounting") {
         document.getElementById('btnupload').style.display = 'none';
     }

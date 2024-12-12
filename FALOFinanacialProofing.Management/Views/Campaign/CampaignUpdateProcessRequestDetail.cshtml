@@ -142,6 +142,10 @@
     $(document).ready(function () {
         const id = new URLSearchParams(window.location.search).get('requestId');
         const jwtToken = localStorage.getItem('jwtToken');
+        if (!jwtToken) {
+            window.location.href = '/Authentication/Login';
+            return;
+        }
         const userId = localStorage.getItem('userId');
         $.ajax({
             url: `https://localhost:7294/api/MoveNextCampaignStatusRequests/GetMoveNextCampaignStatusRequestById/${id}`,

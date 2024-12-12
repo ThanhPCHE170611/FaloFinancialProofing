@@ -204,6 +204,10 @@
         return date.toISOString().split('T')[0];
     }
     const jwtToken = localStorage.getItem('jwtToken');
+    if (!jwtToken) {
+        window.location.href = '/Authentication/Login';
+        return;
+    }
     $(document).ready(function () {
         
         const campaignId = localStorage.getItem('campaignId');

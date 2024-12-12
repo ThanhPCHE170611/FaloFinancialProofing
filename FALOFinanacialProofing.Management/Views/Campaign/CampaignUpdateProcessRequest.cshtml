@@ -77,9 +77,12 @@
 <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-
+    const jwtToken = localStorage.getItem('jwtToken');
+    if (!jwtToken) {
+        window.location.href = '/Authentication/Login';
+        return;
+    }
     async function sendRequest() {
-        const jwtToken = localStorage.getItem('jwtToken');
         const userId = localStorage.getItem('userId');
         const campaignId = localStorage.getItem('campaignId');
 

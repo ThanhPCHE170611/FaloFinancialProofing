@@ -415,7 +415,7 @@
         const checkrole = localStorage.getItem('loggingRole');
         const userId = localStorage.getItem('userId');
         if (!jwtToken) {
-            alert('JWT token not found. Please log in.');
+            window.location.href = '/Authentication/Login';
             return;
         }
         let currentButton = null;
