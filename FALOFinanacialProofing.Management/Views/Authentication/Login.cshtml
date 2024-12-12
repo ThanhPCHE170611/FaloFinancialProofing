@@ -198,8 +198,8 @@ $(document).ready(function () {
             $('#registerMessage').html('<span class="text-danger">All fields are required. Please fill them out.</span>');
             return;
         }
-
-        if (email) {
+        const emailRegex = @Html.Raw("/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/");
+        if (!emailRegex.test(email)) {
             $('#registerMessage').html('<span class="text-danger">Invalid email format. Please enter a valid email address.</span>');
             return;
         }
@@ -208,10 +208,11 @@ $(document).ready(function () {
             $('#registerMessage').html('<span class="text-danger">Username cannot contain spaces. Please remove any spaces.</span>');
             return;
         }
-        // if (password) {
-        //     $('#registerMessage').html('<span class="text-danger">Password must be at least 8 characters long and include at least one uppercase letter, one number, and one special character.</span>');
-        //     return;
-        // }
+            const passwordRegex = @Html.Raw("/^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,}$/");
+        if (!passwordRegex.test(password)) {
+            $('#registerMessage').html('<span class="text-danger">Password must be at least 8 characters long and include at least one uppercase letter, one number, and one special character.</span>');
+            return;
+        }
 
         if (password !== confirmPassword) {
             $('#registerMessage').html('<span class="text-danger">Passwords do not match. Please try again.</span>');
