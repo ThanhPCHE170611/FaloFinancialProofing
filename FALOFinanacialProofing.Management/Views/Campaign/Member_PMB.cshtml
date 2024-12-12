@@ -224,7 +224,6 @@
     const jwtToken = localStorage.getItem('jwtToken');
     if (!jwtToken) {
         window.location.href = '/Authentication/Login';
-        return;
     }
     let currentPage = 1;
     const pageSize = 7;
@@ -279,7 +278,7 @@
         const isActive = $('#statusFilter').val();
 
         $.ajax({
-            url: `https://localhost:7294/api/CampaignMember/GetAllCampaignMembersByCampaignId?searchInput=${searchInput}&CampaignId=${campaignId}&isActive=${isActive}&currentPage=${currentPage}`,
+            url: `${apiBaseUrl}/api/CampaignMember/GetAllCampaignMembersByCampaignId?searchInput=${searchInput}&CampaignId=${campaignId}&isActive=${isActive}&currentPage=${currentPage}`,
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -426,7 +425,7 @@
             isActive: isActive
         };
         $.ajax({
-            url: `https://localhost:7294/api/CampaignMember/UpdateCampaignMemberStatus`,
+            url: `${apiBaseUrl}/api/CampaignMember/UpdateCampaignMemberStatus`,
             method: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(payload),

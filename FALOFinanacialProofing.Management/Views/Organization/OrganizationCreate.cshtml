@@ -241,7 +241,7 @@
         }
 
         $.ajax({
-            url: 'https://localhost:7294/api/Organizations/CreateOrganization',
+            url: `${apiBaseUrl}/api/Organizations/CreateOrganization`,
             type: 'POST',
             data: formData,
             contentType: false,

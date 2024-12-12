@@ -229,7 +229,6 @@
     const jwtToken = localStorage.getItem('jwtToken');
     if (!jwtToken) {
         window.location.href = '/Authentication/Login';
-        return;
     }
     $(document).ready(function () {
         
@@ -245,7 +244,7 @@
 
         function fetchCampaignDetails(id) {
             $.ajax({
-                url: `https://localhost:7294/api/Campaign/GetCampaignDetailsById/${id}`,
+                url: `${apiBaseUrl}/api/Campaign/GetCampaignDetailsById/${id}`,
                 type: 'GET',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`
@@ -305,7 +304,7 @@
             }
             console.log($('#endDate').val());
             $.ajax({
-                url: `https://localhost:7294/api/Campaign/UpdateCampaign`,
+                url: `${apiBaseUrl}/api/Campaign/UpdateCampaign`,
                 type: 'PUT',
                 data: formData,
                 processData: false,
@@ -400,7 +399,7 @@
 
     function downloadFile(fileName) {
         $.ajax({
-            url: `https://localhost:7294/api/CreateCampaignFiles/DownloadCampaignFile/${fileName}`,
+            url: `${apiBaseUrl}/api/CreateCampaignFiles/DownloadCampaignFile/${fileName}`,
             type: 'GET',
             xhrFields: {
                 responseType: 'blob' 

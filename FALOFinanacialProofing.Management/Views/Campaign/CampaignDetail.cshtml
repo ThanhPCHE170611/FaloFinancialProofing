@@ -206,7 +206,6 @@
     const jwtToken = localStorage.getItem('jwtToken');
     if (!jwtToken) {
         window.location.href = '/Authentication/Login';
-        return;
     }
     $(document).ready(function () {
         
@@ -279,7 +278,7 @@
             }
 
             $.ajax({
-                url: `https://localhost:7294/api/Campaign/updateenddateforprojectmanager?campaignId=${campaignId}&userId=${userId}&currentRole=${checkrole}&newDateTime=${newEndDate.toISOString()}`,
+                url: `${apiBaseUrl}/api/Campaign/updateenddateforprojectmanager?campaignId=${campaignId}&userId=${userId}&currentRole=${checkrole}&newDateTime=${newEndDate.toISOString()}`,
                 type: 'POST',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`,
@@ -304,7 +303,7 @@
 
         function fetchCampaignDetails(id) {
             $.ajax({
-                url: `https://localhost:7294/api/Campaign/GetCampaignDetailsById/${id}`,
+                url: `${apiBaseUrl}/api/Campaign/GetCampaignDetailsById/${id}`,
                 type: 'GET',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`
@@ -374,7 +373,7 @@
 
     function downloadFile(fileName) {
         $.ajax({
-            url: `https://localhost:7294/api/CreateCampaignFiles/DownloadCampaignFile/${fileName}`,
+            url: `${apiBaseUrl}/api/CreateCampaignFiles/DownloadCampaignFile/${fileName}`,
             type: 'GET',
             xhrFields: {
                 responseType: 'blob' 

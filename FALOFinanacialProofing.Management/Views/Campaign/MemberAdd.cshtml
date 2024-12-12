@@ -210,7 +210,6 @@
     const jwtToken = localStorage.getItem('jwtToken');
     if (!jwtToken) {
         window.location.href = '/Authentication/Login';
-        return;
     }
     const userId = localStorage.getItem('userId');
     const checkrole = localStorage.getItem('loggingRole');
@@ -250,7 +249,7 @@
         function fetchAvailableVolunteers() {
             const searchInput = $('#volunteerSearchBox').val().trim();
             $.ajax({
-                url: `https://localhost:7294/api/Users/GetUserNotInCampaignById/${campaignId}?searchInput=${searchInput}`,
+                url: `${apiBaseUrl}/api/Users/GetUserNotInCampaignById/${campaignId}?searchInput=${searchInput}`,
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`
@@ -367,7 +366,7 @@
         }
 
         $.ajax({
-            url: `https://localhost:7294/api/CampaignMember/CreateManyCampaignMembers/${campaignId}/${userId}/${checkroleId}`,
+            url: `${apiBaseUrl}/api/CampaignMember/CreateManyCampaignMembers/${campaignId}/${userId}/${checkroleId}`,
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(selectedMembers),

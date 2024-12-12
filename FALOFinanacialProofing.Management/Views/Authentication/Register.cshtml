@@ -92,7 +92,7 @@
                 };
 
                 $.ajax({
-                    url: 'https://localhost:7294/api/Users/Register',
+                    url: `${apiBaseUrl}/api/Users/Register`,
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(registerData),

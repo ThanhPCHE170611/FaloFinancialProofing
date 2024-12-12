@@ -26,11 +26,11 @@ function submitDecline() {
 
     let apiUrl = '';
     if (checkrole === "Volunteer Leader") {
-        apiUrl = `https://localhost:7294/api/ApproveProcess/rejectprepayrequestforvolunteerleader`;
+        apiUrl = `${apiBaseUrl}/api/ApproveProcess/rejectprepayrequestforvolunteerleader`;
     } else if (checkrole === "Accounting") {
-        apiUrl = `https://localhost:7294/api/ApproveProcess/rejectprepayrequestforaccounting`;
+        apiUrl = `${apiBaseUrl}/api/ApproveProcess/rejectprepayrequestforaccounting`;
     } else if (checkrole === "Project Manager") {
-        apiUrl = `https://localhost:7294/api/ApproveProcess/rejectprepayrequestforprojectmanager`;
+        apiUrl = `${apiBaseUrl}/api/ApproveProcess/rejectprepayrequestforprojectmanager`;
     } else {
         alert('Invalid role. Cannot decline request.');
         closeModal();
@@ -142,7 +142,7 @@ function submitVoucherFiles(requestId) {
     });
 
     $.ajax({
-        url: `https://localhost:7294/api/ApproveProcess/approverequestforaccounting?userid=${userId}&currentLoggingRole=${checkrole}&requestid=${requestId}`,
+        url: `${apiBaseUrl}/api/ApproveProcess/approverequestforaccounting?userid=${userId}&currentLoggingRole=${checkrole}&requestid=${requestId}`,
         method: 'POST',
         data: formData,
         processData: false,
@@ -193,7 +193,7 @@ function approveRequest(button, requestId) {
     const jwtToken = localStorage.getItem('jwtToken');
     if (checkrole === "Volunteer Leader") {
         $.ajax({
-            url: `https://localhost:7294/api/ApproveProcess/approverequestforvolunteerleader/${requestId}`,
+            url: `${apiBaseUrl}/api/ApproveProcess/approverequestforvolunteerleader/${requestId}`,
             method: 'GET',
             data: {
                 userid: userId,
@@ -219,7 +219,7 @@ function approveRequest(button, requestId) {
     }
     else if (checkrole === "Accounting") {
         $.ajax({
-            url: `https://localhost:7294/api/ApproveProcess/approverequestforaccounting/${requestId}`,
+            url: `${apiBaseUrl}/api/ApproveProcess/approverequestforaccounting/${requestId}`,
             method: 'GET',
             data: {
                 userid: userId,
@@ -248,7 +248,7 @@ function approveRequest(button, requestId) {
     }
     if (checkrole === "Project Manager") {
         $.ajax({
-            url: `https://localhost:7294/api/ApproveProcess/approverequestforprojectmanager/${requestId}`,
+            url: `${apiBaseUrl}/api/ApproveProcess/approverequestforprojectmanager/${requestId}`,
             method: 'GET',
             data: {
                 userid: userId,
@@ -380,7 +380,7 @@ function updateRowToRejected(button, id) {
 
 function downloadAttachment(fileName) {
     $.ajax({
-        url: `https://localhost:7294/api/AttachmentFile/downloadpaymentattachmentfile/${fileName}`,
+        url: `${apiBaseUrl}/api/AttachmentFile/downloadpaymentattachmentfile/${fileName}`,
         method: 'GET',
         xhrFields: {
             responseType: 'blob'
@@ -401,7 +401,7 @@ function downloadAttachment(fileName) {
 
 function downloadVoucher(fileName) {
     $.ajax({
-        url: `https://localhost:7294/api/Voucher/downloadpaymentvoucherfile/${fileName}`,
+        url: `${apiBaseUrl}/api/Voucher/downloadpaymentvoucherfile/${fileName}`,
         method: 'GET',
         xhrFields: {
             responseType: 'blob'
@@ -452,7 +452,7 @@ function submitMissingFile(requestId) {
     formData.append('attachment', fileInput.files[0]);
 
     $.ajax({
-        url: `https://localhost:7294/api/RequestForm/addmissingattachmentforrequest/${requestId}`,
+        url: `${apiBaseUrl}/api/RequestForm/addmissingattachmentforrequest/${requestId}`,
         method: 'POST',
         data: formData,
         processData: false,
@@ -510,13 +510,13 @@ $(document).ready(function () {
         let apiUrl;
         switch (checkrole) {
             case "Accounting":
-                apiUrl = `https://localhost:7294/api/ApproveProcess/getallpaymentrequestforaccountingincampaign/${userId}?currentLoggingRole=${checkrole}&campaignId=${campaignId}&page=${page}`;
+                apiUrl = `${apiBaseUrl}/api/ApproveProcess/getallpaymentrequestforaccountingincampaign/${userId}?currentLoggingRole=${checkrole}&campaignId=${campaignId}&page=${page}`;
                 break;
             case "Project Manager":
-                apiUrl = `https://localhost:7294/api/ApproveProcess/getallpaymentrequestforprojectmanagerincampaign/${userId}?currentLoggingRole=${checkrole}&campaignId=${campaignId}&page=${page}`;
+                apiUrl = `${apiBaseUrl}/api/ApproveProcess/getallpaymentrequestforprojectmanagerincampaign/${userId}?currentLoggingRole=${checkrole}&campaignId=${campaignId}&page=${page}`;
                 break;
             case "Volunteer Leader":
-                apiUrl = `https://localhost:7294/api/ApproveProcess/getallpaymentrequestforvolunteerleaderincampaign/${userId}?currentLoggingRole=${checkrole}&campaignId=${campaignId}&page=${page}`;
+                apiUrl = `${apiBaseUrl}/api/ApproveProcess/getallpaymentrequestforvolunteerleaderincampaign/${userId}?currentLoggingRole=${checkrole}&campaignId=${campaignId}&page=${page}`;
                 break;
             default:
                 break;

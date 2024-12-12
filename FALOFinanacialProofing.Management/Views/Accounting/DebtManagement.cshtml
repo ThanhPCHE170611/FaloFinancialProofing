@@ -168,7 +168,7 @@
             window.location.href = '/Authentication/Login';
             return;
         }
-        const apiUrl = "https://localhost:7294/api/DebManagement/getdebtlistforpmb";
+        const apiUrl = `${apiBaseUrl}/api/DebManagement/getdebtlistforpmb`;
 
         function fetchData(emailFilter = "", isActive = "", page = 1) {
             const requestData = {

@@ -121,9 +121,9 @@
         function fetchOrganizationList() {
         let apiUrl;
         if (checkrole === "Project Manager") {
-            apiUrl = `https://localhost:7294/api/Organizations/GetOrganizationsByUserId/${userId}?OrganizationName=${searchInput}&currentPage=${currentPage}`;
+            apiUrl = `${apiBaseUrl}/api/Organizations/GetOrganizationsByUserId/${userId}?OrganizationName=${searchInput}&currentPage=${currentPage}`;
         } else if (checkrole === "Project Management Board") {
-            apiUrl = `https://localhost:7294/api/Organizations/GetAllOrganizationInSystem?OrganizationName=${searchInput}&currentPage=${currentPage}`;
+            apiUrl = `${apiBaseUrl}/api/Organizations/GetAllOrganizationInSystem?OrganizationName=${searchInput}&currentPage=${currentPage}`;
         } else {
             alert('Invalid role. Access denied.');
             return;

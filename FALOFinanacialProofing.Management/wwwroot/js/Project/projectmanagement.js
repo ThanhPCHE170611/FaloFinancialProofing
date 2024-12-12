@@ -14,9 +14,9 @@ function loadProjects() {
     let apiUrl;
 
     if (checkrole === "Project Manager") {
-        apiUrl = `https://localhost:7294/api/Projects/GetAllProjectByUserId/${userId}?searchInput=${searchInput}&status=${statusFilter}&currentPage=${currentPage}`;
+        apiUrl = `${apiBaseUrl}/api/Projects/GetAllProjectByUserId/${userId}?searchInput=${searchInput}&status=${statusFilter}&currentPage=${currentPage}`;
     } else if (checkrole === "Project Management Board") {
-        apiUrl = `https://localhost:7294/api/Projects/GetAllProjectInSystem?searchInput=${searchInput}&status=${statusFilter}&currentPage=${currentPage}&PageSizeCustom=7`;
+        apiUrl = `${apiBaseUrl}/api/Projects/GetAllProjectInSystem?searchInput=${searchInput}&status=${statusFilter}&currentPage=${currentPage}&PageSizeCustom=7`;
     } else {
         return;
     }

@@ -20,7 +20,7 @@ function changeUserId(button, Id) {
 function loadAccounts() {
     const searchInput = $('#searchInput').val().trim();
     $.ajax({
-        url: `https://localhost:7294/api/Users/GetAccountList?searchInput=${searchInput}&currentPage=${currentPage}`,
+        url: `${apiBaseUrl}/api/Users/GetAccountList?searchInput=${searchInput}&currentPage=${currentPage}`,
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${jwtToken}`

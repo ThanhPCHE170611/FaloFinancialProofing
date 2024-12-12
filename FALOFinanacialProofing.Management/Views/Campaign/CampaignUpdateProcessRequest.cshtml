@@ -128,7 +128,7 @@
         };
 
         try {
-            const response = await fetch('https://localhost:7294/api/MoveNextCampaignStatusRequests/CreateMoveNextCampaignStatusRequest', {
+            const response = await fetch(`${apiBaseUrl}/api/MoveNextCampaignStatusRequests/CreateMoveNextCampaignStatusRequest`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

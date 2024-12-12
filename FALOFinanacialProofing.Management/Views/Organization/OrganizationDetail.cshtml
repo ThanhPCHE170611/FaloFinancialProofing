@@ -191,7 +191,7 @@
 
         function fetchOrganizationDetails() {
             $.ajax({
-                url: `https://localhost:7294/api/Organizations/GetOrganizationById/${orgId}`,
+                url: `${apiBaseUrl}/api/Organizations/GetOrganizationById/${orgId}`,
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`
@@ -278,7 +278,7 @@
             }
 
             $.ajax({
-                url: `https://localhost:7294/api/Organizations/UpdateOrganization`,
+                url: `${apiBaseUrl}/api/Organizations/UpdateOrganization`,
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`

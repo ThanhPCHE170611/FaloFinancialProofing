@@ -33,7 +33,7 @@ $(document).ready(function () {
     }
 
     $.ajax({
-        url: `https://localhost:7294/api/RequestForm/getrequestdetailbyrequestid/${requestId}`,
+        url: `${apiBaseUrl}/api/RequestForm/getrequestdetailbyrequestid/${requestId}`,
         type: 'GET',
         headers: {
             'Authorization': `Bearer ${jwtToken}`
@@ -134,7 +134,7 @@ $(document).ready(function () {
                     $("#cancelRequestBtn").on('click', function () {
                         if (confirm("Are you sure you want to cancel this request?")) {
                             $.ajax({
-                                url: `https://localhost:7294/api/RequestForm/cancelrequest/${requestId}`,
+                                url: `${apiBaseUrl}/api/RequestForm/cancelrequest/${requestId}`,
                                 type: 'GET',
                                 headers: {
                                     'Authorization': `Bearer ${jwtToken}`
@@ -170,8 +170,8 @@ function safeValue(value, defaultValue = 'N/A') {
 function downloadFile(fileName, fileType) {
     const jwtToken = localStorage.getItem('jwtToken');
     const endpoint = fileType === 'attachment'
-        ? `https://localhost:7294/api/AttachmentFile/downloadpaymentattachmentfile/${fileName}`
-        : `https://localhost:7294/api/Voucher/downloadpaymentvoucherfile/${fileName}`;
+        ? `${apiBaseUrl}/api/AttachmentFile/downloadpaymentattachmentfile/${fileName}`
+        : `${apiBaseUrl}/api/Voucher/downloadpaymentvoucherfile/${fileName}`;
 
     $.ajax({
         url: endpoint,

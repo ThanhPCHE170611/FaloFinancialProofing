@@ -211,7 +211,6 @@
     const jwtToken = localStorage.getItem('jwtToken');
     if (!jwtToken) {
         window.location.href = '/Authentication/Login';
-        return;
     }
     function openDeclineModal(button, requestId) {
         currentButton = button;
@@ -260,7 +259,7 @@
 
 
         $.ajax({
-            url: 'https://localhost:7294/CreateMoveNextCampaignStatusRequestHistory',
+            url: `${apiBaseUrl}/CreateMoveNextCampaignStatusRequestHistory`,
             type: 'POST',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -376,7 +375,7 @@
 
         const jwtToken = localStorage.getItem('jwtToken');
         $.ajax({
-            url: 'https://localhost:7294/CreateMoveNextCampaignStatusRequestHistory',
+            url: `${apiBaseUrl}/CreateMoveNextCampaignStatusRequestHistory`,
             type: 'POST',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -405,9 +404,9 @@
         let currentPage = 1;
         const pageSize = 7;
         if (checkrole === "Project Management Board") {
-            apiUrl = 'https://localhost:7294/api/MoveNextCampaignStatusRequests/GetAllMoveNextCampaignStatusRequestsByPMB';
+            apiUrl = `${apiBaseUrl}/api/MoveNextCampaignStatusRequests/GetAllMoveNextCampaignStatusRequestsByPMB`;
         } else {
-            apiUrl = `https://localhost:7294/api/MoveNextCampaignStatusRequests/GetAllMoveNextCampaignStatusRequestsByUserId/${userId}`;
+            apiUrl = `${apiBaseUrl}/api/MoveNextCampaignStatusRequests/GetAllMoveNextCampaignStatusRequestsByUserId/${userId}`;
         }
 
 

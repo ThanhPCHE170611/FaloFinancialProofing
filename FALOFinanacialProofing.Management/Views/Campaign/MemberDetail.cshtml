@@ -294,7 +294,7 @@
     // });
     function loadSDGs() {
         $.ajax({
-            url: 'https://localhost:7294/api/SDG/GetAllSDGs',
+            url: `${apiBaseUrl}/api/SDG/GetAllSDGs`,
             type: 'GET',
             success: function (response) {
                 if (response.success && response.data.length > 0) {
@@ -366,7 +366,7 @@
 
         function loadUserProfile(userId) {
             $.ajax({
-                url: `https://localhost:7294/api/Users/GetUserProfile/${userId}`,
+                url: `${apiBaseUrl}/api/Users/GetUserProfile/${userId}`,
                 type: 'GET',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`

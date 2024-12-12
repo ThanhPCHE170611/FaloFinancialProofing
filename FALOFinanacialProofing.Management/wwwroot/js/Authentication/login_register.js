@@ -1,4 +1,5 @@
-﻿$(document).ready(function () {
+﻿
+$(document).ready(function () {
     // Xử lý khi ấn nút Login
     document.querySelector('.img__btn').addEventListener('click', function () {
         document.querySelector('.cont').classList.toggle('s--signup');
@@ -32,7 +33,7 @@
 
         $('#loginMessage').text('');
         $.ajax({
-            url: 'https://localhost:7294/api/Users/Login',
+            url: `${apiBaseUrl}/api/Users/Login`,
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(loginData),
@@ -123,7 +124,7 @@
         };
 
         $.ajax({
-            url: 'https://localhost:7294/api/Users/Register',
+            url: `${apiBaseUrl}/api/Users/Register`,
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(registerData),

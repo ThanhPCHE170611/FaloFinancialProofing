@@ -5,7 +5,11 @@
         event.preventDefault();
 
         const email = $('#email').val().trim();
-
+        const jwtToken = localStorage.getItem('jwtToken');
+        ưif(!jwtToken) {
+            window.location.href = '/Authentication/Login';
+            return;
+        }
         if (!email) {
             alert("Email field cannot be empty.");
             return;
@@ -17,7 +21,7 @@
         }
 
         $.ajax({
-            url: `https://localhost:7294/api/Users/ForgotPassword?email=${email}`,
+            url: `${apiBaseUrl}/api/Users/ForgotPassword?email=${email}`,
             method: 'POST',
             contentType: 'application/json',
             success: function (response) {

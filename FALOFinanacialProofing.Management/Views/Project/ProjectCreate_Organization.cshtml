@@ -183,7 +183,7 @@
 
     function fetchOrganizations() {
             $.ajax({
-                url: `https://localhost:7294/api/Organizations/GetOrganizationsByUserId/${userId}`,
+                url: `${apiBaseUrl}/api/Organizations/GetOrganizationsByUserId/${userId}`,
                 type: 'GET',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`
@@ -263,7 +263,7 @@
             });
 
             $.ajax({
-                url: 'https://localhost:7294/api/Projects/CreateProject',
+                url: `${apiBaseUrl}/api/Projects/CreateProject`,
                 type: 'POST',
                 data: formData,
                 processData: false,

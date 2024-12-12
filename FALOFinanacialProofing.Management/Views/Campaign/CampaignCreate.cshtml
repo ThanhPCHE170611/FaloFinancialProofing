@@ -293,7 +293,7 @@
             });
 
             $.ajax({
-                url: 'https://localhost:7294/api/Campaign/CreateCampaignClient',
+                url: `${apiBaseUrl}/api/Campaign/CreateCampaignClient`,
                 type: 'POST',
                 headers: {
                     'Authorization': 'Bearer ' + jwtToken

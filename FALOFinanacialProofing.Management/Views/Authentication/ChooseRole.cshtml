@@ -65,6 +65,7 @@
 
 </body>
 </html>
+<script src="~/js/config.js"></script>
 <script>
     var accessToken = '@Model';
     if (accessToken && accessToken.trim() !== '') {
@@ -111,7 +112,7 @@
                     console.log('Role ID selected:', checkRoleId);
                     window.location.href = `/Home/Index`;
                     // $.ajax({
-                    //     url: `https://localhost:7294/api/Users/SetRoleLoginAfterLogin/${role}`,
+                    //     url: `${apiBaseUrl}/api/Users/SetRoleLoginAfterLogin/${role}`,
                     //     type: 'GET',
                     //     contentType: 'application/json',
                     //     headers: {
