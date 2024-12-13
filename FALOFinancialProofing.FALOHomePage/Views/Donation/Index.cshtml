@@ -48,28 +48,26 @@
 <div class="container">
     <h2>Sao Kê</h2>
 
-    <!-- Search Bar -->
-    <div class="blog-single__right-item">
-        <div class="item shadow mb-30">
+    <div class="blog-single__right-item combined-block" style="display: flex; align-items: flex-start;">
+        <!-- Search Block (on the left side) -->
+        <div class="search-block item shadow mb-30" style="display: flex; flex-direction: column; flex: 1;">
             <h5 class="title">Search</h5>
-            <div class="serach-bar">
-                <input type="text" id="searchInput" placeholder="Search here" style="padding:6px">
-                <button id="searchButton">
-                    @* <i class="fa-regular fa-magnifying-glass"></i> *@
-                </button>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search here" style="padding:3px">
             </div>
         </div>
-    </div>
-    <div class="blog-single__right-item">
-        <div class="item shadow mb-30">
+
+        <!-- Date Filter Block (on the right side) -->
+        <div class="date-filter-block item shadow mb-30" style="display: flex; flex-direction: column; flex: 1;">
+            <h5 class="title">Filter by Date</h5>
             <div class="date-filter">
-                <h5 class="title">Filter by Date</h5>
-                <input type="date" id="startDate" placeholder="Start Date">
-                <input type="date" id="endDate" placeholder="End Date">
+                <input type="date" id="startDate" placeholder="Start Date" style="margin-bottom: 5px; border:1px solid black; padding: 3px; border-radius: 8px;">
+                <input type="date" id="endDate" placeholder="End Date" style="margin-bottom: 5px; border:1px solid black; padding: 3px; border-radius: 8px;">
                 <button id="applyDateFilter">Apply Filter</button>
             </div>
         </div>
     </div>
+
 
     <!-- Error Message -->
     <div id="errorMessage" class="alert alert-danger" style="display: none;"></div>
@@ -133,9 +131,9 @@
             currency: 'VND'
         });
         const totalAmountHtml = `
-                <div style="text-align: right; margin-bottom: 10px; font-weight: bold; color: green;">
-                    Tổng Số Tiền: ${totalAmountFormatted}
-                </div>`;
+                    <div style="text-align: right; margin-bottom: 10px; font-weight: bold; color: green;">
+                        Tổng Số Tiền: ${totalAmountFormatted}
+                    </div>`;
         $('#transactionsContainer').before(totalAmountHtml);
     }
 
@@ -156,16 +154,16 @@
         //         Tổng Số Tiền: ${totalAmount}
         //     </div>`;
         let tableHtml = `
-            <table class="table table-bordered table-hover" id="transactions-table">
-                                                                                                                             <thead>
-                                                                                                                                 <tr>
-                                                                                                                                     <th scope="col">Mã Giao Dịch</th>
-                                                                                                                                     <th scope="col">Thời Điểm Giao Dịch</th>
-                                                                                                                                     <th scope="col">Số Tiền</th>
-                                                                                                                                     <th scope="col">Nội Dung Giao Dịch</th>
-                                                                                                                                 </tr>
-                                                                                                                             </thead>
-                                                                                                                             <tbody>`;
+                <table class="table table-bordered table-hover" id="transactions-table">
+                                                                                                                                 <thead>
+                                                                                                                                     <tr>
+                                                                                                                                         <th scope="col">Mã Giao Dịch</th>
+                                                                                                                                         <th scope="col">Thời Điểm Giao Dịch</th>
+                                                                                                                                         <th scope="col">Số Tiền</th>
+                                                                                                                                         <th scope="col">Nội Dung Giao Dịch</th>
+                                                                                                                                     </tr>
+                                                                                                                                 </thead>
+                                                                                                                                 <tbody>`;
 
         transactions.forEach(log => {
             const formattedAmount = log.amount.toLocaleString('vi-VN', {
@@ -174,11 +172,11 @@
             });
 
             tableHtml += `<tr>
-                                                                                                                             <td>${log.tid}</td>
-                                                                                                                             <td>${new Date(log.transactionDate).toLocaleString()}</td>
-                                                                                                                                 <td>${formattedAmount}</td>
-                                                                                                                             <td>${log.description}</td>
-                                                                                                                           </tr>`;
+                                                                                                                                 <td>${log.tid}</td>
+                                                                                                                                 <td>${new Date(log.transactionDate).toLocaleString()}</td>
+                                                                                                                                     <td>${formattedAmount}</td>
+                                                                                                                                 <td>${log.description}</td>
+                                                                                                                               </tr>`;
         });
 
         tableHtml += `</tbody></table>`;
@@ -315,12 +313,6 @@
         }
     });
 
-    document.getElementById('searchButton').addEventListener('click', function () {
-        const searchQuery = document.getElementById('searchInput').value;
-        console.log("Search Query:", searchQuery);
-        currentPage = 1;
-        fetchTransactions(currentPage, searchQuery);
-    });
 
     // Initial fetch
     fetchTransactions(currentPage);

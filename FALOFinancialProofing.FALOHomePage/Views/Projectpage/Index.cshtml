@@ -202,54 +202,52 @@
             </div>
             <div class="cause__slider-wrp">
                 <div class="swiper cause__slider">
-                    <div class="swiper-wrapper py-4">
+                    <div class="swiper-wrapper py-4" style="width:350px; margin-right: 30px">
                         @foreach (var campaign in campaigns)
                         {
                             var percentage = Math.Round(((decimal)campaign.TotalMoneyEarned / campaign.FundTarget) * 100);
-                            <div class="swiper-slide">
-                                <div class="cause__item">
-                                    <div class="cause_menu_image image">
-                                        @if (campaign.Image == null)
-                                        {
-                                            <img src="/images/cause/CampaignImages.jpg" alt="image">
-                                        }
-                                        else
-                                        {
-                                            <img src="@campaign.Image" alt="image">
-                                        }
+                            <div class="cause__item" style="padding:30px">
+                                <div class="cause_menu_image image">
+                                    @if (campaign.Image == null)
+                                    {
+                                        <img src="/images/cause/CampaignImages.jpg" alt="image">
+                                    }
+                                    else
+                                    {
+                                        <img src="@campaign.Image" alt="image">
+                                    }
 
-                                        <span class="cause-tag">@campaign.EndDate?.ToString("MMMM dd, yyyy")</span>
-                                    </div>
-                                    <div class="cause__content">
-                                        <h4 class="mb-4 mt-20">
-                                            <a href="@Url.Action("Index", "Campaignpage", new {id=campaign.CampaignId})" class="primary-hover">
-                                                @campaign.Title
-                                            </a>
-                                        </h4>
-                                        <div class="progress-area">
-                                            <div class="progress__item">
-                                                @if (percentage > 100)
-                                                {
-                                                    <div class="progress__content" style="width: 100%;"><span>@percentage%</span></div>
-                                                }
-                                                else
-                                                {
-                                                    <div class="progress__content" style="width: @percentage%;"><span>@percentage%</span></div>
-                                                }
-                                            </div>
-                                            <div class="progress__goal mt-15">
-                                                <h6>Goal : <span>@campaign.FundTarget VND</span></h6>
-                                                <h6>Raised : <span>@campaign.TotalMoneyEarned VND</span></h6>
-                                            </div>
-                                            <div class="btn-three mt-30">
-                                                <span class="btn-circle">
+                                    <span class="cause-tag">@campaign.EndDate?.ToString("MMMM dd, yyyy")</span>
+                                </div>
+                                <div class="cause__content">
+                                    <h4 class="mb-4 mt-20">
+                                        <a href="@Url.Action("Index", "Campaignpage", new {id=campaign.CampaignId})" class="primary-hover">
+                                            @campaign.Title
+                                        </a>
+                                    </h4>
+                                    <div class="progress-area">
+                                        <div class="progress__item">
+                                            @if (percentage > 100)
+                                            {
+                                                <div class="progress__content" style="width: 100%;"><span>@percentage%</span></div>
+                                            }
+                                            else
+                                            {
+                                                <div class="progress__content" style="width: @percentage%;"><span>@percentage%</span></div>
+                                            }
+                                        </div>
+                                        <div class="progress__goal mt-15">
+                                            <h6>Goal : <span>@campaign.FundTarget VND</span></h6>
+                                            <h6>Raised : <span>@campaign.TotalMoneyEarned VND</span></h6>
+                                        </div>
+                                        <div class="btn-three mt-30">
+                                            <span class="btn-circle">
+                                            </span>
+                                            <a href="@Url.Action("Index", "Campaignpage", new {id=campaign.CampaignId})" class="btn-inner">
+                                                <span class="btn-text">
+                                                    ỦNG HỘ
                                                 </span>
-                                                <a href="@Url.Action("Index", "Campaignpage", new {id=campaign.CampaignId})" class="btn-inner">
-                                                    <span class="btn-text">
-                                                        ỦNG HỘ
-                                                    </span>
-                                                </a>
-                                            </div>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -262,3 +260,4 @@
     }
 
 </main>
+
