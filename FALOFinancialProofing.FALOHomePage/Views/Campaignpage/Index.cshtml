@@ -70,7 +70,7 @@
                     <div class="blog-single__right-item">
                         <div class="item shadow mb-30">
                             <h5 class="title">Đóng Góp</h5>
-                            @if (campaignDetails.FundTarget > campaignDetails.TotalMoneyEarned)
+                            @if (!(campaignDetails.FundTarget <= campaignDetails.TotalMoneyEarned || campaignDetails.Status.CompareTo("Fund-Raising") != 0))
                             {
                                 <div class="btn-two d-none d-lg-inline-block">
 
