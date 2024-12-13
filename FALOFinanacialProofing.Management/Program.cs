@@ -1,7 +1,13 @@
+using FALOFinanacialProofing.Management;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using NuGet.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var configuration = builder.Configuration;
+
+// Add other services
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

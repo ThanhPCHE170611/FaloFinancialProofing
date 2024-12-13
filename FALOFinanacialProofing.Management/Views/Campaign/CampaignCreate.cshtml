@@ -70,7 +70,7 @@
 
                         <div class="mb-3">
                             <label for="totalAmount" class="form-label">Fund Target</label>
-                            <input type="number" class="form-control" id="totalAmount" placeholder="Enter total amount" min="0" step="0.01">
+                            <input type="text" class="form-control" id="totalAmount" placeholder="Enter total amount">
                         </div>
 
                         <div class="mb-3">
@@ -133,6 +133,11 @@
     var quill = new Quill('#editor-container', {
         theme: 'snow'
     });
+    const jwtToken = localStorage.getItem('jwtToken');
+    if (!jwtToken) {
+        window.location.href = '/Authentication/Login';
+        return;
+    }
     document.getElementById('attachments').addEventListener('change', function (e) {
         const fileList = document.getElementById('fileList');
         fileList.innerHTML = '';
@@ -175,10 +180,22 @@
       });
     });
     $(document).ready(function () {
+        $('#totalAmount').on('input', function () {
+            let input = $(this).val();
+
+            input = input.replace(/[^0-9]/g, '');
+
+            if (!/^\d+$/.test(input)) {
+                alert('Vui lòng nhập số nguyên dương và không chứa dấu thập phân hoặc ký tự không hợp lệ.');
+                $(this).val('');
+                return;
+            }
+
+            const formatted = Number(input).toLocaleString();
+            $(this).val(formatted);
+        });
         $('#save-btn button').on('click', function (e) {
             e.preventDefault();
-
-            const jwtToken = localStorage.getItem('jwtToken');
             const userId = localStorage.getItem('userId');
             const projectId = new URLSearchParams(window.location.search).get('projectId');
 
@@ -186,21 +203,65 @@
 
             const campaignName = $('#campaignName').val();
             const location = $('#location').val();
-            const totalAmount = $('#totalAmount').val();
+
+            // const totalAmount = parseFloat($('#totalAmount').val());
+            const totalAmount = $('#totalAmount').val().replace(/,/g, '');
+
             let endDate = $('#endDate').val();
             const description = quill.getText();;
             const files = $('#attachments')[0].files;
 
-            if (!campaignName || !location || !totalAmount || !endDate || !description) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); 
+            const selectedEndDate = new Date(endDate);
+
+            if (!campaignName || !totalAmount || !endDate) {
                 alert('Please fill in all required fields.');
                 return;
             }
+            if (!campaignName || campaignName.length < 8) {
+                alert('Campaign Name is required and must be at least 8 characters long.');
+                $('#campaignName').focus();
+                return;
+            }
+
+            if (!location || location.length < 8) {
+                alert('Location is required and must be at least 8 characters long.');
+                $('#location').focus();
+                return;
+            }
+
+            if (!location) {
+                alert('Location is required and cannot be empty.');
+                $('#location').focus();
+                return;
+            }
+            
+            if (!totalAmount || totalAmount < 1000) {
+                alert('Fund Target is required and must be at least 1000.');
+                $('#totalAmount').focus();
+                return;
+            }
+
+
+            if (!endDate || selectedEndDate <= today) {
+                alert('Expected End Date must be after today.');
+                $('#endDate').focus();
+                return;
+            }
+
+            if (!description || description.length < 8) {
+                alert('Campaign Description is required and must be at least 8 characters long.');
+                $('#description').focus();
+                return;
+            }
+
 
             endDate = formatDateToMMDDYYYY(endDate);
             console.log("EndDate" + endDate);
 
 
-            const today = new Date();
+            
             const year = today.getFullYear();
             const month = String(today.getMonth() + 1).padStart(2, '0');
             const day = String(today.getDate()).padStart(2, '0');
@@ -232,7 +293,7 @@
             });
 
             $.ajax({
-                url: 'https://localhost:7294/api/Campaign/CreateCampaignClient',
+                url: `${apiBaseUrl}/api/Campaign/CreateCampaignClient`,
                 type: 'POST',
                 headers: {
                     'Authorization': 'Bearer ' + jwtToken

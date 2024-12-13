@@ -15,7 +15,7 @@ namespace FALOFinancialProofing.DTOs.CampaignDTO
         [Required]
         public DateTime DateOfCreation { get; set; }
         [Required]
-        public double FundTarget { get; set; }
+        public long FundTarget { get; set; }
         public string? Image { get; set; }
         public DateTime? EndDate { get; set; }
         public string? Address { get; set; }

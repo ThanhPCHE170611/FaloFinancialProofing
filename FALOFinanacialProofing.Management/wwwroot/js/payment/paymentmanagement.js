@@ -13,33 +13,40 @@ function submitDecline() {
     if (!currentDeclineButton || !currentRequestId) return;
 
     const reason = document.getElementById('declineReason').value.trim();
-    if (!reason) {
-        alert('Please enter a reason for decline.');
+    //if (!reason) {
+    //    alert('Please enter a reason for decline.');
+    //    return;
+    //}
+
+    if (!reason || reason.length < 10) {
+        alert('The reason must be at least 10 characters long.');
+        document.getElementById('declineReason').focus(); 
         return;
     }
 
-
-
     let apiUrl = '';
     if (checkrole === "Volunteer Leader") {
-        apiUrl = `https://localhost:7294/api/ApproveProcess/rejectprepayrequestforvolunteerleader/${currentRequestId}?userid=${userId}&currentLoggingRole=${checkrole}&feedback=${reason}`;
+        apiUrl = `${apiBaseUrl}/api/ApproveProcess/rejectprepayrequestforvolunteerleader`;
     } else if (checkrole === "Accounting") {
-        apiUrl = `https://localhost:7294/api/ApproveProcess/rejectprepayrequestforaccounting/${currentRequestId}?userid=${userId}&currentLoggingRole=${checkrole}&feedback=${reason}`;
+        apiUrl = `${apiBaseUrl}/api/ApproveProcess/rejectprepayrequestforaccounting`;
     } else if (checkrole === "Project Manager") {
-        apiUrl = `https://localhost:7294/api/ApproveProcess/rejectprepayrequestforprojectmanager/${currentRequestId}?userid=${userId}&currentLoggingRole=${checkrole}&feedback=${reason}`;
+        apiUrl = `${apiBaseUrl}/api/ApproveProcess/rejectprepayrequestforprojectmanager`;
     } else {
         alert('Invalid role. Cannot decline request.');
         closeModal();
         return;
     }
+    const payload = {
+        userid: userId,
+        currentLoggingRole: checkrole,
+        requestId: currentRequestId,
+        feedback: reason
+    };
     $.ajax({
         url: apiUrl,
         method: 'POST',
-        data: {
-            userid: userId,
-            currentLoggingRole: checkrole,
-            feedback: reason
-        },
+        contentType: 'application/json',
+        data: JSON.stringify(payload),
         headers: {
             'Authorization': `Bearer ${jwtToken}`
         },
@@ -50,11 +57,11 @@ function submitDecline() {
             } else {
                 alert(response.message || 'Failed to decline the request.');
             }
-            closeModalDeclinePrepay();
+            closeModalDeclinePayment();
         },
         error: function (xhr) {
             alert(`Error ${xhr.status}: ${xhr.responseText || 'An error occurred while declining the request.'}`);
-            closeModalDeclinePrepay();
+            closeModalDeclinePayment();
         }
     });
 }
@@ -135,7 +142,7 @@ function submitVoucherFiles(requestId) {
     });
 
     $.ajax({
-        url: `https://localhost:7294/api/ApproveProcess/approverequestforaccounting?userid=${userId}&currentLoggingRole=${checkrole}&requestid=${requestId}`,
+        url: `${apiBaseUrl}/api/ApproveProcess/approverequestforaccounting?userid=${userId}&currentLoggingRole=${checkrole}&requestid=${requestId}`,
         method: 'POST',
         data: formData,
         processData: false,
@@ -186,7 +193,7 @@ function approveRequest(button, requestId) {
     const jwtToken = localStorage.getItem('jwtToken');
     if (checkrole === "Volunteer Leader") {
         $.ajax({
-            url: `https://localhost:7294/api/ApproveProcess/approverequestforvolunteerleader/${requestId}`,
+            url: `${apiBaseUrl}/api/ApproveProcess/approverequestforvolunteerleader/${requestId}`,
             method: 'GET',
             data: {
                 userid: userId,
@@ -212,7 +219,7 @@ function approveRequest(button, requestId) {
     }
     else if (checkrole === "Accounting") {
         $.ajax({
-            url: `https://localhost:7294/api/ApproveProcess/approverequestforaccounting/${requestId}`,
+            url: `${apiBaseUrl}/api/ApproveProcess/approverequestforaccounting/${requestId}`,
             method: 'GET',
             data: {
                 userid: userId,
@@ -226,7 +233,10 @@ function approveRequest(button, requestId) {
                     console.log(checkrole);
                     console.log(userId);
                     console.log(requestId);
-                    showFileUploadPopup(requestId);
+                    //showFileUploadPopup(requestId);
+                    updateRowToApprovedForPM(button, requestId);
+                    alert("Request approved successfully for Accounting.");
+                    location.reload();
                 } else {
                     alert(response.message || "Failed to approve the request.");
                 }
@@ -238,7 +248,7 @@ function approveRequest(button, requestId) {
     }
     if (checkrole === "Project Manager") {
         $.ajax({
-            url: `https://localhost:7294/api/ApproveProcess/approverequestforprojectmanager/${requestId}`,
+            url: `${apiBaseUrl}/api/ApproveProcess/approverequestforprojectmanager/${requestId}`,
             method: 'GET',
             data: {
                 userid: userId,
@@ -370,7 +380,7 @@ function updateRowToRejected(button, id) {
 
 function downloadAttachment(fileName) {
     $.ajax({
-        url: `https://localhost:7294/api/AttachmentFile/downloadpaymentattachmentfile/${fileName}`,
+        url: `${apiBaseUrl}/api/AttachmentFile/downloadpaymentattachmentfile/${fileName}`,
         method: 'GET',
         xhrFields: {
             responseType: 'blob'
@@ -383,15 +393,15 @@ function downloadAttachment(fileName) {
             link.download = fileName;
             link.click();
         },
-        error: function () {
-            alert('Failed to download attachment file. Please try again.');
+        error: function (errors) {
+            alert(errors);
         }
     });
 }
 
 function downloadVoucher(fileName) {
     $.ajax({
-        url: `https://localhost:7294/api/Voucher/downloadpaymentvoucherfile/${fileName}`,
+        url: `${apiBaseUrl}/api/Voucher/downloadpaymentvoucherfile/${fileName}`,
         method: 'GET',
         xhrFields: {
             responseType: 'blob'
@@ -442,7 +452,7 @@ function submitMissingFile(requestId) {
     formData.append('attachment', fileInput.files[0]);
 
     $.ajax({
-        url: `https://localhost:7294/api/RequestForm/addmissingattachmentforrequest/${requestId}`,
+        url: `${apiBaseUrl}/api/RequestForm/addmissingattachmentforrequest/${requestId}`,
         method: 'POST',
         data: formData,
         processData: false,
@@ -471,39 +481,7 @@ $(document).ready(function () {
     const checkrole = localStorage.getItem('loggingRole');
     const jwtToken = localStorage.getItem('jwtToken');
     let currentPage = 1;
-    const pageSize = 5;
-
-    //if (checkrole && checkrole !== 'Volunteer') {
-    //    const nametitle = document.getElementById('nametitle');
-    //    nametitle.textContent = 'Approve Payment Request';
-
-    //    const createRequestLink = document.getElementById('create_request_page');
-    //    createRequestLink.style.display = 'none';
-
-    //    const newLink = document.createElement('a');
-    //    newLink.setAttribute('asp-controller', 'Prepay');
-    //    newLink.setAttribute('asp-action', 'PrepayManagement_PM');
-    //    newLink.textContent = 'Prepay Created Request';
-
-    //    const newLink2 = document.createElement('a');
-    //    newLink2.setAttribute('asp-controller', 'Payment');
-    //    newLink2.setAttribute('asp-action', 'PaymentManagement_PM');
-    //    newLink2.textContent = 'Payment Created Request';
-
-    //    const url = new URL(`/Prepay/PrepayManagement_PM`, window.location.origin);
-    //    if (campaignId) {
-    //        url.searchParams.set('campaignid', campaignId);
-    //    }
-
-    //    const url2 = new URL(`/Payment/PaymentManagement_PM`, window.location.origin);
-    //    if (campaignId) {
-    //        url.searchParams.set('campaignid', campaignId);
-    //    }
-    //    newLink.href = url.toString();
-    //    newLink2.href = url2.toString();
-    //    navTabs.appendChild(newLink);
-    //    navTabs.appendChild(newLink2);
-    //}
+    const pageSize = 30;
 
     function formatDateTime(dateString) {
         if (!dateString) return 'N/A';
@@ -525,24 +503,25 @@ $(document).ready(function () {
     }
 
     
-
+    let searchEmail = ''; 
+    let filterStatus = ''; 
 
     function loadPrepayRequests(page) {
         let apiUrl;
         switch (checkrole) {
             case "Accounting":
-                apiUrl = `https://localhost:7294/api/ApproveProcess/getallpaymentrequestforaccountingincampaign/${userId}?currentLoggingRole=${checkrole}&campaignId=${campaignId}&page=${page}`;
+                apiUrl = `${apiBaseUrl}/api/ApproveProcess/getallpaymentrequestforaccountingincampaign/${userId}?currentLoggingRole=${checkrole}&campaignId=${campaignId}&page=${page}`;
                 break;
             case "Project Manager":
-                apiUrl = `https://localhost:7294/api/ApproveProcess/getallpaymentrequestforprojectmanagerincampaign/${userId}?currentLoggingRole=${checkrole}&campaignId=${campaignId}&page=${page}`;
+                apiUrl = `${apiBaseUrl}/api/ApproveProcess/getallpaymentrequestforprojectmanagerincampaign/${userId}?currentLoggingRole=${checkrole}&campaignId=${campaignId}&page=${page}`;
                 break;
             case "Volunteer Leader":
-                apiUrl = `https://localhost:7294/api/ApproveProcess/getallpaymentrequestforvolunteerleaderincampaign/${userId}?currentLoggingRole=${checkrole}&campaignId=${campaignId}&page=${page}`;
+                apiUrl = `${apiBaseUrl}/api/ApproveProcess/getallpaymentrequestforvolunteerleaderincampaign/${userId}?currentLoggingRole=${checkrole}&campaignId=${campaignId}&page=${page}`;
                 break;
             default:
                 break;
         }
-
+        apiUrl += `&status=${filterStatus}&createdByEmail=${searchEmail}`;
         $.ajax({
             url: apiUrl,
             method: 'GET',
@@ -598,30 +577,45 @@ $(document).ready(function () {
                             `;
                             }
                         }
-
                         let voucherLinks = '';
-                        if (request.voucherFiles && request.voucherFiles.length > 0) {
-                            const validFiles = request.voucherFiles.filter(file => file.filePath);
-                            if (validFiles.length > 0) {
-                                voucherLinks = validFiles.map(file => `
+                        if (checkrole === "Project Manager") {
+                            if (request.voucherFiles && request.voucherFiles.length > 0) {
+                                const validFiles = request.voucherFiles.filter(file => file.filePath);
+                                if (validFiles.length > 0) {
+                                    voucherLinks = validFiles.map(file => `
                                 <a href="javascript:void(0);" onclick="downloadVoucher('${file.filePath}')" class="btn btn-link text-info">${file.filePath}</a>
                                 `).join('<br>');
+                                } else {
+                                    voucherLinks = '<span class="text-muted">No Attachments</span>';
+                                }
                             } else {
                                 voucherLinks = '<span class="text-muted">No Attachments</span>';
                             }
                         } else {
-                            voucherLinks = '<span class="text-muted">No Attachments</span>';
+                            if (request.vouchers && request.vouchers.length > 0) {
+                                const validFiles = request.vouchers.filter(file => file.filePath);
+                                if (validFiles.length > 0) {
+                                    voucherLinks = validFiles.map(file => `
+                                <a href="javascript:void(0);" onclick="downloadVoucher('${file.filePath}')" class="btn btn-link text-info">${file.filePath}</a>
+                                `).join('<br>');
+                                } else {
+                                    voucherLinks = '<span class="text-muted">No Attachments</span>';
+                                }
+                            } else {
+                                voucherLinks = '<span class="text-muted">No Attachments</span>';
+                            }
                         }
+                        
                         tbody.append(`
                                     <tr data-request-id="${request.id}">
-                                        <td class="align-middle text-center text-sm">${index + 1}</td>
+                                        <td class="align-middle text-center ">${index + 1}</td>
                                         <td><span class="text-secondary text-xs font-weight-bold">${request.createByName}</span></td>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${request.expectedMoney.toLocaleString()}</span></td>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${request.createByEmail}</span></td>
+                                        <td class="align-middle text-center "><span class="text-secondary text-xs font-weight-bold">${request.expectedMoney.toLocaleString()}</span></td>
+                                        <td class="align-middle text-center "><span class="text-secondary text-xs font-weight-bold">${request.createByEmail}</span></td>
                                         <td class="align-middle text-center">${attachmentLinks}</td>
                                         <td class="align-middle text-center">${voucherLinks}</td>
-                                        <td class="align-middle text-center text-sm">${statusLabel}</td>
-                                        <td class="align-middle text-center text-sm"><span class="text-secondary text-xs font-weight-bold">${formatDateTime(request.createAt)}</span></td>
+                                        <td class="align-middle text-center ">${statusLabel}</td>
+                                        <td class="align-middle text-center "><span class="text-secondary text-xs font-weight-bold">${formatDateTime(request.createAt)}</span></td>
                                         <td class="align-middle text-center">${actionButtons}</td>
                                     </tr>
                                 `);
@@ -638,16 +632,86 @@ $(document).ready(function () {
         });
     }
 
+    //function setupPagination(totalRecords, currentPage) {
+    //    const totalPages = Math.ceil(totalRecords / pageSize);
+    //    const paginationContainer = $('#pagination');
+    //    paginationContainer.empty();
+    //    for (let i = 1; i <= totalPages; i++) {
+    //        const pageButton = $(`<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}">${i}</button>`);
+    //        pageButton.on('click', () => changePage(i));
+    //        paginationContainer.append(pageButton);
+    //    }
+    //}
     function setupPagination(totalRecords, currentPage) {
         const totalPages = Math.ceil(totalRecords / pageSize);
         const paginationContainer = $('#pagination');
         paginationContainer.empty();
-        for (let i = 1; i <= totalPages; i++) {
-            const pageButton = $(`<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}">${i}</button>`);
-            pageButton.on('click', () => changePage(i));
-            paginationContainer.append(pageButton);
+
+        const maxVisibleButtons = 5; 
+        const ellipsis = `<span class="btn btn-sm btn-light disabled">...</span>`;
+
+        function createPageButton(page) {
+            return $(`<button class="btn btn-sm btn-page ${page === currentPage ? 'btn-primary' : 'btn-light'}">${page}</button>`)
+                .on('click', () => changePage(page));
         }
+
+        const prevButton = $(`<button class="btn btn-sm btn-page ${currentPage === 1 ? 'btn-light disabled' : 'btn-light'}">Previous</button>`);
+        prevButton.on('click', () => {
+            if (currentPage > 1) changePage(currentPage - 1);
+        });
+        paginationContainer.append(prevButton);
+
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisibleButtons / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisibleButtons - 1);
+
+        if (endPage - startPage + 1 < maxVisibleButtons) {
+            startPage = Math.max(1, endPage - maxVisibleButtons + 1);
+        }
+
+        if (startPage > 1) {
+            paginationContainer.append(createPageButton(1));
+            if (startPage > 2) {
+                paginationContainer.append($(ellipsis));
+            }
+        }
+
+        for (let page = startPage; page <= endPage; page++) {
+            paginationContainer.append(createPageButton(page));
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                paginationContainer.append($(ellipsis));
+            }
+            paginationContainer.append(createPageButton(totalPages));
+        }
+
+        const nextButton = $(`<button class="btn btn-sm btn-page ${currentPage === totalPages ? 'btn-light disabled' : 'btn-light'}">Next</button>`);
+        nextButton.on('click', () => {
+            if (currentPage < totalPages) changePage(currentPage + 1);
+        });
+        paginationContainer.append(nextButton);
     }
+
+    window.changePage = function (page) {
+        if (page < 1 || page > Math.ceil(totalRecords / pageSize)) return; 
+        currentPage = page;
+        loadPrepayRequests(page); 
+    };
+
+
+    $('#searchBox').on('keyup', function () {
+        searchEmail = $(this).val().trim();
+        currentPage = 1;
+        loadPrepayRequests(currentPage);
+    });
+
+    $('#statusFilter').on('change', function () {
+        filterStatus = $(this).val();
+        currentPage = 1;
+        loadPrepayRequests(currentPage);
+    });
+
 
     window.changePage = function (page) {
         currentPage = page;

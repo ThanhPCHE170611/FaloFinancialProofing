@@ -36,7 +36,7 @@ namespace FALOFinancialProofing.Controllers
 
         // những campaign không ở trạng thái pending và rejected
         [HttpGet("GetAllCampaignInSystem")]
-        public async Task<IActionResult> GetAllCampaignInSystem(string? title, string? status, bool? IsActive, int currentPage = IntConstant.PageNumberDefault)
+        public async Task<IActionResult> GetAllCampaignInSystem(string? title, string? status, bool? IsActive, int currentPage = IntConstant.PageNumberDefault, int PageSizeCustom = 7)
         {
             List<CampaignInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -67,7 +67,7 @@ namespace FALOFinancialProofing.Controllers
                 }
                 filterPagingData.DataCount = data.Count;
                 filterPagingData.CurrentPage = currentPage;
-                data = PaginationHelper.Paginate<CampaignInformation>(data.AsQueryable(), currentPage, IntConstant.PageSizeCustom).ToList();
+                data = PaginationHelper.Paginate<CampaignInformation>(data.AsQueryable(), currentPage, PageSizeCustom).ToList();
                 filterPagingData.Data = data;
             }
             catch (Exception ex)
@@ -83,7 +83,7 @@ namespace FALOFinancialProofing.Controllers
         }
         //[RoleAttribute(AppRole.ProjectManagementBoard, AppRole.ProjectManager, AppRole.Admin)]
         [HttpGet("GetAllCampaignByProjectId/{ProjectId}")]// search theo title
-        public async Task<IActionResult> GetAllCampaignByProjectId(string? title, int ProjectId, string? status, int currentPage = IntConstant.PageNumberDefault)
+        public async Task<IActionResult> GetAllCampaignByProjectId(string? title, int ProjectId, string? status, int currentPage = IntConstant.PageNumberDefault, int PageSizeCustom = 6)
         {
             List<CampaignInformation> data = null;
             FilterPagingData filterPagingData = new FilterPagingData();
@@ -110,7 +110,7 @@ namespace FALOFinancialProofing.Controllers
                 }
                 filterPagingData.DataCount = data.Count;
                 filterPagingData.CurrentPage = currentPage;
-                data = PaginationHelper.Paginate<CampaignInformation>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                data = PaginationHelper.Paginate<CampaignInformation>(data.AsQueryable(), currentPage, PageSizeCustom).ToList();
                 filterPagingData.Data = data;
             }
             catch (Exception ex)

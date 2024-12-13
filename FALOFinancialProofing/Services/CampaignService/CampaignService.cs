@@ -87,7 +87,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                         UpdateLog = p.UpdateLog,
                         TotalMoneyEarned = p.TransactionLogs
                             .Where(t => t.Amount > 0)
-                            .Sum(x => (double)x.Amount),
+                            .Sum(x => (long)x.Amount),
                     }).ToListAsync();
             }
             catch (Exception ex)
@@ -102,7 +102,7 @@ namespace FALOFinancialProofing.Services.CampaignService
             List<CampaignInformation> data = null!;
             try
             {
-                data = await campaignRepository.GetAll().Where(p => p.ProjectId == ProjectId)
+                data = await campaignRepository.GetAll().Where(p => p.ProjectId == ProjectId && p.IsActive)
                     .Select(p => new CampaignInformation()
                     {
                         FirstName = p.User.FirstName,
@@ -123,7 +123,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                         Status = p.Status,
                         TotalMoneyEarned = p.TransactionLogs
                             .Where(t => t.Amount > 0)
-                            .Sum(x => (double)x.Amount),
+                            .Sum(x => (long)x.Amount),
                         UpdateLog = p.UpdateLog,
                     }).ToListAsync();
             }
@@ -179,7 +179,7 @@ namespace FALOFinancialProofing.Services.CampaignService
                         UpdateLog = p.UpdateLog,
                         TotalMoneyEarned = p.TransactionLogs
                             .Where(t => t.Amount > 0)
-                            .Sum(x => (double)x.Amount),
+                            .Sum(x => (long)x.Amount),
                         CreateCampaignFiles = p.CreateCampaignRequests.SelectMany(ccr => ccr.CreateCampaignFiles).Select(f => new CreateCampaignFileInformation()
                         {
                             Id = f.Id,
@@ -242,6 +242,10 @@ namespace FALOFinancialProofing.Services.CampaignService
                     campaign.IsActive = updateCampaignDTO.IsActive ?? campaign.IsActive;
                     campaign.Status = updateCampaignDTO.Status ?? campaign.Status;
                     campaign.BankId = updateCampaignDTO.BankId ?? campaign.BankId;
+                    if (updateCampaignDTO.EndDate != null)
+                    {
+                        await UpdateEndDateForProjectManagerBoardAsync(updateCampaignDTO, campaign, message);
+                    }
                 }
                 checkValid = await campaignRepository.UpdateAsync(campaign);
             }
@@ -304,10 +308,16 @@ namespace FALOFinancialProofing.Services.CampaignService
                 {
                     throw new Exception("This user has no such Project");
                 }
-                var isProjectActive = await _projectService.CheckProjectIsActiveAsync(createCampaignClientRequest.ProjectId);
+                //var isProjectActive = await _projectService.CheckProjectIsActiveAsync(createCampaignClientRequest.ProjectId);
+                var project = await _projectService.GetProjectByIdAsync(createCampaignClientRequest.ProjectId);
+                var isProjectActive = project.IsActive;
                 if (!isProjectActive)
                 {
                     throw new Exception("Project is not active");
+                }
+                if (project.Status != null && project.Status.Equals(RequestStatus.Close))
+                {
+                    throw new Exception("Project has been close");
                 }
                 // số tiền tạo > 0
                 if (createCampaignClientRequest.FundTarget <= 0)
@@ -403,6 +413,27 @@ namespace FALOFinancialProofing.Services.CampaignService
             }
         }
 
+        public async Task<Campaign?> UpdateEndDateForProjectManagerBoardAsync(UpdateCampaignDTO updateCampaignDTO, Campaign campaign, StringBuilder message)
+        {
+            try
+            {
+                // check if new date is valid
+                if (updateCampaignDTO.EndDate != campaign.EndDate)
+                {
+                    campaign.EndDate = updateCampaignDTO.EndDate;
+                    var newUpdateLog = new StringBuilder(campaign.UpdateLog);
+                    newUpdateLog.AppendLine($"Project Manager Board change end date to {updateCampaignDTO.EndDate} at {DateTime.Now}");
+                    campaign.UpdateLog = newUpdateLog.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                message.Append(ex.Message);
+                Console.WriteLine($"UpdateEndDateForProjectManagerBoardAsync: {ex.Message}");
+            }
+
+            return campaign;
+        }
         public async Task<Campaign?> UpdateEndDateForProjectManagerAsync(int campaignId, string userId, string currentRole, DateTime newDateTime, StringBuilder message)
         {
             try
@@ -499,6 +530,14 @@ namespace FALOFinancialProofing.Services.CampaignService
                 if ((campaignOwner == null && !checkPMB && !checkAdmin) || (!checkPMB && !checkAdmin && campaignOwner != null && !campaignOwner.IsActive))
                 {
                     throw new Exception("You don't have permission to update campaign!");
+                }
+                if (checkAdmin || checkPMB)
+                {
+                    var endDate = campaign.EndDate;
+                    if (endDate != null && updateCampaignDTO.EndDate != null && endDate > updateCampaignDTO.EndDate)
+                    {
+                        throw new Exception("End Date must be after the current end date");
+                    }
                 }
                 if (updateCampaignDTO.LogoFile != null && updateCampaignDTO.LogoFile.Length > FileHelper.CampaignImageMaxFileSize)
                 {

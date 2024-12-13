@@ -32,162 +32,270 @@
         <div class="item shadow mb-30">
             <h5 class="title">Search</h5>
             <div class="serach-bar">
-                <input type="text" id="searchInput" placeholder="Search here">
-                <button id="searchButton"><i class="fa-regular fa-magnifying-glass"></i></button>
+                <input type="text" id="searchInput" placeholder="Search here" style=" padding: 6px;">
             </div>
         </div>
+        <div class="blog-single__right-item">
+            <div class="item shadow mb-30">
+                <div class="date-filter">
+                    <h5 class="title">Filter by Date</h5>
+                    <input type="date" id="startDate">
+                    <input type="date" id="endDate">
+                    <button id="applyDateFilter">Apply Filter</button>
+                </div>
+            </div>
+        </div>
+        <!-- Error Message -->
+        <div id="errorMessage" class="alert alert-danger" style="display:none;"></div>
+
+        <!-- Table for displaying the activity logs -->
+        <table class="table table-bordered table-hover" id="activityTable" style="display:none;">
+            <thead>
+                <tr>
+                    <th scope="col">Thời Gian</th>
+                    <th scope="col">Mô tả hoạt động</th>
+                    <th scope="col">Số tiền</th>
+                    <th scope="col">Người thực hiện</th>
+                    <th scope="col">Chứng thực</th>
+                </tr>
+            </thead>
+            <tbody id="activityLogs"></tbody>
+        </table>
+
+        <!-- Pagination controls -->
+        <div id="paginationControls" class="pegi justify-content-center mt-80 pagination"></div>
     </div>
 
-    <!-- Error Message -->
-    <div id="errorMessage" class="alert alert-danger" style="display:none;"></div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- Table for displaying the activity logs -->
-    <table class="table table-bordered table-hover" id="activityTable" style="display:none;">
-        <thead>
-            <tr>
-                <th scope="col">Thời Gian</th>
-                <th scope="col">Mô tả hoạt động</th>
-                <th scope="col">Số tiền</th>
-                <th scope="col">Người thực hiện</th>
-                <th scope="col">Chứng thực</th>
-            </tr>
-        </thead>
-        <tbody id="activityLogs"></tbody>
-    </table>
-
-    <!-- Pagination controls -->
-    <div id="paginationControls" class="pegi justify-content-center mt-80 pagination"></div>
-</div>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function () {
-        var campaignId = '@ViewBag.campaignId';
-        loadActivityLogs(1, "", campaignId);  // Initial load for page 1
-
-        // Search functionality
-        $('#searchButton').click(function () {
-            var searchInput = $('#searchInput').val();
-            loadActivityLogs(1, searchInput, campaignId);
-        });
-
-        // Allow pressing Enter to trigger search
-        $('#searchInput').keypress(function (e) {
-            if (e.which === 13) {  // Enter key
+    @inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+    <script>
+        let fixedTotalAmount = 0;
+        let fixedTotalFiles = 0;
+        $(document).ready(function () {
+            var campaignId = '@ViewBag.campaignId';
+            loadActivityLogs(1, "", campaignId);  // Initial load for page 1
+            fetchFixedData(campaignId);
+            // Search functionality
+            $('#searchButton').click(function () {
                 var searchInput = $('#searchInput').val();
                 loadActivityLogs(1, searchInput, campaignId);
-            }
-        });
-    });
-
-    // Function to load activity logs with pagination
-    function loadActivityLogs(currentPage, searchInput, campaignId) {
-        const apiUrl = `https://localhost:7294/api/AttachmentFile/getallpaymentattachmentincampaignwithrequest/${campaignId}?name=${searchInput}&page=${currentPage}`;
-
-        $.ajax({
-            url: apiUrl,
-            type: 'GET',
-            success: function (response) {
-                if (response && response.success && response.data && response.data.data) {
-                    renderActivityLogs(response.data.data);
-                    renderPagination(response.data.totalRecords, currentPage, searchInput, campaignId);
-                } else {
-                    showError("No data found.");
-                }
-            },
-            error: function () {
-                showError("Failed to fetch activity logs.");
-            }
-        });
-    }
-
-    // Function to render the activity logs in the table
-    function renderActivityLogs(activities) {
-        $('#activityTable').show();
-        $('#activityLogs').empty();
-
-        activities.forEach(function (activity) {
-            var rowHtml = `<tr>
-                            <td>${new Date(activity.createAt).toLocaleString()}</td>
-                            <td>${activity.description}</td>
-                            <td>${activity.expectedMoney}</td>
-                            <td>${activity.createByName} (${activity.createByEmail})</td>
-                            <td>
-                                ${activity.attachmentFilePath ?
-                    `<a href="javascript:void(0);" onclick="downloadAttachmentFile('${activity.attachmentFilePath}')">${activity.attachmentFilePath}</a>` :
-                    '<span class="text-danger">Thiếu</span>'
-                }
-                            </td>
-                        </tr>`;
-            $('#activityLogs').append(rowHtml);
-        });
-
-        $('#errorMessage').hide();
-    }
-
-    function renderPagination(totalRecords, currentPage, searchInput, campaignId) {
-        const pageSize = 5;  
-        const totalPages = Math.ceil(totalRecords / pageSize);  
-        const paginationControls = $('#paginationControls');
-        paginationControls.empty();  
-
-        if (currentPage > 1) {
-            paginationControls.append(`<button onclick="loadActivityLogs(${currentPage - 1}, '${searchInput}', ${campaignId})"><i class="fa-solid fa-arrow-left-long primary-color transition"></i></button>`);
-        }
-
-        const startPage = Math.max(1, currentPage - 2);  
-        const endPage = Math.min(totalPages, currentPage + 2);  
-
-        for (let i = startPage; i <= endPage; i++) {
-            if (i === currentPage) {
-                paginationControls.append(`<button class="active" disabled>${i}</button>`);
-            } else {
-                paginationControls.append(`<button onclick="loadActivityLogs(${i}, '${searchInput}', ${campaignId})">${i}</button>`);
-            }
-        }
-
-        if (currentPage < totalPages) {
-            paginationControls.append(`<button onclick="loadActivityLogs(${currentPage + 1}, '${searchInput}', ${campaignId})"><i class="fa-solid fa-arrow-right-long primary-color transition"></i></button>`);
-        }
-    }
-
-
-    // Function to show error message
-    function showError(message) {
-        $('#errorMessage').text(message).show();
-        $('#activityTable').hide();
-    }
-
-    // Function to handle file download
-    function downloadAttachmentFile(filePath) {
-        const filename = filePath.split('/').pop();
-        const url = `https://localhost:7294/api/AttachmentFile/downloadattachmentfilewithnotypebyfilename/${filename}`;
-
-        fetch(url)
-            .then(response => {
-                if (response.ok) {
-                    return response.blob();
-                } else {
-                    throw new Error('Failed to fetch the file: ' + response.statusText);
-                }
-            })
-            .then(blob => {
-                const link = document.createElement('a');
-                const blobUrl = URL.createObjectURL(blob);
-
-                link.href = blobUrl;
-                link.download = filename;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-
-                URL.revokeObjectURL(blobUrl);
-            })
-            .catch(error => {
-                console.error('Error downloading file:', error);
-                alert('Error downloading file: ' + error.message);
             });
-    }
-    
-</script>
+
+            // Allow pressing Enter to trigger search
+            $('#searchInput').keypress(function (e) {
+                if (e.which === 13) {  // Enter key
+                    var searchInput = $('#searchInput').val();
+                    loadActivityLogs(1, searchInput, campaignId);
+                }
+            });
+            $('#applyDateFilter').click(applyDateFilter);
+        });
+
+        var apiUrl = '@Configuration["ApiBaseUrl"]';
+
+        // Function to load activity logs with pagination
+        function loadActivityLogs(currentPage, searchInput, campaignId, startDate = "", endDate = "") {
+            const url = apiUrl + `/api/AttachmentFile/getallpaymentattachmentincampaignwithrequest/${campaignId}?name=${searchInput}&page=${currentPage}`;
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function (response) {
+                    if (response && response.success && response.data && response.data.data) {
+                        renderActivityLogs(response.data.data);
+                        // renderPagination(response.data.totalRecords, currentPage, searchInput, campaignId);
+                        updatePagination(response.data.totalRecords, currentPage, searchInput, campaignId, startDate, endDate);
+                    } else {
+                        showError("No data found.");
+                    }
+                },
+                error: function () {
+                    showError("Failed to fetch activity logs.");
+                }
+            });
+        }
+
+        // Function to render the activity logs in the table
+        function renderActivityLogs(activities) {
+            $('#activityTable').show();
+            $('#activityLogs').empty();
+            activities.forEach(function (activity) {
+                const formattedAmount = activity.expectedMoney.toLocaleString('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND'
+                });
+                var rowHtml = `<tr>
+                                                                                                                <td>${new Date(activity.createAt).toLocaleString()}</td>
+                                                                                                                <td>${activity.description}</td>
+                                                                                                                    <td>${formattedAmount}</td>
+                                                                                                                <td>${activity.createByName} (${activity.createByEmail})</td>
+                                                                                                                <td>
+                                                                                                                    ${activity.attachmentFilePath ?
+                        `<a href="javascript:void(0);" onclick="downloadAttachmentFile('${activity.attachmentFilePath}')">${activity.attachmentFilePath}</a>` :
+                        '<span class="text-danger">Thiếu</span>'
+                    }
+                                                                                                                </td>
+                                                                                                            </tr>`;
+                $('#activityLogs').append(rowHtml);
+            });
+            $('#errorMessage').hide();
+        }
+
+        function fetchFixedData(campaignId) {
+            const fileApiUrl = apiUrl + `/api/AttachmentFile/getnumberallattachmentfileincampain/${campaignId}`;
+            const amountApiUrl = apiUrl + `/api/AttachmentFile/getallpaymentattachmentincampaignwithrequest/${campaignId}`;
+
+            // Fetch total files
+            $.ajax({
+                url: fileApiUrl,
+                type: 'GET',
+                success: function (response) {
+                    if (response && response.success && typeof response.data === 'number') {
+                        fixedTotalFiles = response.data;
+                        console.log(response.data.totalRecords);
+                    } else {
+                        console.warn("Failed to fetch total file count.");
+                    }
+                },
+                error: function () {
+                    console.error("Error fetching total file count.");
+                }
+            });
+
+            // Fetch total amount
+            $.ajax({
+                url: amountApiUrl,
+                type: 'GET',
+                success: function (response) {
+                    if (response && response.success && response.data && response.data.data) {
+                        fixedTotalAmount = response.data.data.reduce((sum, transaction) => sum + (transaction.expectedMoney || 0), 0);
+                        fixedTotalFiles = response.data.totalRecords;
+                        displayFixedData(response.data.data);
+                    } else {
+                        console.warn("Failed to fetch total amount.");
+                    }
+                },
+                error: function () {
+                    console.error("Error fetching total amount.");
+                }
+            });
+        }
+        function displayFixedData(activities) {
+            const currentFiles = activities.filter(activity => activity.attachmentFilePath).length;;
+            const completionPercentage = ((currentFiles / fixedTotalFiles) * 100).toFixed(2);
+            const totalAmountFormatted = fixedTotalAmount.toLocaleString('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            });
+
+            $('#activityTable').before(`
+                    <div style="text-align: right; margin-bottom: 10px; font-weight: bold; color: green;">
+                        Tổng Số Tiền: ${totalAmountFormatted}
+                    </div>
+                    <div style="text-align: right; margin-bottom: 10px; font-weight: bold; color: orangered;">
+                        Tổng Số File: ${currentFiles} / ${fixedTotalFiles} (${completionPercentage}% Hoàn Thành)
+                    </div>
+                `);
+        }
+        function updatePagination(totalRecords, currentPage, searchInput, campaignId, startDate = "", endDate = "") {
+            const pageSize = 30;
+            const totalPages = Math.ceil(totalRecords / pageSize);
+            const paginationControls = $('#paginationControls');
+            paginationControls.empty();
+
+            if (currentPage > 1) {
+                paginationControls.append(`<button onclick="loadActivityLogs(${currentPage - 1}, '${searchInput}', ${campaignId}, '${startDate}', '${endDate}')"><i class="fa-solid fa-arrow-left-long primary-color transition"></i></button>`);
+            }
+
+            if (totalPages <= 6) {
+                for (let i = 1; i <= totalPages; i++) {
+                    if (i === currentPage) {
+                        paginationControls.append(`<button class="active" disabled>${i}</button>`);
+                    } else {
+                        paginationControls.append(`<button onclick="loadActivityLogs(${i}, '${searchInput}', ${campaignId}, '${startDate}', '${endDate}')">${i}</button>`);
+                    }
+                }
+            } else {
+                paginationControls.append(`<button onclick="loadActivityLogs(1, '${searchInput}', ${campaignId}, '${startDate}', '${endDate}')">1</button>`);
+                paginationControls.append(`<button onclick="loadActivityLogs(2, '${searchInput}', ${campaignId}, '${startDate}', '${endDate}')">2</button>`);
+
+                if (currentPage > 4) {
+                    paginationControls.append(`<span>...</span>`);
+                }
+
+                const startPage = Math.max(3, currentPage - 1);
+                const endPage = Math.min(totalPages - 2, currentPage + 1);
+
+                for (let i = startPage; i <= endPage; i++) {
+                    if (i === currentPage) {
+                        paginationControls.append(`<button class="active" disabled>${i}</button>`);
+                    } else {
+                        paginationControls.append(`<button onclick="loadActivityLogs(${i}, '${searchInput}', ${campaignId}, '${startDate}', '${endDate}')">${i}</button>`);
+                    }
+                }
+
+                if (currentPage < totalPages - 3) {
+                    paginationControls.append(`<span>...</span>`);
+                }
+
+                paginationControls.append(`<button onclick="loadActivityLogs(${totalPages - 1}, '${searchInput}', ${campaignId}, '${startDate}', '${endDate}')">${totalPages - 1}</button>`);
+                paginationControls.append(`<button onclick="loadActivityLogs(${totalPages}, '${searchInput}', ${campaignId}, '${startDate}', '${endDate}')">${totalPages}</button>`);
+            }
+
+            if (currentPage < totalPages) {
+                paginationControls.append(`<button onclick="loadActivityLogs(${currentPage + 1}, '${searchInput}', ${campaignId}, '${startDate}', '${endDate}')"><i class="fa-solid fa-arrow-right-long primary-color transition"></i></button>`);
+            }
+        }
+
+        // Function to show error message
+        function showError(message) {
+            $('#errorMessage').text(message).show();
+            $('#activityTable').hide();
+        }
+
+        // Function to handle file download
+        function downloadAttachmentFile(filePath) {
+            const filename = filePath.split('/').pop();
+            const url = apiUrl + `/api/AttachmentFile/downloadattachmentfilewithnotypebyfilename/${filename}`;
+
+            fetch(url)
+                .then(response => {
+                    if (response.ok) {
+                        return response.blob();
+                    } else {
+                        throw new Error('Failed to fetch the file: ' + response.statusText);
+                    }
+                })
+                .then(blob => {
+                    const link = document.createElement('a');
+                    const blobUrl = URL.createObjectURL(blob);
+
+                    link.href = blobUrl;
+                    link.download = filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    URL.revokeObjectURL(blobUrl);
+                })
+                .catch(error => {
+                    console.error('Error downloading file:', error);
+                    alert('Error downloading file: ' + error.message);
+                });
+        }
+        function applyDateFilter() {
+            const startDate = $('#startDate').val();
+            const endDate = $('#endDate').val();
+
+            if (new Date(startDate) > new Date(endDate)) {
+                showError("Start date cannot be after the end date.");
+                return;
+            }
+
+            const searchInput = $('#searchInput').val();
+            const campaignId = '@ViewBag.campaignId';
+            loadActivityLogs(1, searchInput, campaignId, startDate, endDate);
+        }
+    </script>
 

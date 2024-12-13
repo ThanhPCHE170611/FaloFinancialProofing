@@ -2,17 +2,18 @@
     theme: 'snow'
 });
 
-document.getElementById('relatedDocs').addEventListener('change', function (event) {
-    const docList = document.getElementById('docList');
-    docList.innerHTML = '';
-    const files = event.target.files;
-    Array.from(files).forEach(file => {
-        const listItem = document.createElement('li');
-        listItem.classList.add('list-group-item');
-        listItem.textContent = file.name;
-        docList.appendChild(listItem);
-    });
-});
+//document.getElementById('relatedDocs').addEventListener('change', function (event) {
+//    const docList = document.getElementById('docList');
+//    docList.innerHTML = '';
+//    const files = event.target.files;
+//    Array.from(files).forEach(file => {
+//        const listItem = document.createElement('li');
+//        listItem.classList.add('list-group-item');
+//        listItem.textContent = file.name;
+//        docList.appendChild(listItem);
+//    });
+//});
+
 
 var win = navigator.platform.indexOf('Win') > -1;
 if (win && document.querySelector('#sidenav-scrollbar')) {
@@ -27,12 +28,14 @@ const userId = localStorage.getItem('userId');
 const projectId = localStorage.getItem('projectId');
 const jwtToken = localStorage.getItem('jwtToken');
 const checkrole = localStorage.getItem('loggingRole');
+const roleid = localStorage.getItem('loggingRoleId');
+
 document.addEventListener('DOMContentLoaded', function () {
     const jwtToken = localStorage.getItem('jwtToken');
     const checkrole = localStorage.getItem('loggingRole');
     function loadProjectDetails() {
         $.ajax({
-            url: `https://localhost:7294/api/Projects/GetProjectDetailsById/${projectId}`,
+            url: `${apiBaseUrl}/api/Projects/GetProjectDetailsById/${projectId}`,
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -59,36 +62,91 @@ document.addEventListener('DOMContentLoaded', function () {
         updateBtn.id = 'update-btn';
         saveBtnContainer.appendChild(updateBtn);
 
-        const fieldsToWatch = ['projectName', 'projectProcess', 'projectStatus','editor-container'];
-        fieldsToWatch.forEach(id => {
-            document.getElementById(id).addEventListener('input', () => {
-                updateBtn.disabled = false;
-            });
+        const fieldsToWatch = ['projectName', 'projectProcess', 'projectStatus', 'editor-container','choseImage'];
+        //fieldsToWatch.forEach(id => {
+        //    document.getElementById(id).addEventListener('input', () => {
+        //        updateBtn.disabled = false;
+        //    });
+        //});
+        const editableFields = ['projectName', 'projectProcess', 'projectStatus', 'choseImage'];
+
+        editableFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.removeAttribute('readonly'); 
+                field.removeAttribute('disabled'); 
+            }
         });
 
+        fieldsToWatch.forEach(id => {
+            const element = document.getElementById(id);
+
+            if (!element) return; 
+
+            if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                element.addEventListener('input', () => {
+                    updateBtn.disabled = false;
+                });
+            } else if (element.tagName === 'SELECT') {
+                element.addEventListener('change', () => {
+                    updateBtn.disabled = false;
+                });
+            } else if (element.tagName === 'BUTTON' || element.type === 'file') {
+                element.addEventListener('change', () => {
+                    updateBtn.disabled = false;
+                });
+            }
+        });
+
+        quill.on('text-change', function () {
+            updateBtn.disabled = false; 
+        });
         updateBtn.addEventListener('click', function () {
             const updateData = prepareUpdateData();
 
-            fetch(`https://localhost:7294/api/Projects/UpdateProject`, {
-                method: 'PUT',
+            $.ajax({
+                url: `${apiBaseUrl}/api/Projects/UpdateProject`,
+                type: 'PUT',
                 headers: {
-                    'Authorization': `Bearer ${jwtToken}`,
+                    'Authorization': `Bearer ${jwtToken}`
                 },
-                body: updateData
-            })
-                .then(response => response.json())
-                .then(data => {
+                data: updateData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
                     if (data.success) {
                         alert('Project updated successfully!');
                         location.reload();
                     } else {
-                        alert('Failed to update project: ' + data.message);
+                        alert( data.message);
                     }
-                })
-                .catch(() => alert('Error updating project'));
+                },
+                error: function (xhr, status, error) {
+                    alert('Error updating project: ' + xhr.responseText || status);
+                }
+            });
         });
     }
+    function prepareUpdateData() {
+        const formData = new FormData();
+        formData.append('ProjectId', projectId);
+        formData.append('UserId', userId);
+        formData.append('RoleId', roleid);
+        formData.append('projectName', document.getElementById('projectName').value);
+        formData.append('Description', quill.getText());
+        //if (uploadedImage) {
+        //    formData.append('LogoFile', uploadedImage);
+        //}
+        const logoFile = $('#projectImages')[0].files[0];
+        if (logoFile) {
+            formData.append('LogoFile', logoFile);
+        }
+        formData.append('Status', document.getElementById('projectProcess').value);
+        formData.append('isActive', document.getElementById('projectStatus').value);
 
+
+        return formData;
+    }
 
     function populateProjectDetails(project) {
         document.getElementById('projectName').value = project.projectName;
@@ -103,62 +161,140 @@ document.addEventListener('DOMContentLoaded', function () {
             const imagePreview = document.getElementById('imagePreview');
             imagePreview.innerHTML = `
                         <div class="col-md-4 mb-3">
-                            <img src="${project.image}" alt="Project Image" class="img-fluid" id="existing-image">
+                            <img src="${project.image}" alt="Project Image" class="img-fluid rounded" id="existing-image">
                         </div>`;
         }
 
-        //displayFiles(files);
+        displayFiles(project.createProjectFiles);
 
     }
-
-
     loadProjectDetails();
 });
-function prepareUpdateData() {
-    const formData = new FormData();
-    formData.append('ProjectId', projectId);
-    formData.append('UserId', userId);
-    formData.append('projectName', document.getElementById('projectName').value);
-    formData.append('Description', quill.getText());
-    if (uploadedImage) {
-        formData.append('LogoFile', uploadedImage);
-    }
-    formData.append('Status', document.getElementById('projectProcess').value);
-    formData.append('isActive', document.getElementById('projectStatus').value);
-    
 
-    return formData;
-}
-projectImageInput.addEventListener('change', function (event) {
-    const file = event.target.files[0];
-    if (file) {
-        uploadedImage = file;
-        const imagePreview = document.getElementById('imagePreview');
-        imagePreview.innerHTML = `
-                        <div class="col-md-4 mb-3">
-                            <img src="${URL.createObjectURL(file)}" alt="New Project Image" class="img-fluid">
-                        </div>`;
+//projectImageInput.addEventListener('change', function (event) {
+//    const file = event.target.files[0];
+//    if (file) {
+//        uploadedImage = file;
+//        const imagePreview = document.getElementById('imagePreview');
+//        imagePreview.innerHTML = `
+//                        <div class="col-md-4 mb-3">
+//                            <img src="${URL.createObjectURL(file)}" alt="New Project Image" class="img-fluid">
+//                        </div>`;
+//    }
+//});
+$('#projectImages').on('change', function (event) {
+    const files = event.target.files;
+    if (files.length > 0) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            updateImagePreview(e.target.result);
+        };
+        reader.readAsDataURL(files[0]);
+
+        if (!isChanged) {
+            $('#btnUpdate').removeAttr('disable');
+            isChanged = true;
+        }
     }
 });
 
-function displayFiles(files) {
-    const docList = document.getElementById('docList');
-    docList.innerHTML = '';
-
-    files.forEach(file => {
-        const listItem = document.createElement('li');
-        listItem.classList.add('list-group-item');
-        listItem.textContent = file;
-        listItem.style.cursor = 'pointer';
-
-        listItem.addEventListener('click', function () {
-            downloadFile(file);
-        });
-
-        docList.appendChild(listItem);
+document.getElementById('projectImages').addEventListener('change', function (event) {
+    const imagePreview = document.getElementById('imagePreview');
+    imagePreview.innerHTML = '';
+    const files = event.target.files;
+    Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const colDiv = document.createElement('div');
+            colDiv.classList.add('col-md-4', 'mb-3');
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.classList.add('img-fluid', 'rounded');
+            colDiv.appendChild(img);
+            imagePreview.appendChild(colDiv);
+        }
+        reader.readAsDataURL(file);
     });
-}
+});
+
+//function displayFiles(files) {
+//    const docList = document.getElementById('docList');
+//    docList.innerHTML = '';
+
+//    if (!Array.isArray(files) || files.length === 0) {
+//        const noFilesMessage = document.createElement('li');
+//        noFilesMessage.classList.add('list-group-item');
+//        noFilesMessage.textContent = 'No files available';
+//        docList.appendChild(noFilesMessage);
+//        return;
+//    }
+
+//    files.forEach(file => {
+//        const listItem = document.createElement('li');
+//        listItem.classList.add('list-group-item');
+//        listItem.textContent = file.filePath; 
+//        listItem.style.cursor = 'pointer';
+
+//        listItem.addEventListener('click', function () {
+//            downloadFile(file.filePath);
+//        });
+
+//        docList.appendChild(listItem);
+//    });
+//}
 
 function downloadFile(fileName) {
-    window.location.href = `https://localhost:7294/api/Projects/downloadattachmentfilewithnotypebyfilename/${fileName}`;
+    $.ajax({
+        url: `${apiBaseUrl}/api/CreateProjectFiles/DownloadProjectFile/${fileName}`,
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${jwtToken}`
+        },
+        xhrFields: {
+            responseType: 'blob'
+        },
+        success: function (data, status, xhr) {
+            console.log(fileName);
+            const contentType = xhr.getResponseHeader('Content-Type');
+            const blob = new Blob([data], { type: contentType });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+        },
+        error: function (xhr, status, error) {
+            alert('Error downloading file. Please try again.');
+            console.error('Error downloading file:', error);
+        }
+    });
+}
+function displayFiles(files) {
+    const campaignFilesList = $('#campaignFilesList');
+    campaignFilesList.empty();
+
+    if (!files || files.length === 0) {
+        campaignFilesList.append('<li>No files available for this campaign.</li>');
+        return;
+    }
+
+    files.forEach(file => {
+        const listItem = $(`
+                <li>
+                    <a href="#" class="file-link" data-file="${file.filePath}">
+                        ${file.filePath}
+                    </a>
+                </li>
+            `);
+        campaignFilesList.append(listItem);
+    });
+
+    $('.file-link').on('click', function (event) {
+        event.preventDefault();
+        const fileName = $(this).data('file');
+        downloadFile(fileName);
+    });
 }

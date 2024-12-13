@@ -88,8 +88,8 @@
             <div class="pt-4 pb-3 d-flex justify-content-between align-items-center">
                 <nav class="nav-tabs" id="navTabs">
                     <a asp-controller="Campaign" asp-action="CampaignDetail" >Campaign Detail</a>
-                    <a asp-controller="Prepay" asp-action="PrepayManagement">Prepay Request</a>
-                    <a asp-controller="Payment" asp-action="PaymentManagement">Payment Request</a>
+                    <a asp-controller="Prepay" asp-action="PrepayManagement">Created Prepay Request</a>
+                    <a asp-controller="Payment" asp-action="PaymentManagement">Created Payment Request</a>
                     <a asp-controller="Accounting" asp-action="AccountingBookCampaign">Accounting Book</a>
                     <a asp-controller="Campaign" asp-action="Member" class="active">Member</a>
                 </nav>
@@ -97,7 +97,7 @@
         </div>
         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
-                <h6 class="text-white text-capitalize ps-3 mb-0">Add Member to Campaign</h6>
+                <h6 class="text-white text-capitalize ps-3 mb-0" id="titleAddMember">Add Member to Campaign</h6>
             </div>
         </div>
         <div class="d-flex justify-content-between container-fluid py-4">
@@ -208,8 +208,17 @@
     let selectedUserIds = [];
     const campaignId = localStorage.getItem('campaignId');
     const jwtToken = localStorage.getItem('jwtToken');
+    if (!jwtToken) {
+        window.location.href = '/Authentication/Login';
+    }
     const userId = localStorage.getItem('userId');
     const checkrole = localStorage.getItem('loggingRole');
+    const checkroleId = localStorage.getItem('loggingRoleId');
+    const campaignName = localStorage.getItem('campaignName');
+    if (campaignName) {
+        const titleElement = document.getElementById('titleAddMember');
+        titleElement.textContent = `Add Member to Campaign ${campaignName}`;
+    }
     $(document).ready(function () {
 
         fetchAvailableVolunteers();
@@ -219,12 +228,12 @@
             const newLink = document.createElement('a');
             newLink.setAttribute('asp-controller', 'Prepay');
             newLink.setAttribute('asp-action', 'PrepayManagement_PM');
-            newLink.textContent = 'Prepay Created Request';
+            newLink.textContent = 'Approval Prepay Request';
 
             const newLink2 = document.createElement('a');
             newLink2.setAttribute('asp-controller', 'Payment');
             newLink2.setAttribute('asp-action', 'PaymentManagement_PM');
-            newLink2.textContent = 'Payment Created Request';
+            newLink2.textContent = 'Approval Payment Request';
 
             const url = new URL(`/Prepay/PrepayManagement_PM`, window.location.origin);
 
@@ -240,7 +249,7 @@
         function fetchAvailableVolunteers() {
             const searchInput = $('#volunteerSearchBox').val().trim();
             $.ajax({
-                url: `https://localhost:7294/api/Users/GetUserNotInCampaignById/${campaignId}?searchInput=${searchInput}`,
+                url: `${apiBaseUrl}/api/Users/GetUserNotInCampaignById/${campaignId}?searchInput=${searchInput}`,
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`
@@ -357,7 +366,7 @@
         }
 
         $.ajax({
-            url: `https://localhost:7294/api/CampaignMember/CreateManyCampaignMembers/${campaignId}/${userId}`,
+            url: `${apiBaseUrl}/api/CampaignMember/CreateManyCampaignMembers/${campaignId}/${userId}/${checkroleId}`,
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(selectedMembers),
@@ -369,7 +378,7 @@
                     alert('Members successfully added to the campaign!');
                     location.reload(); 
                 } else {
-                    alert('Failed to add members: ' + response.message);
+                    alert(response.message);
                     location.reload();
                 }
             },

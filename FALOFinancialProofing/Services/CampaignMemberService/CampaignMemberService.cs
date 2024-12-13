@@ -1,4 +1,5 @@
-﻿using FALOFinancialProofing.DTOs.CampaignMemberDTO;
+﻿using FALOFinancialProofing.DTOs.CampaignDTO;
+using FALOFinancialProofing.DTOs.CampaignMemberDTO;
 using FALOFinancialProofing.DTOs.RoleDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
@@ -108,11 +109,10 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             var campaignMembers = new List<CampaignMemberInformation>();
             try
             {
-
-                bool checkPM = (await authServices.CheckRole(userId, roleId, AppRole.ProjectManager, new StringBuilder())).Equals(AppRole.ProjectManager);
-                bool checkPMB = (await authServices.CheckRole(userId, roleId, AppRole.ProjectManagementBoard, new StringBuilder())).Equals(AppRole.ProjectManager);
-
-                campaignMembers = await cmRepository.GetAll().Where(cm => cm.UserId.Equals(userId) && cm.RoleId.Equals(roleId) && (!(checkPM || checkPMB) ? cm.Campaign.IsActive : true)).OrderBy(cm => cm.Id).Select(cm => new CampaignMemberInformation()
+                //bool checkPM = (await authServices.CheckRole(userId, roleId, AppRole.ProjectManager, new StringBuilder()));
+                //bool checkPMB = (await authServices.CheckRole(userId, roleId, AppRole.ProjectManagementBoard, new StringBuilder()));
+                //!(checkPM || checkPMB)
+                campaignMembers = await cmRepository.GetAll().Where(cm => cm.UserId.Equals(userId) && cm.RoleId.Equals(roleId) && cm.Campaign.IsActive).OrderBy(cm => cm.Id).Select(cm => new CampaignMemberInformation()
                 {
                     id = cm.Id,
                     UserId = cm.UserId,
@@ -247,11 +247,11 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             return campaignMembers;
         }
         //?
-        public async Task<CampaignMember?> GetCampaignMemberByUserIdAsync(string userid)
+        public async Task<CampaignMember?> GetCampaignMemberByUserIdAndCampaignIdAsync(string userid, int campaignId)
         {
             try
             {
-                return await cmRepository.GetAll(x => x.UserId.Equals(userid))
+                return await cmRepository.GetAll(x => x.UserId.Equals(userid) && x.CampaignId == campaignId)
                     .Include(cm => cm.Role)
                     .FirstOrDefaultAsync();
             }
@@ -275,13 +275,24 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 {
                     throw new Exception("Cannot deactivate CampaignMember with debt greater than 0.");
                 }
+                #region Điều kiện cũ
+                //var campaignOwner = await campaignService.GetCampaignByUserIdAndCampaignIdAsync(updateCampaignMemberStatusDTO.PmUserId, updateCampaignMemberStatusDTO.CampaignId);
+                //bool checkAdmin = await authServices.CheckUserInRole(updateCampaignMemberStatusDTO.PmUserId, AppRole.Admin, new StringBuilder());
+                //bool checkPMB = await authServices.CheckUserInRole(updateCampaignMemberStatusDTO.PmUserId, AppRole.ProjectManagementBoard, new StringBuilder());
+                //if ((campaignOwner == null && !checkPMB && !checkAdmin) || (campaignOwner != null && !campaignOwner.IsActive))
+                //{
+                //    throw new Exception("You don't have permission to update campaign!");
+                //} 
+                #endregion
                 var campaignOwner = await campaignService.GetCampaignByUserIdAndCampaignIdAsync(updateCampaignMemberStatusDTO.PmUserId, updateCampaignMemberStatusDTO.CampaignId);
-                bool checkAdmin = await authServices.CheckUserInRole(updateCampaignMemberStatusDTO.PmUserId, AppRole.Admin, new StringBuilder());
-                bool checkPMB = await authServices.CheckUserInRole(updateCampaignMemberStatusDTO.PmUserId, AppRole.ProjectManagementBoard, new StringBuilder());
-                if ((campaignOwner == null && !checkPMB && !checkAdmin) || (campaignOwner != null && !campaignOwner.IsActive))
+                bool checkAdmin = await authServices.CheckRole(updateCampaignMemberStatusDTO.PmUserId, updateCampaignMemberStatusDTO.PmRoleId, AppRole.Admin, new StringBuilder());
+                bool checkPMB = await authServices.CheckRole(updateCampaignMemberStatusDTO.PmUserId, updateCampaignMemberStatusDTO.PmRoleId, AppRole.ProjectManagementBoard, new StringBuilder());
+                // Không check trong campaignMember Pm có isactive =true/false
+                if ((campaignOwner == null && !checkPMB && !checkAdmin) || (!checkPMB && !checkAdmin && campaignOwner != null && !campaignOwner.IsActive))
                 {
                     throw new Exception("You don't have permission to update campaign!");
                 }
+
                 UpdateCampaignMemberStatusDTOToEntity(existingCampaignMember, updateCampaignMemberStatusDTO);
 
                 return await cmRepository.UpdateAsync(existingCampaignMember);
@@ -370,13 +381,14 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             };
         }
 
-        public async Task<List<CreateManyCampaignMemberDTO>> ValidateCampaignMembersCreateAsync(List<CreateManyCampaignMemberDTO> createManyCampaignMemberDTOs, int campaignId, string pmUserId, StringBuilder message)
+        public async Task<List<CreateManyCampaignMemberDTO>> ValidateCampaignMembersCreateAsync(List<CreateManyCampaignMemberDTO> createManyCampaignMemberDTOs, int campaignId, string pmUserId, string pmRoleId, StringBuilder message)
         {
             List<CreateManyCampaignMemberDTO> successDatas = new List<CreateManyCampaignMemberDTO>();
             try
             {
                 // check campaign Exist
-                var campaign = await campaignRepository.Get(campaignId);
+                //var campaign = await campaignRepository.Get(campaignId);
+                var campaign = await campaignRepository.Get(c => c.Id == campaignId && c.CreateBy.Equals(pmUserId));
                 if (campaign == null)
                 {
                     throw new Exception($"Campaign not found with id = {campaignId}.");
@@ -385,12 +397,16 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 {
                     throw new Exception($"Campaign is not active.");
                 }
+                if (campaign.Status != null && (campaign.Status.Equals(RequestStatus.Close) || campaign.Status.Equals(RequestStatus.Pending)))
+                {
+                    throw new Exception($"Campaign is close.");
+                }
                 // chỉ người tạo hoặc pmb mới có quyền add người vào chiến dịch
                 //var campaignMember = await cmRepository.Get(cm=>cm.CampaignId==campaignId&&pmUserId.Equals(cm.))
-                var pmUser = await campaignRepository.Get(c => c.Id == campaignId && c.CreateBy.Equals(pmUserId));
+                var pmUser = await cmRepository.Get(c => c.CampaignId == campaignId && c.UserId.Equals(pmUserId) && c.RoleId.Equals(pmRoleId));
                 // kiểm tra thằng add này có phải là pmb không
-                var checkPMB = await authServices.CheckUserInRoleId(pmUserId, AppRole.ProjectManagementBoard, new StringBuilder());
-                var checkAdmin = await authServices.CheckUserInRoleId(pmUserId, AppRole.Admin, new StringBuilder());
+                bool checkAdmin = await authServices.CheckRole(pmUserId, pmRoleId, AppRole.Admin, new StringBuilder());
+                bool checkPMB = await authServices.CheckRole(pmUserId, pmRoleId, AppRole.ProjectManagementBoard, new StringBuilder());
                 // người dùng không tạo ra chiến dịch, hoặc tạo ra nhưng bị vô hiệu hóa hoặc không phải là pmb hoặc admin
                 if ((pmUser == null && !checkPMB && !checkAdmin) || (pmUser != null && !pmUser.IsActive))
                 {

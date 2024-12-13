@@ -108,7 +108,7 @@
                             <h6 class="text-white text-capitalize ps-3 mb-0">Project Registration Management</h6>
                             <div id="createRequestBtn">
                                 <a class="btn btn-dark mb-0 me-3" asp-area="" asp-controller="Project" asp-action="ProjectCreate">Create Project (Individual)</a>
-                                <a class="btn btn-dark mb-0 me-3" asp-area="" asp-controller="Project" asp-action="ProjectCreate">Create Project (Organization)</a>
+                                <a class="btn btn-dark mb-0 me-3" asp-area="" asp-controller="Project" asp-action="ProjectCreate_Organization" id="organizationCreated">Create Project (Organization)</a>
                             </div>
                         </div>
                     </div>
@@ -120,6 +120,7 @@
                             <option value="Pending">Pending</option>
                             <option value="Accepted">Approved</option>
                             <option value="Rejected">Rejected</option>
+                            <option value="Cancel">Cancel</option>
                         </select>
                     </div>
 
@@ -152,9 +153,9 @@
     <div id="declineModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModalDeclineProjectRequest()">&times;</span>
-            <h3>Reject</h3>
+            <h3>Reject Request</h3>
             <label for="declineReason">Reason for Rejection:</label>
-            <textarea id="declineReason" class="form-control" rows="3" placeholder="Enter feedback..."></textarea>
+            <textarea id="declineReason" class="form-control" rows="3" placeholder="Enter feedback"></textarea>
             <button class="btn btn-danger mt-3" onclick="submitDecline()">Submit</button>
         </div>
     </div>
@@ -169,8 +170,9 @@
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@* <script src="~/js/project/projectrequestmanagement.js"></script> *@
 <script>
-    let currentButton = null;
+        let currentButton = null;
     let currentRequestId = null;
 
     function openDeclineModal(button, requestId) {
@@ -220,7 +222,7 @@
 
 
         $.ajax({
-            url: 'https://localhost:7294/api/CreateProjectRequestApproveHistories/CreateCreateProjectRequestApproveHistory',
+            url: `${apiBaseUrl}/api/CreateProjectRequestApproveHistories/CreateCreateProjectRequestApproveHistory`,
             type: 'POST',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -232,7 +234,7 @@
                     console.log(createProjectRequestId);
                     updateRowToRejected(button, createProjectRequestId);
                 } else {
-                    alert('Failed: ' + response.message);
+                    alert(response.message);
                 }
             },
             error: function (xhr, status, error) {
@@ -338,7 +340,7 @@
         return formattedDate + ' ' + formattedTime;
     }
 
-    function handleProjectApproval(button,createProjectRequestId, isAllowed) {
+    function handleProjectApproval(button, createProjectRequestId, isAllowed) {
         const userId = localStorage.getItem('userId');
 
         const today = new Date();
@@ -359,7 +361,7 @@
 
         const jwtToken = localStorage.getItem('jwtToken');
         $.ajax({
-            url: 'https://localhost:7294/api/CreateProjectRequestApproveHistories/CreateCreateProjectRequestApproveHistory',
+            url: `${apiBaseUrl}/api/CreateProjectRequestApproveHistories/CreateCreateProjectRequestApproveHistory`,
             type: 'POST',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -369,9 +371,9 @@
             success: function (response) {
                 if (response.success) {
                     console.log(createProjectRequestId);
-                    updateRowToApprovedForPM(button,createProjectRequestId);
+                    updateRowToApprovedForPM(button, createProjectRequestId);
                 } else {
-                    alert('Failed: ' + response.message);
+                    alert(response.message);
                 }
             },
             error: function (xhr, status, error) {
@@ -386,16 +388,16 @@
         const checkrole = localStorage.getItem('loggingRole');
         const userId = localStorage.getItem('userId');
         let currentPage = 1;
-        const pageSize = 5;
+        const pageSize = 7;
         let apiUrl;
         if (checkrole === "Project Management Board") {
             $('.action-buttons').show();
-            apiUrl = 'https://localhost:7294/api/CreateProjectRequests/GetCreateProjectRequestByPMB';
+            apiUrl = `${apiBaseUrl}/api/CreateProjectRequests/GetCreateProjectRequestByPMB`;
         } else {
-            apiUrl = `https://localhost:7294/api/CreateProjectRequests/GetAllCreateProjectRequestsByUserId/${userId}`;
+            apiUrl = `${apiBaseUrl}/api/CreateProjectRequests/GetAllCreateProjectRequestsByUserId/${userId}`;
         }
 
-        if(checkrole === 'Project Management Board') {
+        if (checkrole === 'Project Management Board') {
             document.getElementById('createRequestBtn').style.display = 'none';
         }
 
@@ -428,7 +430,32 @@
                 }
             });
         }
-
+        function checkOrganizations() {
+            $.ajax({
+                url: `${apiBaseUrl}/api/Organizations/GetOrganizationsByUserId/${userId}`,
+                type: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                success: function (response) {
+                    if (!response.success || !response.data || response.data.length === 0) {
+                        // No organization found
+                        alert('You have not created any organizations yet. Redirecting to the organization creation page...');
+                        window.location.href = '/Organization/OrganizationCreate';
+                    } else {
+                        window.location.href = '/Project/ProjectCreate_Organization';
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching organizations:', error);
+                    alert('An error occurred while checking organizations. Please try again later.');
+                }
+            });
+        }
+        $('#organizationCreated').on('click', function (e) {
+            e.preventDefault();
+            checkOrganizations();
+        });
         function populateTable(data) {
             const tableBody = $('#projectTable tbody');
             tableBody.empty();
@@ -442,25 +469,25 @@
                 const statusClass = getStatusClass(request.status);
 
                 let actionButtons = `
-                    <button class="btn btn-success btn-sm" onclick="handleProjectApproval(this,${request.id}, true)">Approve</button>
-                    <button class="btn btn-danger btn-sm" onclick="openDeclineModal(this,${request.id})">Decline</button>
-                    <a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>
-                `;
-                if (request.status === "Accepted") {
-                    actionButtons = `<span class="text-approved me-2" style="margin-left:5px">Approved</span>
-                                    <a href="/Project/ProjectRequestDetail?requestId=${request.id}" class="text-blue me-2" >Detail</a>`;
-                } else if (request.status === "Rejected") {
-                    actionButtons = `<span class="text-declined me-2" style="margin-left:5px">Rejected</span>
-                                <a href="/Project/ProjectRequestDetail?requestId=${request.id}" class="text-blue me-2">Detail</a>`;
-                } else if(request.status === "Cancel") {
-                    actionButtons = `
+                        <button class="btn btn-success btn-sm" onclick="handleProjectApproval(this,${request.id}, true)">Approve</button>
+                        <button class="btn btn-danger btn-sm" onclick="openDeclineModal(this,${request.id})">Decline</button>
                         <a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>
                     `;
+                if (request.status === "Accepted") {
+                    actionButtons = `<span class="text-approved me-2" style="margin-left:5px">Approved</span>
+                                        <a href="/Project/ProjectRequestDetail?requestId=${request.id}" class="text-blue me-2" >Detail</a>`;
+                } else if (request.status === "Rejected") {
+                    actionButtons = `<span class="text-declined me-2" style="margin-left:5px">Rejected</span>
+                                    <a href="/Project/ProjectRequestDetail?requestId=${request.id}" class="text-blue me-2">Detail</a>`;
+                } else if (request.status === "Cancel") {
+                    actionButtons = `
+                            <a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>
+                        `;
                 }
 
                 if (checkrole !== "Project Management Board") {
-                    if(checkrole === "Project Manager") {
-                        if(request.status === "Rejected" || request.status === "Pending" || request.status === "Cancel") {
+                    if (checkrole === "Project Manager") {
+                        if (request.status === "Rejected" || request.status === "Pending" || request.status === "Cancel") {
                             actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>`;
                         } else {
                             actionButtons = `<a class="btn btn-info btn-sm" href="/Project/ProjectRequestDetail?requestId=${request.id}">Detail</a>`;
@@ -471,17 +498,17 @@
 
                 }
                 const row = `
-                    <tr>
-                        <td class="align-middle text-center text-sm">${index + 1}</td>
-                        <td class="align-middle text-center text-sm">${request.title}</td>
-                        <td class="align-middle text-center text-sm">${request.senderName}</td>
-                        <td class="align-middle text-center text-sm">${formatDateTime(request.createdAt)}</span></td>
-                        <td class="align-middle text-center text-sm">
-                            <span class="badge badge-sm ${statusClass}">${request.status}</span>
-                        </td>
-                        <td class="align-middle text-center">${actionButtons}</td>
-                    </tr>
-                `;
+                        <tr>
+                            <td class="align-middle text-center text-sm">${index + 1}</td>
+                            <td class="align-middle text-center text-sm">${request.title}</td>
+                            <td class="align-middle text-center text-sm">${request.senderName}</td>
+                            <td class="align-middle text-center text-sm">${formatDateTime(request.createdAt)}</span></td>
+                            <td class="align-middle text-center text-sm">
+                                <span class="badge badge-sm ${statusClass}">${request.status}</span>
+                            </td>
+                            <td class="align-middle text-center">${actionButtons}</td>
+                        </tr>
+                    `;
 
                 tableBody.append(row);
             });
@@ -492,22 +519,63 @@
             if (status === "Cancel") return "bg-gradient-secondary";
             return "badge-pending";
         }
-        function setupPagination(totalItems) {
-            const totalPages = Math.ceil(totalItems / pageSize);
+        function setupPagination(totalItemsCount) {
+            const totalPages = Math.ceil(totalItemsCount / pageSize);
             const paginationContainer = $('#pagination');
             paginationContainer.empty();
 
-            for (let i = 1; i <= totalPages; i++) {
-                const pageButton = $(`<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}">${i}</button>`);
-                pageButton.on('click', () => changePage(i));
-                paginationContainer.append(pageButton);
+            const maxVisibleButtons = 5;
+            const ellipsis = `<span class="btn btn-sm btn-light disabled">...</span>`;
+
+            function createPageButton(page) {
+                return $(`<button class="btn btn-sm btn-page ${page === currentPage ? 'btn-primary' : 'btn-light'}">${page}</button>`)
+                    .on('click', () => changePage(page, totalItemsCount));
             }
+
+            const prevButton = $(`<button class="btn btn-sm btn-page ${currentPage === 1 ? 'btn-light disabled' : 'btn-light'}">Previous</button>`);
+            prevButton.on('click', () => {
+                if (currentPage > 1) changePage(currentPage - 1, totalItemsCount);
+            });
+            paginationContainer.append(prevButton);
+
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisibleButtons / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisibleButtons - 1);
+
+            if (endPage - startPage + 1 < maxVisibleButtons) {
+                startPage = Math.max(1, endPage - maxVisibleButtons + 1);
+            }
+
+            if (startPage > 1) {
+                paginationContainer.append(createPageButton(1));
+                if (startPage > 2) {
+                    paginationContainer.append($(ellipsis));
+                }
+            }
+
+            for (let page = startPage; page <= endPage; page++) {
+                paginationContainer.append(createPageButton(page));
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    paginationContainer.append($(ellipsis));
+                }
+                paginationContainer.append(createPageButton(totalPages));
+            }
+
+            const nextButton = $(`<button class="btn btn-sm btn-page ${currentPage === totalPages ? 'btn-light disabled' : 'btn-light'}">Next</button>`);
+            nextButton.on('click', () => {
+                if (currentPage < totalPages) changePage(currentPage + 1, totalItemsCount);
+            });
+            paginationContainer.append(nextButton);
         }
 
-    window.changePage = function (page) {
-        currentPage = page;
-        fetchProjectRequests($('#searchInput').val(), $('#statusFilter').val(), currentPage);
-    };
+        window.changePage = function (page, totalItemsCount) {
+            const totalPages = Math.ceil(totalItemsCount / pageSize);
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            fetchProjectRequests($('#searchInput').val(), $('#statusFilter').val(), currentPage);
+        };
 
         $('#searchInput').on('keyup', function () {
             currentPage = 1;
@@ -521,6 +589,4 @@
 
         fetchProjectRequests();
     });
-
 </script>
-

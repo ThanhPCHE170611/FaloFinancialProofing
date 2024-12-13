@@ -10,12 +10,21 @@
         <div class="item shadow mb-30">
             <h5 class="title">Search</h5>
             <div class="serach-bar">
-                <input type="text" id="searchInput" placeholder="Search here">
-                <button id="searchButton"><i class="fa-regular fa-magnifying-glass"></i></button>
+                <input type="text" id="searchInput" placeholder="Search here" style="padding:6px;">
+                @* <button id="searchButton"><i class="fa-regular fa-magnifying-glass"></i></button> *@
             </div>
         </div>
     </div>
-
+    <div class="blog-single__right-item">
+        <div class="item shadow mb-30">
+            <div class="date-filter">
+                <h5 class="title">Filter by Date</h5>
+                <input type="date" id="startDate" placeholder="Start Date">
+                <input type="date" id="endDate" placeholder="End Date">
+                <button id="applyDateFilter">Apply Filter</button>
+            </div>
+        </div>
+    </div>
     <!-- Error Message -->
     <div id="errorMessage" class="alert alert-danger" style="display:none;"></div>
 
@@ -38,10 +47,12 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 <script>
     $(document).ready(function () {
         // Load transactions on page load
-        loadTransactions(1, "");
+        loadTransactions(1, "", "", "");
 
         // Event handler for search button click
         $('#searchButton').click(function () {
@@ -56,12 +67,25 @@
                 loadTransactions(1, searchInput);
             }
         });
+        $('#applyDateFilter').click(function () {
+            const startDate = $('#startDate').val();
+            const endDate = $('#endDate').val();
+
+            if (new Date(startDate) > new Date(endDate)) {
+                showError("Start date cannot be later than end date.");
+                return;
+            }
+
+            const searchInput = $('#searchInput').val();
+            loadTransactions(1, searchInput, startDate, endDate);
+        });
     });
+    var apiUrl = '@Configuration["ApiBaseUrl"]';
 
     // Function to load transactions with pagination and search
-    function loadTransactions(currentPage, searchInput) {
+    function loadTransactions(currentPage, searchInput, startDate, endDate) {
         var userId = '@userId';  // Get userId from session
-        var apiUrl = `https://localhost:7294/api/TransactionLogs/GetUserTransactionLogs/${userId}?searchInput=${searchInput}&currentPage=${currentPage}`;
+        var url = apiUrl + `/api/TransactionLogs/GetUserTransactionLogs/${userId}?searchInput=${searchInput}&currentPage=${currentPage}&startDate=${startDate}&endDate=${endDate}`;
 
         // Make AJAX call to fetch transactions
         $.ajax({
@@ -70,7 +94,7 @@
             success: function (response) {
                 if (response && response.data && response.data.data) {
                     renderTransactionLogs(response.data.data);
-                    renderPagination(response.data.dataCount, currentPage, searchInput);
+                    renderPagination(response.data.dataCount, currentPage, searchInput, startDate, endDate);
                 } else {
                     showError("No transaction logs available.");
                 }
@@ -87,13 +111,17 @@
         $('#transactionLogs').empty();
 
         transactions.forEach(function (transaction) {
+            const formattedAmount = transaction.amount.toLocaleString('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            });
             var rowHtml = `<tr>
-                            <td>${transaction.tid}</td>
-                            <td>${new Date(transaction.transactionDate).toLocaleString()}</td>
-                            <td>${transaction.amount}</td>
-                            <td>${transaction.description}</td>
-                            <td>${transaction.campaignName}</td>
-                        </tr>`;
+                                                                                <td>${transaction.tid}</td>
+                                                                                <td>${new Date(transaction.transactionDate).toLocaleString()}</td>
+                                                                                    <td>${formattedAmount}</td>
+                                                                                <td>${transaction.description}</td>
+                                                                                <td>${transaction.campaignName}</td>
+                                                                            </tr>`;
             $('#transactionLogs').append(rowHtml);
         });
 
@@ -101,39 +129,96 @@
     }
 
     // Function to render pagination controls
-    function renderPagination(totalRecords, currentPage, searchInput) {
-        var pageSize = 5;  // Set the number of items per page
-        var totalPages = Math.ceil(totalRecords / pageSize);  // Calculate the total number of pages
+    // function renderPagination(totalRecords, currentPage, searchInput) {
+    //     var pageSize = 5;  Set the number of items per page
+    //     var totalPages = Math.ceil(totalRecords / pageSize);  Calculate the total number of pages
+    //     var paginationControls = $('#paginationControls');
+    //     paginationControls.empty();  Clear any existing pagination buttons
+
+    //     Render "Previous" button
+    //     if (currentPage > 1) {
+    //         paginationControls.append(`<button onclick="loadTransactions(${currentPage - 1}, '${searchInput}')">
+    //                                                             <i class="fa-solid fa-arrow-left-long primary-color transition"></i>
+    //                                                         </button>`);
+    //     }
+
+    //     Render page number buttons
+    //     var startPage = Math.max(1, currentPage - 2);  Ensure the start page does not go below 1
+    //     var endPage = Math.min(totalPages, currentPage + 2);  Ensure the end page does not exceed total pages
+
+    //     for (var i = startPage; i <= endPage; i++) {
+    //         if (i === currentPage) {
+    //             paginationControls.append(`<button class="active" disabled> ${i} </button>`);
+    //         } else {
+    //             paginationControls.append(`<button onclick="loadTransactions(${i}, '${searchInput}')"> ${i} </button>`);
+    //         }
+    //     }
+
+    //     Render "Next" button
+    //     if (currentPage < totalPages) {
+    //         paginationControls.append(`<button onclick="loadTransactions(${currentPage + 1}, '${searchInput}')">
+    //                                                             <i class="fa-solid fa-arrow-right-long primary-color transition"></i>
+    //                                                         </button>`);
+    //     }
+    // }
+
+
+
+    function renderPagination(totalRecords, currentPage, searchInput, startDate, endDate) {
+        var pageSize = 30;
+        var totalPages = Math.ceil(totalRecords / pageSize);
         var paginationControls = $('#paginationControls');
-        paginationControls.empty();  // Clear any existing pagination buttons
+        paginationControls.empty();
 
-        // Render "Previous" button
+        if (totalPages <= 1) return;
+
         if (currentPage > 1) {
-            paginationControls.append(`<button onclick="loadTransactions(${currentPage - 1}, '${searchInput}')">
-                <i class="fa-solid fa-arrow-left-long primary-color transition"></i>
-            </button>`);
+            paginationControls.append(`<button onclick="loadTransactions(${currentPage - 1}, '${searchInput}', '${startDate}', '${endDate}')">
+                    <i class="fa-solid fa-arrow-left-long primary-color transition"></i>
+                </button>`);
         }
 
-        // Render page number buttons
-        var startPage = Math.max(1, currentPage - 2);  // Ensure the start page does not go below 1
-        var endPage = Math.min(totalPages, currentPage + 2);  // Ensure the end page does not exceed total pages
-
-        for (var i = startPage; i <= endPage; i++) {
-            if (i === currentPage) {
-                paginationControls.append(`<button class="active" disabled> ${i} </button>`);
-            } else {
-                paginationControls.append(`<button onclick="loadTransactions(${i}, '${searchInput}')"> ${i} </button>`);
+        if (totalPages <= 6) {
+            for (var i = 1; i <= totalPages; i++) {
+                paginationControls.append(generatePageButton(i, currentPage, searchInput, startDate, endDate));
             }
+        } else {
+            paginationControls.append(generatePageButton(1, currentPage, searchInput, startDate, endDate));
+            paginationControls.append(generatePageButton(2, currentPage, searchInput, startDate, endDate));
+
+            if (currentPage > 4) {
+                paginationControls.append(`<span>...</span>`);
+            }
+
+            var startPage = Math.max(3, currentPage - 1);
+            var endPage = Math.min(totalPages - 2, currentPage + 1);
+
+            for (var i = startPage; i <= endPage; i++) {
+                paginationControls.append(generatePageButton(i, currentPage, searchInput, startDate, endDate));
+            }
+
+            if (currentPage < totalPages - 3) {
+                paginationControls.append(`<span>...</span>`);
+            }
+
+            paginationControls.append(generatePageButton(totalPages - 1, currentPage, searchInput, startDate, endDate));
+            paginationControls.append(generatePageButton(totalPages, currentPage, searchInput, startDate, endDate));
         }
 
-        // Render "Next" button
         if (currentPage < totalPages) {
-            paginationControls.append(`<button onclick="loadTransactions(${currentPage + 1}, '${searchInput}')">
-                <i class="fa-solid fa-arrow-right-long primary-color transition"></i>
-            </button>`);
+            paginationControls.append(`<button onclick="loadTransactions(${currentPage + 1}, '${searchInput}', '${startDate}', '${endDate}')">
+                    <i class="fa-solid fa-arrow-right-long primary-color transition"></i>
+                </button>`);
         }
     }
 
+    function generatePageButton(page, currentPage, searchInput, startDate, endDate) {
+        if (page === currentPage) {
+            return `<button class="active" disabled>${page}</button>`;
+        } else {
+            return `<button onclick="loadTransactions(${page}, '${searchInput}', '${startDate}', '${endDate}')">${page}</button>`;
+        }
+    }
     // Function to show error message
     function showError(message) {
         $('#errorMessage').text(message).show();

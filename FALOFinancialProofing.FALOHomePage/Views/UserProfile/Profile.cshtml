@@ -95,7 +95,7 @@
 
                         <div class="mb-3">
                             <label for="fullName" class="form-label">Full Name</label>
-                            <input type="text" class="form-control" id="fullName" placeholder="Nhập họ và tên" >
+                            <input type="text" class="form-control" id="fullName" placeholder="Nhập họ và tên">
                         </div>
 
                         <div class="mb-3">
@@ -107,7 +107,7 @@
                             <label class="form-label">Gender</label>
                             <div class="gender-radio-group">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="gender" id="male" value="true" >
+                                    <input class="form-check-input" type="radio" name="gender" id="male" value="true">
                                     <label class="form-check-label" for="male">Male</label>
                                 </div>
                                 <div class="form-check">
@@ -124,7 +124,7 @@
 
                         <div class="mb-3">
                             <label for="workplace" class="form-label">Workplace</label>
-                            <input type="text" class="form-control" id="workplace" placeholder="Nhập nơi học tập hoặc làm việc" >
+                            <input type="text" class="form-control" id="workplace" placeholder="Nhập nơi học tập hoặc làm việc">
                         </div>
 
                         <div class="mb-3">
@@ -155,17 +155,17 @@
 
                         <div class="mb-3">
                             <label for="education" class="form-label">Education</label>
-                            <input type="text" class="form-control" id="education" placeholder="Nhập trình độ học vấn" >
+                            <input type="text" class="form-control" id="education" placeholder="Nhập trình độ học vấn">
                         </div>
 
                         <div class="mb-3">
                             <label for="skills" class="form-label">Skills</label>
-                            <input type="text" class="form-control" id="skills" placeholder="Nhập kỹ năng" >
+                            <input type="text" class="form-control" id="skills" placeholder="Nhập kỹ năng">
                         </div>
 
                         <div class="mb-3">
                             <label for="hobbies" class="form-label">Hobbies</label>
-                            <input type="text" class="form-control" id="hobbies" placeholder="Nhập sở thích" >
+                            <input type="text" class="form-control" id="hobbies" placeholder="Nhập sở thích">
                         </div>
 
                         <div class="mb-3">
@@ -190,6 +190,7 @@
 </html>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 @* <script src="~/js/userProfile/profile.js"></script> *@
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 <script>
     function previewImage() {
         var fileInput = document.getElementById('profilePicture');
@@ -197,7 +198,7 @@
         var file = fileInput.files[0];
         var reader = new FileReader();
 
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             var img = document.createElement('img');
             img.src = e.target.result;
             imagePreview.innerHTML = '';
@@ -208,12 +209,14 @@
             reader.readAsDataURL(file);
         }
     }
+    var apiUrl = '@Configuration["ApiBaseUrl"]';
+
     document.querySelectorAll('.sdg-tags span').forEach(function (tag) {
         tag.addEventListener('click', function () {
             this.classList.toggle('active');
         });
     });
-    
+
     $(document).ready(function () {
         const userId = '@userId';
         const jwtToken = '@jwt';
@@ -222,9 +225,9 @@
 
         $('#socialMediaContainer').on('click', '.add-social-btn', function () {
             const newInput = `<div class="input-group mb-2">
-                <input type="url" class="form-control social-media-input" data-id="0" placeholder="Enter social media link">
-                <button type="button" class="btn btn-outline-danger remove-social-btn">-</button>
-            </div>`;
+                    <input type="url" class="form-control social-media-input" data-id="0" placeholder="Enter social media link">
+                    <button type="button" class="btn btn-outline-danger remove-social-btn">-</button>
+                </div>`;
             $('#socialMediaContainer').append(newInput);
         });
 
@@ -233,8 +236,9 @@
         });
 
         function loadUserProfile(userId) {
+            var url = apiUrl + `/api/Users/GetUserProfile/${userId}`;
             $.ajax({
-                url: `https://localhost:7294/api/Users/GetUserProfile/${userId}`,
+                url: url,
                 type: 'GET',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`
@@ -263,14 +267,14 @@
                         if (data.socialNetworkRequests && data.socialNetworkRequests.length > 0) {
                             data.socialNetworkRequests.forEach(social => {
                                 const socialInput = `<div class="input-group mb-2">
-                                    <input type="url" class="form-control social-media-input" data-id="${social.id}" value="${social.socialNetworksLink}" placeholder="Enter social media link">
-                                </div>`;
+                                        <input type="url" class="form-control social-media-input" data-id="${social.id}" value="${social.socialNetworksLink}" placeholder="Enter social media link">
+                                    </div>`;
                                 socialMediaContainer.append(socialInput);
                             });
                         } else {
                             const blankInput = `<div class="input-group mb-2">
-                            <input type="url" class="form-control social-media-input" data-id="0" placeholder="Enter social media link">
-                            </div>`;
+                                <input type="url" class="form-control social-media-input" data-id="0" placeholder="Enter social media link">
+                                </div>`;
                             socialMediaContainer.append(blankInput);
                         }
                         $('#volunteerExperience').val(data.volunteerExperience);
@@ -279,7 +283,7 @@
                         $('#sdgList span').each(function () {
                             const sdgId = $(this).data('id');
                             if (activeSDGIds.includes(sdgId)) {
-                            $(this).addClass('active');
+                                $(this).addClass('active');
                             }
                         });
                         if (data.image) {
@@ -318,7 +322,7 @@
             $('.social-media-input').each(function () {
                 const socialLink = $(this).val();
                 const socialId = $(this).data('id') || 0;
-                 if (socialLink) {
+                if (socialLink) {
                     socialNetworkRequests.push({
                         id: socialId,
                         socialNetworksLink: socialLink,
@@ -408,7 +412,7 @@
                         localStorage.setItem('fullname', $('#fullName').val());
                         location.reload();
                     } else {
-                    alert('Failed to update profile: ' + response.message);
+                        alert('Failed to update profile: ' + response.message);
                     }
                 },
                 error: function (errors) {

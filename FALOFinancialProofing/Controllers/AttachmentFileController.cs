@@ -169,7 +169,10 @@ namespace FALOFinancialProofing.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetAllPaymentAttachmentInCampaignWithRequest(int campaignId,
             string? name,
-            int page = IntConstant.PageNumberDefault)
+            int page = IntConstant.PageNumberDefault,
+            DateTime? fromdate = null,
+            DateTime? todate = null
+        )
         {
             var attachmentFiles = await attachmentFileServices.GetAllPaymentAttachmentInCampaignWithRequest(campaignId);
             if (!attachmentFiles.Any())
@@ -185,7 +188,13 @@ namespace FALOFinancialProofing.Controllers
             if (!String.IsNullOrEmpty(name))
             {
                 filteredAttachmentFiles = filteredAttachmentFiles
-                    .Where(x => x.AttachmentFilePath != null && x.AttachmentFilePath.ToLower().Contains(name.ToLower()));
+                    .Where(x => x.Description != null && x.Description.ToLower().Contains(name.ToLower()));
+            }
+            if(fromdate != null && todate != null && fromdate.Value.CompareTo(todate.Value) < 0) 
+            {
+                filteredAttachmentFiles = filteredAttachmentFiles
+                    .Where(x => x.CreateAt.CompareTo(fromdate) > 0 
+                                && x.CreateAt.CompareTo(todate) < 0);
             }
             var totalRecords = filteredAttachmentFiles.Count();
             var pagedResult = filteredAttachmentFiles

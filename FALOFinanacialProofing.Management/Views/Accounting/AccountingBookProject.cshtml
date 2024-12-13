@@ -204,18 +204,21 @@
 <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
 <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 <script>
     const checkrole = localStorage.getItem('loggingRole');
     const projectId = localStorage.getItem('projectId');
     const navTabs = document.getElementById('navTabs');
     const userId = localStorage.getItem('userId');
     const jwtToken = localStorage.getItem('jwtToken');
+    var apiBaseUrl = '@Configuration["ApiBaseUrl"]';
     console.log(projectId);
     function showCreateVoucherPopup() {
         document.getElementById('createVoucherModal').style.display = 'block';
     }
-
+    if (!jwtToken) {
+        window.location.href = '/Authentication/Login';
+    }
     function submitVoucher() {
         const fileInput = document.getElementById('voucherFile');
         if (fileInput.files.length === 0) {
@@ -230,7 +233,7 @@
         formData.append('CampaignId', campaignId);
 
         $.ajax({
-            url: 'https://localhost:7294/api/AccountingBook/uploadaccountingbook',
+            url: `${apiBaseUrl}/api/AccountingBook/uploadaccountingbook`,
             type: 'POST',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -256,7 +259,7 @@
     let searchInput = '';
     function fetchAccountingBooks() {
         $.ajax({
-            url: `https://localhost:7294/api/AccountingBook/getallaccountingbookinproject?projectId=${projectId}&name=${searchInput}&page=${currentPage}`,
+            url: `${apiBaseUrl}/api/AccountingBook/getallaccountingbookinproject?projectId=${projectId}&name=${searchInput}&page=${currentPage}`,
             type: 'GET',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -264,9 +267,15 @@
             success: function (response) {
                 console.log('API Response:', response);
                 if (response.success) {
-                    console.log('Data:', response.data);
-                    populateTable(response.data.data);
-                    setupPagination(response.data.totalRecords, response.data.page);
+                    if(response.message === 'Accounting books not found') {
+                        const tableBody = $('#voucherTableBody');
+                        tableBody.empty();
+                        tableBody.append('<tr><td colspan="3" class="text-center">No accounting books found</td></tr>');
+                    } else {
+                        console.log('Data:', response.data);
+                        populateTable(response.data.data);
+                        setupPagination(response.data.totalRecords, response.data.page);
+                    }  
                 } else {
                     const tableBody = $('#voucherTableBody');
                     tableBody.empty();
@@ -302,7 +311,7 @@
     function downloadFile(button, fileName) {
         console.log(jwtToken);  
         $.ajax({
-            url: `https://localhost:7294/api/AccountingBook/downloadaccountingbook/${fileName}`,
+            url: `${apiBaseUrl}/api/AccountingBook/downloadaccountingbook/${fileName}`,
             type: 'GET',
             xhrFields: {
                 responseType: 'blob' 
@@ -344,7 +353,7 @@
         }
     };
     function setupPagination(totalRecords, currentPage) {
-        const totalPages = Math.ceil(totalRecords / 5);
+        const totalPages = Math.ceil(totalRecords / 30);
         const paginationContainer = $('#pagination');
         paginationContainer.empty();
 

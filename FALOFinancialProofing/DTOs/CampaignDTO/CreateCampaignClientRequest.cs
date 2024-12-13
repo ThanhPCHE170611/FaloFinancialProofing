@@ -16,7 +16,7 @@ namespace FALOFinancialProofing.DTOs.CampaignDTO
         [MinLength(8, ErrorMessage = "Description must be at least 8 characters")]
         public string Description { get; set; }
         [Required]
-        public double FundTarget { get; set; }
+        public long FundTarget { get; set; }
         //public string? Image { get; set; } // sẽ xóa
         [ImageFile]
         public IFormFile? LogoFile { get; set; }

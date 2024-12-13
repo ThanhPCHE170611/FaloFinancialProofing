@@ -192,8 +192,6 @@
                             <label for="volunteerGoals" class="form-label">Volunteer Goals</label>
                             <textarea class="form-control" id="volunteerGoals" rows="3" placeholder="Nhập mục tiêu tình nguyện"></textarea>
                         </div>
-
-                        <a class="btn btn-warning" href="changepassword">Change Password</a>
                         <div id="save-btn">
                             <button type="button" class="btn btn-primary" id="updateProfileBtn" disabled>Update Profile</button>
                         </div>
@@ -215,14 +213,16 @@
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@* <script src="~/js/userprofile/userprofile.js"></script> *@
 <script>
+
     function previewImage() {
         var fileInput = document.getElementById('profilePicture');
         var imagePreview = document.getElementById('imagePreview');
         var file = fileInput.files[0];
         var reader = new FileReader();
 
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             var img = document.createElement('img');
             img.src = e.target.result;
             imagePreview.innerHTML = '';
@@ -240,7 +240,7 @@
     });
     function loadSDGs() {
         $.ajax({
-            url: 'https://localhost:7294/api/SDG/GetAllSDGs',
+            url: `${apiBaseUrl}/api/SDG/GetAllSDGs`,
             type: 'GET',
             success: function (response) {
                 if (response.success && response.data.length > 0) {
@@ -273,9 +273,9 @@
 
         $('#socialMediaContainer').on('click', '.add-social-btn', function () {
             const newInput = `<div class="input-group mb-2">
-                <input type="url" class="form-control social-media-input" data-id="0" placeholder="Enter social media link">
+            <input type="url" class="form-control social-media-input" data-id="0" placeholder="Enter social media link">
                 <button type="button" class="btn btn-outline-danger remove-social-btn">-</button>
-            </div>`;
+        </div>`;
             $('#socialMediaContainer').append(newInput);
         });
 
@@ -285,7 +285,7 @@
 
         function loadUserProfile(userId) {
             $.ajax({
-                url: `https://localhost:7294/api/Users/GetUserProfile/${userId}`,
+                url: `${apiBaseUrl}/api/Users/GetUserProfile/${userId}`,
                 type: 'GET',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`
@@ -311,26 +311,26 @@
                         $('#phone').val(data.phoneNumber);
                         const socialMediaContainer = $('#socialMediaContainer');
                         socialMediaContainer.empty();
-                        if (data.socialNetworkRequests && data.socialNetworkRequests.length > 0) {
-                            data.socialNetworkRequests.forEach(social => {
-                                const socialInput = `<div class="input-group mb-2">
-                                    <input type="url" class="form-control social-media-input" data-id="${social.id}" value="${social.socialNetworksLink}" placeholder="Enter social media link">
-                                </div>`;
-                                socialMediaContainer.append(socialInput);
-                            });
-                        } else {
-                            const blankInput = `<div class="input-group mb-2">
-                            <input type="url" class="form-control social-media-input" data-id="0" placeholder="Enter social media link">
-                            </div>`;
-                            socialMediaContainer.append(blankInput);
-                        }
+                         if (data.socialNetworkRequests && data.socialNetworkRequests.length > 0) {
+                             data.socialNetworkRequests.forEach(social => {
+                                 const socialInput = `<div class="input-group mb-2">
+                                     <input type="url" class="form-control social-media-input" data-id="${social.id}" value="${social.socialNetworksLink}" placeholder="Enter social media link">
+                                 </div>`;
+                                 socialMediaContainer.append(socialInput);
+                             });
+                         } else {
+                             const blankInput = `<div class="input-group mb-2">
+                             <input type="url" class="form-control social-media-input" data-id="0" placeholder="Enter social media link">
+                             </div>`;
+                             socialMediaContainer.append(blankInput);
+                         }
                         $('#volunteerExperience').val(data.volunteerExperience);
                         $('#volunteerGoals').val(data.volunteerGoal);
                         const activeSDGIds = data.userSDGInformations.map(item => item.sDGInformation.id);
                         $('#sdgList span').each(function () {
                             const sdgId = $(this).data('id');
                             if (activeSDGIds.includes(sdgId)) {
-                            $(this).addClass('active');
+                                $(this).addClass('active');
                             }
                         });
                         if (data.image) {
@@ -369,7 +369,7 @@
             $('.social-media-input').each(function () {
                 const socialLink = $(this).val();
                 const socialId = $(this).data('id') || 0;
-                 if (socialLink) {
+                if (socialLink) {
                     socialNetworkRequests.push({
                         id: socialId,
                         socialNetworksLink: socialLink,
@@ -444,7 +444,7 @@
             }
 
             $.ajax({
-                url: 'https://localhost:7294/api/Users/UpdateUserProfile',
+                url: `${apiBaseUrl}/api/Users/UpdateUserProfile`,
                 type: 'POST',
                 data: formData,
                 contentType: false,
@@ -459,7 +459,7 @@
                         localStorage.setItem('fullname', $('#fullName').val());
                         location.reload();
                     } else {
-                    alert('Failed to update profile: ' + response.message);
+                        alert('Failed to update profile: ' + response.message);
                     }
                 },
                 error: function (errors) {
@@ -477,6 +477,8 @@
                     }
                 }
             });
+
         });
     });
+
 </script>

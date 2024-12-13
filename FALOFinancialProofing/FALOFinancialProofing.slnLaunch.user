@@ -9,6 +9,10 @@
       {
         "Path": "..\\FALOFinanacialProofing.Management\\FALOFinanacialProofing.Management.csproj",
         "Action": "Start"
+      },
+      {
+        "Path": "..\\FALOFinancialProofing.FALOHomePage\\FALOFinancialProofing.FALOHomePage.csproj",
+        "Action": "Start"
       }
     ]
   }

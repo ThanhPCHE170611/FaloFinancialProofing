@@ -73,9 +73,15 @@
                                 <label for="status" class="form-label">Status</label>
                                 <input type="text" class="form-control" id="status" readonly>
                             </div>
-                            <div class="col-md-12">
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="status" class="form-label">Account Number</label>
+                                <input type="text" class="form-control" id="accountNumber" readonly>
+                            </div>
+                            <div class="col-md-6">
                                 <label for="status" class="form-label">Fund Target</label>
-                                <input type="text" class="form-control" id="fundTaget" readonly>
+                                <input type="text" class="form-control" id="fundTarget" readonly>
                             </div>
                         </div>
                         <div class="row mb-3" id="approver-section">
@@ -141,23 +147,32 @@
 
         return formattedDate + ' ' + formattedTime;
     }
+    function safeValue(value, defaultValue = 'N/A') {
+        return value ? value : defaultValue;
+    }
+    const jwtToken = localStorage.getItem('jwtToken');
+    if (!jwtToken) {
+        window.location.href = '/Authentication/Login';
+    }
     $(document).ready(function () {
         const campaignId = new URLSearchParams(window.location.search).get('requestId');
-        const jwtToken = localStorage.getItem('jwtToken');
         const userId = localStorage.getItem('userId');
         $.ajax({
-            url: `https://localhost:7294/api/CreateCampaignRequests/GetCreateCampaignRequest/${campaignId}`,
+            url: `${apiBaseUrl}/api/CreateCampaignRequests/GetCreateCampaignRequest/${campaignId}`,
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
             },
             success: function (data) {
-                $('#title').val(data.title);
-                $('#senderName').val(data.senderName);
-                $('#createdAt').val(formatDateTime(data.createdAt));
-                $('#status').val(data.status);
-                $('#description').val(data.description);
-                $('#fundTaget').val(data.fundTarget);
+                $('#title').val(safeValue(data.title));
+                $('#senderName').val(safeValue(data.senderName));
+                $('#createdAt').val(safeValue(data.createdAt ? formatDateTime(data.createdAt) : null));
+                $('#status').val(safeValue(data.status));
+                $('#accountNumber').val(safeValue(data.accountNumber));
+                $('#description').val(safeValue(data.description));
+                $('#fundTarget').val(safeValue(data.fundTarget.toLocaleString()));
+
+
                 if (data.receiverName !== ' ') {
                     $('#receiverName').val(data.receiverName);
                     $('#approver-section').show();
@@ -178,8 +193,9 @@
                     .css('margin-left', '10px')
                     .text('Cancel Request')
                     .click(function () {
+                        if (confirm('Are you sure you want to cancel this request?')) {
                         $.ajax({
-                            url: `https://localhost:7294/api/CreateCampaignRequests/CancelCreateCampaignRequest/${userId}/${campaignId}`,
+                            url: `${apiBaseUrl}/api/CreateCampaignRequests/CancelCreateCampaignRequest/${userId}/${campaignId}`,
                             method: 'PUT',
                             headers: {
                                 'Authorization': `Bearer ${jwtToken}`
@@ -187,19 +203,28 @@
                             success: function (response) {
                                 alert(response.message);
                                 if (response.success) {
-                                    location.reload();
+                                    // location.reload();
+                                    window.location.href = '/Campaign/CampaignRequestManagement';
                                 }
                             },
                             error: function (xhr, status, error) {
                                 alert('Error: ' + (xhr.responseText || status));
                             }
                         });
+                        }
                     });
                     $('#save-btn').append(cancelButton);
                 }
 
                 data.createCampaignFiles.forEach(function (file) {
-                    $('#docList').append(`<li class="list-group-item">${file.filePath}</li>`);
+                    const listItem = $(`<li class="list-group-item"><a href="#" class="file-link" data-file="${file.filePath}">${file.filePath}</a></li>`);
+                    $('#docList').append(listItem);
+                });
+
+                $('.file-link').on('click', function (event) {
+                    event.preventDefault();
+                    const fileName = $(this).data('file');
+                    downloadFile(fileName);
                 });
             },
             error: function (err) {
@@ -207,4 +232,33 @@
             }
         });
     });
+    function downloadFile(fileName) {
+        $.ajax({
+            url: `${apiBaseUrl}/api/CreateCampaignFiles/DownloadCampaignFile/${fileName}`,
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            },
+            xhrFields: {
+                responseType: 'blob' 
+            },
+            success: function (data, status, xhr) {
+                console.log(fileName);
+                const contentType = xhr.getResponseHeader('Content-Type');
+                const blob = new Blob([data], { type: contentType });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            },
+            error: function (xhr, status, error) {
+                alert('Error downloading file. Please try again.');
+                console.error('Error downloading file:', error);
+            }
+        });
+    }
 </script>

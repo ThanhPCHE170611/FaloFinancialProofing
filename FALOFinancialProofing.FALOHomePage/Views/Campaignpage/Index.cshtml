@@ -1,9 +1,9 @@
 ﻿@page "/CampaignDetails"
-
+@using System.Globalization
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     var campaignDetails = ViewBag.CampaignDetails as FALOFinancialProofing.FALOHomePage.Models.CampaignDetailsDTO;
-    var percentage = Math.Round((campaignDetails.TotalMoneyEarned / campaignDetails.FundTarget) * 100);
+    var percentage = Math.Round(((decimal)campaignDetails.TotalMoneyEarned / campaignDetails.FundTarget) * 100);
 }
 
 <main>
@@ -27,13 +27,16 @@
                 <div class="col-lg-8 order-2 order-lg-1">
                     <div class="blog__item blog-single__left-item shadow-none">
                         <div class="image">
-                            @if(campaignDetails.Image == null)
+                            @if (campaignDetails.Image == null)
                             {
                                 <img src="/images/cause/CampaignImages.jpg" alt="image">
                             }
-                            else{
+                            else
+                            {
                                 <img src="@campaignDetails.Image" alt="image">
+
                             }
+                            <span class="blog-tag">End Date - @campaignDetails.EndDate.Value.ToString("MMM dd, yyyy")</span>
                         </div>
                         <div class="progress-area px-4 pb-4 pt-35 bor border-top-0">
                             <div class="progress__item">
@@ -43,12 +46,14 @@
                                 }
                                 else
                                 {
-                                    <div class="progress__content" style="width: @percentage%;"><span>@percentage%</span></div>
+                                    <div class="progress__content" style="width: @percentage%;">
+                                        <span>@percentage%</span>
+                                    </div>
                                 }
                             </div>
                             <div class="progress__goal mt-15">
-                                <h6>Goal : <span>@campaignDetails.FundTarget</span></h6>
-                                <h6>Raised : <span>@campaignDetails.TotalMoneyEarned</span></h6>
+                                <h6>Goal : <span>@campaignDetails.FundTarget.ToString("C", new CultureInfo("vi-VN"))</span></h6>
+                                <h6>Raised : <span>@campaignDetails.TotalMoneyEarned.ToString("C", new CultureInfo("vi-VN"))</span></h6>
                             </div>
                         </div>
                         <div class="blog__content p-0">
@@ -77,24 +82,24 @@
                                             Ủng Hộ
                                         </span>
                                     </a>
-                                    
+
                                 </div>
                             }
-                            
+
                             else
                             {
-                            <p class="text-danger"> Chiến dịch đã đóng ủng hộ</p>
+                                <p class="text-danger"> Chiến dịch đã đóng ủng hộ</p>
                             }
                         </div>
                         <div class="item shadow mb-30">
                             <h5 class="title">Chứng Thực</h5>
                             <ul class="category">
                                 <li><a <a href="javascript:void(0);" onclick="downloadAccountingBook(@campaignDetails.CampaignId)">Tải Báo Cáo Tài Chính</a></li>
-                                <li><a href="@Url.Action("Index", "Donation", new {id=campaignDetails.BankId})">Sao Kê</a></li>
+                                <li><a href="@Url.Action("Index", "Donation", new {id=campaignDetails.CampaignId})">Sao Kê</a></li>
                                 <li><a href="@Url.Action("CampaignActivity", "Campaignpage", new {id=campaignDetails.CampaignId})">Hoạt Động</a></li>
                             </ul>
                         </div>
-                        @if (campaignDetails.UpdateLog != null && campaignDetails.UpdateLog!="")
+                        @if (campaignDetails.UpdateLog != null && campaignDetails.UpdateLog != "")
                         {
                             <div class="item shadow mb-30">
                                 <h5 class="title">Thông Tin Cập Nhật</h5>
@@ -111,12 +116,14 @@
     <!-- Blog single area end here -->
 </main>
 
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 <script>
+    var apiUrl = '@Configuration["ApiBaseUrl"]';
     function downloadAccountingBook(campaignId) {
         // First, make a request to get the file path from the API
-        const apiUrl = `https://localhost:7294/api/AccountingBook/getaccountingbookincampaign?campaignId=${campaignId}`;
+        const url = apiUrl + `/api/AccountingBook/getaccountingbookincampaign?campaignId=${campaignId}`;
 
-        fetch(apiUrl)
+        fetch(url)
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -128,7 +135,7 @@
                         return;
                     }
 
-                    const downloadUrl = `https://localhost:7294/api/AccountingBook/downloadaccountingbook/${filePath}`;
+                    const downloadUrl = apiUrl + `/api/AccountingBook/downloadaccountingbook/${filePath}`;
 
                     // Create a temporary anchor element to trigger the download
                     const a = document.createElement('a');

@@ -1,0 +1,448 @@
+﻿@{
+    ViewData["Title"] = "Member";
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <style>
+        .modal, .add-member-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .badge-approved {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        .badge-declined {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .modal-content, .add-member-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+            .close:hover,
+            .close:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+        .search-filter-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .search-box {
+            width: 70%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .filter-box {
+            width: 25%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .table th, .table td {
+            text-align: center;
+        }
+
+
+        .nav-tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+            .nav-tabs a {
+                padding: 10px 20px;
+                text-decoration: none;
+                color: #000;
+                background-color: #f1f1f1;
+                border-radius: 5px;
+            }
+
+                .nav-tabs a.active {
+                    background-color: #EC407A;
+                    color: #fff;
+                }
+
+                .nav-tabs a:hover {
+                    background-color: #007bff;
+                    color: #fff;
+                }
+
+        .listbox {
+            position: relative;
+            width: 100%;
+        }
+
+            .listbox input {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+            }
+
+            .listbox ul {
+                position: absolute;
+                width: 100%;
+                max-height: 200px;
+                overflow-y: auto;
+                background-color: white;
+                border: 1px solid #ddd;
+                list-style-type: none;
+                padding: 0;
+                margin: 0;
+                display: none;
+            }
+
+                .listbox ul li {
+                    padding: 10px;
+                    cursor: pointer;
+                }
+
+                    .listbox ul li:hover {
+                        background-color: #f1f1f1;
+                    }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class=" pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <nav class="nav-tabs" id="navTabs">
+                                <a asp-controller="Campaign" asp-action="CampaignDetail_PMB">Campaign Detail</a>
+                                <a asp-controller="Accounting" asp-action="AccountingBookCampaign_PMB">Accounting Book</a>
+                                <a asp-controller="Campaign" asp-action="Member_PMB" class="active">Member</a>
+                                <a asp-controller="Accounting" asp-action="DebtManagement">Debt</a>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Member List</h6>
+
+                        </div>
+                    </div>
+                    <div class="search-filter-container px-3">
+                        <input type="text" id="searchInput" placeholder="Search by Name" class="search-box" />
+                        <select id="statusFilter" class="filter-box">
+                            <option value="">All Statuses</option>
+                            <option value="true">Active</option>
+                            <option value="false">Inactive</option>
+                        </select>
+                    </div>
+
+                    <div class="card-body px-0 pb-2">
+                        <div class="table-responsive p-0">
+                            <table class="table align-items-center mb-0" id="memberTable">
+                                <thead>
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STT</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Email</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Role</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                                        <th class="text-secondary opacity-7">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="memberList">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="pagination-container text-center mt-4">
+                    <div id="pagination"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="detailModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h3>Member Detail</h3>
+                <div id="memberDetailContent"></div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+<script>
+    const campaignId = localStorage.getItem('campaignId');
+    const jwtToken = localStorage.getItem('jwtToken');
+    if (!jwtToken) {
+        window.location.href = '/Authentication/Login';
+    }
+    let currentPage = 1;
+    const pageSize = 7;
+    let selectedMember = null;
+    const checkrole = localStorage.getItem('loggingRole');
+    const checkroleId = localStorage.getItem('loggingRoleId');
+    const userId = localStorage.getItem('userId');
+    function showDetail(button) {
+        const row = button.closest('tr');
+        const name = row.cells[1].innerText;
+        const email = row.cells[2].innerText;
+        const role = row.cells[3].innerText;
+        const status = row.cells[4].innerText;
+
+        const detailContent = `
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Role:</strong> ${role}</p>
+            <p><strong>Status:</strong> ${status}</p>
+        `;
+
+        document.getElementById('memberDetailContent').innerHTML = detailContent;
+        document.getElementById('detailModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('detailModal').style.display = 'none';
+    }
+
+    $(document).ready(function () {
+        if (checkrole === 'Project Manager' || checkrole === 'Project Management Board') {
+            const addMemberButton = `
+                <a class="btn btn-dark mb-0 me-3" href="/Campaign/MemberAdd_PMB">Add Member</a>
+            `;
+            $('.bg-gradient-primary').append(addMemberButton);
+        }
+        loadMembers();
+
+        $('#searchInput').on('keyup', function () {
+            currentPage = 1;
+            loadMembers();
+        });
+
+        $('#statusFilter').on('change', function () {
+            currentPage = 1;
+            loadMembers();
+        });
+    });
+
+    function loadMembers() {
+        const searchInput = $('#searchInput').val().trim();
+        const isActive = $('#statusFilter').val();
+
+        $.ajax({
+            url: `${apiBaseUrl}/api/CampaignMember/GetAllCampaignMembersByCampaignId?searchInput=${searchInput}&CampaignId=${campaignId}&isActive=${isActive}&currentPage=${currentPage}`,
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            },
+            success: function (response) {
+                if (response.success && response.data.data.length > 0) {
+                    renderTable(response.data.data);
+                    setupPagination(response.data.dataCount);
+                } else {
+                    $('#memberList').html('<tr><td colspan="6">No members found.</td></tr>');
+                }
+            },
+            error: function () {
+                alert('Error fetching campaign members');
+            }
+        });
+    }
+
+    function renderTable(members) {
+        const memberList = $('#memberList');
+        memberList.empty();
+
+        members.forEach((member, index) => {
+            const statusText = member.isActive ? 'Active' : 'Inactive';
+            const statusColor = member.isActive ? 'green' : 'red';
+            const actionButtonColor = member.isActive ? 'btn-danger' : 'btn-success';
+            const getStatusClass = member.isActive ? 'badge badge-sm badge-approved' : 'badge badge-sm badge-declined';
+            const actionButtonText = member.isActive ? 'Inactive' : 'Active';
+            const detailButton = `
+                <a class="btn btn-info btn-sm" href="/Campaign/MemberDetail_PMB?userId=${member.userId}">Detail</a>
+            `;
+
+            if (member.roleInformation.roleName === 'Project Manager') {
+                console.log('gêk');
+                actionButton = detailButton;
+            } else {
+                actionButton = checkrole === 'Project Management Board' ? `
+                    ${detailButton}
+                    <button class="btn ${actionButtonColor} btn-sm" onclick="confirmStatusChange('${member.id}', ${!member.isActive})">
+                    ${actionButtonText}
+                    </button>` : detailButton;
+            }
+            
+            const row = `
+                <tr>
+                    <td class="align-middle text-center ">${index + 1 + (currentPage - 1) * pageSize}</td>
+                    <td class="align-middle text-center ">${member.firstName} ${member.lastName}</td>
+                    <td class="align-middle text-center ">${member.email}</td>
+                    <td class="align-middle text-center ">${member.roleInformation.roleName}</td>
+                    <td class="align-middle text-center "><span class="${getStatusClass}">${statusText}</span></td>
+                    <td class="align-middle text-center ">${actionButton}</td>
+                </tr>
+            `;
+            memberList.append(row);
+        });
+    }
+
+
+    // function setupPagination(totalCount) {
+    //     const totalPages = Math.ceil(totalCount / pageSize);
+    //     const paginationContainer = $('#pagination');
+    //     paginationContainer.empty();
+
+    //     for (let i = 1; i <= totalPages; i++) {
+    //         const pageButton = `<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}" onclick="goToPage(${i})">${i}</button>`;
+    //         paginationContainer.append(pageButton);
+    //     }
+    // }
+
+    // function goToPage(page) {
+    //     currentPage = page;
+    //     loadMembers();
+    // }
+    function setupPagination(totalCount) {
+        const totalPages = Math.ceil(totalCount / pageSize);
+        const paginationContainer = $('#pagination');
+        paginationContainer.empty();
+
+        const maxVisibleButtons = 5;
+        const ellipsis = `<span class="btn btn-sm btn-light disabled">...</span>`;
+
+        if (currentPage > 1) {
+            const prevButton = `<button class="btn btn-sm btn-page btn-light" onclick="goToPage(${currentPage - 1})">Previous</button>`;
+            paginationContainer.append(prevButton);
+        } else {
+            const prevButton = `<button class="btn btn-sm btn-page btn-light disabled">Previous</button>`;
+            paginationContainer.append(prevButton);
+        }
+
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisibleButtons / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisibleButtons - 1);
+
+       if (endPage - startPage + 1 < maxVisibleButtons) {
+            startPage = Math.max(1, endPage - maxVisibleButtons + 1);
+        }
+
+        if (startPage > 1) {
+            paginationContainer.append(`<button class="btn btn-sm btn-page btn-light" onclick="goToPage(1)">1</button>`);
+            if (startPage > 2) {
+                paginationContainer.append(ellipsis);
+            }
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            const pageButton = `<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}" onclick="goToPage(${i})">${i}</button>`;
+            paginationContainer.append(pageButton);
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                paginationContainer.append(ellipsis);
+            }
+            paginationContainer.append(`<button class="btn btn-sm btn-page btn-light" onclick="goToPage(${totalPages})">${totalPages}</button>`);
+        }
+
+        if (currentPage < totalPages) {
+            const nextButton = `<button class="btn btn-sm btn-page btn-light" onclick="goToPage(${currentPage + 1})">Next</button>`;
+            paginationContainer.append(nextButton);
+        } else {
+            const nextButton = `<button class="btn btn-sm btn-page btn-light disabled">Next</button>`;
+            paginationContainer.append(nextButton);
+        }
+    }
+
+    function goToPage(page) {
+        if (page < 1 || page > Math.ceil(totalCount / pageSize)) return;
+        currentPage = page;
+        loadMembers();
+    }
+
+    function confirmStatusChange(userId, newStatus) {
+        const statusText = newStatus ? 'Active' : 'Inactive';
+        if (confirm(`Are you sure you want to set the status to ${statusText}?`)) {
+            updateMemberStatus(userId, newStatus);
+        }
+    }
+
+    function updateMemberStatus(id, isActive) {
+        const payload = {
+            id: id,
+            pmUserId: userId,
+            pmRoleId: checkroleId,
+            campaignId: campaignId,
+            isActive: isActive
+        };
+        $.ajax({
+            url: `${apiBaseUrl}/api/CampaignMember/UpdateCampaignMemberStatus`,
+            method: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(payload),
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            },
+            success: function (response) {
+                if (response.success) {
+                    alert('Campaign member status updated successfully.');
+                    loadMembers();
+                } else {
+                    alert('Failed to update member status: ' + response.message);
+                }
+            },
+            error: function () {
+                alert('Error updating member status');
+            }
+        });
+    }
+</script>

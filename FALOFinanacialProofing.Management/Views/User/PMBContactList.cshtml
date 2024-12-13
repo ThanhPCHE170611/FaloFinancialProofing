@@ -108,7 +108,7 @@
                     </div>
                 </div>
                 <div class="pagination-container text-center mt-4">
-                    <div id="paginationControls"></div>
+                    <div id="pagination"></div>
                 </div>
             </div>
         </div>
@@ -176,7 +176,7 @@
 
         function fetchAccountList() {
             $.ajax({
-                url: `https://localhost:7294/api/Users/GetPMBAccountList?searchInput=${encodeURIComponent(searchInput)}&currentPage=${currentPage}`,
+                url: `${apiBaseUrl}/api/Users/GetPMBAccountList?searchInput=${encodeURIComponent(searchInput)}&currentPage=${currentPage}`,
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`
@@ -184,7 +184,7 @@
                 success: function (response) {
                     if (response.success) {
                         renderAccountTable(response.data.data);
-                        setupPagination(response.data);
+                        setupPagination(response.data.dataCount);
                     } else {
                         alert('Failed to fetch accounts: ' + response.message);
                     }
@@ -229,15 +229,74 @@
         function displayValue(value) {
             return value ? value : 'N/A';
         }
-        function setupPagination(data) {
-            $('#paginationControls').empty();
-            const totalPages = Math.ceil(data.dataCount / 5);
+    //     function setupPagination(data) {
+    //         $('#paginationControls').empty();
+    //         const totalPages = Math.ceil(data.dataCount / 7);
 
-            for (let i = 1; i <= totalPages; i++) {
-                const pageButton = `<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}" onclick="goToPage(${i})">${i}</button>`;
-                $('#paginationControls').append(pageButton);
+    //         for (let i = 1; i <= totalPages; i++) {
+    //             const pageButton = `<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}" onclick="goToPage(${i})">${i}</button>`;
+    //             $('#paginationControls').append(pageButton);
+    //         }
+    //     }
+    const pageSize = 7;
+    function setupPagination(totalRecords) {
+        const totalPages = Math.ceil(totalRecords / pageSize);
+        const paginationContainer = $('#pagination');
+        paginationContainer.empty();
+
+        const maxVisibleButtons = 5;
+        const ellipsis = `<span class="btn btn-sm btn-light disabled">...</span>`;
+
+        if (currentPage > 1) {
+            const prevButton = `<button class="btn btn-sm btn-page btn-light" onclick="goToPage(${currentPage - 1}, ${totalRecords})">Previous</button>`;
+            paginationContainer.append(prevButton);
+        } else {
+            const prevButton = `<button class="btn btn-sm btn-page btn-light disabled">Previous</button>`;
+            paginationContainer.append(prevButton);
+        }
+
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisibleButtons / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisibleButtons - 1);
+
+        if (endPage - startPage + 1 < maxVisibleButtons) {
+            startPage = Math.max(1, endPage - maxVisibleButtons + 1);
+        }
+
+        if (startPage > 1) {
+            paginationContainer.append(`<button class="btn btn-sm btn-page btn-light" onclick="goToPage(1, ${totalRecords})">1</button>`);
+            if (startPage > 2) {
+                paginationContainer.append(ellipsis);
             }
         }
+
+        for (let i = startPage; i <= endPage; i++) {
+            const pageButton = `<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}" onclick="goToPage(${i}, ${totalRecords})">${i}</button>`;
+            paginationContainer.append(pageButton);
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                paginationContainer.append(ellipsis);
+            }
+            paginationContainer.append(`<button class="btn btn-sm btn-page btn-light" onclick="goToPage(${totalPages}, ${totalRecords})">${totalPages}</button>`);
+        }
+
+        if (currentPage < totalPages) {
+            const nextButton = `<button class="btn btn-sm btn-page btn-light" onclick="goToPage(${currentPage + 1}, ${totalRecords})">Next</button>`;
+            paginationContainer.append(nextButton);
+        } else {
+            const nextButton = `<button class="btn btn-sm btn-page btn-light disabled">Next</button>`;
+            paginationContainer.append(nextButton);
+        }
+    }
+
+    function goToPage(page, totalRecords) {
+        const totalPages = Math.ceil(totalRecords / pageSize);
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        fetchAccountList();
+    }
+        
         $('#searchInput').on('keyup', function () {
             searchInput = $(this).val().trim();
             currentPage = 1;
@@ -246,10 +305,11 @@
 
         fetchAccountList();
     });
-    function goToPage(page) {
-        currentPage = page;
-        fetchAccountList();
-    }
-    window.goToPage = goToPage;
+    // function goToPage(page) {
+    //     currentPage = page;
+    //     fetchAccountList();
+    // }
+    
+
 
 </script>

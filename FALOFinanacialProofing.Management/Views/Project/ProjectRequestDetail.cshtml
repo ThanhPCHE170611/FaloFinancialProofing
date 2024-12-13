@@ -34,6 +34,10 @@
             display: none;
         }
 
+        #organization-section {
+            display: none;
+        }
+
         #docList li {
             margin-bottom: 5px;
         }
@@ -73,6 +77,12 @@
                             <div class="col-md-12">
                                 <label for="status" class="form-label">Status</label>
                                 <input type="text" class="form-control" id="status" readonly>
+                            </div>
+                        </div>
+                        <div class="row mb-3" id="organization-section">
+                            <div class="col-md-12">
+                                <label for="organizationInput" class="form-label">Organization</label>
+                                <input type="text" class="form-control" id="organizationInput" readonly>
                             </div>
                         </div>
                         <div class="row mb-3" id="approver-section">
@@ -138,12 +148,16 @@
 
         return formattedDate + ' ' + formattedTime;
     }
+    const jwtToken = localStorage.getItem('jwtToken');
     $(document).ready(function () {
-        const projectId = new URLSearchParams(window.location.search).get('requestId');
-        const jwtToken = localStorage.getItem('jwtToken');
+        const projectId = new URLSearchParams(window.location.search).get('requestId');    
         const userId = localStorage.getItem('userId');
+        if (!jwtToken) {
+            window.location.href = '/Authentication/Login';
+            return;
+        }
         $.ajax({
-            url: `https://localhost:7294/api/CreateProjectRequests/GetCreateProjectRequest/${projectId}`,
+            url: `${apiBaseUrl}/api/CreateProjectRequests/GetCreateProjectRequest/${projectId}`,
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -156,6 +170,12 @@
                     $('#receiverName').val(data.receiverName);
                     $('#approver-section').show();
                 }
+                if(data.organizationName !== 'No Organization') {
+                    $('#organizationInput').val(data.organizationName);
+                    $('#organization-section').show();
+                    console.log(data.organizationName);
+                }
+                
                 $('#description').val(data.description);
                 $('#status').val(data.status);
 
@@ -173,8 +193,9 @@
                     .css('margin-left', '10px')
                     .text('Cancel Request')
                     .click(function () {
+                        if (confirm('Are you sure you want to cancel this request?')) {
                         $.ajax({
-                            url: `https://localhost:7294/api/CreateProjectRequests/CancelCreateProjectRequest/${userId}/${projectId}`,
+                            url: `${apiBaseUrl}/api/CreateProjectRequests/CancelCreateProjectRequest/${userId}/${projectId}`,
                             method: 'PUT',
                             headers: {
                                 'Authorization': `Bearer ${jwtToken}`
@@ -183,18 +204,27 @@
                                 alert(response.message);
                                 if (response.success) {
                                     location.reload();
+                                    window.location.href = '/Project/ProjectRequestManagement';
                                 }
                             },
                             error: function (xhr, status, error) {
                                 alert('Error: ' + (xhr.responseText || status));
                             }
                         });
+                        }
                     });
                     $('#save-btn').append(cancelButton);
                 }
 
                 data.createProjectFiles.forEach(function (file) {
-                    $('#docList').append(`<li class="list-group-item">${file.filePath}</li>`);
+                    const listItem = $(`<li class="list-group-item"><a href="#" class="file-link" data-file="${file.filePath}">${file.filePath}</a></li>`);
+                    $('#docList').append(listItem);
+                });
+
+                $('.file-link').on('click', function (event) {
+                    event.preventDefault();
+                    const fileName = $(this).data('file');
+                    downloadFile(fileName);
                 });
             },
             error: function (xhr, status, error) {
@@ -202,6 +232,35 @@
             }
         });
     });
+    function downloadFile(fileName) {
+        $.ajax({
+            url: `${apiBaseUrl}/api/CreateProjectFiles/DownloadProjectFile/${fileName}`,
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            },
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function (data, status, xhr) {
+                console.log(fileName);
+                const contentType = xhr.getResponseHeader('Content-Type');
+                const blob = new Blob([data], { type: contentType });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            },
+            error: function (xhr, status, error) {
+                alert('Error downloading file. Please try again.');
+                console.error('Error downloading file:', error);
+            }
+        });
+    }
 </script>
 
 

@@ -379,6 +379,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                     && x.ApproveProcesses.Any(x => x.ApproverId.Equals(userid)))
                         .Include(x => x.AttachmentFiles)
                         .Include(x => x.ApproveProcesses)
+                        .ThenInclude(x => x.Vouchers)
                         .Include(x => x.User)
                         .Select(rf => new PrePayRequestFormViewRequest
                         {
@@ -396,6 +397,10 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                                 FilePath = af.FilePath,
                                 RequestId = af.RequestId
                             }).ToList(),
+                            Vouchers = rf.ApproveProcesses.Select(ap => new VoucherRequest
+                            {
+                                FilePath = ap.Vouchers.FirstOrDefault(vc => vc.Id != null).FilePath,
+                            }).Where(cv => cv.FilePath != null).ToList(),
                             ApproveProcessStatus = (rf.ApproveProcesses.FirstOrDefault(x => x.ApproverId.Equals(userid)) == null ? "null" : rf.ApproveProcesses.FirstOrDefault(x => x.ApproverId.Equals(userid)).ApproveStatus)
                         }).ToListAsync();
                     if (requestForms != null && requestForms.Count > 0)
@@ -439,6 +444,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                         && x.ApproveProcesses.Any(x => x.ApproverId.Equals(userid)))
                         .Include(x => x.AttachmentFiles)
                         .Include(x => x.ApproveProcesses)
+                        .ThenInclude(x => x.Vouchers)
                         .Include(x => x.User)
                         .Select(rf => new PrePayRequestFormViewRequest
                         {
@@ -456,6 +462,10 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                                 FilePath = af.FilePath,
                                 RequestId = af.RequestId
                             }).ToList(),
+                            Vouchers = rf.ApproveProcesses.Select(ap => new VoucherRequest
+                            {
+                                FilePath = ap.Vouchers.FirstOrDefault(vc => vc.Id != null).FilePath,
+                            }).Where(cv => cv.FilePath != null).ToList(),
                             ApproveProcessStatus = (rf.ApproveProcesses.FirstOrDefault(x => x.ApproverId.Equals(userid)) == null ? "null" : rf.ApproveProcesses.FirstOrDefault(x => x.ApproverId.Equals(userid)).ApproveStatus)
                         }).ToListAsync();
                     if (requestForms != null && requestForms.Count > 0)
@@ -499,6 +509,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                     && x.ApproveProcesses.Any(x => x.ApproverId.Equals(userid)))
                         .Include(x => x.AttachmentFiles)
                         .Include(x => x.ApproveProcesses)
+                        .ThenInclude(x => x.Vouchers)
                         .Include(x => x.User)
                         .Select(rf => new PrePayRequestFormViewRequest
                         {
@@ -516,6 +527,10 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                                 FilePath = af.FilePath,
                                 RequestId = af.RequestId
                             }).ToList(),
+                            Vouchers = rf.ApproveProcesses.Select(ap => new VoucherRequest
+                            {
+                                FilePath = ap.Vouchers.FirstOrDefault(vc => vc.Id != null).FilePath,
+                            }).Where(cv => cv.FilePath != null).ToList(),
                             ApproveProcessStatus = (rf.ApproveProcesses.FirstOrDefault(x => x.ApproverId.Equals(userid)) == null ? "null" : rf.ApproveProcesses.FirstOrDefault(x => x.ApproverId.Equals(userid)).ApproveStatus)
                         }).ToListAsync();
                     if (requestForms != null && requestForms.Count > 0)
@@ -558,6 +573,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                     && x.ApproveProcesses.Any(x => x.ApproverId.Equals(userid)))
                         .Include(x => x.AttachmentFiles)
                         .Include(x => x.ApproveProcesses)
+                        .ThenInclude(x => x.Vouchers)
                         .Include(x => x.User)
                         .Select(rf => new PrePayRequestFormViewRequest
                         {
@@ -575,6 +591,10 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                                 FilePath = af.FilePath,
                                 RequestId = af.RequestId
                             }).ToList(),
+                            Vouchers = rf.ApproveProcesses.Select(ap => new VoucherRequest
+                            {
+                                FilePath = ap.Vouchers.FirstOrDefault(vc => vc.Id != null).FilePath,
+                            }).Where(cv => cv.FilePath != null).ToList(),
                             ApproveProcessStatus = (rf.ApproveProcesses.FirstOrDefault(x => x.ApproverId.Equals(userid)) == null ? "null" : rf.ApproveProcesses.FirstOrDefault(x => x.ApproverId.Equals(userid)).ApproveStatus)
                         }).ToListAsync();
                     if (requestForms != null && requestForms.Count > 0)

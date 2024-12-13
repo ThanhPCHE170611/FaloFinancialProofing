@@ -1,4 +1,5 @@
-﻿using FALOFinancialProofing.Helpers;
+﻿using FALOFinancialProofing.DataSeedings;
+using FALOFinancialProofing.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -365,7 +366,17 @@ namespace FALOFinancialProofing.Models
                new SDG() { Id = 1, SDGName = "No Poverty" }, new SDG() { Id = 2, SDGName = "Zero Hunger" }, new SDG() { Id = 3, SDGName = "Good Health And Well-Being" }, new SDG() { Id = 4, SDGName = "Quality Education" }, new SDG() { Id = 5, SDGName = "Gender Equality" }, new SDG() { Id = 6, SDGName = "Clean Water And Sanitation" }
 
             );
+
+            var hasher = new PasswordHasher<User>();
+            modelBuilder.Entity<User>().HasData(
+                DataSeeding.GetUsers()
+            );
+
+            modelBuilder.Entity<UserRole>().HasData(
+                DataSeeding.GetUserRoles()
+            );
         }
+
 
         public void DeleteIdentityPrefix(ModelBuilder modelBuilder)
         {
