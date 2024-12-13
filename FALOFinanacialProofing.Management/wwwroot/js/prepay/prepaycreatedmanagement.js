@@ -82,7 +82,7 @@ window.onclick = function (event) {
 function downloadAttachment(fileName) {
     const jwtToken = localStorage.getItem('jwtToken');
     $.ajax({
-        url: `https://localhost:7294/api/AttachmentFile/downloadprepayattachmentfile/${fileName}`,
+        url: `${apiBaseUrl}/api/AttachmentFile/downloadprepayattachmentfile/${fileName}`,
         method: 'GET',
         xhrFields: {
             responseType: 'blob'
@@ -107,7 +107,7 @@ function downloadAttachment(fileName) {
 function downloadVoucher(fileName) {
     const jwtToken = localStorage.getItem('jwtToken');
     $.ajax({
-        url: `https://localhost:7294/api/Voucher/downloadprepayvoucherfile/${fileName}`,
+        url: `${apiBaseUrl}/api/Voucher/downloadprepayvoucherfile/${fileName}`,
         method: 'GET',
         xhrFields: {
             responseType: 'blob'
@@ -160,7 +160,7 @@ function submitMissingFile(requestId) {
     formData.append('attachment', fileInput.files[0]);
 
     $.ajax({
-        url: `https://localhost:7294/api/RequestForm/addmissingattachmentforrequest/${requestId}`,
+        url: `${apiBaseUrl}/api/RequestForm/addmissingattachmentforrequest/${requestId}`,
         method: 'POST',
         data: formData,
         processData: false,
@@ -240,7 +240,7 @@ $(document).ready(function () {
     let filterStatus = '';
     function loadPrepayRequests(page) {
         $.ajax({
-            url: `https://localhost:7294/api/RequestForm/getallprepayrequestincampaign/${campaignId}?userId=${userId}&page=${page}&status=${filterStatus}&searchDescription=${searchEmail}`,
+            url: `${apiBaseUrl}/api/RequestForm/getallprepayrequestincampaign/${campaignId}?userId=${userId}&page=${page}&status=${filterStatus}&searchDescription=${searchEmail}`,
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`

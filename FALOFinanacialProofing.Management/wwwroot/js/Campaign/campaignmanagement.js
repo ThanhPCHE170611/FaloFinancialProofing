@@ -26,9 +26,9 @@ $(document).ready(function () {
 
         let apiUrl;
         if (checkrole === "Project Management Board") {
-            apiUrl = `https://localhost:7294/api/Campaign/GetAllCampaignInSystem`
+            apiUrl = `${apiBaseUrl}/api/Campaign/GetAllCampaignInSystem`
         } else {
-            apiUrl = `https://localhost:7294/api/CampaignMember/GetAllCampaignMembersByUserIdAndRoleId`
+            apiUrl = `${apiBaseUrl}/api/CampaignMember/GetAllCampaignMembersByUserIdAndRoleId`
         }
 
         $.ajax({

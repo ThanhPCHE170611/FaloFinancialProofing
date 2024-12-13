@@ -46,7 +46,7 @@ $(document).ready(function () {
     }
 
     $.ajax({
-        url: `https://localhost:7294/api/Users/getuserdebincampaign?userId=${userId}&campaignId=${campaignId}`,
+        url: `${apiBaseUrl}/api/Users/getuserdebincampaign?userId=${userId}&campaignId=${campaignId}`,
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${jwtToken}`
@@ -88,18 +88,18 @@ $(document).ready(function () {
     //if (checkrole === "Volunteer") {
     //    apiUrl = ;
     //} else if (checkrole === "Volunteer Leader") {
-    //    apiUrl = `https://localhost:7294/api/RequestForm/getapproverforvolunteerleader/${campaignId}`;
+    //    apiUrl = `${apiBaseUrl}/api/RequestForm/getapproverforvolunteerleader/${campaignId}`;
     //} else if (checkrole === "Accounting") {
-    //    apiUrl = `https://localhost:7294/api/RequestForm/getapproverforaccounting/${campaignId}`;
+    //    apiUrl = `${apiBaseUrl}/api/RequestForm/getapproverforaccounting/${campaignId}`;
     //} else if (checkrole === "Project Manager") {
-    //    apiUrl = `https://localhost:7294/api/RequestForm/getapproverforprojectmanagement/${campaignId}`;
+    //    apiUrl = `${apiBaseUrl}/api/RequestForm/getapproverforprojectmanagement/${campaignId}`;
     //} else {
     //    alert('Invalid role. Please check your role and try again.');
     //    return;
     //}
 
     $.ajax({
-        url: `https://localhost:7294/api/RequestForm/getapproverlistforvolunteer/${campaignId}`,
+        url: `${apiBaseUrl}/api/RequestForm/getapproverlistforvolunteer/${campaignId}`,
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${jwtToken}`
@@ -221,7 +221,7 @@ $(document).ready(function () {
         console.log(dateTime);
 
         $.ajax({
-            url: 'https://localhost:7294/api/RequestForm/createnewpaymentrequest',
+            url: `${apiBaseUrl}/api/RequestForm/createnewpaymentrequest`,
             method: 'POST',
             data: formData,
             processData: false,

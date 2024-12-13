@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const checkrole = localStorage.getItem('loggingRole');
     function loadProjectDetails() {
         $.ajax({
-            url: `https://localhost:7294/api/Projects/GetProjectDetailsById/${projectId}`,
+            url: `${apiBaseUrl}/api/Projects/GetProjectDetailsById/${projectId}`,
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const updateData = prepareUpdateData();
 
             $.ajax({
-                url: 'https://localhost:7294/api/Projects/UpdateProject',
+                url: `${apiBaseUrl}/api/Projects/UpdateProject`,
                 type: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`
@@ -245,7 +245,7 @@ document.getElementById('projectImages').addEventListener('change', function (ev
 
 function downloadFile(fileName) {
     $.ajax({
-        url: `https://localhost:7294/api/CreateProjectFiles/DownloadProjectFile/${fileName}`,
+        url: `${apiBaseUrl}/api/CreateProjectFiles/DownloadProjectFile/${fileName}`,
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${jwtToken}`

@@ -151,11 +151,14 @@
         return value ? value : defaultValue;
     }
     const jwtToken = localStorage.getItem('jwtToken');
+    if (!jwtToken) {
+        window.location.href = '/Authentication/Login';
+    }
     $(document).ready(function () {
         const campaignId = new URLSearchParams(window.location.search).get('requestId');
         const userId = localStorage.getItem('userId');
         $.ajax({
-            url: `https://localhost:7294/api/CreateCampaignRequests/GetCreateCampaignRequest/${campaignId}`,
+            url: `${apiBaseUrl}/api/CreateCampaignRequests/GetCreateCampaignRequest/${campaignId}`,
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -192,7 +195,7 @@
                     .click(function () {
                         if (confirm('Are you sure you want to cancel this request?')) {
                         $.ajax({
-                            url: `https://localhost:7294/api/CreateCampaignRequests/CancelCreateCampaignRequest/${userId}/${campaignId}`,
+                            url: `${apiBaseUrl}/api/CreateCampaignRequests/CancelCreateCampaignRequest/${userId}/${campaignId}`,
                             method: 'PUT',
                             headers: {
                                 'Authorization': `Bearer ${jwtToken}`
@@ -231,7 +234,7 @@
     });
     function downloadFile(fileName) {
         $.ajax({
-            url: `https://localhost:7294/api/CreateCampaignFiles/DownloadCampaignFile/${fileName}`,
+            url: `${apiBaseUrl}/api/CreateCampaignFiles/DownloadCampaignFile/${fileName}`,
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`

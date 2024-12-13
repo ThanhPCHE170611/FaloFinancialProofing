@@ -60,7 +60,7 @@ $(document).ready(function () {
     });
 
     $.ajax({
-        url: `https://localhost:7294/api/Users/getuserdebincampaign?userId=${userId}&campaignId=${campaignId}`,
+        url: `${apiBaseUrl}/api/Users/getuserdebincampaign?userId=${userId}&campaignId=${campaignId}`,
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${jwtToken}`
@@ -99,14 +99,14 @@ $(document).ready(function () {
 
     let apiUrl;
     if (checkrole === "Volunteer") {
-        apiUrl = `https://localhost:7294/api/RequestForm/getapproverlistforvolunteer/${campaignId}`;
+        apiUrl = `${apiBaseUrl}/api/RequestForm/getapproverlistforvolunteer/${campaignId}`;
     } else if (checkrole === "Volunteer Leader") {
-        apiUrl = `https://localhost:7294/api/RequestForm/getapproverforvolunteerleader/${campaignId}`;
+        apiUrl = `${apiBaseUrl}/api/RequestForm/getapproverforvolunteerleader/${campaignId}`;
     } else if (checkrole === "Accounting") {
-        apiUrl = `https://localhost:7294/api/RequestForm/getapproverforaccounting/${campaignId}`;
+        apiUrl = `${apiBaseUrl}/api/RequestForm/getapproverforaccounting/${campaignId}`;
         
     } else if (checkrole === "Project Manager") {
-        apiUrl = `https://localhost:7294/api/RequestForm/getapproverforprojectmanagement/${campaignId}`;
+        apiUrl = `${apiBaseUrl}/api/RequestForm/getapproverforprojectmanagement/${campaignId}`;
     } else {
         alert('Invalid role. Please check your role and try again.');
         return;
@@ -176,7 +176,7 @@ $(document).ready(function () {
         console.log(dateTime);
 
         $.ajax({
-            url: 'https://localhost:7294/api/RequestForm/creatnewprepayrequest',
+            url: `${apiBaseUrl}/api/RequestForm/creatnewprepayrequest`,
             method: 'POST',
             data: formData,
             processData: false,

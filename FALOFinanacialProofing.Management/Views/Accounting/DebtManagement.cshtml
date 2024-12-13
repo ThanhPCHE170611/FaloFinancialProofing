@@ -164,8 +164,11 @@
         const userId = localStorage.getItem('userId');
         const checkrole = localStorage.getItem('loggingRole');
         const campaignId = localStorage.getItem('campaignId');
-
-        const apiUrl = "https://localhost:7294/api/DebManagement/getdebtlistforpmb";
+        if (!jwtToken) {
+            window.location.href = '/Authentication/Login';
+            return;
+        }
+        const apiUrl = `${apiBaseUrl}/api/DebManagement/getdebtlistforpmb`;
 
         function fetchData(emailFilter = "", isActive = "", page = 1) {
             const requestData = {

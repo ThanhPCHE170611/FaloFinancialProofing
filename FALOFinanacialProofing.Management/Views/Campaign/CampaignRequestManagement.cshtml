@@ -390,7 +390,7 @@
         console.log('User ID:', userId);
 
         $.ajax({
-            url: 'https://localhost:7294/api/CampaignRequestApproveHistories/CreateCampaignRequestApproveHistory',
+            url: `${apiBaseUrl}/api/CampaignRequestApproveHistories/CreateCampaignRequestApproveHistory`,
             type: 'POST',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -415,7 +415,7 @@
         const checkrole = localStorage.getItem('loggingRole');
         const userId = localStorage.getItem('userId');
         if (!jwtToken) {
-            alert('JWT token not found. Please log in.');
+            window.location.href = '/Authentication/Login';
             return;
         }
         let currentButton = null;
@@ -425,7 +425,7 @@
         currentButton = button;
         currentRequestId = requestId;
         $.ajax({
-            url: 'https://localhost:7294/api/Banks/GetAllBanks',
+            url: `${apiBaseUrl}/api/Banks/GetAllBanks`,
             type: 'GET',
             success: function (response) {
                 if (response && Array.isArray(response)) {
@@ -487,7 +487,7 @@
         console.log('Payload:', payload);
 
         $.ajax({
-            url: 'https://localhost:7294/api/CampaignRequestApproveHistories/CreateCampaignRequestApproveHistory',
+            url: `${apiBaseUrl}/api/CampaignRequestApproveHistories/CreateCampaignRequestApproveHistory`,
             type: 'POST',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -510,9 +510,9 @@
 
         if (checkrole === "Project Management Board") {
             $('.action-buttons').show();
-            apiUrl = 'https://localhost:7294/api/CreateCampaignRequests/GetCreateCampaignRequestByPMB';
+            apiUrl = `${apiBaseUrl}/api/CreateCampaignRequests/GetCreateCampaignRequestByPMB`;
         } else {
-            apiUrl = `https://localhost:7294/api/CreateCampaignRequests/GetAllCreateCampaignRequestsByUserId/${userId}`;
+            apiUrl = `${apiBaseUrl}/api/CreateCampaignRequests/GetAllCreateCampaignRequestsByUserId/${userId}`;
         }
         let currentPage = 1;
         const pageSize = 7;

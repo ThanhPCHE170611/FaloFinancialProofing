@@ -176,7 +176,7 @@
 
         function fetchAccountList() {
             $.ajax({
-                url: `https://localhost:7294/api/Users/GetPMBAccountList?searchInput=${encodeURIComponent(searchInput)}&currentPage=${currentPage}`,
+                url: `${apiBaseUrl}/api/Users/GetPMBAccountList?searchInput=${encodeURIComponent(searchInput)}&currentPage=${currentPage}`,
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`

@@ -48,7 +48,7 @@ function handleProjectReject(button, createProjectRequestId, isAllowed, feedback
 
 
     $.ajax({
-        url: 'https://localhost:7294/api/CreateProjectRequestApproveHistories/CreateCreateProjectRequestApproveHistory',
+        url: `${apiBaseUrl}/api/CreateProjectRequestApproveHistories/CreateCreateProjectRequestApproveHistory`,
         type: 'POST',
         headers: {
             'Authorization': `Bearer ${jwtToken}`
@@ -187,7 +187,7 @@ function handleProjectApproval(button, createProjectRequestId, isAllowed) {
 
     const jwtToken = localStorage.getItem('jwtToken');
     $.ajax({
-        url: 'https://localhost:7294/api/CreateProjectRequestApproveHistories/CreateCreateProjectRequestApproveHistory',
+        url: `${apiBaseUrl}/api/CreateProjectRequestApproveHistories/CreateCreateProjectRequestApproveHistory`,
         type: 'POST',
         headers: {
             'Authorization': `Bearer ${jwtToken}`
@@ -218,9 +218,9 @@ $(document).ready(function () {
     let apiUrl;
     if (checkrole === "Project Management Board") {
         $('.action-buttons').show();
-        apiUrl = 'https://localhost:7294/api/CreateProjectRequests/GetCreateProjectRequestByPMB';
+        apiUrl = `${apiBaseUrl}/api/CreateProjectRequests/GetCreateProjectRequestByPMB`;
     } else {
-        apiUrl = `https://localhost:7294/api/CreateProjectRequests/GetAllCreateProjectRequestsByUserId/${userId}`;
+        apiUrl = `${apiBaseUrl}/api/CreateProjectRequests/GetAllCreateProjectRequestsByUserId/${userId}`;
     }
 
     if (checkrole === 'Project Management Board') {
@@ -258,7 +258,7 @@ $(document).ready(function () {
     }
     function checkOrganizations() {
         $.ajax({
-            url: `https://localhost:7294/api/Organizations/GetOrganizationsByUserId/${userId}`,
+            url: `${apiBaseUrl}/api/Organizations/GetOrganizationsByUserId/${userId}`,
             type: 'GET',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`

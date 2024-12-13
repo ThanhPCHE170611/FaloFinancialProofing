@@ -8,10 +8,12 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
     public class ProjectpageController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration;
 
-        public ProjectpageController(IHttpClientFactory httpClientFactory)
+        public ProjectpageController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
         }
         // GET: ProjectpageController
         public async Task<IActionResult> Index(int? id)
@@ -28,17 +30,20 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
                     var client = _httpClientFactory.CreateClient();
 
                     // Make a GET request to the API
-                    var response = await client.GetStringAsync($"https://localhost:7294/api/Projects/GetProjectDetailsById/{id}");
+                    var apiBaseUrl = _configuration["ApiBaseUrl"];
+
+                    var url = apiBaseUrl + $"/api/Projects/GetProjectDetailsById/{id}";
+                    var response = await client.GetStringAsync(url);
 
                     // Deserialize the JSON response into an object
                     var projectDetails = JsonConvert.DeserializeObject<ApiResponseProject>(response);
 
                     ViewBag.projectDetails = projectDetails.Data;
 
-                    string url = "https://localhost:7294/api/Campaign/GetAllCampaignByProjectId/" + id + "?currentPage=1&PageSizeCustom=1000";
+                    url = apiBaseUrl + $"/api/Campaign/GetAllCampaignByProjectId/{id}?currentPage=1&PageSizeCustom=1000";
                     // Get all campaigns through project id
                     var responseCampaigns = await client.GetStringAsync(url);
-                    
+
                     var campaigns = JsonConvert.DeserializeObject<ApiResponseCampaign>(responseCampaigns);
 
                     // Check if campaigns data is valid
@@ -46,7 +51,7 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
                     {
                         // Handle the failure case (e.g., log the message)
                         Console.WriteLine($"API failed: {campaigns?.Message}");
-                        return View("/Error/Error404");  // Exit or handle failure logic as necessary
+                        return RedirectToAction("Error404", "Error");
                     }
 
                     if (campaigns?.Data?.Data != null && campaigns.Data.Data.Any())

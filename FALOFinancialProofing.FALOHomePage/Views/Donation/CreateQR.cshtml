@@ -61,7 +61,10 @@
 </main>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 <script>
+    var apiUrl = '@Configuration["ApiBaseUrl"]';
+
     document.addEventListener("DOMContentLoaded", function () {
         var QRDetails = @Html.Raw(donationDetailsJson);
 
@@ -115,7 +118,9 @@
 
             console.log("Data being sent:", data);
 
-            fetch('https://localhost:7294/api/CreateQrCodes/CreateQrCode', {
+            var url = apiUrl + '/api/CreateQrCodes/CreateQrCode';
+
+            fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -169,67 +174,67 @@
         }
     }
 
-    document.addEventListener("DOMContentLoaded", function () {
-        var donateButton = document.getElementById('syncButton');
-        var QRDetails = @Html.Raw(donationDetailsJson);
+    // document.addEventListener("DOMContentLoaded", function () {
+    //     var donateButton = document.getElementById('syncButton');
+    //     var QRDetails = @Html.Raw(donationDetailsJson);
 
-        console.log("QRDetails:", QRDetails);
+    //     console.log("QRDetails:", QRDetails);
 
-        if (!donateButton) {
-            console.error("Sync button not found!");
-        }
+    //     if (!donateButton) {
+    //         console.error("Sync button not found!");
+    //     }
 
-        donateButton.addEventListener('click', function (e) {
-            e.preventDefault();
-            var bankId = QRDetails.bankId;
+    //     donateButton.addEventListener('click', function (e) {
+    //         e.preventDefault();
+    //         var bankId = QRDetails.bankId;
 
-            if (!bankId) {
-                alert('Bank ID is missing.');
-                return;
-            }
+    //         if (!bankId) {
+    //             alert('Bank ID is missing.');
+    //             return;
+    //         }
 
-            fetch(`https://localhost:7294/api/Banks/GetBankById/${bankId}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch bank details');
-                    }
-                    return response.json();
-                })
-                .then(bankDetails => {
-                    console.log("Bank details:", bankDetails);
+    //         fetch(`https://localhost:7294/api/Banks/GetBankById/${bankId}`)
+    //             .then(response => {
+    //                 if (!response.ok) {
+    //                     throw new Error('Failed to fetch bank details');
+    //                 }
+    //                 return response.json();
+    //             })
+    //             .then(bankDetails => {
+    //                 console.log("Bank details:", bankDetails);
 
-                    var accountNumber = bankDetails.accountNumber;
+    //                 var accountNumber = bankDetails.accountNumber;
 
-                    if (!accountNumber) {
-                        alert('Account number not found.');
-                        return;
-                    }
+    //                 if (!accountNumber) {
+    //                     alert('Account number not found.');
+    //                     return;
+    //                 }
 
-                    fetch(`https://localhost:7294/api/WebHooks/SyncTransaction/${accountNumber}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                        .then(response => {
-                            if (response.status === 204) {
-                                console.log("Transaction successfully synced with no content in response.");
-                                alert('Transaction successfully synced!');
-                            } else {
-                                throw new Error(`Unexpected response status: ${response.status}`);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Sync Transaction Error:', error);
-                            alert('An error occurred while syncing the transaction.');
-                        });
-                })
-                .catch(error => {
-                    console.error('GetBankById Error:', error);
-                    alert('An error occurred while fetching bank details.');
-                });
-        });
-    });
+    //                 fetch(`https://localhost:7294/api/WebHooks/SyncTransaction/${accountNumber}`, {
+    //                     method: 'POST',
+    //                     headers: {
+    //                         'Content-Type': 'application/json'
+    //                     }
+    //                 })
+    //                     .then(response => {
+    //                         if (response.status === 204) {
+    //                             console.log("Transaction successfully synced with no content in response.");
+    //                             alert('Transaction successfully synced!');
+    //                         } else {
+    //                             throw new Error(`Unexpected response status: ${response.status}`);
+    //                         }
+    //                     })
+    //                     .catch(error => {
+    //                         console.error('Sync Transaction Error:', error);
+    //                         alert('An error occurred while syncing the transaction.');
+    //                     });
+    //             })
+    //             .catch(error => {
+    //                 console.error('GetBankById Error:', error);
+    //                 alert('An error occurred while fetching bank details.');
+    //             });
+    //     });
+    // });
 
 </script>
 

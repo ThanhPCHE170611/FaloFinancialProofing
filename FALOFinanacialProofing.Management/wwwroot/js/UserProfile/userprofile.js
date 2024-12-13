@@ -23,7 +23,7 @@ document.querySelectorAll('.sdg-tags span').forEach(function (tag) {
 });
 function loadSDGs() {
     $.ajax({
-        url: 'https://localhost:7294/api/SDG/GetAllSDGs',
+        url: `${apiBaseUrl}/api/SDG/GetAllSDGs`,
         type: 'GET',
         success: function (response) {
             if (response.success && response.data.length > 0) {
@@ -68,7 +68,7 @@ $(document).ready(function () {
 
     function loadUserProfile(userId) {
         $.ajax({
-            url: `https://localhost:7294/api/Users/GetUserProfile/${userId}`,
+            url: `${apiBaseUrl}/api/Users/GetUserProfile/${userId}`,
             type: 'GET',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -227,7 +227,7 @@ $(document).ready(function () {
         }
 
         $.ajax({
-            url: 'https://localhost:7294/api/Users/UpdateUserProfile',
+            url: `${apiBaseUrl}/api/Users/UpdateUserProfile`,
             type: 'POST',
             data: formData,
             contentType: false,

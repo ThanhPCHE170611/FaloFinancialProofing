@@ -294,7 +294,7 @@
     // });
     function loadSDGs() {
         $.ajax({
-            url: 'https://localhost:7294/api/SDG/GetAllSDGs',
+            url: `${apiBaseUrl}/api/SDG/GetAllSDGs`,
             type: 'GET',
             success: function (response) {
                 if (response.success && response.data.length > 0) {
@@ -321,6 +321,10 @@
     $(document).ready(function () {
         const userId = new URLSearchParams(window.location.search).get('userId');
         const jwtToken = localStorage.getItem('jwtToken');
+        if (!jwtToken) {
+            window.location.href = '/Authentication/Login';
+            return;
+        }
         const checkrole = localStorage.getItem('loggingRole');
         loadSDGs()
         loadUserProfile(userId);
@@ -362,7 +366,7 @@
 
         function loadUserProfile(userId) {
             $.ajax({
-                url: `https://localhost:7294/api/Users/GetUserProfile/${userId}`,
+                url: `${apiBaseUrl}/api/Users/GetUserProfile/${userId}`,
                 type: 'GET',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`

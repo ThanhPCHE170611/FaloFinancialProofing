@@ -41,6 +41,8 @@
 </main>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 <script>
     $(document).ready(function () {
         // Initially load campaigns with an empty search query
@@ -61,9 +63,12 @@
         });
     });
 
+    var apiUrl = '@Configuration["ApiBaseUrl"]';
+
+
     function loadCampaigns(pageNumber = 1, searchInput = "") {
         $.ajax({
-            url: `https://localhost:7294/api/Campaign/GetAllCampaignInSystem?title=${searchInput}&IsActive=true&currentPage=${pageNumber}&PageSizeCustom=7`,  // Adjust URL for the search query
+            url: apiUrl + `/api/Campaign/GetAllCampaignInSystem?title=${searchInput}&IsActive=true&currentPage=${pageNumber}&PageSizeCustom=7`,  // Adjust URL for the search query
             type: 'GET',
             success: function (response) {
                 if (response.success) {
@@ -109,32 +114,32 @@
             var campaignImage = campaign.image || '/images/cause/CampaignImages.jpg';  // Fallback image if none exists
 
             var cardHtml = `<div class="col-lg-8 order-2 order-lg-1">
-                                                                                                                                                                                            <div class="cause__item cause-list__item mb-30">
-                                                                                                                                                                                                <div class="cause__image image" style="width:100%; height:auto;overflow:hidden;">
-                                                                                                                                                                                                    <img src="${campaignImage}" style="width:100%; height:auto;object-fit:cover" alt="image">
-                                                                                                                                                                                                    <span class="cause-tag">${formattedDate}</span>
-                                                                                                                                                                                                </div>
-                                                                                                                                                                                                <div class="cause__content">
-                                                                                                                                                                                                    <h4 class="mb-2">
-                                                                                                                                                                                                        <a href="${url}" class="btn-inner">
-                                                                                                                                                                                                            ${campaign.title}
-                                                                                                                                                                                                        </a>
-                                                                                                                                                                                                    </h4>
-                                                                                                                                                                                                    <p class="mb-3">
-                                                                                                                                                                                                        ${shortenedDescription}
-                                                                                                                                                                                                    </p>
-                                                                                                                                                                                                    <div class="progress-area">
-                                                                                                                                                                                                        <div class="progress__item">
-                                                                                                                                                                                                            <div class="progress__content" style="width: ${percentageDisplay}%;"><span>${percentage}%</span></div>
-                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                        <div class="progress__goal mt-15">
-                                                                                                                                                                                                                <h6>Goal : <span>${formattedAmountGoal} VND</span></h6>
-                                                                                                                                                                                                                <h6>Raised : <span>${formattedAmountRaise} VND</span></h6>
+                                                                                                                                                                                                <div class="cause__item cause-list__item mb-30">
+                                                                                                                                                                                                    <div class="cause__image image" style="width:100%; height:auto;overflow:hidden;">
+                                                                                                                                                                                                        <img src="${campaignImage}" style="width:100%; height:auto;object-fit:cover" alt="image">
+                                                                                                                                                                                                        <span class="cause-tag">${formattedDate}</span>
+                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                    <div class="cause__content">
+                                                                                                                                                                                                        <h4 class="mb-2">
+                                                                                                                                                                                                            <a href="${url}" class="btn-inner">
+                                                                                                                                                                                                                ${campaign.title}
+                                                                                                                                                                                                            </a>
+                                                                                                                                                                                                        </h4>
+                                                                                                                                                                                                        <p class="mb-3">
+                                                                                                                                                                                                            ${shortenedDescription}
+                                                                                                                                                                                                        </p>
+                                                                                                                                                                                                        <div class="progress-area">
+                                                                                                                                                                                                            <div class="progress__item">
+                                                                                                                                                                                                                <div class="progress__content" style="width: ${percentageDisplay}%;"><span>${percentage}%</span></div>
+                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                            <div class="progress__goal mt-15">
+                                                                                                                                                                                                                    <h6>Goal : <span>${formattedAmountGoal} VND</span></h6>
+                                                                                                                                                                                                                    <h6>Raised : <span>${formattedAmountRaise} VND</span></h6>
+                                                                                                                                                                                                            </div>
                                                                                                                                                                                                         </div>
                                                                                                                                                                                                     </div>
                                                                                                                                                                                                 </div>
-                                                                                                                                                                                            </div>
-                                                                                                                                                                                        </div>`;
+                                                                                                                                                                                            </div>`;
             campaignsContainer.append(cardHtml);
         });
     }

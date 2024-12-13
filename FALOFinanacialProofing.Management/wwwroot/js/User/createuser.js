@@ -101,7 +101,7 @@
         };
         console.log(registerRequest);
         $.ajax({
-            url: 'https://localhost:7294/api/Users/Admin-Register',
+            url: `${apiBaseUrl}/api/Users/Admin-Register`,
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`,

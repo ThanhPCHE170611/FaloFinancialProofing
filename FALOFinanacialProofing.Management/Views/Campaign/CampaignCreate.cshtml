@@ -133,6 +133,11 @@
     var quill = new Quill('#editor-container', {
         theme: 'snow'
     });
+    const jwtToken = localStorage.getItem('jwtToken');
+    if (!jwtToken) {
+        window.location.href = '/Authentication/Login';
+        return;
+    }
     document.getElementById('attachments').addEventListener('change', function (e) {
         const fileList = document.getElementById('fileList');
         fileList.innerHTML = '';
@@ -191,8 +196,6 @@
         });
         $('#save-btn button').on('click', function (e) {
             e.preventDefault();
-
-            const jwtToken = localStorage.getItem('jwtToken');
             const userId = localStorage.getItem('userId');
             const projectId = new URLSearchParams(window.location.search).get('projectId');
 
@@ -290,7 +293,7 @@
             });
 
             $.ajax({
-                url: 'https://localhost:7294/api/Campaign/CreateCampaignClient',
+                url: `${apiBaseUrl}/api/Campaign/CreateCampaignClient`,
                 type: 'POST',
                 headers: {
                     'Authorization': 'Bearer ' + jwtToken

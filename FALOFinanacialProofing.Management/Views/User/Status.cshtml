@@ -274,7 +274,7 @@
         const isActive = $('#statusFilter').val();
 
         $.ajax({
-            url: `https://localhost:7294/api/CampaignMember/GetAllCampaignMembersByUserId?searchInput=${searchInput}&userId=${userId}&isActive=${isActive}&currentPage=${currentPage}`,
+            url: `${apiBaseUrl}/api/CampaignMember/GetAllCampaignMembersByUserId?searchInput=${searchInput}&userId=${userId}&isActive=${isActive}&currentPage=${currentPage}`,
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -365,7 +365,7 @@
             isActive: isActive
         };
         $.ajax({
-            url: `https://localhost:7294/api/CampaignMember/UpdateCampaignMemberStatus`,
+            url: `${apiBaseUrl}/api/CampaignMember/UpdateCampaignMemberStatus`,
             method: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(payload),

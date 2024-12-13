@@ -1,5 +1,4 @@
 ﻿using FALOFinancialProofing.FALOHomePage.Models;
-using FALOFinancialProofing.FALOHomePage.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -12,16 +11,15 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
     public class DonationController : Controller
     {
         // GET: DonationController
-        private readonly TransactionPollingDirect _transactionPollingDirect;
-        private readonly BankAccountService bankAccountService;
 
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration;
 
-        public DonationController(TransactionPollingDirect transactionPollingDirect, BankAccountService bankData, IHttpClientFactory httpClientFactory)
+
+        public DonationController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
-            _transactionPollingDirect = transactionPollingDirect;
-            bankAccountService = bankData;
             _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
         }
         public async Task<IActionResult> Index(int id)
         {
@@ -73,11 +71,6 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
             }
         }
 
-        public async Task<IActionResult> ViewAccounts()
-        {
-            var accounts = await bankAccountService.GetAccounts();
-            return View(accounts);
-        }
 
         //Validate whether user has logged in yet
         public async Task<IActionResult> CreateQR(int campaignId)
@@ -101,7 +94,9 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
                     var client = _httpClientFactory.CreateClient();
 
                     // Make a GET request to the API
-                    var response = await client.GetStringAsync($"https://localhost:7294/api/Campaign/GetCampaignDetailsById/{campaignId}");
+                    var apiBaseUrl = _configuration["ApiBaseUrl"];
+                    var url = apiBaseUrl + $"/api/Campaign/GetCampaignDetailsById/{campaignId}";
+                    var response = await client.GetStringAsync(url);
 
                     // Deserialize the JSON response into an object
                     var campaignDetails = JsonConvert.DeserializeObject<ApiResponseCampaignDetails>(response);
@@ -137,7 +132,8 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
             {
                 var client = _httpClientFactory.CreateClient();
 
-                var firstApiUrl = $"https://localhost:7294/api/AccountingBook/getaccountingbookincampaign?campaignId={campaignId}";
+                var apiBaseUrl = _configuration["ApiBaseUrl"];
+                var firstApiUrl = apiBaseUrl + $"/api/AccountingBook/getaccountingbookincampaign?campaignId={campaignId}";
 
                 var firstApiResponse = await client.GetStringAsync(firstApiUrl);
 
@@ -150,7 +146,7 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
 
                 var filePath = firstApiResult.Data.FilePath;
 
-                var secondApiUrl = $"https://localhost:7294/api/AccountingBook/downloadaccountingbook/{filePath}";
+                var secondApiUrl = apiBaseUrl + $"/api/AccountingBook/downloadaccountingbook/{filePath}";
 
                 var secondApiResponse = await client.GetAsync(secondApiUrl);
 
@@ -256,3 +252,4 @@ namespace FALOFinancialProofing.FALOHomePage.Controllers
         }
     }
 }
+

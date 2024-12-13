@@ -142,9 +142,13 @@
     $(document).ready(function () {
         const id = new URLSearchParams(window.location.search).get('requestId');
         const jwtToken = localStorage.getItem('jwtToken');
+        if (!jwtToken) {
+            window.location.href = '/Authentication/Login';
+            return;
+        }
         const userId = localStorage.getItem('userId');
         $.ajax({
-            url: `https://localhost:7294/api/MoveNextCampaignStatusRequests/GetMoveNextCampaignStatusRequestById/${id}`,
+            url: `${apiBaseUrl}/api/MoveNextCampaignStatusRequests/GetMoveNextCampaignStatusRequestById/${id}`,
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -178,7 +182,7 @@
                     .click(function () {
                         if (confirm('Are you sure you want to cancel this request?')) {
                         $.ajax({
-                            url: `https://localhost:7294/api/MoveNextCampaignStatusRequests/CancelMoveNextCampaignStatusRequest?requestId=${id}&senderId=${userId}`,
+                            url: `${apiBaseUrl}/api/MoveNextCampaignStatusRequests/CancelMoveNextCampaignStatusRequest?requestId=${id}&senderId=${userId}`,
                             method: 'POST',
                             headers: {
                                 'Authorization': `Bearer ${jwtToken}`

@@ -186,15 +186,19 @@
 <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
 <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 <script>
     const checkrole = localStorage.getItem('loggingRole');
     const campaignId = localStorage.getItem('campaignId');
     const navTabs = document.getElementById('navTabs');
     const userId = localStorage.getItem('userId');
     const jwtToken = localStorage.getItem('jwtToken');
+    var apiBaseUrl = '@Configuration["ApiBaseUrl"]';
     console.log(campaignId);
     console.log(checkrole);
-
+    if (!jwtToken) {
+            window.location.href = '/Authentication/Login';
+    }
     if(checkrole !== "Accounting") {
         document.getElementById('btnupload').style.display = 'none';
     }
@@ -237,7 +241,7 @@
         formData.append('CampaignId', campaignId);
 
         $.ajax({
-            url: 'https://localhost:7294/api/AccountingBook/uploadaccountingbook',
+            url: `${apiBaseUrl}/api/AccountingBook/uploadaccountingbook`,
             type: 'POST',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -264,14 +268,12 @@
     }
 
     function createTableRow(accountingBook, index) {
-        const showDeleteButton = checkrole === "Accounting";
         return `
             <tr>
                 <td class="align-middle text-center">${index + 1}</td>
                 <td class="align-middle text-center">${accountingBook.filePath}</td>
                 <td class="align-middle text-center">
                     <button class="btn btn-success btn-sm" onclick="downloadFile(this,'${accountingBook.filePath}')">Download</button>
-                    ${showDeleteButton ? `<button class="btn btn-danger btn-sm" onclick="deleteRow(this, '${accountingBook.filePath}')">Delete</button>` : ''}
                 </td>
             </tr>
         `;
@@ -285,7 +287,7 @@
 
         if (confirm(`Are you sure you want to delete the accounting book: ${fileName}?`)) {
             $.ajax({
-                url: `https://localhost:7294/api/AccountingBook/deleteaccountingbook/${fileName}`,
+                url: `${apiBaseUrl}/api/AccountingBook/deleteaccountingbook/${fileName}`,
                 type: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`
@@ -313,7 +315,7 @@
 
     function fetchAccountingBooks() {
         $.ajax({
-            url: `https://localhost:7294/api/AccountingBook/getaccountingbookincampaign?campaignId=${campaignId}`,
+            url: `${apiBaseUrl}/api/AccountingBook/getaccountingbookincampaign?campaignId=${campaignId}`,
             type: 'GET',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -322,6 +324,7 @@
                 console.log('API Response:', response);
                 if (response.success) {
                     console.log('Data:', response.data);
+                    document.getElementById('btnupload').style.display = 'none';
                     populateTable(response.data);
                 } else {
                     const tableBody = $('#voucherTableBody');
@@ -349,7 +352,7 @@
 
     function downloadFile(button, fileName) {
         $.ajax({
-            url: `https://localhost:7294/api/AccountingBook/downloadaccountingbook/${fileName}`,
+            url: `${apiBaseUrl}/api/AccountingBook/downloadaccountingbook/${fileName}`,
             type: 'GET',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`

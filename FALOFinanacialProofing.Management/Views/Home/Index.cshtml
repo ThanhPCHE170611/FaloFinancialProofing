@@ -116,7 +116,9 @@
 <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 <script>
+    var apiBaseUrl = '@Configuration["ApiBaseUrl"]';
     if ('@Model' && '@Model' !== '') {
         localStorage.setItem('jwtToken', '@Model');
         const decodedToken = jwt_decode('@Model');
@@ -143,12 +145,17 @@
         $(document).ready(function () {
         const userId = localStorage.getItem('userId');
         const roleId = localStorage.getItem('loggingRoleId');
+        const jwtToken = localStorage.getItem('jwtToken');
+        if (!jwtToken) {
+            window.location.href = '/Authentication/Login';
+            return;
+        }
         let currentPage = 1;
         let searchInput = '';
 
         function fetchCampaignMembers() {
             $.ajax({
-                url: `https://localhost:7294/api/Campaign/GetFourCampaignByFilter?numOfElements=10`,
+                url: `${apiBaseUrl}/api/Campaign/GetFourCampaignByFilter?numOfElements=10`,
                 type: 'GET',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
