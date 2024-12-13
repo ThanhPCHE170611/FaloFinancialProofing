@@ -6,11 +6,18 @@ using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using FALOFinanacialProofing.Management.Models;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
 
 namespace FALOFinanacialProofing.Management.Controllers
 {
     public class AuthenticationController : Controller
     {
+        private readonly IConfiguration _configuration;
+
+        public AuthenticationController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
         public ActionResult Login()
         {
             return View();
@@ -28,7 +35,9 @@ namespace FALOFinanacialProofing.Management.Controllers
             var claims = result.Principal.Identities.FirstOrDefault().Claims.Select(claim => new { claim.Issuer, claim.OriginalIssuer, claim.Type, claim.Value });
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("AccessToken", accessToken);
-            var response = await client.PostAsync("https://localhost:7294/api/Users/Login-Google/Volunteer", null);
+            var apiBaseUrl = _configuration["ApiBaseUrl"];
+            var apiUrl = apiBaseUrl + "/api/Users/Login-Google/Volunteer";
+            var response = await client.PostAsync(apiUrl, null);
             var responseString = await response.Content.ReadAsStringAsync();
             var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseString);
             //ViewData["serverAccessToken"] = apiResponse != null ? apiResponse.Data.AccessToken : null;
