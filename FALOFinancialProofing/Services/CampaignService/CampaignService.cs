@@ -195,6 +195,7 @@ namespace FALOFinancialProofing.Services.CampaignService
 
             return data;
         }
+
         public async Task<Campaign> GetCampaignByCampaignIdAsync(int CampaignId)
         {
             Campaign data = null!;
