@@ -28,23 +28,25 @@
 <div class="container">
     <h2>Hoạt Động</h2>
     <!-- Search Bar -->
-    <div class="blog-single__right-item">
-        <div class="item shadow mb-30">
+    <div class="blog-single__right-item combined-block" style="display: flex; align-items: flex-start;">
+        <!-- Search Block (on the left side) -->
+        <div class="search-block item shadow mb-30" style="display: flex; flex-direction: column; flex: 1;">
             <h5 class="title">Search</h5>
-            <div class="serach-bar">
-                <input type="text" id="searchInput" placeholder="Search here" style=" padding: 6px;">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search here" style="padding:3px">
             </div>
         </div>
-        <div class="blog-single__right-item">
-            <div class="item shadow mb-30">
-                <div class="date-filter">
-                    <h5 class="title">Filter by Date</h5>
-                    <input type="date" id="startDate">
-                    <input type="date" id="endDate">
-                    <button id="applyDateFilter">Apply Filter</button>
-                </div>
+
+        <!-- Date Filter Block (on the right side) -->
+        <div class="date-filter-block item shadow mb-30" style="display: flex; flex-direction: column; flex: 1;">
+            <h5 class="title">Filter by Date</h5>
+            <div class="date-filter">
+                <input type="date" id="startDate" placeholder="Start Date" style="margin-bottom: 5px; border:1px solid black; padding: 3px; border-radius: 8px;">
+                <input type="date" id="endDate" placeholder="End Date" style="margin-bottom: 5px; border:1px solid black; padding: 3px; border-radius: 8px;">
+                <button id="applyDateFilter">Apply Filter</button>
             </div>
         </div>
+    </div>
         <!-- Error Message -->
         <div id="errorMessage" class="alert alert-danger" style="display:none;"></div>
 
@@ -64,7 +66,6 @@
 
         <!-- Pagination controls -->
         <div id="paginationControls" class="pegi justify-content-center mt-80 pagination"></div>
-    </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -76,11 +77,6 @@
             var campaignId = '@ViewBag.campaignId';
             loadActivityLogs(1, "", campaignId);  // Initial load for page 1
             fetchFixedData(campaignId);
-            // Search functionality
-            $('#searchButton').click(function () {
-                var searchInput = $('#searchInput').val();
-                loadActivityLogs(1, searchInput, campaignId);
-            });
 
             // Allow pressing Enter to trigger search
             $('#searchInput').keypress(function (e) {
@@ -92,11 +88,23 @@
             $('#applyDateFilter').click(applyDateFilter);
         });
 
+        function formatDateForAPI(date) {
+            if (!date) return "";  
+            const d = new Date(date);
+            const month = d.getMonth() + 1; 
+            const day = d.getDate();
+            const year = d.getFullYear();
+            return `${month}/${day}/${year}`; 
+        }
+
         var apiUrl = '@Configuration["ApiBaseUrl"]';
 
         // Function to load activity logs with pagination
         function loadActivityLogs(currentPage, searchInput, campaignId, startDate = "", endDate = "") {
-            const url = apiUrl + `/api/AttachmentFile/getallpaymentattachmentincampaignwithrequest/${campaignId}?name=${searchInput}&page=${currentPage}`;
+            const formattedStartDate = formatDateForAPI(startDate);
+            const formattedEndDate = formatDateForAPI(endDate);
+
+            const url = apiUrl + `/api/AttachmentFile/getallpaymentattachmentincampaignwithrequest/${campaignId}?name=${searchInput}&page=${currentPage}&fromdate=${formattedStartDate}&todate=${formattedEndDate}`;
 
             $.ajax({
                 url: url,
@@ -104,7 +112,6 @@
                 success: function (response) {
                     if (response && response.success && response.data && response.data.data) {
                         renderActivityLogs(response.data.data);
-                        // renderPagination(response.data.totalRecords, currentPage, searchInput, campaignId);
                         updatePagination(response.data.totalRecords, currentPage, searchInput, campaignId, startDate, endDate);
                     } else {
                         showError("No data found.");
@@ -153,7 +160,6 @@
                 success: function (response) {
                     if (response && response.success && typeof response.data === 'number') {
                         fixedTotalFiles = response.data;
-                        console.log(response.data.totalRecords);
                     } else {
                         console.warn("Failed to fetch total file count.");
                     }

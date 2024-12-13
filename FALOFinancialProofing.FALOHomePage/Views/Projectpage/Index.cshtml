@@ -202,12 +202,11 @@
             </div>
             <div class="cause__slider-wrp">
                 <div class="swiper cause__slider">
-                    <div class="swiper-wrapper py-4">
+                    <div class="swiper-wrapper py-4" style="width:350px; margin-right: 30px">
                         @foreach (var campaign in campaigns)
                         {
                             var percentage = Math.Round(((decimal)campaign.TotalMoneyEarned / campaign.FundTarget) * 100);
-                            <div class="swiper-slide">
-                                <div class="cause__item">
+                                <div class="cause__item"style="padding:30px">
                                     <div class="cause_menu_image image">
                                         @if (campaign.Image == null)
                                         {
@@ -253,7 +252,6 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                         }
                     </div>
                 </div>
@@ -262,3 +260,4 @@
     }
 
 </main>
+
