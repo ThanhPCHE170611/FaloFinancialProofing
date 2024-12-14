@@ -47,25 +47,25 @@
             </div>
         </div>
     </div>
-    <!-- Error Message -->
-    <div id="errorMessage" class="alert alert-danger" style="display:none;"></div>
+        <!-- Error Message -->
+        <div id="errorMessage" class="alert alert-danger" style="display:none;"></div>
 
-    <!-- Table for displaying the activity logs -->
-    <table class="table table-bordered table-hover" id="activityTable" style="display:none;">
-        <thead>
-            <tr>
-                <th scope="col">Thời Gian</th>
-                <th scope="col">Mô tả hoạt động</th>
-                <th scope="col">Số tiền</th>
-                <th scope="col">Người thực hiện</th>
-                <th scope="col">Chứng thực</th>
-            </tr>
-        </thead>
-        <tbody id="activityLogs"></tbody>
-    </table>
+        <!-- Table for displaying the activity logs -->
+        <table class="table table-bordered table-hover" id="activityTable" style="display:none;">
+            <thead>
+                <tr>
+                    <th scope="col">Thời Gian</th>
+                    <th scope="col">Mô tả hoạt động</th>
+                    <th scope="col">Số tiền</th>
+                    <th scope="col">Người thực hiện</th>
+                    <th scope="col">Chứng thực</th>
+                </tr>
+            </thead>
+            <tbody id="activityLogs"></tbody>
+        </table>
 
-    <!-- Pagination controls -->
-    <div id="paginationControls" class="pegi justify-content-center mt-80 pagination"></div>
+        <!-- Pagination controls -->
+        <div id="paginationControls" class="pegi justify-content-center mt-80 pagination"></div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -89,12 +89,12 @@
         });
 
         function formatDateForAPI(date) {
-            if (!date) return "";
+            if (!date) return "";  
             const d = new Date(date);
-            const month = d.getMonth() + 1;
+            const month = d.getMonth() + 1; 
             const day = d.getDate();
             const year = d.getFullYear();
-            return `${month}/${day}/${year}`;
+            return `${month}/${day}/${year}`; 
         }
 
         var apiUrl = '@Configuration["ApiBaseUrl"]';

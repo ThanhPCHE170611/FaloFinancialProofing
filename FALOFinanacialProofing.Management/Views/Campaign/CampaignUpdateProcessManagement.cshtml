@@ -271,7 +271,7 @@
                     console.log(createProjectRequestId);
                     updateRowToRejected(button, createProjectRequestId);
                 } else {
-                    alert('Failed: ' + response.message);
+                    alert(response.message);
                 }
             },
             error: function (xhr, status, error) {
@@ -387,7 +387,7 @@
                     console.log(createProjectRequestId);
                     updateRowToApprovedForPM(button,createProjectRequestId);
                 } else {
-                    alert('Failed: ' + response.message);
+                    alert(response.message);
                 }
             },
             error: function (xhr, status, error) {

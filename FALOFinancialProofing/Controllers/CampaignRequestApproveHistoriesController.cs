@@ -75,7 +75,7 @@ namespace FALOFinancialProofing.Controllers
                 bool checkValid = await _campaignRequestApproveHistoryService.CheckValidCampaignRequestApproveHistory(campaignRequestApproveHistoryClientRequest, message);
                 if (!checkValid)
                 {
-                    return BadRequest(new ApiResponse()
+                    return Ok(new ApiResponse()
                     {
                         Success = false,
                         Message = message.ToString()
@@ -85,7 +85,7 @@ namespace FALOFinancialProofing.Controllers
                 checkValid = await _campaignRequestApproveHistoryService.CreateCampaignRequestApproveHistoryAsync(campaignRequestApproveHistoryClientRequest, message);
                 if (!checkValid)
                 {
-                    return BadRequest(new ApiResponse()
+                    return Ok(new ApiResponse()
                     {
                         Success = false,
                         Message = message.ToString()
