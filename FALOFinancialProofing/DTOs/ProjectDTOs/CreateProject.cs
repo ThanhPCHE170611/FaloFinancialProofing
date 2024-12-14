@@ -19,6 +19,7 @@ namespace FALOFinancialProofing.DTOs.ProjectDTOs
         public int OrganizationId { get; set; }
         // tệp đính kèm
         //[Required(ErrorMessage = "Please select a file.")]
+        [ZipFile]
         public List<IFormFile>? FormFiles { get; set; }
         [ImageFile]
         public IFormFile? LogoFile { get; set; }
