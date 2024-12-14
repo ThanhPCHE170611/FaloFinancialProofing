@@ -354,7 +354,7 @@ $(document).ready(function () {
                         messages.forEach(message => console.error(`Error: ${message}`));
                         console.groupEnd();
                     }
-                    alert('Validation errors occurred. Check console for details.');
+                    alert('Logo file is invalid or all required field is not filled yet!!.');
                 } else {
                     console.error('Unexpected error:', errors);
                     alert('An unexpected error occurred. Check console for details.');

@@ -160,20 +160,20 @@
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    // function previewLogo() {
-    //     const file = document.getElementById('organizationLogo').files[0];
-    //     const preview = document.getElementById('logoPreview');
-    //     preview.innerHTML = '';
-    //     if (file) {
-    //         const reader = new FileReader();
-    //         reader.onload = function (e) {
-    //             const img = document.createElement('img');
-    //             img.src = e.target.result;
-    //             preview.appendChild(img);
-    //         };
-    //         reader.readAsDataURL(file);
-    //     }
-    // }
+    function previewLogo() {
+        const file = document.getElementById('organizationLogo').files[0];
+        const preview = document.getElementById('logoPreview');
+        preview.innerHTML = '';
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                preview.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        }
+    }
     $(document).ready(function () {
         const jwtToken = localStorage.getItem('jwtToken');
         const checkrole = localStorage.getItem('loggingRole');
