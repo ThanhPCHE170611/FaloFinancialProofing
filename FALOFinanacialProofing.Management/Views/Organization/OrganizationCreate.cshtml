@@ -135,8 +135,8 @@
                             <textarea class="form-control" id="bio" rows="3" placeholder="Enter Bio"></textarea>
                         </div>
 
-                        <div id="save-btn">
-                            <button type="submit" class="btn btn-warning">Create Organization</button>
+                        <div>
+                            <button type="submit" class="btn btn-warning" id="save-btn">Create Organization</button>
                         </div>
                     </div>
                 </div>
@@ -177,7 +177,7 @@
             reader.readAsDataURL(file);
         }
     }
-    $('#save-btn button').on('click', function () {
+    $('#save-btn').on('click', function () {
         const userId = localStorage.getItem('userId');
 
         if (!jwtToken || !userId) {
