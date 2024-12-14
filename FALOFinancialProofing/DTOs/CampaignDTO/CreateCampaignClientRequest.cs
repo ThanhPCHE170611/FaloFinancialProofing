@@ -22,6 +22,7 @@ namespace FALOFinancialProofing.DTOs.CampaignDTO
         public IFormFile? LogoFile { get; set; }
         public DateTime? EndDate { get; set; }
         public string? Address { get; set; }
+        [ZipFile]
         public List<IFormFile>? FormFiles { get; set; }
         //public int? BankId { get; set; }
 

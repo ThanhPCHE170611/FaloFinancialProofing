@@ -13,13 +13,14 @@ namespace FALOFinancialProofing.Services.OrganizationServices
         private readonly IRepository<Organization, int> _organizationRepository;
         private readonly AuthServices _authServices;
         private readonly IOrganizationMemberService organizationMemberService;
+        private readonly IRepository<OrganizationMember, int> organizationMemberRepository;
 
-
-        public OrganizationService(IRepository<Organization, int> organizationRepository, AuthServices authServices, IOrganizationMemberService organizationMemberService)
+        public OrganizationService(IRepository<Organization, int> organizationRepository, AuthServices authServices, IOrganizationMemberService organizationMemberService, IRepository<OrganizationMember, int> organizationMemberRepository)
         {
             _organizationRepository = organizationRepository;
             _authServices = authServices;
             this.organizationMemberService = organizationMemberService;
+            this.organizationMemberRepository = organizationMemberRepository;
         }
 
         #region Comment may use
@@ -88,6 +89,11 @@ namespace FALOFinancialProofing.Services.OrganizationServices
                 if (!user)
                 {
                     throw new Exception();
+                }
+                var checkExistDupplicate = await organizationMemberRepository.GetAll().Where(x => x.UserId.Equals(createOrganization.UserId) && x.Organization.Name.Equals(createOrganization.Name) && x.Organization.Main_office.Equals(createOrganization.Main_office) && x.Organization.Representative.Equals(createOrganization.Representative) && x.Organization.PhoneNumber.Equals(createOrganization.PhoneNumber) && x.Organization.Email.Equals(createOrganization.Email) && x.Organization.Description.Equals(createOrganization.Description) && x.Organization.Vision.Equals(createOrganization.Vision) && x.Organization.Mission.Equals(createOrganization.Mission) && x.Organization.CoreValue.Equals(createOrganization.CoreValue) && x.Organization.MainActivity.Equals(createOrganization.MainActivity) && x.Organization.Interests.Equals(createOrganization.Interests) && x.Organization.VolunteerExperience.Equals(createOrganization.VolunteerExperience) && x.Organization.VolunteerObjectives.Equals(createOrganization.VolunteerObjectives) && x.Organization.Bio.Equals(createOrganization.Bio)).AnyAsync();
+                if (checkExistDupplicate)
+                {
+                    throw new Exception("Dupplicate Organization Information!");
                 }
                 checkValid = true;
             }
@@ -275,6 +281,11 @@ namespace FALOFinancialProofing.Services.OrganizationServices
                 if (organization == null)
                 {
                     throw new Exception("Organization not found!");
+                }
+                var checkExistDupplicate = await organizationMemberRepository.GetAll().Where(x => x.Organization.Id != updateOrganization.Id && x.UserId.Equals(updateOrganization.UserId) && x.Organization.Name.Equals(updateOrganization.Name) && x.Organization.Main_office.Equals(updateOrganization.Main_office) && x.Organization.Representative.Equals(updateOrganization.Representative) && x.Organization.PhoneNumber.Equals(updateOrganization.PhoneNumber) && x.Organization.Email.Equals(updateOrganization.Email) && x.Organization.Description.Equals(updateOrganization.Description) && x.Organization.Vision.Equals(updateOrganization.Vision) && x.Organization.Mission.Equals(updateOrganization.Mission) && x.Organization.CoreValue.Equals(updateOrganization.CoreValue) && x.Organization.MainActivity.Equals(updateOrganization.MainActivity) && x.Organization.Interests.Equals(updateOrganization.Interests) && x.Organization.VolunteerExperience.Equals(updateOrganization.VolunteerExperience) && x.Organization.VolunteerObjectives.Equals(updateOrganization.VolunteerObjectives) && x.Organization.Bio.Equals(updateOrganization.Bio)).AnyAsync();
+                if (checkExistDupplicate)
+                {
+                    throw new Exception("Dupplicate Organization Information!");
                 }
                 var organizationOwner = await organizationMemberService.GetOrganizationMemberByUserIdAndOrganizationIdAsync(updateOrganization.UserId, updateOrganization.Id);
                 bool checkAdmin = await _authServices.CheckUserInRole(updateOrganization.UserId, AppRole.Admin, new StringBuilder());
