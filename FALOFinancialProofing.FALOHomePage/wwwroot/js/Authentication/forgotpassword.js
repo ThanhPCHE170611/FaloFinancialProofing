@@ -16,8 +16,11 @@
             return;
         }
 
+        var apiUrl = '@Configuration["ApiBaseUrl"]';
+        var url1 = apiUrl + `api/Users/ForgotPassword?email=${email}`;
         $.ajax({
-            url: `https://localhost:7294/api/Users/ForgotPassword?email=${email}`,
+
+            url: url1,
             method: 'POST',
             contentType: 'application/json',
             success: function (response) {

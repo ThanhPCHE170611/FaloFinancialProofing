@@ -15,12 +15,15 @@
     });
 
     // Function to load transactions
-    function loadTransactions(currentPage, searchInput) {
+function loadTransactions(currentPage, searchInput) {
+
+        var apiUrl = '@Configuration["ApiBaseUrl"]';
         var userId = '@userId';
-        var apiUrl = `https://localhost:7294/api/TransactionLogs/GetUserTransactionLogs/${userId}?searchInput=${searchInput}&currentPage=${currentPage}`;
+        var url = apiUrl + `api/TransactionLogs/GetUserTransactionLogs/${userId}?searchInput=${searchInput}&currentPage=${currentPage}`;
+
 
         $.ajax({
-            url: apiUrl,
+            url: url,
             type: 'GET',
             success: function (response) {
                 if (response && response.data && response.data.data) {

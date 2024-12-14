@@ -245,7 +245,7 @@
         const userId = '@userId';
 
         if (userId) {
-            fetch(`https://localhost:7294/api/Users/GetUserProfile/${userId}`)
+            fetch(`https://103.226.249.96:8080/api/Users/GetUserProfile/${userId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success && data.data.image) {

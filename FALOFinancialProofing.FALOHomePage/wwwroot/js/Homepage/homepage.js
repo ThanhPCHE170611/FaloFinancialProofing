@@ -4,8 +4,10 @@
 
 // Function to load campaigns with pagination
 function loadCampaigns() {
+    var apiUrl = '@Configuration["ApiBaseUrl"]';
+    var url1 = apiUrl + `api/Campaign/GetFourCampaignByFilter?IsActive=true&OrderByAscending=true&numOfElements=4`;
     $.ajax({
-        url: `https://localhost:7294/api/Campaign/GetFourCampaignByFilter?IsActive=true&OrderByAscending=true&numOfElements=4`,  // Adjust URL if necessary, e.g., for a specific controller
+        url: url1,  // Adjust URL if necessary, e.g., for a specific controller
         type: 'GET',
         data: {
             status: null,
@@ -99,8 +101,10 @@ $(document).ready(function () {
 
 // Function to load projects with pagination
 function loadProjects() {
+    var apiUrl = '@Configuration["ApiBaseUrl"]';
+    var url1 = apiUrl + `api/Projects/GetFourProjectByFilter?IsActive=true&OrderByAscending=true&numOfElements=4`;
     $.ajax({
-        url: `https://localhost:7294/api/Projects/GetFourProjectByFilter?IsActive=true&OrderByAscending=true&numOfElements=4`,  // Adjust URL if necessary, e.g., for a specific controller
+        url: url1,  // Adjust URL if necessary, e.g., for a specific controller
         type: 'GET',
         data: {
             status: null,  // You can set the status filter if needed

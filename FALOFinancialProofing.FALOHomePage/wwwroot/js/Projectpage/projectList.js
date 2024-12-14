@@ -19,10 +19,11 @@
 
 function loadProjects(pageNumber = 1, searchInput = "") {
     // Construct the API URL with the search input and other parameters
-    var apiUrl = `https://localhost:7294/api/Projects/GetAllProjectInSystem?searchInput=${searchInput}&IsActive=true&currentPage=${pageNumber}&PageSizeCustom=9`;
+    var apiUrl = '@Configuration["ApiBaseUrl"]';
+    var url1 = apiUrl + `/api/Projects/GetAllProjectInSystem?searchInput=${searchInput}&IsActive=true&currentPage=${pageNumber}&PageSizeCustom=9`;
 
     $.ajax({
-        url: apiUrl,
+        url: url1,
         type: 'GET',
         success: function (response) {
             if (response.success) {

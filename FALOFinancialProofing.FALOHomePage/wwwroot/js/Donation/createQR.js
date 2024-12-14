@@ -38,8 +38,10 @@
 
             console.log("Data being sent:", data); // Log data object
 
+            var apiUrl = '@Configuration["ApiBaseUrl"]';
+            var url = apiUrl + `/api/CreateQrCodes/CreateQrCode`;
             // Make the API call to generate the QR code
-            fetch('https://localhost:7294/api/CreateQrCodes/CreateQrCode', {
+            fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -120,8 +122,11 @@
                 return;
             }
 
+
+            var apiUrl = '@Configuration["ApiBaseUrl"]';
+            var url = apiUrl + `/api/Banks/GetBankById/${bankId}`;
             // Step 1: Fetch bank details using the first API
-            fetch(`https://localhost:7294/api/Banks/GetBankById/${bankId}`)
+            fetch(url)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Failed to fetch bank details');
@@ -141,7 +146,9 @@
 
                     // Step 2: Call the second API using the account number
 
-                    fetch(`https://localhost:7294/api/WebHooks/SyncTransaction/${accountNumber}`, {
+                    var apiUrl = '@Configuration["ApiBaseUrl"]';
+                    var url = apiUrl + `api/WebHooks/SyncTransaction/${accountNumber}`;
+                    fetch(url, {
                         method: 'POST',  // POST request
                         headers: {
                             'Content-Type': 'application/json'

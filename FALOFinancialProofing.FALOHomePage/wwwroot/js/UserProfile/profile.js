@@ -40,8 +40,10 @@
         });
 
         function loadUserProfile(userId) {
+            var apiUrl = '@Configuration["ApiBaseUrl"]';
+            var url1 = apiUrl + `/api/Users/GetUserProfile/${userId}`;
             $.ajax({
-                url: `https://localhost:7294/api/Users/GetUserProfile/${userId}`,
+                url: url1,
                 type: 'GET',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`
@@ -198,9 +200,11 @@
             if (logoFile) {
                 formData.append('LogoFile', logoFile);
             }
-
+            var apiUrl = '@Configuration["ApiBaseUrl"]';
+            var url1 = apiUrl + `/api/Users/UpdateUserProfile`;
             $.ajax({
-                url: 'https://localhost:7294/api/Users/UpdateUserProfile',
+
+                url: url1,
                 type: 'POST',
                 data: formData,
                 contentType: false,
