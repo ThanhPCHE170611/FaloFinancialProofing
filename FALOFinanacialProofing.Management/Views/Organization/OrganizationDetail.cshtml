@@ -177,10 +177,14 @@
     // }
     $(document).ready(function () {
         const jwtToken = localStorage.getItem('jwtToken');
-        if (!jwtToken) {
-            window.location.href = '/Authentication/Login';
-            return;
+        const checkrole = localStorage.getItem('loggingRole');
+        if(checkrole === "Project Management Board") {
+            document.getElementById('save-btn button').style.display = 'none';
         }
+        // if (!jwtToken) {
+        //     window.location.href = '/Authentication/Login';
+        //     return;
+        // }
         const orgId = new URLSearchParams(window.location.search).get('orgId');
         const userId = localStorage.getItem('userId');
 
@@ -289,7 +293,7 @@
                 success: function (response) {
                     if (response.success) {
                         alert('Organization updated successfully!');
-                        fetchOrganizationDetails();
+                        window.location.href = `/Organization/OrganizationManagement`;
                     } else {
                         alert(response.message);
                     }

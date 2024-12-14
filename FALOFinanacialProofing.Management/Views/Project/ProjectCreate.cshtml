@@ -166,10 +166,10 @@
     }
     $(document).ready(function () {
         const jwtToken = localStorage.getItem('jwtToken');
-        if (!jwtToken) {
-            window.location.href = '/Authentication/Login';
-            return;
-        }
+        // if (!jwtToken) {
+        //     window.location.href = '/Authentication/Login';
+        //     return;
+        // }
         $('#save-btn button').on('click', function (event) {
             event.preventDefault();
 

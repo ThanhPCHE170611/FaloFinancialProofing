@@ -146,10 +146,10 @@
         const userId = localStorage.getItem('userId');
         const roleId = localStorage.getItem('loggingRoleId');
         const jwtToken = localStorage.getItem('jwtToken');
-        if (!jwtToken) {
-            window.location.href = '/Authentication/Login';
-            return;
-        }
+        // if (!jwtToken) {
+        //     window.location.href = '/Authentication/Login';
+        //     return;
+        // }
         let currentPage = 1;
         let searchInput = '';
 

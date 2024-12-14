@@ -98,10 +98,10 @@
     }
     $(document).ready(function () {
         const jwtToken = localStorage.getItem('jwtToken');
-        if (!jwtToken) {
-            window.location.href = '/Authentication/Login';
-            return;
-        }
+        // if (!jwtToken) {
+        //     window.location.href = '/Authentication/Login';
+        //     return;
+        // }
         const userId = localStorage.getItem('userId');
         const checkrole = localStorage.getItem('loggingRole');
 
@@ -250,16 +250,6 @@
             paginationContainer.append(nextButton);
         }
     }
-
-    function goToPage(page, totalRecords) {
-        const totalPages = Math.ceil(totalRecords / pageSize);
-        if (page < 1 || page > totalPages) return; 
-        currentPage = page;
-        fetchOrganizationList(); 
-    }
-
-
-
         $('#searchInput').on('keyup', function () {
             searchInput = $(this).val().trim();
             currentPage = 1;
@@ -269,10 +259,12 @@
         fetchOrganizationList();
     });
 
-    // function goToPage(page) {
-    //     currentPage = page;
-    //     fetchOrganizationList();
-    // }
-    window.goToPage = goToPage;
+    function goToPage(page, totalRecords) {
+        const totalPages = Math.ceil(totalRecords / pageSize);
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        fetchOrganizationList();
+    }
 
+    window.goToPage = goToPage;
 </script>
