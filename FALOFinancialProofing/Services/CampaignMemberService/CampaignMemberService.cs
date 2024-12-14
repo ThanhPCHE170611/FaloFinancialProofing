@@ -266,7 +266,20 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
             try
             {
                 var existingCampaignMember = await cmRepository.Get(updateCampaignMemberStatusDTO.Id);
-
+                if (updateCampaignMemberStatusDTO.IsActive)
+                {
+                    int campaignId = existingCampaignMember.CampaignId;
+                    var GetAllAccounting = await cmRepository.GetAll()
+                        .Where(x => x.CampaignId == campaignId && x.Role.Name.Equals(AppRole.Accounting))
+                        .ToListAsync();
+                    if (GetAllAccounting != null && GetAllAccounting.Count > 0)
+                    {
+                        if (GetAllAccounting.Any(x => x.IsActive))
+                        {
+                            throw new Exception("Cannot activate CampaignMember with accounting role is active.");
+                        }
+                    }
+                }
                 if (existingCampaignMember == null)
                 {
                     throw new Exception("CampaignMember not found.");
@@ -450,7 +463,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 }
                 if (checkExistFailData)
                 {
-                    message.Append($"Not Valid User(s) Occurs! ");
+                    message.Append($"User is already added to campaign or role is invalid! ");
                 }
             }
             catch (Exception ex)
