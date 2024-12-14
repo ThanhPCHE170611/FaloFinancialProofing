@@ -134,10 +134,10 @@
         theme: 'snow'
     });
     const jwtToken = localStorage.getItem('jwtToken');
-    if (!jwtToken) {
-        window.location.href = '/Authentication/Login';
-        return;
-    }
+    // if (!jwtToken) {
+    //     window.location.href = '/Authentication/Login';
+    //     return;
+    // }
     document.getElementById('attachments').addEventListener('change', function (e) {
         const fileList = document.getElementById('fileList');
         fileList.innerHTML = '';

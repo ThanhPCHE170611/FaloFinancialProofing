@@ -151,9 +151,9 @@
         return value ? value : defaultValue;
     }
     const jwtToken = localStorage.getItem('jwtToken');
-    if (!jwtToken) {
-        window.location.href = '/Authentication/Login';
-    }
+    // if (!jwtToken) {
+    //     window.location.href = '/Authentication/Login';
+    // }
     $(document).ready(function () {
         const campaignId = new URLSearchParams(window.location.search).get('requestId');
         const userId = localStorage.getItem('userId');

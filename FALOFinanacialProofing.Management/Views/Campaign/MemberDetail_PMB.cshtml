@@ -320,10 +320,10 @@
     $(document).ready(function () {
         const userId = new URLSearchParams(window.location.search).get('userId');
         const jwtToken = localStorage.getItem('jwtToken');
-        if (!jwtToken) {
-            window.location.href = '/Authentication/Login';
-            return;
-        }
+        // if (!jwtToken) {
+        //     window.location.href = '/Authentication/Login';
+        //     return;
+        // }
         const checkrole = localStorage.getItem('loggingRole');
         loadSDGs()
         loadUserProfile(userId);
