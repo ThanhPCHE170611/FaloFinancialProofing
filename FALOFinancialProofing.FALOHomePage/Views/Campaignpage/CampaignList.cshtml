@@ -105,7 +105,10 @@
                 style: 'currency',
                 currency: 'VND'
             });
-            var percentage = Math.round((campaign.totalMoneyEarned / campaign.fundTarget) * 100);
+            var percentage = 0;
+            if (campaign.fundTarget > 0) {
+                percentage = Math.round((campaign.totalMoneyEarned / campaign.fundTarget) * 100);
+            }
             var percentageDisplay = percentage > 100 ? 100 : percentage;
             var url = '/Campaignpage/Index/' + campaign.campaignId;
             var shortenedDescription = campaign.description.length > 100 ? campaign.description.substring(0, 100) + '....' : campaign.description;

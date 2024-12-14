@@ -290,12 +290,7 @@
         }
     }
 
-    function goToPage(page, totalRecords) {
-        const totalPages = Math.ceil(totalRecords / pageSize);
-        if (page < 1 || page > totalPages) return;
-        currentPage = page;
-        fetchAccountList();
-    }
+    
         
         $('#searchInput').on('keyup', function () {
             searchInput = $(this).val().trim();
@@ -305,6 +300,12 @@
 
         fetchAccountList();
     });
+    function goToPage(page, totalRecords) {
+        const totalPages = Math.ceil(totalRecords / pageSize);
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        fetchAccountList();
+    }
     // function goToPage(page) {
     //     currentPage = page;
     //     fetchAccountList();
