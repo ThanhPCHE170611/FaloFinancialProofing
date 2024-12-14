@@ -67,7 +67,7 @@ namespace FALOFinancialProofing.Controllers
                 bool checkValid = await _moveNextCampaignStatusRequestHistoryService.CheckValidMoveNextCampaignStatusRequestHistory(requestHistoryDTO, message);
                 if (!checkValid)
                 {
-                    return BadRequest(new ApiResponse()
+                    return Ok(new ApiResponse()
                     {
                         Success = false,
                         Message = message.ToString()
@@ -76,7 +76,7 @@ namespace FALOFinancialProofing.Controllers
                 checkValid = await _moveNextCampaignStatusRequestHistoryService.CreateMoveNextCampaignStatusRequestHistoryAsync(requestHistoryDTO, message);
                 if (!checkValid)
                 {
-                    return BadRequest(new ApiResponse()
+                    return Ok(new ApiResponse()
                     {
                         Success = false,
                         Message = message.ToString()

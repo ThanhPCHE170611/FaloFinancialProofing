@@ -75,7 +75,7 @@ namespace FALOFinancialProofing.Controllers
                 bool checkValid = await _createProjectRequestApproveHistoryService.CheckValidCreateProjectRequestApproveHistory(createProjectRequestApproveHistoryClientRequest, message);
                 if (!checkValid)
                 {
-                    return BadRequest(new ApiResponse()
+                    return Ok(new ApiResponse()
                     {
                         Success = false,
                         Message = message.ToString()
@@ -85,7 +85,7 @@ namespace FALOFinancialProofing.Controllers
                 checkValid = await _createProjectRequestApproveHistoryService.CreateCreateProjectRequestApproveHistoryAsync(createProjectRequestApproveHistoryClientRequest, message);
                 if (!checkValid)
                 {
-                    return BadRequest(new ApiResponse()
+                    return Ok(new ApiResponse()
                     {
                         Success = false,
                         Message = message.ToString()
