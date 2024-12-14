@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FALOFinancialProofing.Migrations
 {
     [DbContext(typeof(FALOFinancialProofingDbContext))]
-    [Migration("20241130142247_doubletolong")]
-    partial class doubletolong
+    [Migration("20241214032843_InitialDatabase")]
+    partial class InitialDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -186,8 +186,8 @@ namespace FALOFinancialProofing.Migrations
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("FundTarget")
-                        .HasColumnType("money");
+                    b.Property<long>("FundTarget")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Image")
                         .HasMaxLength(200)
@@ -1097,6 +1097,297 @@ namespace FALOFinancialProofing.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("Users", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+                            AccessFailedCount = 0,
+                            Address = "123 Đường Chính, Thành phố A",
+                            Bio = "Lập trình viên phần mềm đam mê công nghệ web.",
+                            BirthDate = new DateOnly(1990, 5, 15),
+                            ConcurrencyStamp = "021008a7-a0d7-42cc-8c6a-957e14541e4b",
+                            Education = "Đại học Bách Khoa, Khoa Công nghệ Thông tin",
+                            Email = "admin@falofinancial.com",
+                            EmailConfirmed = true,
+                            FirstName = "Nguyễn",
+                            Gender = true,
+                            Hobby = "Đi bộ đường dài, Nhiếp ảnh",
+                            LastName = "Văn An",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@FALOFINANCIAL.COM",
+                            NormalizedUserName = "ADMIN@FALOFINANCIAL.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAELg0I6FNFMtpNqN8vj2DlxJ3cEezxFsvb7OsKpJWDErIVr8CJzGH1rtTxOVe9XtxBg==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "d1f58327-81b7-4629-9663-9ecdeb32f5e3",
+                            Skill = "C#, .NET, JavaScript",
+                            Strength = "Giải quyết vấn đề, Làm việc nhóm",
+                            TwoFactorEnabled = false,
+                            UserName = "admin@falofinancial.com",
+                            VolunteerExperience = "Tình nguyện viên tại Mái ấm Tình Thương",
+                            VolunteerGoal = "Đóng góp cho sự phát triển cộng đồng địa phương.",
+                            WorkPlace = "Công ty ABC"
+                        },
+                        new
+                        {
+                            Id = "b2c3d4e5-f678-9012-3456-7890abcdef1",
+                            AccessFailedCount = 0,
+                            Address = "456 Đường Số 2, Thành phố B",
+                            Bio = "Nhân viên văn phòng năng động.",
+                            BirthDate = new DateOnly(1988, 7, 20),
+                            ConcurrencyStamp = "96292080-7d1a-4054-a91d-74981141d931",
+                            Education = "Cao đẳng Kinh tế, Quản trị văn phòng",
+                            Email = "user1@falofinancial.com",
+                            EmailConfirmed = true,
+                            FirstName = "Lê",
+                            Gender = false,
+                            Hobby = "Xem phim, Nghe nhạc",
+                            LastName = "Thị Bình",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "USER1@FALOFINANCIAL.COM",
+                            NormalizedUserName = "USER1@FALOFINANCIAL.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAELg0I6FNFMtpNqN8vj2DlxJ3cEezxFsvb7OsKpJWDErIVr8CJzGH1rtTxOVe9XtxBg==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "3bab4250-cccb-46e8-8578-d1d4ef4d7635",
+                            Skill = "Soạn thảo văn bản, Quản lý hồ sơ, Giao tiếp tốt",
+                            Strength = "Cẩn thận, Chu đáo",
+                            TwoFactorEnabled = false,
+                            UserName = "user1@falofinancial.com",
+                            VolunteerGoal = "Tham gia các hoạt động thiện nguyện giúp đỡ cộng đồng.",
+                            WorkPlace = "Công ty XYZ"
+                        },
+                        new
+                        {
+                            Id = "c3d4e5f6-7890-1234-5678-90abcdef12",
+                            AccessFailedCount = 0,
+                            Address = "789 Đường 30/4, Thành phố CT",
+                            Bio = "Lập trình viên tự do, thích khám phá công nghệ mới.",
+                            BirthDate = new DateOnly(1995, 3, 10),
+                            ConcurrencyStamp = "6edc9ac9-6054-4a7e-ab56-d9d4459dc9e4",
+                            Education = "Đại học Cần Thơ, Công nghệ Phần mềm",
+                            Email = "user2@falofinancial.com",
+                            EmailConfirmed = true,
+                            FirstName = "Cao",
+                            Gender = true,
+                            Hobby = "Đọc sách, Chơi thể thao",
+                            LastName = "Văn Tuấn",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "USER2@FALOFINANCIAL.COM",
+                            NormalizedUserName = "USER2@FALOFINANCIAL.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAELg0I6FNFMtpNqN8vj2DlxJ3cEezxFsvb7OsKpJWDErIVr8CJzGH1rtTxOVe9XtxBg==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "b7e4b843-c552-4ba9-8ffd-8f87bfcb179a",
+                            Skill = "PHP, MySQL, Laravel",
+                            Strength = "Tự học, Sáng tạo",
+                            TwoFactorEnabled = false,
+                            UserName = "user2@falofinancial.com",
+                            VolunteerExperience = "Tham gia dự án mã nguồn mở",
+                            VolunteerGoal = "Đóng góp cho cộng đồng lập trình viên.",
+                            WorkPlace = "Freelancer"
+                        },
+                        new
+                        {
+                            Id = "d4e5f678-9012-3456-7890-abcdef123",
+                            AccessFailedCount = 0,
+                            Address = "1011 Đường Lê Lợi, Quận 1, TP.HCM",
+                            Bio = "Thích tham gia các hoạt động xã hội.",
+                            BirthDate = new DateOnly(1992, 9, 25),
+                            ConcurrencyStamp = "d1f4743b-afa4-4d9e-9b73-04802042cb65",
+                            Education = "Đại học Kinh tế TP.HCM, Tài chính Ngân hàng",
+                            Email = "user3@falofinancial.com",
+                            EmailConfirmed = true,
+                            FirstName = "Trần",
+                            Gender = false,
+                            Hobby = "Du lịch, Đọc sách",
+                            LastName = "Thị Diễm",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "USER3@FALOFINANCIAL.COM",
+                            NormalizedUserName = "USER3@FALOFINANCIAL.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAELg0I6FNFMtpNqN8vj2DlxJ3cEezxFsvb7OsKpJWDErIVr8CJzGH1rtTxOVe9XtxBg==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "6e9cbe23-2cc1-4865-8650-2d8e188db2bc",
+                            Skill = "Phân tích tài chính, Tư vấn đầu tư",
+                            Strength = "Giao tiếp, Thuyết trình",
+                            TwoFactorEnabled = false,
+                            UserName = "user3@falofinancial.com",
+                            VolunteerExperience = "Tình nguyện viên dạy học cho trẻ em nghèo",
+                            VolunteerGoal = "Góp phần xây dựng một xã hội tốt đẹp hơn.",
+                            WorkPlace = "Ngân hàng ACB"
+                        },
+                        new
+                        {
+                            Id = "e5f67890-1234-5678-90ab-cdef12345",
+                            AccessFailedCount = 0,
+                            Address = "222 Đường Nguyễn Huệ, Quận 3, TP.HCM",
+                            Bio = "Kỹ sư cầu nối, yêu thích công việc và cuộc sống.",
+                            BirthDate = new DateOnly(1985, 12, 5),
+                            ConcurrencyStamp = "f4a71efc-893f-4ff4-90dc-88714957b5f6",
+                            Education = "Đại học Giao thông Vận tải, Kỹ thuật Cầu đường",
+                            Email = "user4@falofinancial.com",
+                            EmailConfirmed = true,
+                            FirstName = "Phạm",
+                            Gender = true,
+                            Hobby = "Chơi game, Xem phim",
+                            LastName = "Văn Hoàng",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "USER4@FALOFINANCIAL.COM",
+                            NormalizedUserName = "USER4@FALOFINANCIAL.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAELg0I6FNFMtpNqN8vj2DlxJ3cEezxFsvb7OsKpJWDErIVr8CJzGH1rtTxOVe9XtxBg==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "1a3501ba-f7c5-4f41-b112-6671d0a4daa4",
+                            Skill = "Thiết kế cầu đường, Quản lý dự án",
+                            Strength = "Chịu khó, Ham học hỏi",
+                            TwoFactorEnabled = false,
+                            UserName = "user4@falofinancial.com",
+                            VolunteerExperience = "Tham gia xây dựng cầu dân sinh",
+                            VolunteerGoal = "Mang lại niềm vui cho mọi người.",
+                            WorkPlace = "Công ty FPT"
+                        },
+                        new
+                        {
+                            Id = "f6789012-3456-7890-abcd-ef1234567",
+                            AccessFailedCount = 0,
+                            Address = "333 Đường Pasteur, Quận 1, TP.HCM",
+                            Bio = "Y tá tận tâm với nghề.",
+                            BirthDate = new DateOnly(1998, 6, 18),
+                            ConcurrencyStamp = "fa822749-837e-486f-9758-e2dc6223fd1f",
+                            Education = "Đại học Y Dược TP.HCM, Điều dưỡng",
+                            Email = "user5@falofinancial.com",
+                            EmailConfirmed = true,
+                            FirstName = "Hồ",
+                            Gender = false,
+                            Hobby = "Nấu ăn, Làm bánh",
+                            LastName = "Thị Mai",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "USER5@FALOFINANCIAL.COM",
+                            NormalizedUserName = "USER5@FALOFINANCIAL.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAELg0I6FNFMtpNqN8vj2DlxJ3cEezxFsvb7OsKpJWDErIVr8CJzGH1rtTxOVe9XtxBg==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "954ebdc0-d191-4929-8000-66b014916471",
+                            Skill = "Chăm sóc bệnh nhân, Sơ cứu",
+                            Strength = "Kiên nhẫn, Yêu thương con người",
+                            TwoFactorEnabled = false,
+                            UserName = "user5@falofinancial.com",
+                            VolunteerExperience = "Tình nguyện viên tại trạm y tế xã",
+                            VolunteerGoal = "Giúp đỡ những người bệnh tật.",
+                            WorkPlace = "Bệnh viện Chợ Rẫy"
+                        },
+                        new
+                        {
+                            Id = "78901234-5678-90ab-cdef-123456789",
+                            AccessFailedCount = 0,
+                            Address = "444 Đường Cách Mạng Tháng 8, Quận 10, TP.HCM",
+                            Bio = "Giáo viên yêu nghề, mong muốn truyền đạt kiến thức cho học sinh.",
+                            BirthDate = new DateOnly(1987, 4, 8),
+                            ConcurrencyStamp = "64fcfbf2-5d86-4230-9533-81fb2b48b5f0",
+                            Education = "Đại học Sư phạm TP.HCM, Ngữ văn",
+                            Email = "user6@falofinancial.com",
+                            EmailConfirmed = true,
+                            FirstName = "Võ",
+                            Gender = true,
+                            Hobby = "Đọc sách, Du lịch",
+                            LastName = "Văn Nam",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "USER6@FALOFINANCIAL.COM",
+                            NormalizedUserName = "USER6@FALOFINANCIAL.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAELg0I6FNFMtpNqN8vj2DlxJ3cEezxFsvb7OsKpJWDErIVr8CJzGH1rtTxOVe9XtxBg==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "69e19fed-7af6-4639-941e-8a96ced026a4",
+                            Skill = "Giảng dạy, Truyền đạt kiến thức",
+                            Strength = "Nhiệt tình, Trách nhiệm",
+                            TwoFactorEnabled = false,
+                            UserName = "user6@falofinancial.com",
+                            VolunteerExperience = "Tham gia dạy học tình thương",
+                            VolunteerGoal = "Cống hiến cho sự nghiệp giáo dục.",
+                            WorkPlace = "Trường THPT Lê Hồng Phong"
+                        },
+                        new
+                        {
+                            Id = "89012345-6789-abcd-ef12-345678901",
+                            AccessFailedCount = 0,
+                            Address = "555 Đường Nguyễn Thị Minh Khai, Quận 3, TP.HCM",
+                            Bio = "Nhà thiết kế thời trang, yêu cái đẹp và sự sáng tạo.",
+                            BirthDate = new DateOnly(1994, 11, 12),
+                            ConcurrencyStamp = "85e33542-d155-4f66-9d9a-83b5eb3bc0ba",
+                            Education = "Đại học Mỹ thuật TP.HCM, Thiết kế Thời trang",
+                            Email = "user7@falofinancial.com",
+                            EmailConfirmed = true,
+                            FirstName = "Đỗ",
+                            Gender = false,
+                            Hobby = "Xem phim, Nghe nhạc",
+                            LastName = "Thị Ngọc",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "USER7@FALOFINANCIAL.COM",
+                            NormalizedUserName = "USER7@FALOFINANCIAL.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAELg0I6FNFMtpNqN8vj2DlxJ3cEezxFsvb7OsKpJWDErIVr8CJzGH1rtTxOVe9XtxBg==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "61af8e6d-863f-4906-90de-e796c3575c75",
+                            Skill = "Thiết kế, May vá",
+                            Strength = "Sáng tạo, Thẩm mỹ",
+                            TwoFactorEnabled = false,
+                            UserName = "user7@falofinancial.com",
+                            VolunteerExperience = "Tham gia thiết kế trang phục cho chương trình từ thiện",
+                            VolunteerGoal = "Góp phần làm đẹp cho đời.",
+                            WorkPlace = "Công ty Thiết kế Thời trang"
+                        },
+                        new
+                        {
+                            Id = "90123456-789a-bcde-f123-456789012",
+                            AccessFailedCount = 0,
+                            Address = "666 Đường Hai Bà Trưng, Quận 1, TP.HCM",
+                            Bio = "Chuyên viên phân tích chứng khoán, đam mê thị trường tài chính.",
+                            BirthDate = new DateOnly(1991, 8, 22),
+                            ConcurrencyStamp = "c5a3df2a-1ea9-4936-9861-d2c6afc6e427",
+                            Education = "Đại học Ngân hàng TP.HCM, Chứng khoán",
+                            Email = "user8@falofinancial.com",
+                            EmailConfirmed = true,
+                            FirstName = "Lý",
+                            Gender = true,
+                            Hobby = "Chơi thể thao, Đọc sách",
+                            LastName = "Văn Phong",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "USER8@FALOFINANCIAL.COM",
+                            NormalizedUserName = "USER8@FALOFINANCIAL.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAELg0I6FNFMtpNqN8vj2DlxJ3cEezxFsvb7OsKpJWDErIVr8CJzGH1rtTxOVe9XtxBg==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "a8dd8874-4c10-4eee-909d-b359f526e45d",
+                            Skill = "Phân tích chứng khoán, Đầu tư",
+                            Strength = "Tư duy logic, Phân tích",
+                            TwoFactorEnabled = false,
+                            UserName = "user8@falofinancial.com",
+                            VolunteerExperience = "Tham gia tư vấn tài chính cho người dân",
+                            VolunteerGoal = "Giúp mọi người hiểu rõ hơn về tài chính.",
+                            WorkPlace = "Công ty Chứng khoán"
+                        },
+                        new
+                        {
+                            Id = "01234567-89ab-cdef-1234-567890123",
+                            AccessFailedCount = 0,
+                            Address = "777 Đường Điện Biên Phủ, Quận 3, TP.HCM",
+                            Bio = "Luật sư, bảo vệ công lý và lẽ phải.",
+                            BirthDate = new DateOnly(1993, 2, 14),
+                            ConcurrencyStamp = "f44bbada-65d8-4f66-84bd-9f5a0d356dcb",
+                            Education = "Đại học Luật TP.HCM, Luật",
+                            Email = "user9@falofinancial.com",
+                            EmailConfirmed = true,
+                            FirstName = "Trương",
+                            Gender = false,
+                            Hobby = "Du lịch, Âm nhạc",
+                            LastName = "Thị Thu",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "USER9@FALOFINANCIAL.COM",
+                            NormalizedUserName = "USER9@FALOFINANCIAL.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAELg0I6FNFMtpNqN8vj2DlxJ3cEezxFsvb7OsKpJWDErIVr8CJzGH1rtTxOVe9XtxBg==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "8a344601-218a-45a1-acc1-69e194bc3ca8",
+                            Skill = "Tư vấn pháp lý, Soạn thảo văn bản pháp luật",
+                            Strength = "Công bằng, Chính trực",
+                            TwoFactorEnabled = false,
+                            UserName = "user9@falofinancial.com",
+                            VolunteerExperience = "Tư vấn pháp lý miễn phí cho người nghèo",
+                            VolunteerGoal = "Đóng góp cho sự phát triển của pháp luật.",
+                            WorkPlace = "Công ty Luật"
+                        });
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.UserRole", b =>
@@ -1112,6 +1403,58 @@ namespace FALOFinancialProofing.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("UserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+                            RoleId = "15db7f37-5dbc-4035-9b00-a0af4c3fe8bb"
+                        },
+                        new
+                        {
+                            UserId = "b2c3d4e5-f678-9012-3456-7890abcdef1",
+                            RoleId = "205d4496-4ac8-40d9-84b9-e09e1ada7a49"
+                        },
+                        new
+                        {
+                            UserId = "c3d4e5f6-7890-1234-5678-90abcdef12",
+                            RoleId = "205d4496-4ac8-40d9-84b9-e09e1ada7a49"
+                        },
+                        new
+                        {
+                            UserId = "d4e5f678-9012-3456-7890-abcdef123",
+                            RoleId = "83292e2c-6c86-4153-bdc5-760d05ec2299"
+                        },
+                        new
+                        {
+                            UserId = "e5f67890-1234-5678-90ab-cdef12345",
+                            RoleId = "83292e2c-6c86-4153-bdc5-760d05ec2299"
+                        },
+                        new
+                        {
+                            UserId = "f6789012-3456-7890-abcd-ef1234567",
+                            RoleId = "83292e2c-6c86-4153-bdc5-760d05ec2293"
+                        },
+                        new
+                        {
+                            UserId = "78901234-5678-90ab-cdef-123456789",
+                            RoleId = "83292e2c-6c86-4153-bdc5-760d05ec2293"
+                        },
+                        new
+                        {
+                            UserId = "89012345-6789-abcd-ef12-345678901",
+                            RoleId = "4e7b2c09-e0b0-4ddd-9694-ebf3e21e2472"
+                        },
+                        new
+                        {
+                            UserId = "90123456-789a-bcde-f123-456789012",
+                            RoleId = "4e7b2c09-e0b0-4ddd-9694-ebf3e21e2472"
+                        },
+                        new
+                        {
+                            UserId = "01234567-89ab-cdef-1234-567890123",
+                            RoleId = "83292e2c-6c86-4153-bdc5-760d05ec2295"
+                        });
                 });
 
             modelBuilder.Entity("FALOFinancialProofing.Models.UserSDG", b =>

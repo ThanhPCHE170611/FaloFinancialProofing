@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FALOFinancialProofing.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class InitialDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -38,10 +38,10 @@ namespace FALOFinancialProofing.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Main_office = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Representative = table.Column<int>(type: "int", nullable: false),
+                    Representative = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Logo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Logo = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Vision = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Mission = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -50,7 +50,6 @@ namespace FALOFinancialProofing.Migrations
                     Interests = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     VolunteerExperience = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     VolunteerObjectives = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Attachments = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Bio = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -378,7 +377,7 @@ namespace FALOFinancialProofing.Migrations
                     Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateOfCreation = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FundTarget = table.Column<decimal>(type: "money", nullable: false),
+                    FundTarget = table.Column<long>(type: "bigint", nullable: false),
                     Image = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
@@ -615,7 +614,7 @@ namespace FALOFinancialProofing.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CreateQrCodeId = table.Column<int>(type: "int", nullable: false),
+                    CreateQrCodeId = table.Column<int>(type: "int", nullable: true),
                     Amount = table.Column<int>(type: "int", nullable: false),
                     CampaignId = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -877,6 +876,40 @@ namespace FALOFinancialProofing.Migrations
                     { 4, "Quality Education" },
                     { 5, "Gender Equality" },
                     { 6, "Clean Water And Sanitation" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "AccessFailedCount", "Address", "Bio", "BirthDate", "ConcurrencyStamp", "Education", "Email", "EmailConfirmed", "FirstName", "Gender", "Hobby", "Image", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "Skill", "Strength", "TwoFactorEnabled", "UserName", "VolunteerExperience", "VolunteerGoal", "WorkPlace" },
+                values: new object[,]
+                {
+                    { "01234567-89ab-cdef-1234-567890123", 0, "777 Đường Điện Biên Phủ, Quận 3, TP.HCM", "Luật sư, bảo vệ công lý và lẽ phải.", new DateOnly(1993, 2, 14), "f44bbada-65d8-4f66-84bd-9f5a0d356dcb", "Đại học Luật TP.HCM, Luật", "user9@falofinancial.com", true, "Trương", false, "Du lịch, Âm nhạc", null, "Thị Thu", false, null, "USER9@FALOFINANCIAL.COM", "USER9@FALOFINANCIAL.COM", "AQAAAAIAAYagAAAAELg0I6FNFMtpNqN8vj2DlxJ3cEezxFsvb7OsKpJWDErIVr8CJzGH1rtTxOVe9XtxBg==", null, false, "8a344601-218a-45a1-acc1-69e194bc3ca8", "Tư vấn pháp lý, Soạn thảo văn bản pháp luật", "Công bằng, Chính trực", false, "user9@falofinancial.com", "Tư vấn pháp lý miễn phí cho người nghèo", "Đóng góp cho sự phát triển của pháp luật.", "Công ty Luật" },
+                    { "78901234-5678-90ab-cdef-123456789", 0, "444 Đường Cách Mạng Tháng 8, Quận 10, TP.HCM", "Giáo viên yêu nghề, mong muốn truyền đạt kiến thức cho học sinh.", new DateOnly(1987, 4, 8), "64fcfbf2-5d86-4230-9533-81fb2b48b5f0", "Đại học Sư phạm TP.HCM, Ngữ văn", "user6@falofinancial.com", true, "Võ", true, "Đọc sách, Du lịch", null, "Văn Nam", false, null, "USER6@FALOFINANCIAL.COM", "USER6@FALOFINANCIAL.COM", "AQAAAAIAAYagAAAAELg0I6FNFMtpNqN8vj2DlxJ3cEezxFsvb7OsKpJWDErIVr8CJzGH1rtTxOVe9XtxBg==", null, false, "69e19fed-7af6-4639-941e-8a96ced026a4", "Giảng dạy, Truyền đạt kiến thức", "Nhiệt tình, Trách nhiệm", false, "user6@falofinancial.com", "Tham gia dạy học tình thương", "Cống hiến cho sự nghiệp giáo dục.", "Trường THPT Lê Hồng Phong" },
+                    { "89012345-6789-abcd-ef12-345678901", 0, "555 Đường Nguyễn Thị Minh Khai, Quận 3, TP.HCM", "Nhà thiết kế thời trang, yêu cái đẹp và sự sáng tạo.", new DateOnly(1994, 11, 12), "85e33542-d155-4f66-9d9a-83b5eb3bc0ba", "Đại học Mỹ thuật TP.HCM, Thiết kế Thời trang", "user7@falofinancial.com", true, "Đỗ", false, "Xem phim, Nghe nhạc", null, "Thị Ngọc", false, null, "USER7@FALOFINANCIAL.COM", "USER7@FALOFINANCIAL.COM", "AQAAAAIAAYagAAAAELg0I6FNFMtpNqN8vj2DlxJ3cEezxFsvb7OsKpJWDErIVr8CJzGH1rtTxOVe9XtxBg==", null, false, "61af8e6d-863f-4906-90de-e796c3575c75", "Thiết kế, May vá", "Sáng tạo, Thẩm mỹ", false, "user7@falofinancial.com", "Tham gia thiết kế trang phục cho chương trình từ thiện", "Góp phần làm đẹp cho đời.", "Công ty Thiết kế Thời trang" },
+                    { "90123456-789a-bcde-f123-456789012", 0, "666 Đường Hai Bà Trưng, Quận 1, TP.HCM", "Chuyên viên phân tích chứng khoán, đam mê thị trường tài chính.", new DateOnly(1991, 8, 22), "c5a3df2a-1ea9-4936-9861-d2c6afc6e427", "Đại học Ngân hàng TP.HCM, Chứng khoán", "user8@falofinancial.com", true, "Lý", true, "Chơi thể thao, Đọc sách", null, "Văn Phong", false, null, "USER8@FALOFINANCIAL.COM", "USER8@FALOFINANCIAL.COM", "AQAAAAIAAYagAAAAELg0I6FNFMtpNqN8vj2DlxJ3cEezxFsvb7OsKpJWDErIVr8CJzGH1rtTxOVe9XtxBg==", null, false, "a8dd8874-4c10-4eee-909d-b359f526e45d", "Phân tích chứng khoán, Đầu tư", "Tư duy logic, Phân tích", false, "user8@falofinancial.com", "Tham gia tư vấn tài chính cho người dân", "Giúp mọi người hiểu rõ hơn về tài chính.", "Công ty Chứng khoán" },
+                    { "a1b2c3d4-e5f6-7890-1234-567890abcdef", 0, "123 Đường Chính, Thành phố A", "Lập trình viên phần mềm đam mê công nghệ web.", new DateOnly(1990, 5, 15), "021008a7-a0d7-42cc-8c6a-957e14541e4b", "Đại học Bách Khoa, Khoa Công nghệ Thông tin", "admin@falofinancial.com", true, "Nguyễn", true, "Đi bộ đường dài, Nhiếp ảnh", null, "Văn An", false, null, "ADMIN@FALOFINANCIAL.COM", "ADMIN@FALOFINANCIAL.COM", "AQAAAAIAAYagAAAAELg0I6FNFMtpNqN8vj2DlxJ3cEezxFsvb7OsKpJWDErIVr8CJzGH1rtTxOVe9XtxBg==", null, false, "d1f58327-81b7-4629-9663-9ecdeb32f5e3", "C#, .NET, JavaScript", "Giải quyết vấn đề, Làm việc nhóm", false, "admin@falofinancial.com", "Tình nguyện viên tại Mái ấm Tình Thương", "Đóng góp cho sự phát triển cộng đồng địa phương.", "Công ty ABC" },
+                    { "b2c3d4e5-f678-9012-3456-7890abcdef1", 0, "456 Đường Số 2, Thành phố B", "Nhân viên văn phòng năng động.", new DateOnly(1988, 7, 20), "96292080-7d1a-4054-a91d-74981141d931", "Cao đẳng Kinh tế, Quản trị văn phòng", "user1@falofinancial.com", true, "Lê", false, "Xem phim, Nghe nhạc", null, "Thị Bình", false, null, "USER1@FALOFINANCIAL.COM", "USER1@FALOFINANCIAL.COM", "AQAAAAIAAYagAAAAELg0I6FNFMtpNqN8vj2DlxJ3cEezxFsvb7OsKpJWDErIVr8CJzGH1rtTxOVe9XtxBg==", null, false, "3bab4250-cccb-46e8-8578-d1d4ef4d7635", "Soạn thảo văn bản, Quản lý hồ sơ, Giao tiếp tốt", "Cẩn thận, Chu đáo", false, "user1@falofinancial.com", null, "Tham gia các hoạt động thiện nguyện giúp đỡ cộng đồng.", "Công ty XYZ" },
+                    { "c3d4e5f6-7890-1234-5678-90abcdef12", 0, "789 Đường 30/4, Thành phố CT", "Lập trình viên tự do, thích khám phá công nghệ mới.", new DateOnly(1995, 3, 10), "6edc9ac9-6054-4a7e-ab56-d9d4459dc9e4", "Đại học Cần Thơ, Công nghệ Phần mềm", "user2@falofinancial.com", true, "Cao", true, "Đọc sách, Chơi thể thao", null, "Văn Tuấn", false, null, "USER2@FALOFINANCIAL.COM", "USER2@FALOFINANCIAL.COM", "AQAAAAIAAYagAAAAELg0I6FNFMtpNqN8vj2DlxJ3cEezxFsvb7OsKpJWDErIVr8CJzGH1rtTxOVe9XtxBg==", null, false, "b7e4b843-c552-4ba9-8ffd-8f87bfcb179a", "PHP, MySQL, Laravel", "Tự học, Sáng tạo", false, "user2@falofinancial.com", "Tham gia dự án mã nguồn mở", "Đóng góp cho cộng đồng lập trình viên.", "Freelancer" },
+                    { "d4e5f678-9012-3456-7890-abcdef123", 0, "1011 Đường Lê Lợi, Quận 1, TP.HCM", "Thích tham gia các hoạt động xã hội.", new DateOnly(1992, 9, 25), "d1f4743b-afa4-4d9e-9b73-04802042cb65", "Đại học Kinh tế TP.HCM, Tài chính Ngân hàng", "user3@falofinancial.com", true, "Trần", false, "Du lịch, Đọc sách", null, "Thị Diễm", false, null, "USER3@FALOFINANCIAL.COM", "USER3@FALOFINANCIAL.COM", "AQAAAAIAAYagAAAAELg0I6FNFMtpNqN8vj2DlxJ3cEezxFsvb7OsKpJWDErIVr8CJzGH1rtTxOVe9XtxBg==", null, false, "6e9cbe23-2cc1-4865-8650-2d8e188db2bc", "Phân tích tài chính, Tư vấn đầu tư", "Giao tiếp, Thuyết trình", false, "user3@falofinancial.com", "Tình nguyện viên dạy học cho trẻ em nghèo", "Góp phần xây dựng một xã hội tốt đẹp hơn.", "Ngân hàng ACB" },
+                    { "e5f67890-1234-5678-90ab-cdef12345", 0, "222 Đường Nguyễn Huệ, Quận 3, TP.HCM", "Kỹ sư cầu nối, yêu thích công việc và cuộc sống.", new DateOnly(1985, 12, 5), "f4a71efc-893f-4ff4-90dc-88714957b5f6", "Đại học Giao thông Vận tải, Kỹ thuật Cầu đường", "user4@falofinancial.com", true, "Phạm", true, "Chơi game, Xem phim", null, "Văn Hoàng", false, null, "USER4@FALOFINANCIAL.COM", "USER4@FALOFINANCIAL.COM", "AQAAAAIAAYagAAAAELg0I6FNFMtpNqN8vj2DlxJ3cEezxFsvb7OsKpJWDErIVr8CJzGH1rtTxOVe9XtxBg==", null, false, "1a3501ba-f7c5-4f41-b112-6671d0a4daa4", "Thiết kế cầu đường, Quản lý dự án", "Chịu khó, Ham học hỏi", false, "user4@falofinancial.com", "Tham gia xây dựng cầu dân sinh", "Mang lại niềm vui cho mọi người.", "Công ty FPT" },
+                    { "f6789012-3456-7890-abcd-ef1234567", 0, "333 Đường Pasteur, Quận 1, TP.HCM", "Y tá tận tâm với nghề.", new DateOnly(1998, 6, 18), "fa822749-837e-486f-9758-e2dc6223fd1f", "Đại học Y Dược TP.HCM, Điều dưỡng", "user5@falofinancial.com", true, "Hồ", false, "Nấu ăn, Làm bánh", null, "Thị Mai", false, null, "USER5@FALOFINANCIAL.COM", "USER5@FALOFINANCIAL.COM", "AQAAAAIAAYagAAAAELg0I6FNFMtpNqN8vj2DlxJ3cEezxFsvb7OsKpJWDErIVr8CJzGH1rtTxOVe9XtxBg==", null, false, "954ebdc0-d191-4929-8000-66b014916471", "Chăm sóc bệnh nhân, Sơ cứu", "Kiên nhẫn, Yêu thương con người", false, "user5@falofinancial.com", "Tình nguyện viên tại trạm y tế xã", "Giúp đỡ những người bệnh tật.", "Bệnh viện Chợ Rẫy" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "UserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[,]
+                {
+                    { "83292e2c-6c86-4153-bdc5-760d05ec2295", "01234567-89ab-cdef-1234-567890123" },
+                    { "83292e2c-6c86-4153-bdc5-760d05ec2293", "78901234-5678-90ab-cdef-123456789" },
+                    { "4e7b2c09-e0b0-4ddd-9694-ebf3e21e2472", "89012345-6789-abcd-ef12-345678901" },
+                    { "4e7b2c09-e0b0-4ddd-9694-ebf3e21e2472", "90123456-789a-bcde-f123-456789012" },
+                    { "15db7f37-5dbc-4035-9b00-a0af4c3fe8bb", "a1b2c3d4-e5f6-7890-1234-567890abcdef" },
+                    { "205d4496-4ac8-40d9-84b9-e09e1ada7a49", "b2c3d4e5-f678-9012-3456-7890abcdef1" },
+                    { "205d4496-4ac8-40d9-84b9-e09e1ada7a49", "c3d4e5f6-7890-1234-5678-90abcdef12" },
+                    { "83292e2c-6c86-4153-bdc5-760d05ec2299", "d4e5f678-9012-3456-7890-abcdef123" },
+                    { "83292e2c-6c86-4153-bdc5-760d05ec2299", "e5f67890-1234-5678-90ab-cdef12345" },
+                    { "83292e2c-6c86-4153-bdc5-760d05ec2293", "f6789012-3456-7890-abcd-ef1234567" }
                 });
 
             migrationBuilder.CreateIndex(
