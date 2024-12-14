@@ -132,8 +132,7 @@
         fetch(url)
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
-                    // If the API call is successful, use the file path to download the actual file
+                if (response.success && data.success) {
                     const filePath = data.data?.filePath;
 
                     if (!filePath) {
@@ -143,13 +142,11 @@
 
                     const downloadUrl = apiUrl + `/api/AccountingBook/downloadaccountingbook/${filePath}`;
 
-                    // Create a temporary anchor element to trigger the download
                     const a = document.createElement('a');
                     a.href = downloadUrl;
                     a.download = filePath; // Optional: use the file name as the download name
                     a.click(); // Trigger the download
                 } else {
-                    // If the success flag is false, show the error message
                     alert('Lỗi khi lấy dữ liệu: ' + data.message);
                 }
             })
