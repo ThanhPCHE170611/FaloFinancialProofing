@@ -241,11 +241,13 @@
     <!-- Script Js -->
     <script src="/js/script.js"></script>
 
+    @inject Microsoft.Extensions.Configuration.IConfiguration Configuration
     <script>
         const userId = '@userId';
+        var apiUrl = '@Configuration["ApiBaseUrl"]';
 
         if (userId) {
-            fetch(`https://localhost:7294/api/Users/GetUserProfile/${userId}`)
+            fetch(`${apiUrl}/api/Users/GetUserProfile/${userId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success && data.data.image) {

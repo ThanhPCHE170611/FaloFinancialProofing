@@ -3,8 +3,14 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     var campaignDetails = ViewBag.CampaignDetails as FALOFinancialProofing.FALOHomePage.Models.CampaignDetailsDTO;
-    var percentage = Math.Round(((decimal)campaignDetails.TotalMoneyEarned / campaignDetails.FundTarget) * 100);
+    var percentage = campaignDetails.FundTarget > 0 ? Math.Round(((decimal)campaignDetails.TotalMoneyEarned / campaignDetails.FundTarget) * 100) : 0;
 }
+<style>
+    .category pre {
+        white-space: pre-wrap;
+        word-wrap: break-word; /* Optional: Handles long words that don't break */
+    }
+</style>
 
 <main>
     <!-- Page banner area start here -->
@@ -104,7 +110,7 @@
                             <div class="item shadow mb-30">
                                 <h5 class="title">Thông Tin Cập Nhật</h5>
                                 <ul class="category">
-                                    <p>@campaignDetails.UpdateLog</p>
+                                    <pre style="white-space: pre-wrap; font-family: DM Sans, sans-serif;">@campaignDetails.UpdateLog</pre>
                                 </ul>
                             </div>
                         }
