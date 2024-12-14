@@ -63,9 +63,8 @@
 
                             <div class="mb-3">
                                 <label for="organizationLogo" class="form-label">Logo</label>
-                                <input type="file" class="form-control" id="organizationLogo" accept="image/*" onchange="previewLogo()">
+                                <input type="file" class="form-control" id="organizationLogo" accept="image/*">
                                 <div id="logoPreview" class="mt-3">
-                                    <img src="../assets/img/sample-logo.jpg" alt="Organization Logo">
                                 </div>
                             </div>
 
@@ -176,12 +175,8 @@
     }
     $(document).ready(function () {
         const jwtToken = localStorage.getItem('jwtToken');
-        const checkroleOrganization = localStorage.getItem('loggingRole');
-        if(checkroleOrganization === "Project Management Board") {
-            document.getElementById('save-btn button').style.display = 'none';
-        }
-        const checkroleOrganization = localStorage.getItem('loggingRole');
-        if(checkroleOrganization==="Project Management Board")  {
+        const role = localStorage.getItem('loggingRole');
+        if(role === "Project Management Board") {
             document.getElementById('save-btn button').style.display = 'none';
         }
         const orgId = new URLSearchParams(window.location.search).get('orgId');
