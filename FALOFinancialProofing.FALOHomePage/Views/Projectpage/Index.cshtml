@@ -77,22 +77,30 @@
                 <div class="col-lg-4 order-1 order-lg-2">
                     <div class="event-single__right-item">
                         <div class="item shadow mb-30 text-center">
-                            @if (projectDetails.UserImage == null)
-                            {
-                                <img src="/images/project/user.png" alt="image" class="image-fluid" style="object-position:center; height: 120px; width: 120px">
-                            }
-                            else
-                            {
-                                <img src="@projectDetails.UserImage" alt="image" class="image-fluid" style="object-position:center; height: 120px; width: 120px">
-                            }
+                            
                             @if (projectDetails.OrganizationId == null || projectDetails.OrganizationName == null)
                             {
+                                @if (projectDetails.UserImage == null)
+                                {
+                                    <img src="/images/project/user.png" alt="image" class="image-fluid" style="object-position:center; height: 120px; width: 120px">
+                                }
+                                else
+                                {
+                                    <img src="@projectDetails.UserImage" alt="image" class="image-fluid" style="object-position:center; height: 120px; width: 120px">
+                                }
                                 <h5 class="mt-20">@projectDetails.FirstName @projectDetails.LastName</h5>
                                 <span>Người quản lý dự án</span>
                             }
                             else
                             {
-                                @* <h7 style="font: italic"> Tổ chức</h7> *@
+                                @if (projectDetails.Logo == null)
+                                {
+                                    <img src="/images/project/user.png" alt="image" class="image-fluid" style="object-position:center; height: 120px; width: 120px">
+                                }
+                                else
+                                {
+                                    <img src="@projectDetails.Logo" alt="image" class="image-fluid" style="object-position:center; height: 120px; width: 120px">
+                                }
                                 <h5 class="mt-20">@projectDetails.OrganizationName</h5>
                                 <span>Tổ chức</span>
                             }
@@ -144,7 +152,7 @@
                                             <img src="@campaign.Image" alt="image">
                                         }
 
-                                        <span class="cause-tag">@campaign.EndDate?.ToString("MMMM dd, yyyy")</span>
+                                        @* <span class="cause-tag">@campaign.EndDate?.ToString("MMMM dd, yyyy")</span> *@
                                     </div>
                                     <div class="cause__content">
                                         <h4 class="mb-4 mt-20">
@@ -217,8 +225,7 @@
                                     {
                                         <img src="@campaign.Image" alt="image">
                                     }
-
-                                    <span class="cause-tag">@campaign.EndDate?.ToString("MMMM dd, yyyy")</span>
+                                    @* <span class="cause-tag">@campaign.EndDate?.ToString("MMMM dd, yyyy")</span> *@
                                 </div>
                                 <div class="cause__content">
                                     <h4 class="mb-4 mt-20">
@@ -261,3 +268,4 @@
     }
 
 </main>
+
