@@ -224,9 +224,9 @@
 <script>
     const campaignId = localStorage.getItem('campaignId');
     const jwtToken = localStorage.getItem('jwtToken');
-    if (!jwtToken) {
-        window.location.href = '/Authentication/Login';
-    }
+    // if (!jwtToken) {
+    //     window.location.href = '/Authentication/Login';
+    // }
     let currentPage = 1;
     const pageSize = 7;
     let selectedMember = null;

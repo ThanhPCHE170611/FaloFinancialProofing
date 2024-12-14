@@ -209,9 +209,9 @@
     let currentRequestId = null;
 
     const jwtToken = localStorage.getItem('jwtToken');
-    if (!jwtToken) {
-        window.location.href = '/Authentication/Login';
-    }
+    // if (!jwtToken) {
+    //     window.location.href = '/Authentication/Login';
+    // }
     function openDeclineModal(button, requestId) {
         currentButton = button;
         currentRequestId = requestId;

@@ -158,7 +158,6 @@
 <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
 <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
 <script async defer src="https://buttons.github.io/buttons.js"></script>
-<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     // function previewLogo() {
@@ -181,13 +180,17 @@
             window.location.href = '/Authentication/Login';
             return;
         }
+        const checkrole = localStorage.getItem('loggingRole');
+        if(checkrole==="Project Management Board")  {
+            document.getElementById('save-btn button').style.display = 'none';
+        }
         const orgId = new URLSearchParams(window.location.search).get('orgId');
         const userId = localStorage.getItem('userId');
 
-        if (!jwtToken || !orgId) {
-            alert('JWT token or Organization ID is missing. Please log in again.');
-            return;
-        }
+        // if (!jwtToken || !orgId) {
+        //     alert('JWT token or Organization ID is missing. Please log in again.');
+        //     return;
+        // }
 
         function fetchOrganizationDetails() {
             $.ajax({
