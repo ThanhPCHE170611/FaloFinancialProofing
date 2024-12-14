@@ -437,8 +437,8 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                     bool checkIsAccountingRole = await authServices.CheckIsAccountingRole(item.RoleId, new StringBuilder());
                     if (checkExistActiveAccounting && checkIsAccountingRole)
                     {
-                        checkExistFailData = true;
-                        continue;
+                        message.Append($"Accounting Role is already exist in this campaign! ");
+                        return new List<CreateManyCampaignMemberDTO>();
                     }
                     bool checkNotAllowRole = await authServices.CheckIsDonorAdminPmbPmRole(item.RoleId, new StringBuilder());
                     if (checkNotAllowRole)
@@ -450,7 +450,7 @@ namespace FALOFinancialProofing.Services.CampaignMemberService
                 }
                 if (checkExistFailData)
                 {
-                    message.Append($"Not Valid User(s) Occurs! ");
+                    message.Append($"Cannot add user to campaign, please try again");
                 }
             }
             catch (Exception ex)
