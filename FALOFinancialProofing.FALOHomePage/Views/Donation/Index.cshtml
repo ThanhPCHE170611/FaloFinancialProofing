@@ -97,7 +97,7 @@
 
     // Function to fetch transaction logs from the API
     function fetchTransactions(page = 1, searchQuery = "", startDate = "", endDate = "") {
-        const url = apiUrl + `/api/TransactionLogs/GetCampaignTransactionLogs/${campaignId}?currentPage=${page}&searchInput=${encodeURIComponent(searchQuery)}&startDate=${startDate}&endDate=${endDate}`; console.log("Fetching URL:", url); // Log the request URL for debugging
+        const url = `${apiUrl}/api/TransactionLogs/GetCampaignTransactionLogs/${campaignId}?currentPage=${page}&searchInput=${encodeURIComponent(searchQuery)}&startDate=${startDate}&endDate=${endDate}`; console.log("Fetching URL:", url); // Log the request URL for debugging
         console.log("Fetching URL:", url);
         fetch(url)
             .then(response => response.json())

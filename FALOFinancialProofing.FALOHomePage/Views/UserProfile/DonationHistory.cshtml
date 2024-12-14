@@ -85,11 +85,11 @@
     // Function to load transactions with pagination and search
     function loadTransactions(currentPage, searchInput, startDate, endDate) {
         var userId = '@userId';  // Get userId from session
-        var url = apiUrl + `/api/TransactionLogs/GetUserTransactionLogs/${userId}?searchInput=${searchInput}&currentPage=${currentPage}&startDate=${startDate}&endDate=${endDate}`;
+        var url = `${apiUrl}/api/TransactionLogs/GetUserTransactionLogs/${userId}?searchInput=${searchInput}&currentPage=${currentPage}&startDate=${startDate}&endDate=${endDate}`;
 
         // Make AJAX call to fetch transactions
         $.ajax({
-            url: apiUrl,
+            url: url,
             type: 'GET',
             success: function (response) {
                 if (response && response.data && response.data.data) {
