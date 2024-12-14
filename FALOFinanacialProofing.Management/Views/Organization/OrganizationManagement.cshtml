@@ -250,16 +250,6 @@
             paginationContainer.append(nextButton);
         }
     }
-
-    function goToPage(page, totalRecords) {
-        const totalPages = Math.ceil(totalRecords / pageSize);
-        if (page < 1 || page > totalPages) return; 
-        currentPage = page;
-        fetchOrganizationList(); 
-    }
-
-
-
         $('#searchInput').on('keyup', function () {
             searchInput = $(this).val().trim();
             currentPage = 1;
@@ -273,6 +263,13 @@
     //     currentPage = page;
     //     fetchOrganizationList();
     // }
+
+    function goToPage(page, totalRecords) {
+        const totalPages = Math.ceil(totalRecords / pageSize);
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        fetchOrganizationList();
+    }
     window.goToPage = goToPage;
 
 </script>

@@ -306,12 +306,16 @@
 @inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 <script>
     var apiBaseUrl = '@Configuration["ApiBaseUrl"]';
-    document.addEventListener('DOMContentLoaded', function () {
-        const jwtToken = localStorage.getItem('jwtToken');
+
+    function checkToken(jwtToken) {
         if (!jwtToken) {
             window.location.href = '/Authentication/Login';
             return;
         }
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        const jwtToken = localStorage.getItem('jwtToken');
+        checkToken(jwtToken);
         const checkrole = localStorage.getItem('loggingRole');
         const fullname = localStorage.getItem('fullname');
         const userId = localStorage.getItem('userId');

@@ -194,9 +194,9 @@
     function showCreateVoucherPopup() {
         document.getElementById('createVoucherModal').style.display = 'block';
     }
-    if (!jwtToken) {
-            window.location.href = '/Authentication/Login';
-    }
+    // if (!jwtToken) {
+    //         window.location.href = '/Authentication/Login';
+    // }
     function submitVoucher() {
         const fileInput = document.getElementById('voucherFile');
         if (fileInput.files.length === 0) {
