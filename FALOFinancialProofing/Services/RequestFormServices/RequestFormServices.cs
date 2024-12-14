@@ -283,6 +283,18 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 message.Append("CampaignID is not exist or disable or close");
                 return false;
             }
+            //check campaign have volunteer leader and accounting
+            var campaignmembersInCampaign = campainInDb.CampaignMembers;
+            if (campaignmembersInCampaign == null ||
+                !campaignmembersInCampaign.Any(cm => cm.Role.Name.Equals(Resource.AccountingRoleName) 
+                    && cm.IsActive) ||
+                !campaignmembersInCampaign.Any(cm => cm.Role.Name.Equals(Resource.VolunteerLeaderRoleName) 
+                    && cm.IsActive))
+            {
+                message.Append("Cannot create new request because dont find any " +
+                    "active accounting or volunteer leader in this campaign");
+                return false;
+            }
             //check createBy id exist, in campaign
             var createByValidate = campainInDb.CampaignMembers.Any(cm => cm.UserId == requestForm.CreatedBy && cm.IsActive);
             if (!createByValidate)
