@@ -40,6 +40,20 @@
                 list-style: none;
             }
 
+        #voucherList {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+            #voucherList li {
+                padding: 5px 10px;
+                background-color: #e0e0e0;
+                border-radius: 5px;
+                list-style: none;
+            }
+
         .nav-tabs {
             display: flex;
             justify-content: space-around;
@@ -388,7 +402,7 @@
                 },
                 success: function (response) {
                     if (response.success) {
-                        alert('Create new PrePay RequestForm successfully.');
+                        alert('Create new Pre-pay Request successfully.');
                         window.location.href = `/Prepay/PrepayManagement?campaignid=${campaignId}`;
                     } else {
                         alert(response.message);
