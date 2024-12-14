@@ -463,6 +463,7 @@ namespace FALOFinancialProofing.Services
                     LastName = u.LastName,
                     BirthDate = u.BirthDate,
                     Image = UrlHelper.GetImageUrl(request, u.Image, FolderImage.UserImageUpload),
+                    PhoneNumber = u.PhoneNumber,
                     Roles = u.UserRoles.Select(ur => new RoleInformation
                     {
                         RoleId = ur.RoleId,
@@ -498,6 +499,7 @@ namespace FALOFinancialProofing.Services
                         LastName = u.LastName,
                         BirthDate = u.BirthDate,
                         Image = UrlHelper.GetImageUrl(request, u.Image, FolderImage.UserImageUpload),
+                        PhoneNumber = u.PhoneNumber,
                         Roles = u.UserRoles.Where(usr => usr.Role.Name.Equals(AppRole.ProjectManagementBoard)).Select(ur => new RoleInformation
                         {
                             RoleId = ur.RoleId,
@@ -531,6 +533,7 @@ namespace FALOFinancialProofing.Services
                     FirstName = u.FirstName,
                     LastName = u.LastName,
                     BirthDate = u.BirthDate,
+                    PhoneNumber = u.PhoneNumber,
                     Roles = u.UserRoles.Select(ur => new RoleInformation
                     {
                         RoleId = ur.RoleId,
