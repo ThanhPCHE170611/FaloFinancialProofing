@@ -144,10 +144,30 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                 var approveProcess = repository.GetAll(x => x.RequestId == requestid
                     && x.ApproverId.Equals(userid)
                     && x.ApproveStatus.Equals(Resource.ProcessStatus))
+                    .Include(x => x.RequestForm)
                     .FirstOrDefault();
                 if (approveProcess == null)
                 {
                     message.Append("User does not have permission or process is already done");
+                    return false;
+                }
+                //check if campaign is active and not closed
+                var campaign = await campaignRepository.GetAll(x => x.Id == approveProcess.RequestForm.CampaignId 
+                    && x.IsActive)
+                    .Include(x => x.CampaignMembers)
+                    .FirstOrDefaultAsync();
+                if (campaign == null)
+                {
+                    message.Append("Campaign is not active or closed");
+                    return false;
+                }
+                // check if user is a leader of the campaign and active
+                var activeInCampaign = campaign.CampaignMembers.Any(x => x.UserId.Equals(userid)
+                                   && x.Role.Name.Equals(Resource.VolunteerLeaderRoleName)
+                                                      && x.IsActive);
+                if (!activeInCampaign)
+                {
+                    message.Append("User is not a leader of the campaign or not active");
                     return false;
                 }
                 approveProcess.ApproveStatus = Resource.ApprovedStatus;
@@ -178,10 +198,30 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                 var approveProcess = repository.GetAll(x => x.RequestId == requestid
                     && x.ApproverId.Equals(userid)
                     && x.ApproveStatus.Equals(Resource.ProcessStatus))
+                    .Include(x => x.RequestForm)
                     .FirstOrDefault();
                 if (approveProcess == null)
                 {
                     message.Append("User does not have permission or process is already done");
+                    return false;
+                }
+                //check if campaign is active and not closed
+                var campaign = await campaignRepository.GetAll(x => x.Id == approveProcess.RequestForm.CampaignId
+                    && x.IsActive)
+                    .Include(x => x.CampaignMembers)
+                    .FirstOrDefaultAsync();
+                if (campaign == null)
+                {
+                    message.Append("Campaign is not active or closed");
+                    return false;
+                }
+                // check if user is a leader of the campaign and active
+                var activeInCampaign = campaign.CampaignMembers.Any(x => x.UserId.Equals(userid)
+                                   && x.Role.Name.Equals(Resource.AccountingRoleName)
+                                                      && x.IsActive);
+                if (!activeInCampaign)
+                {
+                    message.Append("User is not a accountancy of the campaign or not active");
                     return false;
                 }
                 approveProcess.ApproveStatus = Resource.ApprovedStatus;
@@ -212,10 +252,21 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                 var approveProcess = repository.GetAll(x => x.RequestId == requestid
                     && x.ApproverId.Equals(userid)
                     && x.ApproveStatus.Equals(Resource.ProcessStatus))
+                    .Include(x => x.RequestForm)
                     .FirstOrDefault();
                 if (approveProcess == null)
                 {
                     message.Append("User does not have permission or process is already done");
+                    return false;
+                }
+                //check if campaign is active and not closed
+                var campaign = await campaignRepository.GetAll(x => x.Id == approveProcess.RequestForm.CampaignId
+                    && x.IsActive)
+                    .Include(x => x.CampaignMembers)
+                    .FirstOrDefaultAsync();
+                if (campaign == null)
+                {
+                    message.Append("Campaign is not active or closed");
                     return false;
                 }
                 approveProcess.ApproveStatus = Resource.ApprovedStatus;
@@ -253,10 +304,30 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                 var approveProcess = repository.GetAll(x => x.RequestId == requestid
                     && x.ApproverId.Equals(userid)
                     && x.ApproveStatus.Equals(Resource.ProcessStatus))
+                    .Include(x => x.RequestForm)
                     .FirstOrDefault();
                 if (approveProcess == null)
                 {
                     msg.Append("User does not have permission or process is already done");
+                    return false;
+                }
+                //check if campaign is active and not closed
+                var campaign = await campaignRepository.GetAll(x => x.Id == approveProcess.RequestForm.CampaignId
+                    && x.IsActive)
+                    .Include(x => x.CampaignMembers)
+                    .FirstOrDefaultAsync();
+                if (campaign == null)
+                {
+                    msg.Append("Campaign is not active or closed");
+                    return false;
+                }
+                // check if user is a leader of the campaign and active
+                var activeInCampaign = campaign.CampaignMembers.Any(x => x.UserId.Equals(userid)
+                                   && x.Role.Name.Equals(Resource.VolunteerLeaderRoleName)
+                                                      && x.IsActive);
+                if (!activeInCampaign)
+                {
+                    msg.Append("User is not a leader of the campaign or not active");
                     return false;
                 }
                 return true;
@@ -288,10 +359,30 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                 var approveProcess = repository.GetAll(x => x.RequestId == requestid
                     && x.ApproverId.Equals(userid)
                     && x.ApproveStatus.Equals(Resource.ProcessStatus))
+                    .Include(x => x.RequestForm)
                     .FirstOrDefault();
                 if (approveProcess == null)
                 {
                     msg.Append("User does not have permission or process is already done");
+                    return false;
+                }
+                //check if campaign is active and not closed
+                var campaign = await campaignRepository.GetAll(x => x.Id == approveProcess.RequestForm.CampaignId
+                    && x.IsActive)
+                    .Include(x => x.CampaignMembers)
+                    .FirstOrDefaultAsync();
+                if (campaign == null)
+                {
+                    msg.Append("Campaign is not active or closed");
+                    return false;
+                }
+                // check if user is a leader of the campaign and active
+                var activeInCampaign = campaign.CampaignMembers.Any(x => x.UserId.Equals(userid)
+                                   && x.Role.Name.Equals(Resource.AccountingRoleName)
+                                                      && x.IsActive);
+                if (!activeInCampaign)
+                {
+                    msg.Append("User is not a accountancy of the campaign or not active");
                     return false;
                 }
                 return true;
@@ -323,10 +414,21 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                 var approveProcess = repository.GetAll(x => x.RequestId == requestid
                     && x.ApproverId.Equals(userid)
                     && x.ApproveStatus.Equals(Resource.ProcessStatus))
+                    .Include(x => x.RequestForm)
                     .FirstOrDefault();
                 if (approveProcess == null)
                 {
                     msg.AppendLine("User does not have permission or process is already done");
+                    return false;
+                }
+                //check if campaign is active and not closed
+                var campaign = await campaignRepository.GetAll(x => x.Id == approveProcess.RequestForm.CampaignId
+                    && x.IsActive)
+                    .Include(x => x.CampaignMembers)
+                    .FirstOrDefaultAsync();
+                if (campaign == null)
+                {
+                    msg.Append("Campaign is not active or closed");
                     return false;
                 }
                 return true;
