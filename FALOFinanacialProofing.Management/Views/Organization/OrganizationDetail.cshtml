@@ -139,7 +139,7 @@
                             </div>
 
                             <div id="save-btn">
-                                <button type="submit" class="btn btn-success">Save Changes</button>
+                                <button type="submit" class="btn btn-success" id="editbtn">Save Changes</button>
                             </div>
                         </div>
                     </div>
@@ -176,8 +176,21 @@
     $(document).ready(function () {
         const jwtToken = localStorage.getItem('jwtToken');
         const role = localStorage.getItem('loggingRole');
-        if(role === "Project Management Board") {
-            document.getElementById('save-btn button').style.display = 'none';
+        if( role === "Project Management Board") {
+            document.getElementById('editbtn').style.display = 'none';
+            const inputFields = document.querySelectorAll('#organizationLogo, #name, #mainOffice, #representative, #phoneNumber, #email, #interests');
+            const textAreas = document.querySelectorAll('#description, #vision, #mission, #coreValue, #mainActivity, #volunteerExperience, #volunteerObjectives, #bio');
+            inputFields.forEach(input => {
+                if (input.type === 'file') {
+                    input.disabled = true; 
+                } else {
+                    input.readOnly = true;
+                }
+            });
+
+            textAreas.forEach(textarea => {
+                textarea.readOnly = true;
+            });
         }
         const orgId = new URLSearchParams(window.location.search).get('orgId');
         const userId = localStorage.getItem('userId');

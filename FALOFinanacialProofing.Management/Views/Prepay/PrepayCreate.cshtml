@@ -187,6 +187,19 @@
                 fileList.appendChild(li);
             });
         });
+        document.getElementById('vouchers').addEventListener('change', function (e) {
+            const fileList = document.getElementById('voucherList');
+            fileList.innerHTML = '';
+            Array.from(e.target.files).forEach(file => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(file);
+                a.textContent = file.name;
+                a.download = file.name;
+                li.appendChild(a);
+                fileList.appendChild(li);
+            });
+        });
 
         //if (checkrole === "Accounting") {
         //    $('#voucherInput').show();
@@ -230,11 +243,11 @@
                     `;
                     $('.card-body').prepend(debtSection);
                 } else if (!response.success) {
-                    alert('Error fetching user debt: ' + response.message);
+                    alert(response.message);
                 }
             },
             error: function () {
-                alert('Failed to fetch user debt. Please try again.');
+                console.error('Failed to fetch user debt. Please try again.');
             }
         });
 
@@ -285,7 +298,7 @@
                 }
             },
             error: function () {
-                alert('Failed to load approvers. Please try again.');
+                alert('No approver found for this campaign.');
             }
         });
         $('#expectedMoney').on('input', function () {
@@ -333,7 +346,7 @@
             }
 
             if (!assignFrom) {
-                alert('Assign From is required.');
+                alert('Assign From is required. No Volunteer Leader found for this campaign');
                 $('#assignFrom').focus();
                 return;
             }

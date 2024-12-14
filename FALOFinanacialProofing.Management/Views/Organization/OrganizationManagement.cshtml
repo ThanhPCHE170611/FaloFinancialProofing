@@ -139,11 +139,11 @@
                         renderOrganizationTable(response.data.data);
                         setupPagination(response.data.dataCount);
                     } else {
-                        alert(response.message);
+                        $('#organizationList').empty().append('<tr><td colspan="6" class="text-center">No organizations found</td></tr>');
                     }
                 },
                 error: function (errors) {
-                    alert('Error fetching organization list');
+                    $('#organizationList').empty().append('<tr><td colspan="6" class="text-center">No organizations found</td></tr>');
                     console.error(errors);
                 }
             });

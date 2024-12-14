@@ -86,19 +86,6 @@
             border: 1px solid #ced4da;
         }
 
-        #voucherList {
-            margin-top: 10px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-        }
-
-            #voucherList li {
-                padding: 5px 10px;
-                background-color: #e0e0e0;
-                border-radius: 5px;
-                list-style: none;
-            }
     </style>
 </head>
 
@@ -200,6 +187,19 @@
                 fileList.appendChild(li);
             });
         });
+        document.getElementById('vouchers').addEventListener('change', function (e) {
+            const fileList = document.getElementById('voucherList');
+            fileList.innerHTML = '';
+            Array.from(e.target.files).forEach(file => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(file);
+                a.textContent = file.name;
+                a.download = file.name;
+                li.appendChild(a);
+                fileList.appendChild(li);
+            });
+        });
 
         //if (checkrole === "Accounting") {
         //    $('#voucherInput').show();
@@ -243,11 +243,11 @@
                     `;
                     $('.card-body').prepend(debtSection);
                 } else if (!response.success) {
-                    alert('Error fetching user debt: ' + response.message);
+                    alert(response.message);
                 }
             },
             error: function () {
-                alert('Failed to fetch user debt. Please try again.');
+                console.error('Failed to fetch user debt. Please try again.');
             }
         });
 
@@ -299,7 +299,7 @@
                 }
             },
             error: function () {
-                alert('Failed to load approvers. Please try again.');
+                 alert('No approver found for this campaign.');
             }
         });
 
