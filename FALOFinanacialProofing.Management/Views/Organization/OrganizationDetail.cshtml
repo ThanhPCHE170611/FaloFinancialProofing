@@ -176,11 +176,12 @@
     }
     $(document).ready(function () {
         const jwtToken = localStorage.getItem('jwtToken');
-        if(checkrole === "Project Management Board") {
+        const checkroleOrganization = localStorage.getItem('loggingRole');
+        if(checkroleOrganization === "Project Management Board") {
             document.getElementById('save-btn button').style.display = 'none';
         }
-        const checkrole = localStorage.getItem('loggingRole');
-        if(checkrole==="Project Management Board")  {
+        const checkroleOrganization = localStorage.getItem('loggingRole');
+        if(checkroleOrganization==="Project Management Board")  {
             document.getElementById('save-btn button').style.display = 'none';
         }
         const orgId = new URLSearchParams(window.location.search).get('orgId');
