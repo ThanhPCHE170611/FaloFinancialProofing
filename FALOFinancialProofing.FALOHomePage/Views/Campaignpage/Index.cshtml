@@ -125,14 +125,19 @@
 @inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 <script>
     var apiUrl = '@Configuration["ApiBaseUrl"]';
+
     function downloadAccountingBook(campaignId) {
-        // First, make a request to get the file path from the API
         const url = apiUrl + `/api/AccountingBook/getaccountingbookincampaign?campaignId=${campaignId}`;
 
         fetch(url)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data. Status: ' + response.status);
+                }
+                return response.json(); 
+            })
             .then(data => {
-                if (response.success && data.success) {
+                if (data.success) {
                     const filePath = data.data?.filePath;
 
                     if (!filePath) {
@@ -140,19 +145,21 @@
                         return;
                     }
 
+                    console.log(filePath);
                     const downloadUrl = apiUrl + `/api/AccountingBook/downloadaccountingbook/${filePath}`;
-
                     const a = document.createElement('a');
                     a.href = downloadUrl;
-                    a.download = filePath; // Optional: use the file name as the download name
-                    a.click(); // Trigger the download
+                    a.download = filePath.split('/').pop();
+                    a.click();
+
                 } else {
                     alert('Lỗi khi lấy dữ liệu: ' + data.message);
                 }
             })
             .catch(error => {
-                console.error('Lỗi khi lấy dữ liệu:', error);
+                console.error('Error:', error);
                 alert('Lỗi khi tải báo cáo tài chính');
             });
     }
 </script>
+
