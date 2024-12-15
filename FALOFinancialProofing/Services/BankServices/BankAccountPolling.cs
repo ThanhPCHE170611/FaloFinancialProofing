@@ -54,30 +54,30 @@ namespace FALOFinancialProofing.Services.BankServices
 
     public class CassoBankAccount
     {
-        public int id { get; set; }
-        public string accountNumber { get; set; }
-        public string accountName { get; set; }
-        public string accountType { get; set; }
-        public int balance { get; set; }
-        public string beginningSettingDate { get; set; }
-        public DateTime beginningTxnDate { get; set; }
-        public int beginningBalance { get; set; }
-        public int creditTxnTotal { get; set; }
-        public int creditTxnAmount { get; set; }
-        public int debitTxnTotal { get; set; }
-        public int debitTxnAmount { get; set; }
-        public object lockSyncDate { get; set; }
-        public int endingBalance { get; set; }
-        public DateTime endingTxnDate { get; set; }
-        public string currency { get; set; }
-        public string swift { get; set; }
-        public string citad { get; set; }
-        public string serviceType { get; set; }
-        public string bankName { get; set; }
-        public string bankCodeName { get; set; }
-        public string memo { get; set; }
-        public int connectStatus { get; set; }
-        public int BIN { get; set; }
+        public int? id { get; set; }
+        public string? accountNumber { get; set; }
+        public string? accountName { get; set; }
+        public string? accountType { get; set; }
+        public int? balance { get; set; }
+        public string? beginningSettingDate { get; set; }
+        public DateTime? beginningTxnDate { get; set; }
+        public int? beginningBalance { get; set; }
+        public int? creditTxnTotal { get; set; }
+        public int? creditTxnAmount { get; set; }
+        public int? debitTxnTotal { get; set; }
+        public int? debitTxnAmount { get; set; }
+        public object? lockSyncDate { get; set; }
+        public int? endingBalance { get; set; }
+        public DateTime? endingTxnDate { get; set; }
+        public string? currency { get; set; }
+        public string? swift { get; set; }
+        public string? citad { get; set; }
+        public string? serviceType { get; set; }
+        public string? bankName { get; set; }
+        public string? bankCodeName { get; set; }
+        public string? memo { get; set; }
+        public int? connectStatus { get; set; }
+        public int? BIN { get; set; }
     }
 
     public class AccountResponse
