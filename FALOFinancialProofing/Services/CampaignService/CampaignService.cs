@@ -474,11 +474,12 @@ namespace FALOFinancialProofing.Services.CampaignService
                     return null;
                 }
 
-                campaignWithMemberAndRole.EndDate = newDateTime;
-                var newUpdateLog = new StringBuilder(campaignWithMemberAndRole.UpdateLog);
+                var onlyCampaign = await campaignRepository.GetAll(x => x.Id == campaignId).FirstOrDefaultAsync();
+                onlyCampaign.EndDate = newDateTime;
+                var newUpdateLog = new StringBuilder(onlyCampaign.UpdateLog);
                 newUpdateLog.AppendLine($"Project Manager change end date to {newDateTime} at {DateTime.Now}");
-                campaignWithMemberAndRole.UpdateLog = newUpdateLog.ToString();
-                var canUpdate = await campaignRepository.UpdateAsync(campaignWithMemberAndRole);
+                onlyCampaign.UpdateLog = newUpdateLog.ToString();
+                var canUpdate = await campaignRepository.UpdateAsync(onlyCampaign);
                 if (!canUpdate)
                 {
                     message.Append("Operation is not valid, update failed");

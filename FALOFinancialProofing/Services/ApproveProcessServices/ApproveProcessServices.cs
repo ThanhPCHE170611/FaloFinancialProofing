@@ -153,8 +153,10 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                 }
                 //check if campaign is active and not closed
                 var campaign = await campaignRepository.GetAll(x => x.Id == approveProcess.RequestForm.CampaignId 
+                    && !x.Status.Equals(Resource.CampaignStatus_Close)
                     && x.IsActive)
                     .Include(x => x.CampaignMembers)
+                    .ThenInclude(x => x.Role)
                     .FirstOrDefaultAsync();
                 if (campaign == null)
                 {
@@ -207,8 +209,10 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                 }
                 //check if campaign is active and not closed
                 var campaign = await campaignRepository.GetAll(x => x.Id == approveProcess.RequestForm.CampaignId
+                    && !x.Status.Equals(Resource.CampaignStatus_Close)
                     && x.IsActive)
                     .Include(x => x.CampaignMembers)
+                    .ThenInclude(x => x.Role)
                     .FirstOrDefaultAsync();
                 if (campaign == null)
                 {
@@ -261,8 +265,10 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                 }
                 //check if campaign is active and not closed
                 var campaign = await campaignRepository.GetAll(x => x.Id == approveProcess.RequestForm.CampaignId
+                    && !x.Status.Equals(Resource.CampaignStatus_Close)
                     && x.IsActive)
                     .Include(x => x.CampaignMembers)
+                     .ThenInclude(x => x.Role)
                     .FirstOrDefaultAsync();
                 if (campaign == null)
                 {
@@ -313,8 +319,10 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                 }
                 //check if campaign is active and not closed
                 var campaign = await campaignRepository.GetAll(x => x.Id == approveProcess.RequestForm.CampaignId
+                    && !x.Status.Equals(Resource.CampaignStatus_Close)
                     && x.IsActive)
                     .Include(x => x.CampaignMembers)
+                    .ThenInclude(x => x.Role)
                     .FirstOrDefaultAsync();
                 if (campaign == null)
                 {
@@ -368,8 +376,10 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                 }
                 //check if campaign is active and not closed
                 var campaign = await campaignRepository.GetAll(x => x.Id == approveProcess.RequestForm.CampaignId
+                    && !x.Status.Equals(Resource.CampaignStatus_Close)
                     && x.IsActive)
                     .Include(x => x.CampaignMembers)
+                    .ThenInclude(x => x.Role)
                     .FirstOrDefaultAsync();
                 if (campaign == null)
                 {
@@ -423,8 +433,10 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                 }
                 //check if campaign is active and not closed
                 var campaign = await campaignRepository.GetAll(x => x.Id == approveProcess.RequestForm.CampaignId
+                    && !x.Status.Equals(Resource.CampaignStatus_Close)
                     && x.IsActive)
                     .Include(x => x.CampaignMembers)
+                    .ThenInclude(x => x.Role)
                     .FirstOrDefaultAsync();
                 if (campaign == null)
                 {
