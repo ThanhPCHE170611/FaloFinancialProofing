@@ -175,13 +175,8 @@ namespace FALOFinancialProofing.Services.BankServices
                 var bankList = await GetAllBanksAsync(); //db
                 foreach (var item in cassoBankAccounts)
                 {
-                    if (bankList.Any(b => b.CassoAccountID == item.id))
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        Bank newBank = new Bank
+                    if(!bankList.Any(b => b.CassoAccountID == item.id)){
+                        var newBank = new Bank
                         {
                             OwnerName = item.accountName,
                             AccountNumber = item.accountNumber,
