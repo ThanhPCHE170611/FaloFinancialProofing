@@ -44,7 +44,7 @@ namespace FALOFinancialProofing.Services.BankServices
                         await _bankService.SyncBankAccountsToBankDb(cassoBankAccounts);
                     }
                 }
-                catch (HttpRequestException e)
+                catch (Exception e)
                 {
                     Console.WriteLine($"Request error: {e.Message}");
                 }
