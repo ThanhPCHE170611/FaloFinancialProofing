@@ -1,6 +1,7 @@
 ﻿using FALOFinancialProofing.Constant;
 using FALOFinancialProofing.DTOs;
 using FALOFinancialProofing.DTOs.CampaignMemberDTO;
+using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services;
 using FALOFinancialProofing.Services.ApproveProcessServices;
 using FALOFinancialProofing.Services.RequestFormServices;
@@ -18,15 +19,15 @@ namespace FALOFinancialProofing.Controllers
     {
         private readonly IApproveProcessServices approveProcessServices;
         private readonly IRequestFormServices requestFormServices;
-        private readonly IVoucherServices voucherServices;
+        private readonly FALOFinancialProofingDbContext _dbContext;
         private readonly ICampaignMemberService campaignMemberService;
 
-        public ApproveProcessController(IApproveProcessServices approveProcessServices, IRequestFormServices requestFormServices,
-            IVoucherServices voucherServices, ICampaignMemberService campaignMemberService)
+        public ApproveProcessController(IApproveProcessServices approveProcessServices, IRequestFormServices requestFormServices, 
+            FALOFinancialProofingDbContext dbContext, ICampaignMemberService campaignMemberService)
         {
             this.approveProcessServices = approveProcessServices;
             this.requestFormServices = requestFormServices;
-            this.voucherServices = voucherServices;
+            _dbContext = dbContext;
             this.campaignMemberService = campaignMemberService;
         }
 
@@ -698,7 +699,7 @@ namespace FALOFinancialProofing.Controllers
                     Message = "Approve action cannot be done " + message.ToString()
                 });
             }
-            var requestForm = await requestFormServices.GetRequestFormByIdAsync(requestid);
+            var requestForm = await _dbContext.RequestForms.FindAsync(requestid);
             // calculate debt for request user
             var campaignMember = await campaignMemberService.GetCampaignMemberByUserIdAndCampaignIdAsync(requestForm.CreatedBy, requestForm.CampaignId);
             if (campaignMember == null)
@@ -710,28 +711,9 @@ namespace FALOFinancialProofing.Controllers
                 });
             }
             // update status for request form
-            var updateRequestForm = new RequestFormDTO
-            {
-                Id = requestForm.Id,
-                CreateAt = requestForm.CreateAt,
-                Description = requestForm.Description,
-                ExpectedMoney = requestForm.ExpectedMoney,
-                CreatedBy = requestForm.CreatedBy,
-                CampaignId = requestForm.CampaignId,
-                TypeId = requestForm.TypeId,
-                Status = Resource.ApprovedStatus,
-            };
-            var canUpdateRequestFormStatus = await requestFormServices.UpdateRequestFormAsync(updateRequestForm);
-            if(!canUpdateRequestFormStatus)
-            {
-                return Ok(new
-                {
-                    Success = false,
-                    Message = "Cannot update Request Form"
-                });
-            }
-            
-
+            requestForm.Status = Resource.ApprovedStatus;
+            var canUpdateRequestFormStatus =  _dbContext.RequestForms.Update(requestForm);
+            _dbContext.SaveChanges();
             var updateCampaignMember = requestForm.TypeId == IntConstant.PrePayRequestType ? new UpdateCampaignMemberDTO
             {
                 Id = campaignMember.Id,
@@ -759,8 +741,5 @@ namespace FALOFinancialProofing.Controllers
                 Message = "Request is approved successfully",
             });
         }
-
-
-
     }
 }
