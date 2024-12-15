@@ -7,7 +7,7 @@ namespace FALOFinancialProofing.Services.BankServices
     public class BankAccountPolling : BackgroundService
     {
 
-        private const int PollingInterval = 300000; // 5 phut
+        private const int PollingInterval = 300000; // 5 phut   
         private static string APIKey;
         private const string API_GET = "https://oauth.casso.vn/v2/accounts";
         private static IBankService _bankService;
