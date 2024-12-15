@@ -256,23 +256,7 @@
                 return;
             }
 
-            if (logoFile) {
-                const validLogoExtensions = ['image/png', 'image/jpeg'];
-                if (!validLogoExtensions.includes(logoFile.type)) {
-                    alert('Logo must be a PNG or JPG file.');
-                    return;
-                }
-            }
 
-            if (files.length > 0) {
-                const validFileExtensions = ['application/zip', 'application/pdf'];
-                for (const file of files) {
-                    if (!validFileExtensions.includes(file.type)) {
-                        alert('Attachments must be ZIP or PDF files.');
-                        return;
-                    }
-                }
-            }
             endDate = formatDateToMMDDYYYY(endDate);
             console.log("EndDate" + endDate);
 
@@ -322,7 +306,13 @@
                     window.location.href = '/Campaign/CampaignRequestManagement';
                 },
                 error: function (xhr, status, error) {
-                    alert('Error: ' + xhr.responseText || status);
+                    try {
+                        var errorResponse = JSON.parse(xhr.responseText);
+                        var errorMessage = errorResponse.errors.FormFiles[0];
+                        alert('Error: ' + errorMessage);
+                    } catch (e) {
+                        alert('Error: ' + xhr.responseText || status);
+                    }
                 }
             });
         });
