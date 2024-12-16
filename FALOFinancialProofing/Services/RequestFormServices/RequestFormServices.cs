@@ -246,10 +246,7 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             }
             catch (Exception ex)
             {
-                var updatedRequestForm = await repository.GetAll(x => x.Id == dto.Id)
-                    .FirstOrDefaultAsync();
-                updatedRequestForm.Status = dto.Status;
-                return await repository.UpdateAsync(updatedRequestForm);
+                return false;
             }
         }
 

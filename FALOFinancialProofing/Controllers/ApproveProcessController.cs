@@ -5,7 +5,6 @@ using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Services;
 using FALOFinancialProofing.Services.ApproveProcessServices;
 using FALOFinancialProofing.Services.RequestFormServices;
-using FALOFinancialProofing.Services.VoucherServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
@@ -528,7 +527,7 @@ namespace FALOFinancialProofing.Controllers
         public async Task<IActionResult> ApproveRequestForAccounting(string userid, string currentLoggingRole, int requestid)
         {
             var message = new StringBuilder();
-            var requestForm = await requestFormServices.GetRequestFormByIdAsync(requestid);
+            var requestForm = await _dbContext.RequestForms.FindAsync(requestid);
             var accountingInCampaign = await requestFormServices.GetApproverForVolunteerLeader(requestForm.CampaignId);
             var projectManagerInCampaign = await requestFormServices.GetApproverForAccounting(requestForm.CampaignId);
             if (projectManagerInCampaign == null)
@@ -562,18 +561,9 @@ namespace FALOFinancialProofing.Controllers
                 // update all request form status to approved
                 // calculate debt for request user
                 var campaignMember = await campaignMemberService.GetCampaignMemberByUserIdAndCampaignIdAsync(requestForm.CreatedBy, requestForm.CampaignId);
-                var updateRequestForm = new RequestFormDTO
-                {
-                    Id = requestForm.Id,
-                    CreateAt = requestForm.CreateAt,
-                    Description = requestForm.Description,
-                    ExpectedMoney = requestForm.ExpectedMoney,
-                    CreatedBy = requestForm.CreatedBy,
-                    CampaignId = requestForm.CampaignId,
-                    TypeId = requestForm.TypeId,
-                    Status = Resource.ApprovedStatus,
-                };
-                var canUpdateRequestFormStatus = await requestFormServices.UpdateRequestFormAsync(updateRequestForm);
+                requestForm.Status = Resource.ApprovedStatus;
+                var canUpdateRequestFormStatus = _dbContext.RequestForms.Update(requestForm);
+                _dbContext.SaveChanges();
                 var updateCampaignMember = (requestForm.TypeId == IntConstant.PrePayRequestType ?
                     new UpdateCampaignMemberDTO
                     {

@@ -14,16 +14,19 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
         private readonly IRepository<Campaign, int> campaignRepository;
         private readonly IRepository<CampaignMember, int> campaignMemberRepository;
         private readonly IRepository<RequestForm, int> requestFormRepository;
+        private readonly FALOFinancialProofingDbContext _context;
 
-        public ApproveProcessServices(IRepository<ApproveProcess, int> repository,
-            IRepository<Campaign, int> campaignRepository,
-            IRepository<CampaignMember, int> campaignMemberRepository,
-            IRepository<RequestForm, int> requestFormRepository)
+        public ApproveProcessServices(IRepository<ApproveProcess, int> repository
+            , IRepository<Campaign, int> campaignRepository, 
+            IRepository<CampaignMember, int> campaignMemberRepository, 
+            IRepository<RequestForm, int> requestFormRepository,
+            FALOFinancialProofingDbContext context)
         {
             this.repository = repository;
             this.campaignRepository = campaignRepository;
             this.campaignMemberRepository = campaignMemberRepository;
             this.requestFormRepository = requestFormRepository;
+            _context = context;
         }
 
         public async Task<ApproveProcess?> CreateApproveProcessAsync(ApproveProcessRequest dto)
@@ -172,12 +175,10 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                     message.Append("User is not a leader of the campaign or not active");
                     return false;
                 }
-                approveProcess.ApproveStatus = Resource.ApprovedStatus;
-                var updatedComplete = await repository.UpdateAsync(approveProcess);
-                if (!updatedComplete)
-                {
-                    return false;
-                }
+                var updateApproveProcess = await _context.ApproveProcesses.FindAsync(approveProcess.Id);
+                updateApproveProcess.ApproveStatus = Resource.ApprovedStatus;
+                var updatedComplete = _context.ApproveProcesses.Update(updateApproveProcess);
+                await _context.SaveChangesAsync();
                 return true;
             }
             catch (Exception ex)
@@ -211,6 +212,7 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                 var campaign = await campaignRepository.GetAll(x => x.Id == approveProcess.RequestForm.CampaignId
                     && !x.Status.Equals(Resource.CampaignStatus_Close)
                     && x.IsActive)
+                    .AsNoTracking()
                     .Include(x => x.CampaignMembers)
                     .ThenInclude(x => x.Role)
                     .FirstOrDefaultAsync();
@@ -228,12 +230,10 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                     message.Append("User is not a accountancy of the campaign or not active");
                     return false;
                 }
-                approveProcess.ApproveStatus = Resource.ApprovedStatus;
-                var updatedComplete = await repository.UpdateAsync(approveProcess);
-                if (!updatedComplete)
-                {
-                    return false;
-                }
+                var updateApproveProcess = await _context.ApproveProcesses.FindAsync(approveProcess.Id);
+                updateApproveProcess.ApproveStatus = Resource.ApprovedStatus;
+                var updatedComplete = _context.ApproveProcesses.Update(updateApproveProcess);
+                await _context.SaveChangesAsync();
                 return true;
             }
             catch (Exception ex)
@@ -275,12 +275,10 @@ namespace FALOFinancialProofing.Services.ApproveProcessServices
                     message.Append("Campaign is not active or closed");
                     return false;
                 }
-                approveProcess.ApproveStatus = Resource.ApprovedStatus;
-                var updatedComplete = await repository.UpdateAsync(approveProcess);
-                if (!updatedComplete)
-                {
-                    return false;
-                }
+                var updateApproveProcess = await _context.ApproveProcesses.FindAsync(approveProcess.Id);
+                updateApproveProcess.ApproveStatus = Resource.ApprovedStatus;
+                var updatedComplete = _context.ApproveProcesses.Update(updateApproveProcess);
+                await _context.SaveChangesAsync();
                 return true;
             }
             catch (Exception ex)
