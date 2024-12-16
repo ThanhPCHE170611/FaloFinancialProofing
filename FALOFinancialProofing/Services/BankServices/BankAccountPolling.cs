@@ -54,7 +54,7 @@ namespace FALOFinancialProofing.Services.BankServices
 
     public class CassoBankAccount
     {
-        public int id { get; set; }
+        public int? id { get; set; }
         public string accountNumber { get; set; }
         public string accountName { get; set; }
         public string accountType { get; set; }
@@ -77,7 +77,7 @@ namespace FALOFinancialProofing.Services.BankServices
         public string bankCodeName { get; set; }
         public string memo { get; set; }
         public int connectStatus { get; set; }
-        public int BIN { get; set; }
+        public int? BIN { get; set; }
     }
 
     public class AccountResponse
