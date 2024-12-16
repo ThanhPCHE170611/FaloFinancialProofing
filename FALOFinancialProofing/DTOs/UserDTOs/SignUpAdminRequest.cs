@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FALOFinancialProofing.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace FALOFinancialProofing.DTOs.UserDTOs
 {
