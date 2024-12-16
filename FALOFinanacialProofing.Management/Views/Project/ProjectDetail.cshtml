@@ -32,6 +32,9 @@
             height: auto;
         }
 
+        #organization-section {
+            display: none;
+        }
         #fileList {
             margin-top: 10px;
             display: flex;
@@ -125,7 +128,12 @@
                                 </select>
                             </div>
                         </div>
-
+                        <div class="row mb-3" id="organization-section">
+                            <div class="col-md-12">
+                                <label for="organizationInput" class="form-label">Organization</label>
+                                <input type="text" class="form-control" id="organizationInput" readonly>
+                            </div>
+                        </div>
 
                         <div class="mb-3">
                             <label for="context" class="form-label">Project Description</label>
@@ -342,7 +350,11 @@
             document.getElementById('unit').value = new Date(project.dateOfCreation).toISOString().split('T')[0];
             document.getElementById('projectProcess').value = project.status;
             document.getElementById('projectStatus').value = project.isActive;
-
+            if(project.organizationName !== 'No Organization') {
+                    $('#organizationInput').val(project.organizationName);
+                    $('#organization-section').show();
+                    console.log(project.organizationName);
+                }
             quill.setText(project.description);
 
             if (project.image) {
