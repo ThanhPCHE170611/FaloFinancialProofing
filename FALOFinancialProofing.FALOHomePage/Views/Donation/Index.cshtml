@@ -190,43 +190,6 @@
         errorMessage.style.display = 'block';
     }
 
-    // function updatePagination() {
-    //     const paginationContainer = document.getElementById('paginationContainer');
-    //     paginationContainer.innerHTML = '';  Clear existing pagination buttons
-
-    //     Previous button
-    //     if (currentPage > 1) {
-    //         const prevPageButton = document.createElement('button');
-    //         prevPageButton.innerHTML = `<i class="fa-solid fa-arrow-left-long primary-color transition"></i>`;
-    //         prevPageButton.onclick = () => changePage(currentPage - 1);
-    //         paginationContainer.appendChild(prevPageButton);
-    //     }
-
-    //     Page number buttons
-    //     const startPage = Math.max(1, currentPage - 2);  Show pages before current
-    //     const endPage = Math.min(totalPages, currentPage + 2);  Show pages after current
-
-    //     for (let page = startPage; page <= endPage; page++) {
-    //         const pageButton = document.createElement('button');
-    //         pageButton.textContent = page;
-    //         if (page === currentPage) {
-    //             pageButton.classList.add('active');
-    //             pageButton.disabled = true;
-    //         }
-    //         pageButton.onclick = () => changePage(page);
-    //         paginationContainer.appendChild(pageButton);
-    //     }
-
-    //     Next button
-    //     if (currentPage < totalPages) {
-    //         const nextPageButton = document.createElement('button');
-    //         nextPageButton.innerHTML = `<i class="fa-solid fa-arrow-right-long primary-color transition"></i>`;
-    //         nextPageButton.onclick = () => changePage(currentPage + 1);
-    //         paginationContainer.appendChild(nextPageButton);
-    //     }
-    // }
-
-
     function updatePagination() {
         const paginationContainer = document.getElementById('paginationContainer');
         paginationContainer.innerHTML = '';
@@ -317,4 +280,5 @@
     // Initial fetch
     fetchTransactions(currentPage);
 </script>
+
 

@@ -71,23 +71,25 @@
             const startDate = $('#startDate').val();
             const endDate = $('#endDate').val();
 
-            if (new Date(startDate) > new Date(endDate)) {
+            if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
                 showError("Start date cannot be later than end date.");
                 return;
             }
 
             const searchInput = $('#searchInput').val();
-            loadTransactions(1, searchInput, startDate, endDate);
+            loadTransactions(1, searchInput, startDate || "", endDate || "");
         });
+
     });
     var apiUrl = '@Configuration["ApiBaseUrl"]';
 
-    // Function to load transactions with pagination and search
     function loadTransactions(currentPage, searchInput, startDate, endDate) {
-        var userId = '@userId';  // Get userId from session
+        var userId = '@userId';  
+        if (!startDate) startDate = "";
+        if (!endDate) endDate = "";
+
         var url = `${apiUrl}/api/TransactionLogs/GetUserTransactionLogs/${userId}?searchInput=${searchInput}&currentPage=${currentPage}&startDate=${startDate}&endDate=${endDate}`;
 
-        // Make AJAX call to fetch transactions
         $.ajax({
             url: url,
             type: 'GET',
@@ -104,6 +106,7 @@
             }
         });
     }
+
 
     // Function to render the transaction logs in the table
     function renderTransactionLogs(transactions) {
