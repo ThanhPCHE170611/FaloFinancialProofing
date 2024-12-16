@@ -760,12 +760,9 @@ namespace FALOFinancialProofing.Services
                 var token = await userManager.GeneratePasswordResetTokenAsync(user);
 
                 // Tạo nội dung email
-                string resetPasswordLink = "https://localhost:7109"; // Đường dẫn cố định
                 string emailContent = $@"
 Mã token của bạn: {token}
-Mã token này sẽ bị vô hiệu hóa sau 10 phút.
-
-Click vào link này để đặt lại mật khẩu: {resetPasswordLink}";
+Mã token này sẽ bị vô hiệu hóa sau 10 phút.";
 
                 // Create the email message
                 var message = new Message(
