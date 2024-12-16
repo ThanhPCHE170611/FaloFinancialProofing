@@ -89,6 +89,7 @@ namespace FALOFinancialProofing.Controllers
                 string moneyOutDescriptionPatern = "^(C[0-9]+C){1}$";
                 Regex moneyInRegex = new Regex(descriptionPatern);
                 Regex moneyOutRegex = new Regex(moneyOutDescriptionPatern);
+                char splitChar = '.';
                 foreach (var transaction in item.data)
                 {
                     var transactionLogByCassoTransactionId = await _transactionLogService.GetTransactionLogByCassoTransactionIdAsync(transaction.id);
@@ -100,7 +101,11 @@ namespace FALOFinancialProofing.Controllers
                     {
                         continue;
                     }
-                    var stringSplit = transaction.description.Trim().Split('.', ' ');
+                    if (transaction.description.Contains("-"))
+                    {
+                        splitChar = '-';
+                    }
+                    var stringSplit = transaction.description.Trim().Split(splitChar, ' ');
                     string description = null;
                     foreach (var stringItem in stringSplit)
                     {
