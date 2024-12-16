@@ -91,6 +91,22 @@ namespace FALOFinancialProofing.Services.BankServices
 
             return data;
         }
+
+        public async Task<IEnumerable<Bank>> GetAllBanksInSystemAsync()
+        {
+            List<Bank> data = null!;
+            try
+            {
+                //.Include(bank => bank.Campaigns)
+                data = await _bankRepository.GetAll().ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"GetAllBanksInSystemAsync: {ex.Message}");
+            }
+
+            return data;
+        }
         // admin can update transaction logs
         public async Task<bool> UpdateBankAsync(Bank updateBank)
         {
@@ -172,7 +188,7 @@ namespace FALOFinancialProofing.Services.BankServices
             bool checkValid = false;
             try
             {
-                var bankList = await GetAllBanksAsync(); //db
+                var bankList = await GetAllBanksInSystemAsync(); //db
                 foreach (var item in cassoBankAccounts)
                 {
                     if (!bankList.Any(b => b.CassoAccountID == item.id))
