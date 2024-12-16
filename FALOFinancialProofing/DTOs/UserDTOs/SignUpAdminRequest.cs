@@ -4,7 +4,9 @@ namespace FALOFinancialProofing.DTOs.UserDTOs
 {
     public class SignUpAdminRequest
     {
+        [MinLength(1), Required, NameValidate(ErrorMessage = "Name must not have digit or special character")]
         public string FirstName { get; set; }
+        [MinLength(1), Required, NameValidate(ErrorMessage = "Name must not have digit or special character")]
         public string LastName { get; set; }
         [Required, EmailAddress]
         public string Email { get; set; }
