@@ -109,16 +109,16 @@ namespace FALOFinancialProofing.Controllers
                     string description = null;
                     foreach (var stringItem in stringSplit)
                     {
-                        Match match = moneyInRegex.Match(stringItem);
+                        Match match = moneyInRegex.Match(stringItem.Trim());
                         if (match.Success)
                         {
-                            description = stringItem;
+                            description = stringItem.Trim();
                             break;
                         }
-                        match = moneyOutRegex.Match(stringItem);
+                        match = moneyOutRegex.Match(stringItem.Trim());
                         if (match.Success)
                         {
-                            description = stringItem;
+                            description = stringItem.Trim();
                             break;
                         }
 
