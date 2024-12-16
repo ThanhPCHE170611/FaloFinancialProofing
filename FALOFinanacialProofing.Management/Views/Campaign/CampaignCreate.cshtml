@@ -185,13 +185,20 @@
 
             input = input.replace(/[^0-9]/g, '');
 
+            if (input === '') {
+                $(this).val('');
+                return;
+            }
+
             if (!/^\d+$/.test(input)) {
                 alert('Vui lòng nhập số nguyên dương và không chứa dấu thập phân hoặc ký tự không hợp lệ.');
                 $(this).val('');
                 return;
             }
-
-            const formatted = Number(input).toLocaleString();
+            const formatted = Number(input).toLocaleString('en-US', {
+                useGrouping: true,
+                maximumFractionDigits: 0
+            });
             $(this).val(formatted);
         });
         $('#save-btn button').on('click', function (e) {
