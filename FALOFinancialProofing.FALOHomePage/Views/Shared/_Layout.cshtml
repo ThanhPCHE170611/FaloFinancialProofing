@@ -1,5 +1,6 @@
 ﻿@{
     var userId = Context.Session.GetString("UserId");
+    var userName = Context.Session.GetString("UserName");
 }
 
 <!DOCTYPE html>
@@ -103,6 +104,9 @@
                     <div class="dropdown">
                         <span id="user-image">
                             <img src="/images/project/user.png" alt="image" style="max-height=50px; max-width:50px; border-radius: 100%">
+                            <span id="user-name" style="font-weight: bold; color: #333;">
+                                @userName
+                            </span>
                         </span>
                         <div class="dropdown-content">
                             <p>
@@ -156,14 +160,17 @@
                                     Giải pháp công nghệ đồng hành cùng
                                     cộng đồng thiện nguyện minh bạch
                                 </p>
+                                @if (userId == null)
+                                {
                                     <div class="btn-one mt-40">
                                         <span class="btn-circle"></span>
                                         <a asp-controller="Authentication" asp-action="Login" class="btn-inner">
-                                        <span class="btn-text">
-                                            ĐĂNG NHẬP
-                                        </span>
+                                            <span class="btn-text">
+                                                ĐĂNG NHẬP
+                                            </span>
                                         </a>
                                     </div>
+                                }
                             </div>
                         </div>
                         <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="600ms" data-wow-duration="1500ms">

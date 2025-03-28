@@ -142,6 +142,10 @@
     $(document).ready(function () {
         const id = new URLSearchParams(window.location.search).get('requestId');
         const jwtToken = localStorage.getItem('jwtToken');
+        if (!jwtToken) {
+            window.location.href = '/Authentication/Login';
+            return;
+        }
         const userId = localStorage.getItem('userId');
         $.ajax({
             url: `https://localhost:7294/api/MoveNextCampaignStatusRequests/GetMoveNextCampaignStatusRequestById/${id}`,
@@ -176,6 +180,7 @@
                     .css('margin-left', '10px')
                     .text('Cancel Request')
                     .click(function () {
+                        if (confirm('Are you sure you want to cancel this request?')) {
                         $.ajax({
                             url: `https://localhost:7294/api/MoveNextCampaignStatusRequests/CancelMoveNextCampaignStatusRequest?requestId=${id}&senderId=${userId}`,
                             method: 'POST',
@@ -185,7 +190,8 @@
                             success: function (response) {
                                 if(response.success) {
                                     alert(response.message);
-                                    location.reload(); 
+                                    // location.reload(); 
+                                    window.location.href = '/Campaign/CampaignUpdateProcessManagement';
                                 } else {
                                     alert(response.message);
                                 }
@@ -194,6 +200,7 @@
                                 alert('Error: ' + (xhr.responseText || status));
                             }
                         });
+                        }
                     });
                     $('#save-btn').append(cancelButton);
                 }

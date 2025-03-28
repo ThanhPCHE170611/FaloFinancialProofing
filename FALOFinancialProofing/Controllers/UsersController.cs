@@ -77,7 +77,7 @@ namespace FALOFinancialProofing.Controllers
                 });
             }
             var checkAccountExist = await authServices.CheckGoogleExistAccount(userInfo.Email);
-            if (!checkAccountExist)
+            if (checkAccountExist == null)
             {
                 var checkSuccessCreate = await authServices.ExternalRegisterUser(userInfo, roleName);
                 if (checkSuccessCreate == null || !checkSuccessCreate.Succeeded)
@@ -89,6 +89,20 @@ namespace FALOFinancialProofing.Controllers
                     });
                 }
             }
+            #region tạm chưa dùng
+            //if (roleName.Equals(AppRole.Donor))
+            //{
+            //    var checkIsValidDonorAccount = await authServices.CheckValidDonorAccount(checkAccountExist);
+            //    if (!checkIsValidDonorAccount)
+            //    {
+            //        return Ok(new ApiResponse()
+            //        {
+            //            Success = false,
+            //            Message = "Login With Google Fails, Account Role Not Valid!"
+            //        });
+            //    }
+            //} 
+            #endregion
             UserDto userDto = await authServices.GetUserDto(userInfo);
             var user = await authServices.GetUserById(userDto.Id);
             var checkIsLockout = authServices.checkLockoutAccount(user, message);
@@ -279,13 +293,14 @@ namespace FALOFinancialProofing.Controllers
         [HttpPost("Admin-Register")]
         public async Task<IActionResult> AdminRegister([FromBody] SignUpAdminRequest registerRequest)
         {
-            var user = await authServices.AdminRegisterUser(registerRequest);
+            StringBuilder message = new StringBuilder();
+            var user = await authServices.AdminRegisterUser(registerRequest, message);
             if (user == null)
             {
                 return Ok(new
                 {
                     Success = false,
-                    Message = "Register Failed"
+                    Message = message.ToString()
                 });
             }
             else
@@ -347,7 +362,7 @@ namespace FALOFinancialProofing.Controllers
                 }
 
                 filterPagingData.DataCount = data.Count;
-                data = PaginationHelper.Paginate<UserInformation_Admin>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                data = PaginationHelper.Paginate<UserInformation_Admin>(data.AsQueryable(), currentPage, IntConstant.PageSizeCustom).ToList();
                 filterPagingData.Data = data;
             }
             catch (Exception ex)
@@ -387,7 +402,7 @@ namespace FALOFinancialProofing.Controllers
                 }
 
                 filterPagingData.DataCount = data.Count;
-                data = PaginationHelper.Paginate<UserInformation_Admin>(data.AsQueryable(), currentPage, IntConstant.PageSize).ToList();
+                data = PaginationHelper.Paginate<UserInformation_Admin>(data.AsQueryable(), currentPage, IntConstant.PageSizeCustom).ToList();
                 filterPagingData.Data = data;
             }
             catch (Exception ex)

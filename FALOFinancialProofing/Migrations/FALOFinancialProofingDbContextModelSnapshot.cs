@@ -183,8 +183,8 @@ namespace FALOFinancialProofing.Migrations
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("FundTarget")
-                        .HasColumnType("money");
+                    b.Property<long>("FundTarget")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Image")
                         .HasMaxLength(200)

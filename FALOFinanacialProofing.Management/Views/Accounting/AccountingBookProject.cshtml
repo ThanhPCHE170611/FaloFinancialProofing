@@ -215,7 +215,10 @@
     function showCreateVoucherPopup() {
         document.getElementById('createVoucherModal').style.display = 'block';
     }
-
+    if (!jwtToken) {
+        window.location.href = '/Authentication/Login';
+        return;
+    }
     function submitVoucher() {
         const fileInput = document.getElementById('voucherFile');
         if (fileInput.files.length === 0) {
@@ -264,9 +267,15 @@
             success: function (response) {
                 console.log('API Response:', response);
                 if (response.success) {
-                    console.log('Data:', response.data);
-                    populateTable(response.data.data);
-                    setupPagination(response.data.totalRecords, response.data.page);
+                    if(response.message === 'Accounting books not found') {
+                        const tableBody = $('#voucherTableBody');
+                        tableBody.empty();
+                        tableBody.append('<tr><td colspan="3" class="text-center">No accounting books found</td></tr>');
+                    } else {
+                        console.log('Data:', response.data);
+                        populateTable(response.data.data);
+                        setupPagination(response.data.totalRecords, response.data.page);
+                    }  
                 } else {
                     const tableBody = $('#voucherTableBody');
                     tableBody.empty();
@@ -344,7 +353,7 @@
         }
     };
     function setupPagination(totalRecords, currentPage) {
-        const totalPages = Math.ceil(totalRecords / 5);
+        const totalPages = Math.ceil(totalRecords / 30);
         const paginationContainer = $('#pagination');
         paginationContainer.empty();
 

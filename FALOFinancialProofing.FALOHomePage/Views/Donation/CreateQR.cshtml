@@ -16,7 +16,7 @@
                     <!-- Input Field with space below it -->
                     <div class="input-box pb-3 mb-4 bor-bottom">
                         <span class="me-2">₫</span>
-                        <input class="addAmount-value form-control" type="number" max="10000000">
+                        <input class="addAmount-value form-control" type="text" id="totalAmount">
                     </div>
 
                     <!-- Amount Buttons with more space between them -->
@@ -61,7 +61,10 @@
 </main>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 <script>
+    var apiUrl = '@Configuration["ApiBaseUrl"]';
+
     document.addEventListener("DOMContentLoaded", function () {
         var QRDetails = @Html.Raw(donationDetailsJson);
 
@@ -72,6 +75,20 @@
             console.error("Donate button not found!");
         }
 
+        $('#totalAmount').on('input', function () {
+            let input = $(this).val();
+
+            input = input.replace(/[^0-9]/g, '');
+
+            if (!/^\d+$/.test(input)) {
+                alert('Vui lòng nhập số nguyên dương và không chứa dấu thập phân hoặc ký tự không hợp lệ.');
+                $(this).val('');
+                return;
+            }
+
+            const formatted = Number(input).toLocaleString();
+            $(this).val(formatted);
+        });
         donateButton.addEventListener('click', function (e) {
             e.preventDefault();
             console.log("Donate button clicked!");
@@ -81,27 +98,29 @@
                 return;
             }
 
-            const amountInput = document.querySelector('.addAmount-value');
-            const amount = parseFloat(amountInput.value);
-
-            if (isNaN(amount) || amount < 2000) {
+            // const amountInput = document.querySelector('.addAmount-value');
+            // const amount = parseFloat(amountInput.value);
+            const totalAmount = $('#totalAmount').val().replace(/,/g, '');
+            if (isNaN(totalAmount) || totalAmount < 2000) {
                 alert('Xin hãy nhập số tiền từ 2000đ trở lên');
                 return;
-            } else if (amount > 10000000) {
+            } else if (totalAmount > 10000000) {
                 alert('Xin hãy nhập số tiền dưới 10000000đ trở xuống');
                 return;
             }
 
             const data = {
                 userId: QRDetails.userId,
-                amount: amount,
+                amount: totalAmount,
                 bankId: QRDetails.bankId,
                 campaignId: QRDetails.campaignId
             };
 
             console.log("Data being sent:", data);
 
-            fetch('https://localhost:7294/api/CreateQrCodes/CreateQrCode', {
+            var url = apiUrl + '/api/CreateQrCodes/CreateQrCode';
+
+            fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -155,67 +174,67 @@
         }
     }
 
-    document.addEventListener("DOMContentLoaded", function () {
-        var donateButton = document.getElementById('syncButton');
-        var QRDetails = @Html.Raw(donationDetailsJson);
+    // document.addEventListener("DOMContentLoaded", function () {
+    //     var donateButton = document.getElementById('syncButton');
+    //     var QRDetails = @Html.Raw(donationDetailsJson);
 
-        console.log("QRDetails:", QRDetails);
+    //     console.log("QRDetails:", QRDetails);
 
-        if (!donateButton) {
-            console.error("Sync button not found!");
-        }
+    //     if (!donateButton) {
+    //         console.error("Sync button not found!");
+    //     }
 
-        donateButton.addEventListener('click', function (e) {
-            e.preventDefault();
-            var bankId = QRDetails.bankId;
+    //     donateButton.addEventListener('click', function (e) {
+    //         e.preventDefault();
+    //         var bankId = QRDetails.bankId;
 
-            if (!bankId) {
-                alert('Bank ID is missing.');
-                return;
-            }
+    //         if (!bankId) {
+    //             alert('Bank ID is missing.');
+    //             return;
+    //         }
 
-            fetch(`https://localhost:7294/api/Banks/GetBankById/${bankId}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch bank details');
-                    }
-                    return response.json();
-                })
-                .then(bankDetails => {
-                    console.log("Bank details:", bankDetails);
+    //         fetch(`https://localhost:7294/api/Banks/GetBankById/${bankId}`)
+    //             .then(response => {
+    //                 if (!response.ok) {
+    //                     throw new Error('Failed to fetch bank details');
+    //                 }
+    //                 return response.json();
+    //             })
+    //             .then(bankDetails => {
+    //                 console.log("Bank details:", bankDetails);
 
-                    var accountNumber = bankDetails.accountNumber;
+    //                 var accountNumber = bankDetails.accountNumber;
 
-                    if (!accountNumber) {
-                        alert('Account number not found.');
-                        return;
-                    }
+    //                 if (!accountNumber) {
+    //                     alert('Account number not found.');
+    //                     return;
+    //                 }
 
-                    fetch(`https://localhost:7294/api/WebHooks/SyncTransaction/${accountNumber}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                        .then(response => {
-                            if (response.status === 204) {
-                                console.log("Transaction successfully synced with no content in response.");
-                                alert('Transaction successfully synced!');
-                            } else {
-                                throw new Error(`Unexpected response status: ${response.status}`);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Sync Transaction Error:', error);
-                            alert('An error occurred while syncing the transaction.');
-                        });
-                })
-                .catch(error => {
-                    console.error('GetBankById Error:', error);
-                    alert('An error occurred while fetching bank details.');
-                });
-        });
-    });
+    //                 fetch(`https://localhost:7294/api/WebHooks/SyncTransaction/${accountNumber}`, {
+    //                     method: 'POST',
+    //                     headers: {
+    //                         'Content-Type': 'application/json'
+    //                     }
+    //                 })
+    //                     .then(response => {
+    //                         if (response.status === 204) {
+    //                             console.log("Transaction successfully synced with no content in response.");
+    //                             alert('Transaction successfully synced!');
+    //                         } else {
+    //                             throw new Error(`Unexpected response status: ${response.status}`);
+    //                         }
+    //                     })
+    //                     .catch(error => {
+    //                         console.error('Sync Transaction Error:', error);
+    //                         alert('An error occurred while syncing the transaction.');
+    //                     });
+    //             })
+    //             .catch(error => {
+    //                 console.error('GetBankById Error:', error);
+    //                 alert('An error occurred while fetching bank details.');
+    //             });
+    //     });
+    // });
 
 </script>
 

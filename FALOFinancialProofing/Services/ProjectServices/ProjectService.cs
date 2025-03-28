@@ -1,4 +1,5 @@
-﻿using FALOFinancialProofing.DTOs.ProjectDTOs;
+﻿using FALOFinancialProofing.DTOs.CreateProjectFileDTO;
+using FALOFinancialProofing.DTOs.ProjectDTOs;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
 using FALOFinancialProofing.Repository;
@@ -14,19 +15,13 @@ namespace FALOFinancialProofing.Services.ProjectServices
     {
         private readonly IRepository<Project, int> _projectRepository;
         private readonly IRepository<Organization, int> _organizationRepository;
-        private readonly RoleManager<Role> _roleManager;
-        private readonly UserManager<User> _userManager;
         private readonly AuthServices _authServices;
         private readonly IRepository<Campaign, int> _campaignRepository;
 
-
-
-        public ProjectService(IRepository<Project, int> projectRepository, IRepository<Organization, int> organizationRepository, RoleManager<Role> roleManager, UserManager<User> userManager, AuthServices authServices, IRepository<Campaign, int> campaignRepository)
+        public ProjectService(IRepository<Project, int> projectRepository, IRepository<Organization, int> organizationRepository, AuthServices authServices, IRepository<Campaign, int> campaignRepository)
         {
             _projectRepository = projectRepository;
             _organizationRepository = organizationRepository;
-            _roleManager = roleManager;
-            _userManager = userManager;
             _authServices = authServices;
             _campaignRepository = campaignRepository;
         }
@@ -38,7 +33,6 @@ namespace FALOFinancialProofing.Services.ProjectServices
                 {
                     throw new Exception("Project is null");
                 }
-                //var organization = ConvertToBaseEntity(createProject);
                 await _projectRepository.InsertAsync(createProject);
 
                 return true;
@@ -179,7 +173,7 @@ namespace FALOFinancialProofing.Services.ProjectServices
             List<ProjectInformation> data = null!;
             try
             {
-                data = await _projectRepository.GetAll().Where(p => p.CreatedBy.Equals(UserId) && p.Status != null && !p.Status.Equals(RequestStatus.Rejected))
+                data = await _projectRepository.GetAll().Where(p => p.CreatedBy.Equals(UserId) && p.Status != null && !p.Status.Equals(RequestStatus.Rejected) && p.IsActive)
                     .Select(p => new ProjectInformation()
                     {
                         id = p.Id,
@@ -256,7 +250,14 @@ namespace FALOFinancialProofing.Services.ProjectServices
                         IsActive = p.IsActive,
                         OrganizationId = p.OrganizationId,
                         OrganizationName = p.Organization != null ? p.Organization.Name : "No Organization",
-                        Image = UrlHelper.GetImageUrl(request, p.Image, FolderImage.ProjectImageUpload)
+                        Image = UrlHelper.GetImageUrl(request, p.Image, FolderImage.ProjectImageUpload),
+                        Logo = UrlHelper.GetImageUrl(request, p.Organization != null ? p.Organization.Logo : null, FolderImage.OrganizationImageUpload),
+                        CreateProjectFiles = p.CreateProjectRequests.SelectMany(ccr => ccr.CreateProjectFiles).Select(f => new CreateProjectFileInformation()
+                        {
+                            Id = f.Id,
+                            RequestId = f.RequestId,
+                            FilePath = f.FilePath
+                        }).ToList()
                     }).SingleOrDefaultAsync();
             }
             catch (Exception ex)
@@ -345,14 +346,33 @@ namespace FALOFinancialProofing.Services.ProjectServices
                 if (checkValid && !project.IsActive)
                 {
                     var campaigns = await _campaignRepository.GetAll(c => c.ProjectId == project.Id && c.IsActive).ToListAsync();
-                    foreach (var item in campaigns)
+                    if (campaigns != null && campaigns.Count != 0)
                     {
-                        item.IsActive = false;
+                        foreach (var item in campaigns)
+                        {
+                            item.IsActive = false;
+                        }
+                        checkValid = await _campaignRepository.UpdateManyAsync(campaigns);
+                        if (!checkValid)
+                        {
+                            throw new Exception("Update Campaigns by projectId failed");
+                        }
                     }
-                    checkValid = await _campaignRepository.UpdateManyAsync(campaigns);
-                    if (!checkValid)
+                }
+                if (checkValid && project.Status != null && project.Status.Equals(RequestStatus.Close))
+                {
+                    var campaigns = await _campaignRepository.GetAll(c => c.ProjectId == project.Id && c.IsActive).ToListAsync();
+                    if (campaigns != null && campaigns.Count != 0)
                     {
-                        throw new Exception("Update Campaigns by projectId failed");
+                        foreach (var item in campaigns)
+                        {
+                            item.Status = RequestStatus.Close;
+                        }
+                        checkValid = await _campaignRepository.UpdateManyAsync(campaigns);
+                        if (!checkValid)
+                        {
+                            throw new Exception("Update Campaigns by projectId failed");
+                        }
                     }
                 }
             }
@@ -438,4 +458,7 @@ namespace FALOFinancialProofing.Services.ProjectServices
             throw new NotImplementedException();
         }
     }
+
+
+
 }

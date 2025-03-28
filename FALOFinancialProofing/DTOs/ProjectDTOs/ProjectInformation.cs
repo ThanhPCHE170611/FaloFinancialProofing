@@ -1,5 +1,5 @@
-﻿using FALOFinancialProofing.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using FALOFinancialProofing.DTOs.CreateProjectFileDTO;
+using FALOFinancialProofing.Models;
 
 namespace FALOFinancialProofing.DTOs.ProjectDTOs
 {
@@ -17,7 +17,9 @@ namespace FALOFinancialProofing.DTOs.ProjectDTOs
         public bool IsActive { get; set; }
         public int? OrganizationId { get; set; }
         public string OrganizationName { get; set; }
+        public string? Logo { get; set; }
         public string? Image { get; set; }
+        public ICollection<CreateProjectFileInformation> CreateProjectFiles { get; set; }
 
     }
 }

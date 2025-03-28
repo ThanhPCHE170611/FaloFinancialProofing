@@ -178,9 +178,11 @@
                             <nav class="nav-tabs" id="navTabs">
                                 <a asp-controller="Campaign" asp-action="CampaignDetail">Campaign Detail</a>
                                 <a asp-controller="Prepay" asp-action="PrepayManagement" >Created Prepay Request</a>
-                                <a asp-controller="Payment" asp-action="PaymentManagement" class="active">Created Payment Request</a>
+                                <a asp-controller="Payment" asp-action="PaymentManagement">Created Payment Request</a>
                                 <a asp-controller="Accounting" asp-action="AccountingBookCampaign">Accounting Book</a>
                                 <a asp-controller="Campaign" asp-action="Member">Member</a>
+                                <a asp-controller="Prepay" asp-action="PrepayManagement_PM">Approval Prepay Request</a>
+                                <a asp-controller="Payment" asp-action="PaymentManagement_PM" class="active">Approval Payment Request</a>
                             </nav>
                         </div>
                     </div>
@@ -214,7 +216,7 @@
                 </div>
 
                 <div class="back-button-container">
-                    <a asp-controller="Payment" asp-action="PaymentManagement" class="btn btn-secondary">Back</a>
+                    <a asp-controller="Payment" asp-action="PaymentManagement_PM" class="btn btn-secondary">Back</a>
                 </div>
             </div>
         </div>
@@ -232,4 +234,4 @@
 <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
 <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="~/js/payment/paymentdetail.js"></script>
+<script src="~/js/payment/paymentdetail_pm.js"></script>

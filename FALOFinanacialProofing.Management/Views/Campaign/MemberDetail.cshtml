@@ -132,8 +132,8 @@
                         <div class=" pt-4 pb-3 d-flex justify-content-between align-items-center">
                             <nav class="nav-tabs" id="navTabs">
                                 <a asp-controller="Campaign" asp-action="CampaignDetail">Campaign Detail</a>
-                                <a asp-controller="Prepay" asp-action="PrepayManagement">Prepay Request</a>
-                                <a asp-controller="Payment" asp-action="PaymentManagement">Payment Request</a>
+                                <a asp-controller="Prepay" asp-action="PrepayManagement">Created Prepay Request</a>
+                                <a asp-controller="Payment" asp-action="PaymentManagement">Created Payment Request</a>
                                 <a asp-controller="Accounting" asp-action="AccountingBookCampaign">Accounting Book</a>
                                 <a asp-controller="Campaign" asp-action="Member" class="active">Member</a>
                             </nav>
@@ -321,6 +321,10 @@
     $(document).ready(function () {
         const userId = new URLSearchParams(window.location.search).get('userId');
         const jwtToken = localStorage.getItem('jwtToken');
+        if (!jwtToken) {
+            window.location.href = '/Authentication/Login';
+            return;
+        }
         const checkrole = localStorage.getItem('loggingRole');
         loadSDGs()
         loadUserProfile(userId);
@@ -330,12 +334,12 @@
         const newLink = document.createElement('a');
         newLink.setAttribute('asp-controller', 'Prepay');
         newLink.setAttribute('asp-action', 'PrepayManagement_PM');
-        newLink.textContent = 'Prepay Created Request';
+        newLink.textContent = 'Approval Prepay Request';
 
         const newLink2 = document.createElement('a');
         newLink2.setAttribute('asp-controller', 'Payment');
         newLink2.setAttribute('asp-action', 'PaymentManagement_PM');
-        newLink2.textContent = 'Payment Created Request';
+        newLink2.textContent = 'Approval Payment Request';
 
         const url = new URL(`/Prepay/PrepayManagement_PM`, window.location.origin);
 

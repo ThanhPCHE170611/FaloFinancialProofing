@@ -55,7 +55,7 @@
                 <div class="card my-4">
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
-                            <h6 class="text-white text-capitalize ps-3 mb-0">Project Create</h6>
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Project Registration Request Create</h6>
                         </div>
                     </div>
                     <div class="card-body">
@@ -165,10 +165,15 @@
       Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
     }
     $(document).ready(function () {
+        const jwtToken = localStorage.getItem('jwtToken');
+        if (!jwtToken) {
+            window.location.href = '/Authentication/Login';
+            return;
+        }
         $('#save-btn button').on('click', function (event) {
             event.preventDefault();
 
-            const jwtToken = localStorage.getItem('jwtToken');
+
             const userId = localStorage.getItem('userId');
 
             const today = new Date();
@@ -183,6 +188,24 @@
             const projectName = $('#projectName').val();
             const projectDescription = quill.getText();
             const files = $('#attachments')[0].files;
+
+            if (!projectName) {
+                alert('Project Name is required and cannot be empty.');
+                $('#projectName').focus();
+                return;
+            }
+
+            if (projectName.length < 8) {
+                alert('Project Name must be at least 8 characters long.');
+                $('#projectName').focus();
+                return;
+            }
+
+            if (!projectDescription || projectDescription.length < 8) {
+                alert('Project Description is required and must be at least 8 characters long.');
+                $('#projectDescription').focus();
+                return;
+            }
 
             const formData = new FormData();
             formData.append('ProjectName', projectName);

@@ -52,6 +52,13 @@
                     <div class="search-filter-container px-3">
                         <input type="text" id="searchInput" placeholder="Search by Campaign Name" class="search-box" onkeyup="searchCampaign()" />
                         <select id="statusFilter" class="filter-box" onchange="filterByStatus()">
+                            <option value="">All Stages</option>
+                            <option value="Fund-Raising">Fund-Raising</option>
+                            <option value="Implement">Implement</option>
+                            <option value="Disbursement">Disbursement</option>
+                            <option value="Close">Close</option>
+                        </select>
+                        <select id="statusFilterStatus" class="filter-box" onchange="filterByStatus()" style="display:none;">
                             <option value="">All Statuses</option>
                             <option value="true">Active</option>
                             <option value="false">Inactive</option>
@@ -92,127 +99,6 @@
 <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
 <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    function changeCampaign(button, Id) {
-        localStorage.setItem('campaignId', Id);
-        window.location.href = '/Campaign/CampaignDetail';
-    }
-    function changeCampaignUpdateProcess(button, Id) {
-        localStorage.setItem('campaignId', Id);
-        window.location.href = '/Campaign/CampaignUpdateProcessRequest';
-    }
-    $(document).ready(function () {
-        let currentPage = 1;
-        const userId = localStorage.getItem('userId');
-        const roleId = localStorage.getItem('loggingRoleId');
-        const checkrole = localStorage.getItem('loggingRole');
-        const pageSize = 5;
-        function fetchCampaignData(searchInput = '', isActive = null, page = 1) {
-        const jwtToken = localStorage.getItem('jwtToken');
-
-        let apiUrl;
-        if(checkrole === "Project Management Board") {
-            apiUrl = `https://localhost:7294/api/Campaign/GetAllCampaignInSystem`
-        } else {
-            apiUrl = `https://localhost:7294/api/CampaignMember/GetAllCampaignMembersByUserIdAndRoleId`
-        }
-
-            $.ajax({
-                url: apiUrl,
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${jwtToken}`
-                },
-                data: {
-                    searchInput: searchInput,
-                    userId: userId,
-                    roleId: roleId,
-                    isActive: isActive,
-                    currentPage: page
-                },
-                success: function (response) {
-                    if (response.success) {
-                        console.log(userId);
-                        console.log(roleId);
-                        renderTable(response.data.data);
-                        setupPagination(response.data.dataCount);
-                    } else {
-                        $('#campaignTable tbody').html('<tr><td colspan="5">No data found.</td></tr>');
-                    }
-                },
-                error: function (err) {
-                    $('#campaignTable tbody').html('<tr><td colspan="5">No data found.</td></tr>');
-                }
-            });
-        }
-
-        function renderTable(data) {
-            const tableBody = $('#campaignTable tbody');
-            tableBody.empty();
-            if (data.length === 0) {
-                tableBody.append('<tr><td colspan="5">No results found</td></tr>');
-                return;
-            }
-            
-            data.forEach((item, index) => {
-                console.log(item.campaignId);
-                let actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId})" class="btn btn-info btn-sm detail-btn">Detail</button>`;
-                let campaignName =`${item.title}`;
-                if(checkrole === "Project Manager") {
-                    actionButtons = `<button onclick="changeCampaign(this, ${item.campaignId})" class="btn btn-info btn-sm detail-btn">Detail</button>
-                                        <button class="btn btn-primary btn-sm" onclick="changeCampaignUpdateProcess(this, ${item.campaignId})">Update Process</a>
-                    `;
-                    campaignName = `${item.campaignTitle}`;
-                }
-                
-                const row = `
-                    <tr>
-                        <td class="align-middle text-center text-sm">${index + 1}</td>
-                        <td class="align-middle text-center text-sm">${campaignName}</td>
-                        <td class="align-middle text-center text-sm">${item.projectName}</td>
-                        <td class="align-middle text-center text-sm">${item.fundTarget.toLocaleString()}</td>
-                        <td class="align-middle text-center text-sm">${item.status}</td>
-                        <td class="align-middle text-center">
-                            ${actionButtons}
-                        </td>
-                    </tr>
-                `;
-                tableBody.append(row);
-            });
-        }
-
-        function setupPagination(totalItems) {
-            const totalPages = Math.ceil(totalItems / pageSize);
-            const paginationContainer = $('#pagination');
-            paginationContainer.empty();
-
-            for (let i = 1; i <= totalPages; i++) {
-                const pageButton = $(`<button class="btn btn-sm btn-page ${i === currentPage ? 'btn-primary' : 'btn-light'}">${i}</button>`);
-                pageButton.on('click', () => changePage(i));
-                paginationContainer.append(pageButton);
-            }
-
-            $('.page-btn').click(function () {
-                currentPage = $(this).data('page');
-                fetchCampaignData($('#searchInput').val(), $('#statusFilter').val(), currentPage);
-            });
-        }
-
-
-        $('#searchInput').on('keyup', function () {
-            currentPage = 1;
-            fetchCampaignData($(this).val(), $('#statusFilter').val(), currentPage);
-        });
-
-        $('#statusFilter').on('change', function () {
-            currentPage = 1;
-            fetchCampaignData($('#searchInput').val(), $(this).val(), currentPage);
-        });
-
-        fetchCampaignData();
-    });
-
-</script>
-
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+<script src="~/js/campaign/campaignmanagement.js"></script>

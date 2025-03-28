@@ -54,8 +54,8 @@
                         <div class="pt-4 pb-3 d-flex justify-content-between align-items-center">
                             <nav class="nav-tabs" id="navTabs">
                                 <a asp-controller="Campaign" asp-action="CampaignDetail">Campaign Detail</a>
-                                <a asp-controller="Prepay" asp-action="PrepayManagement">Prepay Request</a>
-                                <a asp-controller="Payment" asp-action="PaymentManagement">Payment Request</a>
+                                <a asp-controller="Prepay" asp-action="PrepayManagement">Created Prepay Request</a>
+                                <a asp-controller="Payment" asp-action="PaymentManagement">Created Payment Request</a>
                                 @* <a asp-controller="Prepay" asp-action="PrepayVoucher">Prepay Voucher</a>
                                 <a asp-controller="Payment" asp-action="PaymentVoucher">Payment Voucher</a> *@
                                 <a asp-controller="Accounting" asp-action="AccountingBookCampaign">Accounting Book</a>
@@ -79,6 +79,7 @@
                             <option value="Process">Process</option>
                             <option value="Approved">Approved</option>
                             <option value="Rejected">Rejected</option>
+                            <option value="Cancel">Cancel</option>
                         </select>
                     </div>
 
@@ -115,14 +116,22 @@
 
     <div id="declineModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h3>Decline Request</h3>
-            <label for="declineReason">Reason for Decline:</label>
-            <textarea id="declineReason" class="form-control" rows="4" placeholder="Enter reason"></textarea>
+            <span class="close" onclick="closeModalDeclinePrepay()">&times;</span>
+            <h3>Reject Request</h3>
+            <label for="declineReason">Feedback for Rejection:</label>
+            <textarea id="declineReason" class="form-control" rows="4" placeholder="Enter feedback"></textarea>
             <button class="btn btn-danger mt-3" onclick="submitDecline()">Submit</button>
         </div>
     </div>
-
+    @* <div id="declineModal" class="modal"> *@
+    @*     <div class="modal-content"> *@
+    @*         <span class="close" onclick="closeModalDeclinePrepay()">&times;</span> *@
+    @*         <h3>Reject</h3> *@
+    @*         <label for="declineReason">Reason for Rejection:</label> *@
+    @*         <textarea id="declineReason" class="form-control" rows="3" placeholder="Enter reason"></textarea> *@
+    @*         <button class="btn btn-danger mt-3" onclick="submitDecline()">Submit</button> *@
+    @*     </div> *@
+    @* </div> *@
     <div id="detailModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>

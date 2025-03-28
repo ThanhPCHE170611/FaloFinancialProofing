@@ -1,3 +1,4 @@
+using FALOFinancialProofing;
 using FALOFinancialProofing.DTOs.CampaignDTO;
 using FALOFinancialProofing.Helpers;
 using FALOFinancialProofing.Models;
@@ -54,7 +55,7 @@ public class CampaignServiceTests
         mockBankService = new Mock<IBankService>();
         mockLogger = new Mock<ILogger<CampaignService>>();
 
-        var mockRoleService = new Mock<RoleService>(mockRoleManager.Object, mockUserManager.Object);
+        mockRoleService = new Mock<RoleService>(mockRoleManager.Object, mockUserManager.Object);
 
         mockAuthServices = new Mock<AuthServices>(
            mockUserManager.Object,
@@ -592,6 +593,305 @@ public class CampaignServiceTests
 
         // Assert
         Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task GetCampaignByUserIdAndCampaignIdAsync_ShouldReturnCampaign_WhenCampaignExists()
+    {
+        // Arrange
+        var pmUserId = "user123";
+        var campaignId = 1;
+        var expectedCampaign = new Campaign { Id = campaignId, CreateBy = pmUserId };
+
+        mockCampaignRepository.Setup(repo => repo.Get(It.IsAny<Expression<Func<Campaign, bool>>>()))
+            .ReturnsAsync(expectedCampaign);
+
+        // Act
+        var result = await campaignService.GetCampaignByUserIdAndCampaignIdAsync(pmUserId, campaignId);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(expectedCampaign.Id, result.Id);
+        Assert.Equal(expectedCampaign.CreateBy, result.CreateBy);
+    }
+
+    [Fact]
+    public async Task GetCampaignByUserIdAndCampaignIdAsync_ShouldThrowException_WhenCampaignDoesNotExist()
+    {
+        // Arrange
+        var pmUserId = "user123";
+        var campaignId = 1;
+
+        mockCampaignRepository.Setup(repo => repo.Get(It.IsAny<Expression<Func<Campaign, bool>>>()))
+            .ReturnsAsync((Campaign)null);
+
+        var result = await campaignService.GetCampaignByUserIdAndCampaignIdAsync(pmUserId, campaignId);
+
+        // Assert
+        Assert.Null(result);
+    }
+
+
+    [Fact]
+    public async Task ValidateCampaignUpdateAsync_CampaignNotFound_ReturnsFalse()
+    {
+        // Arrange
+        var updateCampaignDTO = new UpdateCampaignDTO { Id = 1, UserId = "user1", RoleId = "role1" };
+        var message = new StringBuilder();
+        mockCampaignRepository.Setup(repo => repo.Get(It.IsAny<int>())).ReturnsAsync((Campaign)null);
+
+        // Act
+        var result = await campaignService.ValidateCampaignUpdateAsync(updateCampaignDTO, message);
+
+        // Assert
+        Assert.False(result);
+        Assert.Contains("Campaign not found!", message.ToString());
+    }
+
+    [Fact]
+    public async Task ValidateCampaignUpdateAsync_UserNotAuthorized_ReturnsFalse()
+    {
+        // Arrange
+        var updateCampaignDTO = new UpdateCampaignDTO { Id = 1, UserId = "user1", RoleId = "role1" };
+        var message = new StringBuilder();
+        var campaign = new Campaign { Id = 1, CreateBy = "user2" };
+        mockCampaignRepository.Setup(repo => repo.Get(It.IsAny<int>())).ReturnsAsync(campaign);
+        mockAuthServices.Setup(auth => auth.CheckRole(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<StringBuilder>())).ReturnsAsync(false);
+
+        // Act
+        var result = await campaignService.ValidateCampaignUpdateAsync(updateCampaignDTO, message);
+
+        // Assert
+        Assert.False(result);
+        Assert.Contains("You don't have permission to update campaign!", message.ToString());
+    }
+
+
+
+    [Fact]
+    public async Task ValidateCampaignUpdateAsync_ValidUpdate_ReturnsTrue()
+    {
+        // Arrange
+        var updateCampaignDTO = new UpdateCampaignDTO { Id = 1, UserId = "user1", RoleId = "role1" };
+        var message = new StringBuilder();
+        var campaign = new Campaign { Id = 1, CreateBy = "user1" };
+        mockCampaignRepository.Setup(repo => repo.Get(It.IsAny<int>())).ReturnsAsync(campaign);
+        mockAuthServices.Setup(auth => auth.CheckRole(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<StringBuilder>())).ReturnsAsync(true);
+
+        // Act
+        var result = await campaignService.ValidateCampaignUpdateAsync(updateCampaignDTO, message);
+
+        // Assert
+        Assert.True(result);
+        Assert.Empty(message.ToString());
+    }
+
+
+    [Fact]
+    public async Task UpdateEndDateForProjectManagerBoardAsync_ValidEndDate_UpdatesEndDateAndLog()
+    {
+        // Arrange
+        var updateCampaignDTO = new UpdateCampaignDTO
+        {
+            EndDate = new DateTime(2023, 12, 31)
+        };
+        var campaign = new Campaign
+        {
+            EndDate = new DateTime(2023, 11, 30),
+            UpdateLog = "Initial log."
+        };
+        var message = new StringBuilder();
+
+        // Act
+        var result = await campaignService.UpdateEndDateForProjectManagerBoardAsync(updateCampaignDTO, campaign, message);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(updateCampaignDTO.EndDate, result.EndDate);
+        Assert.Contains($"Project Manager Board change end date to {updateCampaignDTO.EndDate}", result.UpdateLog);
+        Assert.Empty(message.ToString());
+    }
+
+    [Fact]
+    public async Task UpdateEndDateForProjectManagerBoardAsync_SameEndDate_DoesNotUpdateEndDateOrLog()
+    {
+        // Arrange
+        var updateCampaignDTO = new UpdateCampaignDTO
+        {
+            EndDate = new DateTime(2023, 11, 30)
+        };
+        var campaign = new Campaign
+        {
+            EndDate = new DateTime(2023, 11, 30),
+            UpdateLog = "Initial log."
+        };
+        var message = new StringBuilder();
+
+        // Act
+        var result = await campaignService.UpdateEndDateForProjectManagerBoardAsync(updateCampaignDTO, campaign, message);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(updateCampaignDTO.EndDate, result.EndDate);
+        Assert.Equal("Initial log.", result.UpdateLog);
+        Assert.Empty(message.ToString());
+    }
+
+    [Fact]
+    public async Task UpdateEndDateForProjectManagerAsync_NotProjectManager_ReturnsNull()
+    {
+        // Arrange
+        var campaignId = 1;
+        var userId = "user1";
+        var currentRole = "NotProjectManager";
+        var newDateTime = DateTime.Now.AddDays(1);
+        var message = new StringBuilder();
+
+        // Act
+        var result = await campaignService.UpdateEndDateForProjectManagerAsync(campaignId, userId, currentRole, newDateTime, message);
+
+        // Assert
+        Assert.Null(result);
+        Assert.Contains("You are not Project Manager", message.ToString());
+    }
+
+    [Fact]
+    public async Task UpdateEndDateForProjectManagerAsync_CampaignNotFound_ReturnsNull()
+    {
+        // Arrange
+        var campaignId = 1;
+        var userId = "user1";
+        var currentRole = Resource.ProjectManagerRoleName;
+        var newDateTime = DateTime.Now.AddDays(1);
+        var message = new StringBuilder();
+
+        mockCampaignRepository.Setup(repo => repo.GetAll(It.IsAny<Expression<Func<Campaign, bool>>>()))
+            .Returns(new List<Campaign>().AsQueryable().BuildMock());
+
+        // Act
+        var result = await campaignService.UpdateEndDateForProjectManagerAsync(campaignId, userId, currentRole, newDateTime, message);
+
+        // Assert
+        Assert.Null(result);
+        Assert.Contains("Campaign not found or is close or is not active", message.ToString());
+    }
+
+    [Fact]
+    public async Task UpdateEndDateForProjectManagerAsync_UserNotInCampaign_ReturnsNull()
+    {
+        // Arrange
+        var campaignId = 1;
+        var userId = "user1";
+        var currentRole = Resource.ProjectManagerRoleName;
+        var newDateTime = DateTime.Now.AddDays(1);
+        var message = new StringBuilder();
+
+        var campaign = new Campaign
+        {
+            Id = campaignId,
+            Status = "Open",
+            IsActive = true,
+            CampaignMembers = new List<CampaignMember>
+            {
+                new CampaignMember
+                {
+                    UserId = "user2",
+                    IsActive = true,
+                    Role = new Role { Name = Resource.ProjectManagerRoleName }
+                }
+            }
+        };
+
+        mockCampaignRepository.Setup(repo => repo.GetAll(It.IsAny<Expression<Func<Campaign, bool>>>()))
+            .Returns(new List<Campaign> { campaign }.AsQueryable().BuildMock());
+
+        // Act
+        var result = await campaignService.UpdateEndDateForProjectManagerAsync(campaignId, userId, currentRole, newDateTime, message);
+
+        // Assert
+        Assert.Null(result);
+        Assert.Contains("You are not in this campaign or is not active or is not Project Manager", message.ToString());
+    }
+
+    [Fact]
+    public async Task UpdateEndDateForProjectManagerAsync_NewDateNotValid_ReturnsNull()
+    {
+        // Arrange
+        var campaignId = 1;
+        var userId = "user1";
+        var currentRole = Resource.ProjectManagerRoleName;
+        var newDateTime = DateTime.Now.AddDays(-1);
+        var message = new StringBuilder();
+
+        var campaign = new Campaign
+        {
+            Id = campaignId,
+            Status = "Open",
+            IsActive = true,
+            EndDate = DateTime.Now,
+            CampaignMembers = new List<CampaignMember>
+            {
+                new CampaignMember
+                {
+                    UserId = userId,
+                    IsActive = true,
+                    Role = new Role { Name = Resource.ProjectManagerRoleName }
+                }
+            }
+        };
+
+        mockCampaignRepository.Setup(repo => repo.GetAll(It.IsAny<Expression<Func<Campaign, bool>>>()))
+            .Returns(new List<Campaign> { campaign }.AsQueryable().BuildMock());
+
+        // Act
+        var result = await campaignService.UpdateEndDateForProjectManagerAsync(campaignId, userId, currentRole, newDateTime, message);
+
+        // Assert
+        Assert.Null(result);
+        Assert.Contains("New date must be after the current end date", message.ToString());
+    }
+
+    [Fact]
+    public async Task UpdateEndDateForProjectManagerAsync_ValidUpdate_ReturnsUpdatedCampaign()
+    {
+        // Arrange
+        var campaignId = 1;
+        var userId = "user1";
+        var currentRole = Resource.ProjectManagerRoleName;
+        var newDateTime = DateTime.Now.AddDays(1);
+        var message = new StringBuilder();
+
+        var campaign = new Campaign
+        {
+            Id = campaignId,
+            Status = "Open",
+            IsActive = true,
+            EndDate = DateTime.Now,
+            UpdateLog = "Initial log.",
+            CampaignMembers = new List<CampaignMember>
+            {
+                new CampaignMember
+                {
+                    UserId = userId,
+                    IsActive = true,
+                    Role = new Role { Name = Resource.ProjectManagerRoleName }
+                }
+            }
+        };
+
+        mockCampaignRepository.Setup(repo => repo.GetAll(It.IsAny<Expression<Func<Campaign, bool>>>()))
+            .Returns(new List<Campaign> { campaign }.AsQueryable().BuildMock());
+
+        mockCampaignRepository.Setup(repo => repo.UpdateAsync(It.IsAny<Campaign>())).ReturnsAsync(true);
+
+        // Act
+        var result = await campaignService.UpdateEndDateForProjectManagerAsync(campaignId, userId, currentRole, newDateTime, message);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(newDateTime, result.EndDate);
+        Assert.Contains($"Project Manager change end date to {newDateTime}", result.UpdateLog);
+        Assert.Empty(message.ToString());
     }
 
 

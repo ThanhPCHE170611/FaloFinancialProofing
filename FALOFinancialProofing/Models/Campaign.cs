@@ -21,9 +21,8 @@ namespace FALOFinancialProofing.Models
         [Required]
         public DateTime DateOfCreation { get; set; }
 
-        [Column(TypeName = "money")]
         [Required]
-        public double FundTarget { get; set; }
+        public long FundTarget { get; set; }
 
         [MaxLength(200)]
         public string? Image { get; set; }

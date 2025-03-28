@@ -97,7 +97,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                     }
                     else
                     {
-                        throw new Exception($"Debt is not over yet.\nPlease contact {campaignDebtResult.NameOfAccounting} for more information");
+                        throw new Exception($"Debt is not over yet. Please contact project management board to close campaign");
                     }
                 }
                 else
@@ -160,7 +160,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
         //    return IsValid;
         //}
 
-        private async Task<CampaignDebtResult> HasDebtInCampaignAsync(int campaignId)
+        public virtual async Task<CampaignDebtResult> HasDebtInCampaignAsync(int campaignId)
         {
             var campaignDebtResult = new CampaignDebtResult
             {
@@ -175,13 +175,11 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                     .GetAll().Include(x => x.User)
                     .Where(cm => cm.CampaignId == campaignId && cm.Debt != 0)
                     .ToListAsync();
-
-                //campaignDebtResult.NameOfAccounting = campaignMembers.Select(cm => cm.User.FirstName).ToList();
-
                 var Accounting = await _campaignMemberRepository
                     .GetAll()
                     .Include(x => x.User)
-                    .Where(cm => cm.CampaignId == campaignId && cm.RoleId == "83292e2c-6c86-4153-bdc5-760d05ec2293")
+                    //.Where(cm => cm.CampaignId == campaignId && cm.RoleId == "83292e2c-6c86-4153-bdc5-760d05ec2293")
+                    .Where(cm => cm.CampaignId == campaignId && cm.Role.Name.Equals(AppRole.Accounting))
                     .SingleAsync();
 
                 campaignDebtResult.NameOfAccounting = Accounting.User.FirstName + " " + Accounting.User.LastName + " with gmail: " + Accounting.User.Email;
@@ -199,7 +197,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
             return campaignDebtResult;
         }
 
-        private async Task<bool> CheckMoneyOfCampaignAsync(int campaignId)
+        public virtual async Task<bool> CheckMoneyOfCampaignAsync(int campaignId)
         {
             bool IsValid = true;
             try
@@ -226,7 +224,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                            Status = p.Status,
                            TotalMoneyEarned = p.TransactionLogs.Sum(x => x.Amount)
                        }).SingleOrDefaultAsync();
-                double sumOfAmount = 0;
+                long sumOfAmount = 0;
                 //Campaign campaign = new Campaign();
                 //campaign = await _campaignRepository.Get(campaignId);
                 sumOfAmount = data.TotalMoneyEarned;
@@ -242,7 +240,7 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
             return IsValid;
         }
 
-        private async Task<bool> CheckRequestHasBeenCreated(int campaignId)
+        public virtual async Task<bool> CheckRequestHasBeenCreated(int campaignId)
         {
             bool IsValid = true;
             try
@@ -348,9 +346,6 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                 {
                     return IsValid;
                 }
-
-
-
                 var campaign = await _campaignRepository.Get(x => x.Id == createMoveNextCampaignStatusRequestDTO.CampaignID);
                 if (campaign == null)
                 {
@@ -375,11 +370,11 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                 {
                     throw new Exception($"User with ID = {createMoveNextCampaignStatusRequestDTO.SenderId} is not associated with Campaign ID = {createMoveNextCampaignStatusRequestDTO.CampaignID}.");
                 }
-                var projectManagerRoleId = "205d4496-4ac8-40d9-84b9-e09e1ada7a49"; // ID của Project Manager
-                if (campaignMember.RoleId != projectManagerRoleId)
-                {
-                    throw new Exception("User is not a Project Manager for the specified campaign.");
-                }
+                //var projectManagerRoleId = "205d4496-4ac8-40d9-84b9-e09e1ada7a49"; // ID của Project Manager
+                //if (campaignMember.RoleId != projectManagerRoleId)
+                //{
+                //    throw new Exception("User is not a Project Manager for the specified campaign.");
+                //}
 
                 IsValid = true;
             }
@@ -500,9 +495,24 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestServices
                 }
 
                 // Kiểm tra nếu trạng thái của yêu cầu không phải là "pending"
-                if (request.Status != "Pending")
+                //if (request.Status != "Pending")
+                //{
+                //    message.Append("Only requests with status 'pending' can be cancelled.");
+                //    return false;
+                //}
+                if (request.Status == "Accepted")
                 {
-                    message.Append("Only requests with status 'pending' can be cancelled.");
+                    message.Append("Your request has been accepted.");
+                    return false;
+                }
+                if (request.Status == "Rejected")
+                {
+                    message.Append("Your request has been rejected.");
+                    return false;
+                }
+                if (request.Status == "Cancel")
+                {
+                    message.Append("Your request has been canceled. Cancellation is no longer possible.");
                     return false;
                 }
 

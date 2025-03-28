@@ -273,13 +273,14 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             }
             //check campaign id exist?
             var campainInDb = campaignRepository.GetAll(cp => cp.Id == StringExtension.ParseStringToInt(requestForm.CampaignId)
-            && cp.IsActive)
+            && cp.IsActive
+            && !cp.Status.Equals(Resource.CampaignStatus_Close))
                 .Include(cp => cp.CampaignMembers)
                 .ThenInclude(cm => cm.Role)
                 .FirstOrDefault();
             if (campainInDb == null)
             {
-                message.Append("CampaignID is not exist or disable");
+                message.Append("CampaignID is not exist or disable or close");
                 return false;
             }
             //check createBy id exist, in campaign
@@ -297,14 +298,6 @@ namespace FALOFinancialProofing.Services.RequestFormServices
                 return false;
             }
 
-            // Compare role of ApproverID and CreatedBy (voluntear, leader, accounting)
-            var haveEnoughPermission = CheckPermission(requestForm.CreatedBy, requestForm.ApproverId);
-            if (!haveEnoughPermission)
-            {
-                message.Append("The selected Approver must start from volunteer leader");
-                return false;
-            }
-
             if (requestForm.ExpectedMoney <= 0)
             {
                 message.Append("Expected money must be greater than 0");
@@ -313,24 +306,6 @@ namespace FALOFinancialProofing.Services.RequestFormServices
             return true;
         }
 
-        private bool CheckPermission(string createdBy, string approverId)
-        {
-            // 2 case that (volunteer, leader, accounting) and PM
-            var approverRole = campaignMemberRepository.GetAll(x => x.UserId == approverId && x.IsActive)
-                    .Include(x => x.Role)
-                    .FirstOrDefault()
-                    .Role.Name;
-
-            // check approveId role is Volunteer Leader
-            if (approverRole.Equals(Resource.VolunteerLeaderRoleName))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
 
         public async Task<List<AttachmentFileRequest>> SaveAttachmentFilesAsync(List<IFormFile> uploadFiles, int requestId, int typeId)
         {

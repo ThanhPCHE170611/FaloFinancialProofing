@@ -136,6 +136,13 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestHistorySer
             bool checkValid = false;
             try
             {
+                MoveNextCampaignStatusRequest checkStatus = new MoveNextCampaignStatusRequest();
+                checkStatus = await _moveNextCampaignStatusRequestRepository.Get(m => m.Id == moveNextCampaignStatusRequestHistoryDTO.MoveNextCampaignStatusRequestId);
+                if (checkStatus.Status == "Cancel")
+                {
+                    throw new Exception("This request has been canceled. Cannot be approved or rejected.");
+                }
+
                 if (moveNextCampaignStatusRequestHistoryDTO == null)
                 {
                     throw new Exception("MoveNextCampaignStatusRequestHistory is null");
@@ -159,15 +166,17 @@ namespace FALOFinancialProofing.Services.MoveNextCampaignStatusRequestHistorySer
                     // th có một history mới được tạo => thực hiện cập nhật bảng MoveNextCampaignStatusRequest,Campaign,(từ chối hoặc đồng ý - chuyển giai đoạn)
                     if (requestHistoriesCreated.Count == 1)
                     {
-                        if (moveNextCampaignStatusRequestHistoryDTO.IsAllowed)
-                        {
-                            moveNextCampaignStatusRequest.Status = RequestStatus.Accepted;
-                            campaign.Status = moveNextCampaignStatusRequest.StatusOfCampaign;
-                        }
-                        else
-                        {
-                            moveNextCampaignStatusRequest.Status = RequestStatus.Rejected;
-                        }
+                        
+                            if (moveNextCampaignStatusRequestHistoryDTO.IsAllowed)
+                            {
+                                moveNextCampaignStatusRequest.Status = RequestStatus.Accepted;
+                                campaign.Status = moveNextCampaignStatusRequest.StatusOfCampaign;
+                            }
+                            else
+                            {
+                                moveNextCampaignStatusRequest.Status = RequestStatus.Rejected;
+                            }
+                        
                     }
                     else
                     {

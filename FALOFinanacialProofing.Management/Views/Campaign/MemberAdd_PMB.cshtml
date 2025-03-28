@@ -1,0 +1,327 @@
+﻿@{
+    ViewData["Title"] = "MemberAdd";
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+    <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
+    <style>
+        #save-btn {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .container-fluid {
+            padding-top: 20px;
+        }
+
+        .volunteer-list, .selected-members {
+            width: 45%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+
+        .table-container {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        .table th, .table td {
+            text-align: center;
+        }
+
+        .btn-add {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .selected-members-table th, .selected-members-table td {
+            text-align: center;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+            .nav-tabs a {
+                padding: 10px 20px;
+                text-decoration: none;
+                color: #000;
+                background-color: #f1f1f1;
+                border-radius: 5px;
+            }
+
+                .nav-tabs a.active {
+                    background-color: #EC407A;
+                    color: #fff;
+                }
+
+                .nav-tabs a:hover {
+                    background-color: #007bff;
+                    color: #fff;
+                }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid py-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="pt-4 pb-3 d-flex justify-content-between align-items-center">
+                <nav class="nav-tabs" id="navTabs">
+                    <a asp-controller="Campaign" asp-action="CampaignDetail_PMB">Campaign Detail</a>
+                    <a asp-controller="Accounting" asp-action="AccountingBookCampaign_PMB">Accounting Book</a>
+                    <a asp-controller="Campaign" asp-action="Member_PMB" class="active">Member</a>
+                    <a asp-controller="Accounting" asp-action="DebtManagement">Debt</a>
+                </nav>
+            </div>
+        </div>
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
+                <h6 class="text-white text-capitalize ps-3 mb-0" id="titleAddMember">Add Member to Campaign</h6>
+            </div>
+        </div>
+        <div class="d-flex justify-content-between container-fluid py-4">
+            <div class="volunteer-list">
+                <h5>Available Volunteers</h5>
+                <input type="text" id="volunteerSearchBox" class="form-control" placeholder="Search for a volunteer..." onkeyup="filterVolunteers()" />
+                <div class="table-container">
+                    <table class="table table-hover align-items-center mb-0" id="volunteerTable">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="volunteerList">
+                           
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="selected-members">
+                <h5>Selected Members</h5>
+                <table class="table table-hover align-items-center mb-0 selected-members-table">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="selectedMembersList">
+                    </tbody>
+                </table>
+                <div class="btn-add">
+                    <button class="btn btn-primary" onclick="addToCampaign()">Add to Campaign</button>
+                </div>
+            </div>
+        </div>
+        <div id="save-btn">
+            <a href="/Campaign/Member" class="btn btn-info btn-lg" style="margin-left:10px">Back to List</a>
+        </div>
+    </div>
+
+
+</body>
+
+</html>
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    let accountantAssigned = false;
+    let selectedUserIds = [];
+    const campaignId = localStorage.getItem('campaignId');
+    const jwtToken = localStorage.getItem('jwtToken');
+    if (!jwtToken) {
+        window.location.href = '/Authentication/Login';
+        return;
+    }
+    const userId = localStorage.getItem('userId');
+    const checkroleId = localStorage.getItem('loggingRoleId');
+    const checkrole = localStorage.getItem('loggingRole');
+    const campaignName = localStorage.getItem('campaignName');
+    console.log(campaignName);
+    if (campaignName) {
+        const titleElement = document.getElementById('titleAddMember');
+        titleElement.textContent = `Add Member to Campaign ${campaignName}`;
+    }
+    $(document).ready(function () {
+
+        fetchAvailableVolunteers();
+
+        function fetchAvailableVolunteers() {
+            const searchInput = $('#volunteerSearchBox').val().trim();
+            $.ajax({
+                url: `https://localhost:7294/api/Users/GetUserNotInCampaignById/${campaignId}?searchInput=${searchInput}`,
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                success: function (response) {
+                    if (response.success) {
+                        renderVolunteerTable(response.data);
+                    } else {
+                        alert('Failed to fetch data: ' + response.message);
+                    }
+                },
+                error: function (errors) {
+                    alert('Error fetching available volunteers');
+                    console.error(errors);
+                }
+            });
+        }
+        $('#volunteerSearchBox').on('keyup', function () {
+            currentPage = 1;
+            fetchAvailableVolunteers();
+        });
+
+        function renderVolunteerTable(users) {
+            const tableBody = $('#volunteerList');
+            tableBody.empty();
+
+            users.forEach((user, index) => {
+                const rolesOptions = user.roles.map(role => `<option value="${role.roleId}">${role.roleName}</option>`).join('');
+                const row = `
+                    <tr data-user-id="${user.id}">
+                        <td>${index + 1}</td>
+                        <td>${user.firstName} ${user.lastName}</td>
+                        <td>
+                            <select class="form-select role-select">${rolesOptions}</select>
+                        </td>
+                        <td><button class="btn btn-success btn-sm" onclick="addToSelectedList(this)">Add</button></td>
+                    </tr>
+                `;
+                tableBody.append(row);
+            });
+        }
+    });
+
+    function addToSelectedList(button) {
+        const row = $(button).closest('tr');
+        const userId = row.data('user-id');
+        const name = row.find('td:nth-child(2)').text();
+        const roleSelect = row.find('.role-select');
+        const roleId = roleSelect.val();
+        const roleName = roleSelect.find('option:selected').text();
+        const campaignName = localStorage.getItem('campaignName');
+        if (campaignName) {
+            const titleElement = document.getElementById('titleAddMember');
+            titleElement.textContent = `Add Member to Campaign ${campaignName}`;
+        }
+        if (selectedUserIds.includes(userId)) {
+            alert('This user is already added to the selected members list.');
+            return;
+        }
+        if (roleName === 'Accounting' && accountantAssigned) {
+            alert('Only one Accountant can be selected.');
+            return;
+        }
+        if (roleName === 'Accounting') {
+            accountantAssigned = true;
+        }
+
+        selectedUserIds.push(userId);
+        const selectedMembersList = $('#selectedMembersList');
+        const newRow = `
+            <tr data-user-id="${userId}" data-role-id="${roleId}" data-role-name="${roleName}">
+                <td>${selectedMembersList.children().length + 1}</td>
+                <td>${name}</td>
+                <td>${roleName}</td>
+                <td><button class="btn btn-danger btn-sm" onclick="removeFromSelectedList(this, '${userId}', '${roleName}')">Remove</button></td>
+            </tr>
+        `;
+        console.log(newRow);
+        selectedMembersList.append(newRow);
+    }
+
+    function removeFromSelectedList(button, userId, roleName) {
+        $(button).closest('tr').remove();
+        selectedUserIds = selectedUserIds.filter(id => id !== userId);
+        if (roleName === 'Accounting') {
+            accountantAssigned = false;
+        }
+        updateSelectedListNumbers();
+    }
+
+    function updateSelectedListNumbers() {
+        $('#selectedMembersList tr').each((index, row) => {
+            $(row).find('td:first').text(index + 1);
+        });
+    }
+    // function checkRequiredRoles() {
+    //     const selectedRows = $('#selectedMembersList tr');
+    //     const roles = new Set();
+
+    //     selectedRows.each((_, row) => {
+    //         const roleName = $(row).data('role-name');
+    //         roles.add(roleName);
+    //     });
+    //     return roles.has('Accounting') && roles.has('Volunteer Leader') && roles.has('Volunteer');
+    // }
+
+    function addToCampaign() {
+        const selectedMembers = [];
+        $('#selectedMembersList tr').each((_, row) => {
+            const userId = $(row).data('user-id');
+            const roleId = $(row).data('role-id');
+            selectedMembers.push({ userId, roleId });
+        });
+
+        if (selectedMembers.length === 0) {
+            alert('No members selected to add to the campaign.');
+            return;
+        }
+
+        $.ajax({
+            url: `https://localhost:7294/api/CampaignMember/CreateManyCampaignMembers/${campaignId}/${userId}/${checkroleId}`,
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(selectedMembers),
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            },
+            success: function (response) {
+                if (response.success) {
+                    alert('Members successfully added to the campaign!');
+                    location.reload();
+                } else {
+                    alert(response.message);
+                    location.reload();
+                }
+            },
+            error: function () {
+                alert('Error adding members to the campaign');
+            }
+        });
+    }
+</script>
+
+

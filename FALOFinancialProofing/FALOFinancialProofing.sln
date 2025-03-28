@@ -5,14 +5,12 @@ VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FALOFinancialProofing", "FALOFinancialProofing.csproj", "{574169E0-9A3D-4CA8-8148-4E10AFD53AE1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FALOFinancialProofing.Client", "..\FALOFinancialProofing.Client\FALOFinancialProofing.Client.csproj", "{A0FB5859-D2F7-469A-9228-1EDDD7862C24}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FALOFinanacialProofing.Management", "..\FALOFinanacialProofing.Management\FALOFinanacialProofing.Management.csproj", "{B4A52E4E-ADD6-4F71-A8CD-88D8A6CDDE0A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FALOFinancialProofing.Tests", "..\FALOFinancialProofing.Tests\FALOFinancialProofing.Tests.csproj", "{2BFDF636-B213-486D-96DC-A169098AC14A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FALOFinancialProofing.Tests", "..\FALOFinancialProofing.Tests\FALOFinancialProofing.Tests.csproj", "{2BFDF636-B213-486D-96DC-A169098AC14A}"
 	ProjectSection(ProjectDependencies) = postProject
 		{574169E0-9A3D-4CA8-8148-4E10AFD53AE1} = {574169E0-9A3D-4CA8-8148-4E10AFD53AE1}
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FALOFinancialProofing.FALOHomePage", "..\FALOFinancialProofing.FALOHomePage\FALOFinancialProofing.FALOHomePage.csproj", "{AB2AA806-8CE5-45BA-BF9B-2273FDBD9727}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,22 +22,14 @@ Global
 		{574169E0-9A3D-4CA8-8148-4E10AFD53AE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{574169E0-9A3D-4CA8-8148-4E10AFD53AE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{574169E0-9A3D-4CA8-8148-4E10AFD53AE1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A0FB5859-D2F7-469A-9228-1EDDD7862C24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A0FB5859-D2F7-469A-9228-1EDDD7862C24}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A0FB5859-D2F7-469A-9228-1EDDD7862C24}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A0FB5859-D2F7-469A-9228-1EDDD7862C24}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3FEC6C24-EECA-4C02-8453-57BA6135B462}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3FEC6C24-EECA-4C02-8453-57BA6135B462}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3FEC6C24-EECA-4C02-8453-57BA6135B462}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3FEC6C24-EECA-4C02-8453-57BA6135B462}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B4A52E4E-ADD6-4F71-A8CD-88D8A6CDDE0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B4A52E4E-ADD6-4F71-A8CD-88D8A6CDDE0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B4A52E4E-ADD6-4F71-A8CD-88D8A6CDDE0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B4A52E4E-ADD6-4F71-A8CD-88D8A6CDDE0A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2BFDF636-B213-486D-96DC-A169098AC14A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2BFDF636-B213-486D-96DC-A169098AC14A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2BFDF636-B213-486D-96DC-A169098AC14A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2BFDF636-B213-486D-96DC-A169098AC14A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB2AA806-8CE5-45BA-BF9B-2273FDBD9727}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB2AA806-8CE5-45BA-BF9B-2273FDBD9727}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB2AA806-8CE5-45BA-BF9B-2273FDBD9727}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB2AA806-8CE5-45BA-BF9B-2273FDBD9727}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

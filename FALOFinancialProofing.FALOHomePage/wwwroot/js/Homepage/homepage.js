@@ -1,52 +1,59 @@
 ﻿$(document).ready(function () {
-        loadCampaigns();
-    });
+    loadCampaigns();
+});
 
-    // Function to load campaigns with pagination
-    function loadCampaigns() {
-        $.ajax({
-            url: `https://localhost:7294/api/Campaign/GetFourCampaignByFilter?IsActive=true&OrderByAscending=true&numOfElements=4`,  // Adjust URL if necessary, e.g., for a specific controller
-            type: 'GET',
-            data: {
-                status: null,  
-            },
-            success: function (response) {
-                if (response.success) {
-                    renderCampaigns(response.data);
-                } else {
-                    alert("Cannot get the campaigns!");
-                }
-            },
-            error: function (error) {
-                console.error("Error loading campaigns:", error);
+// Function to load campaigns with pagination
+function loadCampaigns() {
+    $.ajax({
+        url: `https://localhost:7294/api/Campaign/GetFourCampaignByFilter?IsActive=true&OrderByAscending=true&numOfElements=4`,  
+        type: 'GET',
+        data: {
+            status: null,
+        },
+        success: function (response) {
+            if (response.success) {
+                renderCampaigns(response.data);
+            } else {
+                alert("Cannot get the campaigns!");
             }
+        },
+        error: function (error) {
+            console.error("Error loading campaigns:", error);
+        }
+    });
+}
+
+// Function to render the campaigns data as cards
+function renderCampaigns(data) {
+    var campaignsContainer = $('#campaignsContainer');
+    campaignsContainer.empty();  // Clear existing data
+
+    // Loop through campaigns only if data.data is a valid array
+    data.forEach(function (campaign) {
+        var date = new Date(campaign.dateOfCreation);
+
+        // Format the date as "Jan 1, 2024"
+        var formattedDate = date.toLocaleDateString('en-US', {
+            month: 'short',  // "Jan"
+            day: 'numeric',  // "1"
+            year: 'numeric'  // "2024"
         });
-    }
+        const formattedAmountGoal = campaign.fundTarget.toLocaleString('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        });
+        const formattedAmountRaise = campaign.totalMoneyEarned.toLocaleString('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        });
+        var campaignImage = campaign.image || '/images/event/Project_image.jpg';
 
-    // Function to render the campaigns data as cards
-    function renderCampaigns(data) {
-        var campaignsContainer = $('#campaignsContainer');
-        campaignsContainer.empty();  // Clear existing data
+        var percentage = Math.round((campaign.totalMoneyEarned / campaign.fundTarget) * 100);
+        var percentageDisplay = percentage > 100 ? 100 : percentage;
 
-            // Loop through campaigns only if data.data is a valid array
-            data.forEach(function (campaign) {
-                var date = new Date(campaign.dateOfCreation);
+        var url = '/Campaignpage/Index/' + campaign.campaignId;
 
-                // Format the date as "Jan 1, 2024"
-                var formattedDate = date.toLocaleDateString('en-US', {
-                    month: 'short',  // "Jan"
-                    day: 'numeric',  // "1"
-                    year: 'numeric'  // "2024"
-                });
-
-            var campaignImage = campaign.image || '/images/event/Project_image.jpg';
-
-            var percentage = Math.round((campaign.totalMoneyEarned / campaign.fundTarget) * 100);
-                var percentageDisplay = percentage > 100 ? 100 : percentage;
-
-                var url = '/Campaignpage/Index/' + campaign.campaignId;
-
-                var cardHtml = `<div class="swiper-slide">
+        var cardHtml = `<div class="swiper-slide">
                                 <div class="cause__item">
                                     <div class="cause__image image">
                                         <img src="${campaignImage}" alt="image">
@@ -63,8 +70,8 @@
                                                 <div class="progress__content" style="width: ${percentageDisplay}%;"><span>${percentage}%</span></div>
                                             </div>
                                             <div class="progress__goal mt-15">
-                                                    <h6>Goal : <span>${campaign.fundTarget} VND</span></h6>
-                                                    <h6>Raised : <span>${campaign.totalMoneyEarned} VND</span></h6>
+                                                    <h6>Goal : <span>${formattedAmountGoal} VND</span></h6>
+                                                    <h6>Raised : <span>${formattedAmountRaise} VND</span></h6>
                                             </div>
                                             <div class="btn-three mt-30">
                                                 <span class="btn-circle">
@@ -80,61 +87,61 @@
                                 </div>
                             </div>
                             `;
-                campaignsContainer.append(cardHtml);
-            });
-    }
-    
-    $(document).ready(function () {
-        loadProjects();
+        campaignsContainer.append(cardHtml);
     });
+}
+
+$(document).ready(function () {
+    loadProjects();
+});
 
 
 
-    // Function to load projects with pagination
-    function loadProjects() {
-        $.ajax({
-            url: `https://localhost:7294/api/Projects/GetFourProjectByFilter?IsActive=true&OrderByAscending=true&numOfElements=4`,  // Adjust URL if necessary, e.g., for a specific controller
-            type: 'GET',
-            data: {
-                status: null,  // You can set the status filter if needed
-            },
-            success: function (response) {
-                if (response.success) {
-                    renderProjects(response.data);
-                } else {
-                    alert("Cannot get the projects!");
-                }
-            },
-            error: function (error) {
-                console.error("Error loading projects:", error);
+// Function to load projects with pagination
+function loadProjects() {
+    $.ajax({
+        url: `https://localhost:7294/api/Projects/GetFourProjectByFilter?IsActive=true&OrderByAscending=true&numOfElements=4`,  // Adjust URL if necessary, e.g., for a specific controller
+        type: 'GET',
+        data: {
+            status: null,  // You can set the status filter if needed
+        },
+        success: function (response) {
+            if (response.success) {
+                renderProjects(response.data);
+            } else {
+                alert("Cannot get the projects!");
             }
+        },
+        error: function (error) {
+            console.error("Error loading projects:", error);
+        }
+    });
+}
+
+// Function to render the projects data as cards
+function renderProjects(data) {
+    var projectsContainer = $('#projectsContainer');
+    projectsContainer.empty();  // Clear existing data
+
+    data.forEach(function (project) {
+        var date = new Date(project.dateOfCreation);
+
+        // Format the date as "Jan 1, 2024"
+        var formattedDate = date.toLocaleDateString('en-US', {
+            month: 'short',  // "Jan"
+            day: 'numeric',  // "1"
+            year: 'numeric'  // "2024"
         });
-    }
 
-    // Function to render the projects data as cards
-    function renderProjects(data) {
-        var projectsContainer = $('#projectsContainer');
-        projectsContainer.empty();  // Clear existing data
+        var url = '/Projectpage/Index/' + project.id;
 
-        data.forEach(function (project) {
-            var date = new Date(project.dateOfCreation);
+        var creator = project.firstName + ' ' + project.lastName;
 
-            // Format the date as "Jan 1, 2024"
-            var formattedDate = date.toLocaleDateString('en-US', {
-                month: 'short',  // "Jan"
-                day: 'numeric',  // "1"
-                year: 'numeric'  // "2024"
-            });
+        var shortenedDescription = project.description.length > 150 ? project.description.substring(0, 150) + '...' : project.description;
 
-            var url = '/Projectpage/Index/' + project.id;
+        var projectImage = project.image || '/images/event/Project_image.jpg';
 
-            var creator = project.firstName+ ' ' + project.lastName;
-
-            var shortenedDescription = project.description.length > 150 ? project.description.substring(0, 150) + '...' : project.description;
-
-            var projectImage = project.image || '/images/event/Project_image.jpg';
-
-            var cardHtml = `<div class="col-xl-6 wow fadeInUp" data-wow-delay="200ms" data-wow-duration="1500ms">
+        var cardHtml = `<div class="col-xl-6 wow fadeInUp" data-wow-delay="200ms" data-wow-duration="1500ms">
                         <div class="event__item h-100">
                             <div class="image h-100">
                                             <img class="h-100" src="${projectImage}" style="height:100%; object-fit:cover; max-width: 283px" alt="image" >
@@ -177,6 +184,6 @@
                         </div>
                     </div>
                     `;
-            projectsContainer.append(cardHtml);
-        });
-    }
+        projectsContainer.append(cardHtml);
+    });
+}

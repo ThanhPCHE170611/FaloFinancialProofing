@@ -20,9 +20,9 @@ $(document).ready(function () {
         });
     });
 
-    if (checkrole === "Accounting") {
-        $('#voucherInput').show();
-    }
+    //if (checkrole === "Accounting") {
+    //    $('#voucherInput').show();
+    //}
     if (checkrole && checkrole !== 'Volunteer') {
         const newLink = document.createElement('a');
         newLink.setAttribute('asp-controller', 'Prepay');
@@ -84,22 +84,22 @@ $(document).ready(function () {
     var dateTime = `${date}T${time}`;
     console.log(dateTime);
 
-    let apiUrl;
-    if (checkrole === "Volunteer") {
-        apiUrl = `https://localhost:7294/api/RequestForm/getapproverlistforvolunteer/${campaignId}`;
-    } else if (checkrole === "Volunteer Leader") {
-        apiUrl = `https://localhost:7294/api/RequestForm/getapproverforvolunteerleader/${campaignId}`;
-    } else if (checkrole === "Accounting") {
-        apiUrl = `https://localhost:7294/api/RequestForm/getapproverforaccounting/${campaignId}`;
-    } else if (checkrole === "Project Manager") {
-        apiUrl = `https://localhost:7294/api/RequestForm/getapproverforprojectmanagement/${campaignId}`;
-    } else {
-        alert('Invalid role. Please check your role and try again.');
-        return;
-    }
+    //let apiUrl;
+    //if (checkrole === "Volunteer") {
+    //    apiUrl = ;
+    //} else if (checkrole === "Volunteer Leader") {
+    //    apiUrl = `https://localhost:7294/api/RequestForm/getapproverforvolunteerleader/${campaignId}`;
+    //} else if (checkrole === "Accounting") {
+    //    apiUrl = `https://localhost:7294/api/RequestForm/getapproverforaccounting/${campaignId}`;
+    //} else if (checkrole === "Project Manager") {
+    //    apiUrl = `https://localhost:7294/api/RequestForm/getapproverforprojectmanagement/${campaignId}`;
+    //} else {
+    //    alert('Invalid role. Please check your role and try again.');
+    //    return;
+    //}
 
     $.ajax({
-        url: apiUrl,
+        url: `https://localhost:7294/api/RequestForm/getapproverlistforvolunteer/${campaignId}`,
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${jwtToken}`
@@ -122,17 +122,79 @@ $(document).ready(function () {
         }
     });
 
-    $('#create-btn').on('click', function () {
-        const expectedMoney = $('#expectedMoney').val();
-        const assignFrom = $('#assignFrom').val();
-        const description = $('#description').val();
-        const files = $('#attachments')[0].files;
+    $('#expectedMoney').on('input', function () {
+        let input = $(this).val();
 
-        if (!expectedMoney || !assignFrom || !description) {
-            alert('Please fill in all required fields.');
+        input = input.replace(/[^0-9]/g, '');
+
+        if (!/^\d+$/.test(input)) {
+            alert('Vui lòng nhập số nguyên dương và không chứa dấu thập phân hoặc ký tự không hợp lệ.');
+            $(this).val('');
             return;
         }
 
+        const formatted = Number(input).toLocaleString();
+        $(this).val(formatted);
+    });
+
+    $('#create-btn').on('click', function () {
+        //const expectedMoney = $('#expectedMoney').val();
+        const expectedMoney = $('#expectedMoney').val().replace(/,/g, '');
+        const assignFrom = $('#assignFrom').val();
+        const description = $('#description').val();
+        const files = $('#attachments')[0].files;
+        const vouchers = $('#vouchers')[0].files;
+        if (!expectedMoney || !description) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+        if (!expectedMoney || isNaN(expectedMoney) || Number(expectedMoney) <= 1000) {
+            alert('Expected Money is required and must be a valid number greater than 1000.');
+            $('#expectedMoney').focus();
+            return;
+        }
+
+        if (!description || description.length < 10) {
+            alert('Description is required and must be at least 10 characters long.');
+            $('#description').focus();
+            return;
+        }
+
+        if (!assignFrom) {
+            alert('Assign From is required.');
+            $('#assignFrom').focus();
+            return;
+        }
+
+        //if (files.length === 0) {
+        //    alert('Attachments are required. Please upload at least one file.');
+        //    $('#attachments').focus();
+        //    return;
+        //}
+
+        if (vouchers.length === 0) {
+            alert('Vouchers are required. Please upload at least one file.');
+            $('#vouchers').focus();
+            return;
+        }
+
+        for (let i = 0; i < files.length; i++) {
+            const fileName = files[i].name;
+            if (!fileName.toLowerCase().endsWith('.zip')) {
+                alert(`Invalid file type for attachments. Only .zip files are allowed. (${fileName})`);
+                $('#attachments').focus();
+                return;
+            }
+        }
+
+        for (let i = 0; i < vouchers.length; i++) {
+            const fileName = vouchers[i].name;
+            if (!fileName.toLowerCase().endsWith('.zip')) {
+                alert(`Invalid file type for vouchers. Only .zip files are allowed. (${fileName})`);
+                $('#vouchers').focus();
+                return;
+            }
+        }
         const formData = new FormData();
         formData.append('CreatedBy', userId);
         formData.append('CampaignId', campaignId);
@@ -144,6 +206,12 @@ $(document).ready(function () {
         Array.from(files).forEach(file => {
             formData.append('UploadFiles', file);
         });
+
+        Array.from(vouchers).forEach(voucher => {
+            console.log("abcxy" + voucher);
+            formData.append('VoucherFile', voucher);
+        });
+
 
         console.log(assignFrom);
         console.log(userId);
@@ -166,7 +234,7 @@ $(document).ready(function () {
                     alert('Create new Payment RequestForm successfully.');
                     window.location.href = `/Payment/PaymentManagement?campaignid=${campaignId}`;
                 } else {
-                    alert('Error: ' + response.message);
+                    alert(response.message);
                 }
             },
             error: function () {

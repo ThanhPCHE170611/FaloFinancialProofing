@@ -11,6 +11,7 @@
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
     <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
     <style>
         .form-control {
@@ -157,6 +158,11 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    const jwtToken = localStorage.getItem('jwtToken');
+    if (!jwtToken) {
+        window.location.href = '/Authentication/Login';
+        return;
+    }
     function previewLogo() {
         const file = document.getElementById('organizationLogo').files[0];
         const preview = document.getElementById('logoPreview');
@@ -172,13 +178,45 @@
         }
     }
     $('#save-btn button').on('click', function () {
-        const jwtToken = localStorage.getItem('jwtToken');
         const userId = localStorage.getItem('userId');
 
         if (!jwtToken || !userId) {
             alert('JWT token or User ID is missing. Please log in again.');
             return;
         }
+        const requiredFields = [
+        { id: '#name', label: 'Name' },
+        { id: '#mainOffice', label: 'Main Office' },
+        { id: '#representative', label: 'Representative' },
+        { id: '#phoneNumber', label: 'Phone Number' },
+        { id: '#email', label: 'Email' },
+        { id: '#description', label: 'Description' },
+        { id: '#vision', label: 'Vision' },
+        { id: '#mission', label: 'Mission' },
+        { id: '#coreValue', label: 'Core Value' },
+        { id: '#mainActivity', label: 'Main Activity' },
+        { id: '#interests', label: 'Interests' },
+        { id: '#volunteerExperience', label: 'Volunteer Experience' },
+        { id: '#volunteerObjectives', label: 'Volunteer Objectives' },
+        { id: '#bio', label: 'Bio' }
+    ];
+
+    for (const field of requiredFields) {
+        const value = $(field.id).val().trim();
+        if (!value || value.length < 8) {
+            alert(`${field.label} is required and must be at least 8 characters long.`);
+            $(field.id).focus();
+            return;
+        }
+    }
+
+    const phoneNumber = $('#phoneNumber').val().trim();
+    const phoneRegex = /^[0-9]{10,15}$/; 
+    if (!phoneRegex.test(phoneNumber)) {
+        alert('Phone Number must be between 10 and 15 digits.');
+        $('#phoneNumber').focus();
+        return;
+    }
 
         const formData = new FormData();
         formData.append('UserId', userId);
@@ -215,8 +253,9 @@
                 if (response.success) {
                     alert('Organization created successfully!');
                     console.log('Organization creation response:', response);
+                    window.location.href = `/Organization/OrganizationManagement`;
                 } else {
-                    alert('Failed to create organization: ' + response.message);
+                    alert(response.message);
                 }
             },
             error: function (errors) {

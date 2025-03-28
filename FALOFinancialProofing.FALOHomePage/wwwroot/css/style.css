@@ -192,7 +192,6 @@ button {
 }
 
 input {
-  border: none;
   outline: none;
 }
 
@@ -1721,10 +1720,11 @@ input {
 }
 
 .pegi {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 20px;
 }
 .pegi a {
   width: 50px;
@@ -3089,8 +3089,15 @@ input {
   }
 }
 .cause__image {
-  position: relative;
+    position: relative;
 }
+
+.cause_menu_image {
+    max-height: 170px;
+    overflow:hidden;
+    position: relative;
+}
+
 .cause__image .cause-tag {
   font-size: 14px;
   color: var(--white);
@@ -3496,7 +3503,7 @@ input {
 .blog-single__right-item .item .serach-bar input, .event-single__right-item .item .serach-bar input {
   width: 100%;
   border: var(--border-1px);
-  padding: 16px;
+  padding: 9px;
 }
 .blog-single__right-item .item .serach-bar input:focus, .event-single__right-item .item .serach-bar input:focus {
   border: 1px solid rgba(247, 79, 34, 0.5);

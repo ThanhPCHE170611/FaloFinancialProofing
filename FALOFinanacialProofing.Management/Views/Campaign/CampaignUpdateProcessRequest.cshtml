@@ -77,9 +77,12 @@
 <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-
+    const jwtToken = localStorage.getItem('jwtToken');
+    if (!jwtToken) {
+        window.location.href = '/Authentication/Login';
+        return;
+    }
     async function sendRequest() {
-        const jwtToken = localStorage.getItem('jwtToken');
         const userId = localStorage.getItem('userId');
         const campaignId = localStorage.getItem('campaignId');
 
@@ -90,6 +93,18 @@
 
         const title = document.getElementById('title').value;
         const description = document.getElementById('description').value;
+
+        if (!title || title.length < 8) {
+            alert('Title is required and must be at least 8 characters long.');
+            document.getElementById('title').focus();
+            return;
+        }
+
+        if (!description || description.length < 8) {
+            alert('Description must be at least 8 characters long.');
+            document.getElementById('description').focus();
+            return;
+        }
 
         var today = new Date();
         var year = today.getFullYear();
@@ -130,7 +145,7 @@
             } else {
                 const errorData = await response.json();
                 console.error('Error:', errorData);
-                alert(`Error: ${errorData.message || 'Failed to send request.'}`);
+                alert(errorData.message);
             }
         } catch (error) {
             console.error('Unexpected error:', error);

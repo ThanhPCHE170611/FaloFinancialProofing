@@ -17,6 +17,10 @@ namespace FALOFinanacialProofing.Management.Controllers
         {
             return View();
         }
+        public ActionResult CampaignDetail_PMB()
+        {
+            return View();
+        }
         public ActionResult CampaignCreate()
         {
             return View();
@@ -29,7 +33,15 @@ namespace FALOFinanacialProofing.Management.Controllers
         {
             return View();
         }
+        public ActionResult Member_PMB()
+        {
+            return View();
+        }
         public ActionResult MemberAdd()
+        {
+            return View();
+        }
+        public ActionResult MemberAdd_PMB()
         {
             return View();
         }
@@ -46,6 +58,10 @@ namespace FALOFinanacialProofing.Management.Controllers
             return View();
         }
         public ActionResult MemberDetail()
+        {
+            return View();
+        }
+        public ActionResult MemberDetail_PMB()
         {
             return View();
         }
